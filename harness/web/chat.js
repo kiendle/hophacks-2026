@@ -59,6 +59,179 @@ export function formatBlocks(text) {
   return blocks;
 }
 
+// Plain punctuation, the same rule steps.py enforces on the server: a person reads commas, full
+// stops, "and" and "to", never a dash, a middle dot, an arrow or a semicolon. Hyphens inside words,
+// dates and thousands separators are left alone. Idempotent, and never throws.
+export function plainText(value) {
+  if (typeof value !== 'string') return '';
+  return value
+    .replace(/[^\S\n]*(?:[←→↔⇒⇨➡]+|-{1,2}>|=>)[^\S\n]*/g, ' to ')
+    .replace(/[^\S\n]*[‒–—―]+[^\S\n]*/g, ', ')
+    .replace(/[^\S\n]*[·•‣▪・]+[^\S\n]*/g, ', ')
+    .replace(/[^\S\n]*;[^\S\n]*(\S?)/g, (whole, tail) => (tail ? `. ${tail.toUpperCase()}` : '.'))
+    .replace(/[^\S\n]{2,}/g, ' ')
+    .replace(/[^\S\n]+([,.])/g, '$1')
+    .replace(/(?:,[^\S\n]*){2,}/g, ', ')
+    .replace(/,[^\S\n]*\./g, '.')
+    .replace(/^[^\S\n]*,[^\S\n]*|[^\S\n]*,[^\S\n]*$/gm, '');
+}
+
+// A step's own duration, one decimal under ten seconds: "3.5 seconds", "28 seconds", "1 minute 5 seconds".
+export function durationWords(ms) {
+  const value = ms === null || ms === undefined || ms === '' ? NaN : Number(ms);
+  if (!Number.isFinite(value) || value < 0) return '';
+  if (value >= 9950) return formatDuration(value);
+  const seconds = Math.round(value / 100) / 10;
+  return `${seconds} ${seconds === 1 ? 'second' : 'seconds'}`;
+}
+
+// A duration in words: "9 seconds", "1 minute 5 seconds", "2 minutes".
+export function formatDuration(ms) {
+  const value = ms === null || ms === undefined || ms === '' ? NaN : Number(ms);
+  if (!Number.isFinite(value) || value < 0) return '';
+  const total = Math.round(value / 1000);
+  if (total < 60) return plural(total, 'second');
+  const seconds = total % 60;
+  return plural(Math.floor(total / 60), 'minute') + (seconds ? ` ${plural(seconds, 'second')}` : '');
+}
+
+// The one line a finished activity list collapses into: "4 steps, 28 seconds".
+export function summarizeSteps(steps, totalMs) {
+  const list = Array.isArray(steps) ? steps : [];
+  if (!list.length) return 'No steps';
+  const failed = list.filter((step) => step && step.ok === false).length;
+  const parts = [plural(list.length, 'step')];
+  if (failed) parts.push(`${failed} did not finish`);
+  const duration = formatDuration(totalMs);
+  if (duration) parts.push(duration);
+  return parts.join(', ');
+}
+
+const plural = (count, word) => `${count} ${word}${count === 1 ? '' : 's'}`;
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const DAYS_IN = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+const LANGUAGE_NAMES = {
+  en: 'English', ja: 'Japanese', es: 'Spanish', pt: 'Portuguese', ko: 'Korean', fr: 'French',
+  de: 'German', tr: 'Turkish', ar: 'Arabic', it: 'Italian', zh: 'Chinese', ru: 'Russian', nl: 'Dutch', hi: 'Hindi',
+};
+const SOURCE_NAMES = { bluesky_live: 'live Bluesky', twitter_firehose: 'the X/Twitter archive', congress: 'US Congress posts' };
+
+const oneLine = (value, limit = 160) => (typeof value === 'string' || typeof value === 'number'
+  ? plainText(String(value).replace(/\s+/g, ' ').trim()).slice(0, limit) : '');
+const asObject = (value) => (value && typeof value === 'object' && !Array.isArray(value) ? value : {});
+
+function dayParts(value, shift = 0) {
+  const found = /^(\d{4})-(\d{2})-(\d{2})/.exec(typeof value === 'string' ? value.trim() : '');
+  if (!found) return null;
+  let [year, month, day] = [Number(found[1]), Number(found[2]), Number(found[3]) + shift];
+  while (day < 1) {
+    month -= 1;
+    if (month < 1) { month = 12; year -= 1; }
+    day += DAYS_IN[month - 1] + (month === 2 && year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0) ? 1 : 0);
+  }
+  if (month < 1 || month > 12 || day > 31) return null;
+  return { year, month, day };
+}
+
+const dayWords = (value, shift = 0) => {
+  const parts = dayParts(value, shift);
+  return parts ? `${MONTHS[parts.month - 1]} ${parts.day}` : '';
+};
+
+// The project's end date is the first day NOT observed, so the last day shown is the day before it.
+export function windowWords(from, to) {
+  const low = dayWords(from);
+  const high = dayWords(to, -1);
+  const span = low && high && low !== high ? `${low} to ${high}` : (low || high);
+  if (!span) return '';
+  const parts = dayParts(to, -1) || dayParts(from);
+  return parts ? `${span}, ${parts.year}` : span;
+}
+
+export function liveWords(lookbackHours, runHours) {
+  const back = Number(lookbackHours);
+  const run = Number(runHours);
+  const said = ['From now'];
+  if (Number.isFinite(back) && back > 0) said.push(`also looking back ${plural(back, 'hour')}`);
+  if (Number.isFinite(run) && run > 0) said.push(`and it keeps running for ${plural(run, 'hour')}`);
+  return said.join(', ');
+}
+
+function groupsOf(spec) {
+  const raw = Array.isArray(spec.categories) ? spec.categories : (Array.isArray(spec.classification) ? spec.classification : []);
+  return raw.slice(0, 12).map((group) => ({
+    name: oneLine(group && typeof group === 'object' ? group.name : group, 60),
+    description: oneLine(group && typeof group === 'object' ? (group.description ?? group.about) : '', 160),
+  })).filter((group) => group.name);
+}
+
+function languageWords(value) {
+  const codes = (Array.isArray(value) ? value : [value]).map((code) => oneLine(code, 16)).filter(Boolean);
+  const names = codes.slice(0, 6).map((code) => LANGUAGE_NAMES[code.toLowerCase()] || code);
+  return names.length ? names.join(', ') : 'Any language';
+}
+
+// The project card's own content: labelled plain lines, built from the saved draft and nothing else.
+// The draft is written by the model, so every key may be spelled either way and every value is text.
+export function projectLines(spec) {
+  const root = asObject(spec);
+  const observation = asObject(root.observation);
+  const span = asObject(observation.window);
+  const filter = asObject(root.filter);
+  const source = oneLine(observation.source ?? root.source, 40);
+  const words = (Array.isArray(root.keywords) ? root.keywords : (Array.isArray(filter.any_terms) ? filter.any_terms : []))
+    .map((word) => oneLine(word, 40)).filter(Boolean).slice(0, 20);
+  const live = source === 'bluesky_live' || span.mode === 'live';
+  const groups = groupsOf(root);
+  const lines = [
+    { label: 'Name', value: oneLine(root.name, 120) },
+    { label: 'What we are watching', value: oneLine(observation.intent ?? root.intent, 240) },
+    { label: 'Where', value: SOURCE_NAMES[source] || oneLine(source.replace(/_/g, ' '), 40) },
+    { label: 'When', value: live ? liveWords(span.lookback_hours, span.run_hours)
+      : windowWords(span.from ?? root.date_from, span.to ?? root.date_to) },
+    { label: 'Language', value: languageWords(root.language ?? observation.language ?? filter.languages) },
+    { label: 'Words we search for', value: words.map((word) => `"${word}"`).join(', ') },
+  ];
+  if (groups.length) {
+    lines.push({ label: 'Groups we sort posts into', groups,
+      value: groups.map((group) => (group.description ? `${group.name}: ${group.description}` : group.name)).join('. ') });
+  }
+  lines.push({ label: 'Feeling question', value: oneLine(root.sentiment_question ?? asObject(root.sentiment).instructions, 240) });
+  return lines.filter((line) => line.value);
+}
+
+const LIVE_DEFAULTS = { minutes: 15, seconds: 20 };
+const span = (value, fallback) => (Number.isFinite(Number(value)) && Number(value) > 0 ? Number(value) : fallback);
+
+// What the "details" link opens: the same facts the step was built from, in plain words. A person
+// who wants to know exactly what was searched reads this; the raw call stays behind ?dev=1.
+export function stepFacts(detail, ms) {
+  const info = asObject(detail);
+  const input = asObject(info.input);
+  const tool = oneLine(info.tool, 60).replace('mcp__harness__', '');
+  const searching = tool === 'preview_keywords' || tool === 'bluesky_recent' || tool === 'bluesky_listen';
+  const words = (Array.isArray(input.keywords) ? input.keywords : []).map((word) => oneLine(word, 40)).filter(Boolean).slice(0, 20);
+  const lines = [];
+  if (words.length) lines.push({ label: 'Words searched', value: words.map((word) => `"${word}"`).join(', ') });
+  if (tool === 'preview_keywords') {
+    const low = dayWords(input.date_from);
+    const high = dayWords(input.date_to, -1);
+    const dates = low && high && low !== high ? `${low} to ${high}` : (low || high);
+    if (dates) lines.push({ label: 'Dates', value: dates });
+  }
+  if (tool === 'bluesky_recent') lines.push({ label: 'Time covered', value: `the last ${plural(span(input.minutes, LIVE_DEFAULTS.minutes), 'minute')}` });
+  if (tool === 'bluesky_listen') lines.push({ label: 'Time covered', value: `${plural(span(input.seconds, LIVE_DEFAULTS.seconds), 'second')} of live posts` });
+  if (searching) lines.push({ label: 'Language', value: languageWords(input.language) });
+  if (tool === 'save_draft') {
+    let name = '';
+    try { name = oneLine(asObject(JSON.parse(String(input.spec_json ?? ''))).name, 120); } catch { name = ''; }
+    if (name) lines.push({ label: 'Project name', value: name });
+  }
+  const took = durationWords(ms);
+  if (took) lines.push({ label: '', value: `Took ${took}` });
+  return lines.filter((line) => line.value);
+}
+
 function spans(line) {
   const out = [];
   let rest = line;
@@ -74,6 +247,8 @@ function spans(line) {
 }
 
 // ------------------------------------------------------------- DOM plumbing
+// ?dev=1 is the only way the raw call, the per-step duration and the JSON button exist at all.
+const DEV = (() => { try { return /(^|[?&])dev=1(&|$)/.test(String(location.search || '')); } catch { return false; } })();
 const $ = (id) => document.getElementById(id);
 
 function el(tag, props = {}, ...children) {
@@ -82,6 +257,7 @@ function el(tag, props = {}, ...children) {
     if (key === 'class') node.className = value;
     else if (key === 'text') node.textContent = value;
     else if (key === 'style') Object.assign(node.style, value);  // CSSOM, never a style attribute
+    else if (key === 'hidden') node.hidden = Boolean(value);     // the property, so toggling it later reads back
     else if (key.startsWith('on')) node.addEventListener(key.slice(2), value);
     else if (value !== undefined && value !== null && value !== false) node.setAttribute(key, value === true ? '' : value);
   }
@@ -118,10 +294,11 @@ const number = (value) => Number(value || 0).toLocaleString();
 const SESSION_KEY = 'signal.observe.session';
 const OFFLINE = 'Cannot reach the assistant on this laptop. Check that the bridge is running, then send the message again.';
 const CHIPS = [
-  'What data can I observe here?',
-  'How did people react to the PlayStation cancellation around Sep 10?',
-  'What did people say about Anthropic on Sep 9?',
+  'What are people saying about AI on Bluesky right now?',
+  'How did people react to the Anthropic resignation post around Sep 9?',
+  'What was said about GPT-6 Astra in early September?',
 ];
+const DATA_QUESTION = 'What data can I observe here?';  // the landing page's own button
 
 const state = {
   running: false,
@@ -132,7 +309,8 @@ const state = {
   turnText: '',        // every delta of this turn, to compare with the final `message`
   turnBubbles: [],     // the bubbles this turn's deltas went into (a card can start a new one)
   progress: null,      // the progress line under the streaming bubble
-  draft: null,         // the one "Project draft" card, reused by later spec events
+  activity: null,      // this turn's list of real steps, which replaces the progress line while it exists
+  project: null,       // the one "Your project so far" card, rewritten in place by later spec events
 };
 
 const readSession = () => {
@@ -175,7 +353,7 @@ function dropChips() {
 function showChips() {
   if ($('chat-log').querySelector('.chips')) return;
   add(el('div', { class: 'chips' },
-    el('p', { class: 'chips-lede', text: 'Ask it anything about what can be observed — or start from one of these.' }),
+    el('p', { class: 'chips-lede', text: 'Ask anything about how people are talking about AI, or start from one of these.' }),
     ...CHIPS.map((chip) => el('button', {
       class: 'chip', type: 'button', text: chip,
       onclick: () => { if (!state.running) send(chip); },
@@ -210,7 +388,90 @@ function setProgress(text) {
 }
 
 function showError(text) {
-  add(el('div', { class: 'notice', role: 'alert' }, ...withBreaks(text)));
+  // even a message written by the server obeys the page's punctuation rule before a person reads it
+  add(el('div', { class: 'notice', role: 'alert' }, ...withBreaks(plainText(String(text ?? '')))));
+}
+
+// ---------------------------------------------------------------- activity
+// Every row is one real tool call: what it is doing, why the assistant said it was doing it, and
+// what came back, written by the server from the tool's real result. "details" opens the same facts
+// in plain words, including how long it took. The raw call exists only in the developer view, so a
+// normal reader never meets a tool name or a piece of JSON.
+function detailText(detail) {
+  try {
+    const name = detail && typeof detail.tool === 'string' ? detail.tool : '(unknown tool)';
+    return `${name}\n${JSON.stringify(detail && detail.input !== undefined ? detail.input : null, null, 2)}`;
+  } catch {
+    return '(the raw call could not be shown)';
+  }
+}
+
+function factNodes(detail, ms) {
+  return stepFacts(detail, ms).map((line) => el('p', { class: 'step-fact' },
+    line.label ? el('span', { class: 'step-fact-label', text: `${line.label}: ` }) : null,
+    document.createTextNode(plainText(line.value))));
+}
+
+function stepRow(event) {
+  const outcome = el('p', { class: 'step-outcome', hidden: true });
+  const raw = DEV ? el('pre', { class: 'step-raw', text: detailText(event.detail) }) : null;
+  const facts = el('div', { class: 'step-facts', hidden: true }, ...factNodes(event.detail, null), raw);
+  const details = el('button', {
+    class: 'link-button step-details', type: 'button', text: 'details', 'aria-expanded': 'false',
+    onclick: () => {
+      const open = facts.hidden;
+      facts.hidden = !open;
+      details.setAttribute('aria-expanded', open ? 'true' : 'false');
+      scroll();
+    },
+  });
+  const why = typeof event.why === 'string' && event.why.trim()
+    ? el('p', { class: 'step-why' }, el('span', { class: 'step-why-label', text: 'Why: ' }), document.createTextNode(plainText(event.why.trim())))
+    : null;
+  const node = el('div', { class: 'step' },
+    el('div', { class: 'step-head' },
+      el('i', { class: 'step-mark', 'aria-hidden': 'true' }),
+      el('span', { class: 'step-title', text: plainText(String(event.title || 'Working on it')) }),
+      details),
+    why, outcome, facts);
+  node.dataset.state = 'run';  // the mark is drawn from this, and it changes when the step ends
+  return { node, outcome, facts, raw, detail: event.detail, ok: null };
+}
+
+function endStepRow(row, event) {
+  row.ok = event.ok !== false;
+  row.node.dataset.state = row.ok ? 'ok' : 'warn';
+  row.outcome.textContent = plainText(String(event.outcome || 'Done.'));
+  row.outcome.hidden = false;
+  // the duration is only known now, so the details are rewritten with it, keeping the raw call last
+  row.facts.replaceChildren(...factNodes(row.detail, event.ms), ...(row.raw ? [row.raw] : []));
+}
+
+function startActivity() {
+  const rows = el('div', { class: 'activity-rows' });
+  const summary = el('button', {
+    class: 'link-button activity-summary', type: 'button', 'aria-expanded': 'true', hidden: true,
+    onclick: () => {
+      const open = rows.hidden;
+      rows.hidden = !open;
+      summary.setAttribute('aria-expanded', open ? 'true' : 'false');
+      scroll();
+    },
+  });
+  const node = add(el('section', { class: 'activity', 'aria-label': 'What the assistant is doing' }, rows, summary));
+  return { node, rows, summary, steps: [], byId: new Map(), started: Date.now() };
+}
+
+function collapseActivity(totalMs) {
+  const activity = state.activity;
+  if (!activity) return;
+  const total = Number(totalMs);
+  activity.summary.textContent = summarizeSteps(activity.steps, Number.isFinite(total) && total > 0 ? total : Date.now() - activity.started);
+  activity.summary.hidden = false;
+  activity.summary.setAttribute('aria-expanded', 'false');
+  activity.rows.hidden = true;
+  state.activity = null;
+  scroll();
 }
 
 // ------------------------------------------------------------------- cards
@@ -218,11 +479,37 @@ function card(title, ...body) {
   return el('section', { class: 'card' }, el('h3', { class: 'card-title', text: title }), ...body);
 }
 
+function prettyJson(value) {
+  try { return JSON.stringify(value ?? {}, null, 2); } catch { return String(value); }
+}
+
+// Developer view only: the project really is a JSON file on this laptop, so hand over the exact text.
+function copyButton(text) {
+  const note = el('span', { class: 'copy-note', role: 'status' });
+  let timer = null;
+  const button = el('button', {
+    class: 'link-button', type: 'button', text: 'Copy JSON',
+    onclick: async () => {
+      if (timer) { clearTimeout(timer); timer = null; }
+      try {
+        if (!navigator || !navigator.clipboard || !navigator.clipboard.writeText) throw new Error('no clipboard');
+        await navigator.clipboard.writeText(text());
+        note.textContent = 'Copied';
+        timer = setTimeout(() => { note.textContent = ''; }, 2000);
+      } catch {
+        note.textContent = 'Copying is not available here.';
+      }
+    },
+  });
+  return { button, note };
+}
+
 function previewCard(event) {
   const days = Array.isArray(event.per_day) ? event.per_day : [];
   const peak = days.reduce((max, day) => Math.max(max, Number(day.count) || 0), 0) || 1;
   const examples = (Array.isArray(event.examples) ? event.examples : []).slice(0, 6);
-  const parts = [el('p', { class: 'card-total' }, el('strong', { text: number(event.total) }), document.createTextNode(' posts already collected'))];
+  const parts = [el('p', { class: 'card-total' }, el('strong', { text: number(event.total) }),
+    document.createTextNode(Number(event.total) === 1 ? ' post' : ' posts'))];
 
   if (days.length) {
     parts.push(el('div', { class: 'bars' }, ...days.map((day) => el('div', { class: 'bar-row' },
@@ -236,7 +523,7 @@ function previewCard(event) {
     parts.push(el('ul', { class: 'examples' }, ...examples.map((post) => {
       const body = [
         el('p', { class: 'example-text' }, ...withBreaks(post.body ?? '')),
-        el('p', { class: 'example-meta' }, document.createTextNode([post.lang, `${number(post.like_count)} likes`, post.day].filter(Boolean).join(' · '))),
+        el('p', { class: 'example-meta' }, document.createTextNode([`${number(post.like_count)} likes`, post.day].filter(Boolean).join(', '))),
       ];
       // A post's own text is never a link; only a url our own tools built, and only over https.
       const href = typeof post.url === 'string' && /^https:\/\//.test(post.url) ? post.url : null;
@@ -246,32 +533,48 @@ function previewCard(event) {
     })));
   }
 
-  if (typeof event.note === 'string' && event.note) parts.push(el('p', { class: 'card-note', text: event.note }));
+  if (typeof event.note === 'string' && event.note) parts.push(el('p', { class: 'card-note', text: plainText(event.note) }));
 
-  if (event.exact !== undefined || event.seconds !== undefined) {
-    const bits = [];
-    if (event.exact !== undefined) bits.push(event.exact ? 'exact count' : 'approximate count');
-    if (typeof event.seconds === 'number') bits.push(`${event.seconds.toFixed(1)} s`);
-    parts.push(el('p', { class: 'card-foot', text: bits.join(' · ') }));
+  if (event.exact !== undefined) {
+    parts.push(el('p', { class: 'card-foot', text: event.exact ? 'We counted every matching post.' : 'This is an estimate.' }));
   }
-  return card(typeof event.title === 'string' && event.title ? event.title : 'Preview — real posts', ...parts);
+  return card(plainText(typeof event.title === 'string' && event.title ? event.title : 'What we found'), ...parts);
+}
+
+// The project the assistant has built so far, in the reader's own words. One card per turn-set:
+// a newer spec event rewrites these lines in place rather than stacking another card on the log.
+function projectLineNode(line) {
+  if (Array.isArray(line.groups)) {
+    return el('div', { class: 'project-groups' },
+      el('p', { class: 'project-line' }, el('span', { class: 'project-label', text: `${line.label}:` })),
+      ...line.groups.map((group) => el('p', { class: 'project-group' },
+        el('strong', { text: group.name }),
+        document.createTextNode(group.description ? ` ${group.description}` : ''))));
+  }
+  return el('p', { class: 'project-line' },
+    el('span', { class: 'project-label', text: `${line.label}: ` }),
+    document.createTextNode(line.value));
+}
+
+function fillProject(body, spec) {
+  const lines = projectLines(spec);
+  body.replaceChildren(...(lines.length ? lines.map(projectLineNode)
+    : [el('p', { class: 'project-line', text: 'Nothing has been written down yet.' })]));
 }
 
 function specCard(event) {
-  const short = String(event.spec_hash ?? '').slice(0, 8);
-  const json = (() => {
-    try { return JSON.stringify(event.spec ?? {}, null, 2); } catch { return String(event.spec); }
-  })();
-  if (state.draft) {
-    state.draft.summary.textContent = `Project draft${short ? ` · ${short}` : ''}`;
-    state.draft.pre.textContent = json;
+  if (state.project) {
+    state.project.spec = event.spec;
+    fillProject(state.project.body, event.spec);
     scroll();
     return null;
   }
-  const summary = el('summary', { class: 'card-title', text: `Project draft${short ? ` · ${short}` : ''}` });
-  const pre = el('pre', { class: 'spec-json', text: json });
-  state.draft = { summary, pre };
-  return el('details', { class: 'card card-draft' }, summary, pre);
+  const body = el('div', { class: 'project-body' });
+  state.project = { body, spec: event.spec };
+  fillProject(body, event.spec);
+  const copy = DEV ? copyButton(() => prettyJson(state.project.spec)) : null;
+  return card('Your project so far', body,
+    copy ? el('div', { class: 'card-tools' }, copy.button, copy.note) : null);
 }
 
 function confirmCard(event) {
@@ -285,7 +588,7 @@ function confirmCard(event) {
     stop();
     confirmButton.disabled = true;
     cancelButton.disabled = true;
-    countdown.textContent = approved ? 'Confirmed.' : 'Cancelled.';
+    countdown.textContent = approved ? 'You confirmed it.' : 'You cancelled it.';
     runTurn(`/api/sessions/${encodeURIComponent(readSession())}/confirm`, { confirmation_id: event.confirmation_id, approved });
   };
 
@@ -298,20 +601,26 @@ function confirmCard(event) {
       stop();
       confirmButton.disabled = true;
       cancelButton.disabled = true;
-      countdown.textContent = 'Expired — ask me to request confirmation again.';
+      countdown.textContent = 'This button has expired. Ask me to set it up again.';
       return;
     }
-    const seconds = Math.ceil(left / 1000);
-    countdown.textContent = `Expires in ${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+    countdown.textContent = `This button works for ${countdownWords(Math.ceil(left / 1000))}.`;
   };
   tick();
   timer = setInterval(tick, 250);
 
   return card('Confirm before it runs',
-    el('p', { class: 'confirm-summary' }, ...withBreaks(event.summary ?? '')),
+    el('p', { class: 'confirm-summary' }, ...withBreaks(plainText(event.summary ?? ''))),
     countdown,
     el('div', { class: 'confirm-actions' }, confirmButton, cancelButton),
   );
+}
+
+// "4 minutes 12 seconds", "12 seconds": the same words as everywhere else on the page.
+function countdownWords(seconds) {
+  if (seconds < 60) return plural(seconds, 'second');
+  const rest = seconds % 60;
+  return plural(Math.floor(seconds / 60), 'minute') + (rest ? ` ${plural(rest, 'second')}` : '');
 }
 
 // ------------------------------------------------------------------ events
@@ -332,9 +641,30 @@ function handleEvent(event) {
       break;
     }
     case 'progress':
+      if (state.activity) break;  // this turn shows its real steps instead of one line
       setProgress(event.text);
       if (state.progress && state.bubble) state.bubble.node.after(state.progress);
       break;
+    case 'step': {
+      if (event.phase === 'start') {
+        if (!state.activity) {
+          setProgress(null);
+          state.activity = startActivity();
+          state.bubble = null;  // the list sits above this turn's text: later deltas start a new bubble
+        }
+        const row = stepRow(event);
+        state.activity.byId.set(String(event.id ?? ''), row);
+        state.activity.steps.push(row);
+        state.activity.rows.append(row.node);
+        if (!state.open) $('launcher-dot').hidden = false;
+        scroll();
+      } else if (state.activity) {
+        const row = state.activity.byId.get(String(event.id ?? ''));
+        if (row) endStepRow(row, event);  // by id: parallel calls come back out of order
+        scroll();
+      }
+      break;
+    }
     case 'preview':
       add(previewCard(event));
       state.bubble = null;  // later deltas start a new bubble below the card
@@ -371,11 +701,13 @@ function handleEvent(event) {
     }
     case 'error':
       setProgress(null);
+      collapseActivity(event.duration_ms);
       showError(event.text || 'Something went wrong.');
       setRunning(false);
       break;
     case 'done':
       setProgress(null);
+      collapseActivity(event.duration_ms);
       setRunning(false);
       break;
     default:
@@ -414,6 +746,7 @@ async function runTurn(url, body) {
   state.sawDelta = false;
   state.turnText = '';
   state.turnBubbles = [];
+  state.activity = null;  // a new turn starts a new list; the finished one stays where it is
   setProgress(null);
   const parse = createFrameParser();
   try {
@@ -489,8 +822,9 @@ function closePanel() {
 function newChat() {
   writeSession(null);
   state.bubble = null;
-  state.draft = null;
+  state.project = null;
   state.progress = null;
+  state.activity = null;
   state.sawDelta = false;
   state.turnText = '';
   state.turnBubbles = [];
@@ -510,7 +844,7 @@ function start() {
   $('chat-close').addEventListener('click', closePanel);
   $('chat-new').addEventListener('click', newChat);
   $('open-chat').addEventListener('click', () => openPanel());
-  $('open-chat-data').addEventListener('click', () => openPanel(CHIPS[0]));
+  $('open-chat-data').addEventListener('click', () => openPanel(DATA_QUESTION));
 
   $('composer').addEventListener('submit', (event) => {
     event.preventDefault();

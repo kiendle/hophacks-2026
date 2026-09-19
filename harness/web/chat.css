@@ -85,6 +85,41 @@ footer { margin-top: 44px; }
 }
 .chip:hover { background: #e3ece0; }
 
+/* ------------------------------------------------------------ activity */
+/* One row per real tool call: state mark, what it is doing, how long it took, and the proof. */
+.activity { display: grid; gap: 7px; padding: 2px 4px; }
+.activity-rows { display: grid; gap: 10px; }
+.step { display: grid; gap: 2px; font-size: 11.5px; line-height: 1.5; color: #45594b; }
+.step-head { display: flex; align-items: baseline; gap: 7px; }
+.step-title { flex: 1 1 auto; min-width: 0; color: #202b28; overflow-wrap: anywhere; }
+.step-details { flex: 0 0 auto; }
+.step-mark { flex: 0 0 12px; display: grid; place-items: center; width: 12px; height: 12px; font-size: 10px; font-style: normal; line-height: 1; color: var(--green); }
+.step-mark::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 1.15s ease-in-out infinite; }
+.step[data-state="ok"] .step-mark::before { content: "✓"; width: auto; height: auto; background: none; animation: none; }
+.step[data-state="warn"] .step-mark { color: #b86043; }
+.step[data-state="warn"] .step-mark::before { content: "!"; width: auto; height: auto; background: none; animation: none; font-weight: 700; }
+@media (prefers-reduced-motion: reduce) { .step-mark::before { animation: none; opacity: .7; } }
+.step-why, .step-outcome { margin: 0; padding-left: 19px; overflow-wrap: anywhere; }
+.step-why { font-style: italic; color: var(--muted); }
+.step-outcome { color: #45594b; }
+.step-facts { margin: 4px 0 0 19px; display: grid; gap: 2px; }
+.step-fact { margin: 0; font-size: 11px; line-height: 1.5; color: var(--muted); overflow-wrap: anywhere; }
+.step-fact-label { font-weight: 600; }
+.step-raw {
+  margin: 5px 0 0; padding: 9px; max-height: 190px; overflow: auto;
+  background: #f5f7f3; border: 1px solid #e6ece3; border-radius: 8px;
+  font-family: ui-monospace, monospace; font-size: 10.5px; line-height: 1.55; white-space: pre; color: #45594b;
+}
+.link-button {
+  padding: 0; border: 0; border-radius: 4px; background: none; color: #3a7a57;
+  font: inherit; font-size: 10.5px; text-decoration: underline; text-underline-offset: 2px;
+}
+.link-button:hover { color: #2b5e42; background: none; }
+.activity-summary { justify-self: start; padding-left: 4px; color: var(--muted); text-decoration: none; }
+.activity-summary::before { content: "\25B8"; margin-right: 5px; }
+.activity-summary[aria-expanded="true"]::before { content: "\25BE"; margin-right: 5px; }
+.activity-summary:hover { color: #45594b; }
+
 /* --------------------------------------------------------------- cards */
 .card {
   display: block; padding: 14px; background: #fff;
@@ -111,13 +146,23 @@ footer { margin-top: 44px; }
 .example-link:focus-visible { outline: 2px solid #3a7a57; outline-offset: 1px; }
 .card-note { font-size: 10px; color: var(--muted); margin: 10px 0 0; font-variant-numeric: tabular-nums; }
 
-.card-draft > summary { cursor: pointer; margin: 0; }
-.card-draft[open] > summary { margin-bottom: 10px; }
+/* The project, in the reader's own words: one labelled line each, groups named in bold. */
+.project-body { display: grid; gap: 6px; }
+.project-line { margin: 0; font-size: 12px; line-height: 1.55; color: #45594b; overflow-wrap: anywhere; }
+.project-label { color: var(--muted); font-weight: 600; }
+.project-groups { display: grid; gap: 3px; }
+.project-group { margin: 0 0 0 12px; font-size: 12px; line-height: 1.55; color: #45594b; overflow-wrap: anywhere; }
+.project-group strong { color: #202b28; font-weight: 650; }
+
 .spec-json {
   margin: 0; padding: 11px; max-height: 260px; overflow: auto;
   background: #f5f7f3; border: 1px solid #e6ece3; border-radius: 8px;
   font-family: ui-monospace, monospace; font-size: 11px; line-height: 1.55; white-space: pre;
 }
+
+.card-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 10px; }
+.copy-note { font-size: 10.5px; color: var(--muted); }
+.card-tools + .spec-json { margin-top: 9px; }
 
 .confirm-summary { font-size: 12.5px; line-height: 1.6; margin: 0 0 10px; overflow-wrap: anywhere; }
 .countdown { font-size: 11px; color: var(--muted); margin: 0 0 11px; font-variant-numeric: tabular-nums; }
