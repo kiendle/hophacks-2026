@@ -1,0 +1,22 @@
+/* Decorative bubble backdrop for the landing page. */
+
+.ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  /* Clears just the middle, so the wordmark and query box stay crisp. */
+  mask-image: radial-gradient(58% 46% at 50% 48%, transparent 30%, #000 78%);
+}
+
+.ambient svg {
+  display: block;
+}
+
+.ambient-label {
+  fill: #4a4a4a;
+  font-size: 12px;
+  font-weight: 500;
+}
