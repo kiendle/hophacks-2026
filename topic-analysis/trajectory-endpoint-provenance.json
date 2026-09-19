@@ -1,0 +1,103 @@
+{
+  "method": "Targeted read of original shards selected by row-group ID statistics; no full rerun.",
+  "interpretation": "Both cited negative-delta trajectories end in blank metadata rows with zero interaction counters while views continue. Treat their negative deltas as tombstone/state artifacts, not organic dislike or sentiment.",
+  "records": [
+    {
+      "id": "2095481966401613923",
+      "shard": "twitter-firehose/tweets-000374.parquet",
+      "first_observed": {
+        "version": "2026-09-05T05:46:45.057Z",
+        "added_at": "2026-09-05T05:46:45.137Z",
+        "author_id": "971621665007271937",
+        "created_at": "2026-09-03T12:00:07Z",
+        "lang": "ja",
+        "body_excerpt": "討伐失敗\n（四コマ漫画） https://t.co/2FaOdqgv8E",
+        "like_count": 31072,
+        "reply_count": 117,
+        "retweet_count": 1106,
+        "quote_count": 28,
+        "views_count": 3393779,
+        "bookmarks_count": 1548
+      },
+      "later_blank_states": [
+        {
+          "version": "2026-09-05T13:30:01.971Z",
+          "added_at": "2026-09-05T13:30:02.096Z",
+          "author_id": "",
+          "created_at": null,
+          "lang": null,
+          "body_excerpt": "",
+          "like_count": 0,
+          "reply_count": 0,
+          "retweet_count": 0,
+          "quote_count": 0,
+          "views_count": 3399260,
+          "bookmarks_count": 0
+        },
+        {
+          "version": "2026-09-06T19:40:09.248Z",
+          "added_at": "2026-09-06T19:40:10.831Z",
+          "author_id": "",
+          "created_at": null,
+          "lang": null,
+          "body_excerpt": "",
+          "like_count": 0,
+          "reply_count": 0,
+          "retweet_count": 0,
+          "quote_count": 0,
+          "views_count": 3404363,
+          "bookmarks_count": 0
+        }
+      ]
+    },
+    {
+      "id": "2093449919965352321",
+      "shard": "twitter-firehose/tweets-000292.parquet",
+      "first_observed": {
+        "version": "2026-08-31T20:20:53.476Z",
+        "added_at": "2026-08-31T20:20:54.304Z",
+        "author_id": "1433141875020484608",
+        "created_at": "2026-08-28T21:25:29Z",
+        "lang": "ja",
+        "body_excerpt": "【爆報】おいおい、これマジかよ？と思うだろ？\n\nマジだったよ！！\n殺害予告でもあったのか？！\n\nさとうさおり氏「突然のご報告にはなりますが、このたび議員辞職をすることになりました」「命は1つしかありません。今回はその命を優先し、今を生きる活動を優先させていただくことと決断いたしました」 https://t.co/MA74NcVN8C",
+        "like_count": 18865,
+        "reply_count": 138,
+        "retweet_count": 5140,
+        "quote_count": 116,
+        "views_count": 841288,
+        "bookmarks_count": 463
+      },
+      "later_blank_states": [
+        {
+          "version": "2026-09-03T22:36:39.579Z",
+          "added_at": "2026-09-03T22:36:39.892Z",
+          "author_id": "",
+          "created_at": null,
+          "lang": null,
+          "body_excerpt": "",
+          "like_count": 0,
+          "reply_count": 0,
+          "retweet_count": 0,
+          "quote_count": 0,
+          "views_count": 852589,
+          "bookmarks_count": 0
+        },
+        {
+          "version": "2026-09-15T01:59:33.157Z",
+          "added_at": "2026-09-15T01:59:33.304Z",
+          "author_id": "",
+          "created_at": null,
+          "lang": null,
+          "body_excerpt": "",
+          "like_count": 0,
+          "reply_count": 0,
+          "retweet_count": 0,
+          "quote_count": 0,
+          "views_count": 865458,
+          "bookmarks_count": 0
+        }
+      ],
+      "intermediate_state_note": "Between the authored state and blank states, raw observations retain the same author/body/lang and mostly rising counters; one observation carries quoting_id=2038266162044424536."
+    }
+  ]
+}

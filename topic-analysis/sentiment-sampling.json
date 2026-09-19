@@ -1,0 +1,1028 @@
+{
+  "method": "Up to one hash-selected non-RT post per author per topic/period; then cap templates after lowercasing, removing URLs/mentions and collapsing whitespace to one author; select up to 200 peak and 300 baseline authors by deterministic hash(author_id). Exclude empty normalized text. Not tweet-prevalence weighted. Baseline is same-regime other complete days. One unique ID scored once globally.",
+  "unique_inference_posts": 30984,
+  "strata": [
+    {
+      "topic": "#5dayweekandfairpli",
+      "period": "baseline",
+      "sampled_authors": 24,
+      "unique_bodies": 24,
+      "languages": "und,en,qht,hi,qme"
+    },
+    {
+      "topic": "#5dayweekandfairpli",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "qme,hi,en,ne,qht,und,ta,in,ht"
+    },
+    {
+      "topic": "#behindtheunfolding",
+      "period": "baseline",
+      "sampled_authors": 7,
+      "unique_bodies": 7,
+      "languages": "en,pt,qht,sv,ko"
+    },
+    {
+      "topic": "#behindtheunfolding",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "und,ko,es,sv,it,in,de,nl,fr,pt,en,fi,ru"
+    },
+    {
+      "topic": "#botswanawordexpo",
+      "period": "baseline",
+      "sampled_authors": 17,
+      "unique_bodies": 17,
+      "languages": "ar,zh,qme,en,pt"
+    },
+    {
+      "topic": "#botswanawordexpo",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "es,zh,ko,in,it,sv,fr,de,nl,en,pt,fi,qht,tl"
+    },
+    {
+      "topic": "#gaboronerevival",
+      "period": "baseline",
+      "sampled_authors": 14,
+      "unique_bodies": 14,
+      "languages": "in,zh,ko,es,en,qme"
+    },
+    {
+      "topic": "#gaboronerevival",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "es,ko,it,ar,sv,in,zh,und,en,pt,fi,qht,no,de,fr,nl"
+    },
+    {
+      "topic": "#happyjkday",
+      "period": "baseline",
+      "sampled_authors": 41,
+      "unique_bodies": 41,
+      "languages": "th,ko,ar,und,en,qht,pt,ja,qme"
+    },
+    {
+      "topic": "#happyjkday",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "tr,und,vi,es,my,in,it,ko,th,ht,ar,ja,qme,en,qht,pt,ru"
+    },
+    {
+      "topic": "#healinggratis",
+      "period": "baseline",
+      "sampled_authors": 7,
+      "unique_bodies": 7,
+      "languages": "in,ko,qme,en"
+    },
+    {
+      "topic": "#healinggratis",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "ro,zh,es,ko,in,it,sv,de,hi,qme,fr,nl,et,pt,en,fi"
+    },
+    {
+      "topic": "#hulmun",
+      "period": "baseline",
+      "sampled_authors": 43,
+      "unique_bodies": 43,
+      "languages": "ar,th,it,zh,en,tl,pt,qme,fr"
+    },
+    {
+      "topic": "#hulmun",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "ja,fr,qme,sl,et,en,pt,da,pl,tr,hu,ar,ht,es"
+    },
+    {
+      "topic": "#megawordablaze",
+      "period": "baseline",
+      "sampled_authors": 17,
+      "unique_bodies": 17,
+      "languages": "qht,en,pt,de,ko"
+    },
+    {
+      "topic": "#megawordablaze",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "es,ar,ko,in,sv,it,und,en,pt,fi,qht,de,nl,fr,qme"
+    },
+    {
+      "topic": "#pokemonpersonalityquiz",
+      "period": "baseline",
+      "sampled_authors": 54,
+      "unique_bodies": 54,
+      "languages": "ja"
+    },
+    {
+      "topic": "#pokemonpersonalityquiz",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "und,ja"
+    },
+    {
+      "topic": "#prepareinhaste",
+      "period": "baseline",
+      "sampled_authors": 8,
+      "unique_bodies": 8,
+      "languages": "en,pt,tl,es"
+    },
+    {
+      "topic": "#prepareinhaste",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "nl,de,qme,fr,en,pt,tl,fi,und,es,ko,sv,in,it"
+    },
+    {
+      "topic": "#timetochooseisnow",
+      "period": "baseline",
+      "sampled_authors": 7,
+      "unique_bodies": 7,
+      "languages": "en,pt,ko"
+    },
+    {
+      "topic": "#timetochooseisnow",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,pt,fi,qme,nl,de,es,ko,it,lt,sv,in,und"
+    },
+    {
+      "topic": "#verzuz",
+      "period": "baseline",
+      "sampled_authors": 127,
+      "unique_bodies": 127,
+      "languages": "und,et,qme,fr,en"
+    },
+    {
+      "topic": "#verzuz",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "und,tr,en,qht,de,qme,fr"
+    },
+    {
+      "topic": "#whybealert",
+      "period": "baseline",
+      "sampled_authors": 6,
+      "unique_bodies": 6,
+      "languages": "en"
+    },
+    {
+      "topic": "#whybealert",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,pt,fi,qht,nl,es,ko,sv,it,und"
+    },
+    {
+      "topic": "#whytheinstructions",
+      "period": "baseline",
+      "sampled_authors": 8,
+      "unique_bodies": 8,
+      "languages": "en,fr,qme"
+    },
+    {
+      "topic": "#whytheinstructions",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "es,ko,sv,it,in,und,pt,en,fi,qht,de,nl,et,fr"
+    },
+    {
+      "topic": "#เปิดกล้องyourtuber",
+      "period": "baseline",
+      "sampled_authors": 67,
+      "unique_bodies": 67,
+      "languages": "en,th,my,in,und"
+    },
+    {
+      "topic": "#เปิดกล้องyourtuber",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "und,vi,tr,th,in,es,my,ja,en,tl"
+    },
+    {
+      "topic": "entity:aew",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "fr,ja,qme,nl,en,pt,pl,no,und,it,es,ar"
+    },
+    {
+      "topic": "entity:aew",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "qme,fr,ja,en,pt,tl,pl,es,ca,ar"
+    },
+    {
+      "topic": "entity:anthropic",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "en,pt,pl,no,ja,de,fr,nl,ko,zh,it,ar,es,tr,vi,<NULL>,und,fa"
+    },
+    {
+      "topic": "entity:anthropic",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "es,th,ar,zh,sv,it,tr,uk,en,pt,fr,ja,de,qme"
+    },
+    {
+      "topic": "entity:arsenal",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "no,en,pt,fi,qht,da,nl,fr,et,ja,de,es,it,ro,ht,in,ca,tr,und"
+    },
+    {
+      "topic": "entity:arsenal",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,fi,pt,fr,de,qme,et,es,ar,sv,in,it,tr,am,und"
+    },
+    {
+      "topic": "entity:baleba",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "ht,es,in,ca,ro,und,tr,eu,lv,en,pt,tl,qht,pl,de,et,fr"
+    },
+    {
+      "topic": "entity:baleba",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "ca,in,ht,es,en,tl,pt,qht,de,fr"
+    },
+    {
+      "topic": "entity:barcola",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "tr,und,zh,in,es,ro,ht,it,fr,nl,de,qme,en,pl,pt,tl,no"
+    },
+    {
+      "topic": "entity:barcola",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "es,in,ht,hu,und,tr,da,en,pl,no,pt,tl,fr,de,qme"
+    },
+    {
+      "topic": "entity:bb28",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "und,<NULL>,in,qme,en,qht,pt"
+    },
+    {
+      "topic": "entity:bb28",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "it,qme,de,et,en,pt,tl,pl,qht"
+    },
+    {
+      "topic": "entity:bbnaija",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "qme,hi,en,tl,cs,pl,pt,<NULL>,und,in,es"
+    },
+    {
+      "topic": "entity:bbnaija",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "in,ht,en,pt,qme"
+    },
+    {
+      "topic": "entity:blackpink",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "pt,en,qht,da,tl,pl,fi,qme,ja,fr,nl,et,in,ko,es,ar,zh,ht,th,tr,und"
+    },
+    {
+      "topic": "entity:blackpink",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "tr,und,in,es,ko,it,th,ht,sv,fr,et,nl,ja,en,pt,pl,tl,qht"
+    },
+    {
+      "topic": "entity:bleach",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "und,tr,es,in,ar,ja,fr,nl,en,pt,tl"
+    },
+    {
+      "topic": "entity:bleach",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,tl,pt,ja,fr,et,qme,es,in,ar,und,fa"
+    },
+    {
+      "topic": "entity:blue-archive",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "ko,es,in,en,qht,pt,ja,qme,fr"
+    },
+    {
+      "topic": "entity:blue-archive",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "ko,in,ja,qme,en,pt"
+    },
+    {
+      "topic": "entity:borzoi",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "it,es,in,ja,fr,nl,de,en,pt,pl,ru"
+    },
+    {
+      "topic": "entity:borzoi",
+      "period": "peak",
+      "sampled_authors": 40,
+      "unique_bodies": 40,
+      "languages": "en,ja,ro"
+    },
+    {
+      "topic": "entity:bruno-fernandes",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "fr,de,et,en,pt,pl,tr,in,it,es,ro,ht"
+    },
+    {
+      "topic": "entity:bruno-fernandes",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,pt,pl,de,fr,cy,in,es,tr"
+    },
+    {
+      "topic": "entity:bts",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "<NULL>,tr,und,ta,in,ko,es,it,th,ht,ca,ja,fr,qst,et,en,pt,tl,pl,qht,da"
+    },
+    {
+      "topic": "entity:bts",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,pt,qht,ja,fr,hi,in,es,th,ar,ko,ht,und,tr,fa"
+    },
+    {
+      "topic": "entity:champions-league",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "en,pt,da,tl,fr,et,el,de,ja,in,es,ro,it,sv,ca,tr,und"
+    },
+    {
+      "topic": "entity:champions-league",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,pt,pl,nl,el,fr,es,in,ca,th,cy,it,ar,tr"
+    },
+    {
+      "topic": "entity:charlie-kirk",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "<NULL>,und,tr,es,cy,in,ht,it,ro,fr,de,nl,et,da,en,pt,pl"
+    },
+    {
+      "topic": "entity:charlie-kirk",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "es,ht,en,da,pt,de,fr"
+    },
+    {
+      "topic": "entity:coventry",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "ja,fr,et,en,pl,pt,tl,tr,es,in,ro"
+    },
+    {
+      "topic": "entity:coventry",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "am,tr,es,in,ca,de,et,fr,en,pt,tl,pl"
+    },
+    {
+      "topic": "entity:davido",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "es,ht,cy,in,en,tl,qme,fr,de,sl"
+    },
+    {
+      "topic": "entity:davido",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "es,und,en,tl,fr,de,et"
+    },
+    {
+      "topic": "entity:dearborn",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "tr,it,zh,es,fr,de,en,pt,pl"
+    },
+    {
+      "topic": "entity:dearborn",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,qht,pt,pl,fr,de,el,ar,es,ca,tr"
+    },
+    {
+      "topic": "entity:deltarune",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "qme,ja,fr,nl,et,de,en,no,pl,pt,cs,da,tl,<NULL>,lv,in,es,ko,lt,it,cy"
+    },
+    {
+      "topic": "entity:deltarune",
+      "period": "peak",
+      "sampled_authors": 131,
+      "unique_bodies": 131,
+      "languages": "en,pt,no,da,qme,ja,fr,de,es,ro,lt"
+    },
+    {
+      "topic": "entity:dolly-parton",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "es,in,it,ht,cy,sv,und,tr,en,pt,tl,da,fi,el,nl,fr,ja"
+    },
+    {
+      "topic": "entity:dolly-parton",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "fr,en,pl,pt,vi,und,es"
+    },
+    {
+      "topic": "entity:enes-kanter",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "tr,vi,es,zh,th,fr,nl,en,no,da,pl,pt"
+    },
+    {
+      "topic": "entity:enes-kanter",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,tl,pl,pt,da,fr,et,ja,it,es,in,tr"
+    },
+    {
+      "topic": "entity:enhypen",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "ja,et,fr,qme,de,en,pl,tl,pt,fi,da,no,tr,und,es,in,th,ko,ca,it,ht,zh"
+    },
+    {
+      "topic": "entity:enhypen",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "tr,cy,es,in,th,ar,ht,ko,ja,de,fr,pt,en,pl,no,da,tl"
+    },
+    {
+      "topic": "entity:f1",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "tr,<NULL>,und,fa,es,zh,ar,it,ko,in,th,ca,ja,fr,nl,de,et,hi,qme,pt,en,cs,tl"
+    },
+    {
+      "topic": "entity:f1",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,pt,pl,fr,ja,de,qme,it,in,es,ko,lt,ar,tr,<NULL>,und"
+    },
+    {
+      "topic": "entity:familymart",
+      "period": "baseline",
+      "sampled_authors": 4,
+      "unique_bodies": 4,
+      "languages": "ja,qht"
+    },
+    {
+      "topic": "entity:familymart",
+      "period": "peak",
+      "sampled_authors": 2,
+      "unique_bodies": 2,
+      "languages": "qht,ja"
+    },
+    {
+      "topic": "entity:floods",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "en,qht,tl,ja,hi,et,zh,ta"
+    },
+    {
+      "topic": "entity:floods",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "ja,hi,en,pt,ta,mr,tr,zh,ar"
+    },
+    {
+      "topic": "entity:gpt6-astra",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "ko,zh,es,ar,ro,in,lv,iw,<NULL>,tr,en,pt,ru,ja,fr,nl"
+    },
+    {
+      "topic": "entity:gpt6-astra",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "ja,fr,de,en,fi,tr,fa,iw,zh,in,es,th,ko,ar,ro"
+    },
+    {
+      "topic": "entity:gran-hermano",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "<NULL>,tr,es,cy,fr,en,pt"
+    },
+    {
+      "topic": "entity:gran-hermano",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "qme,sl,pt,qht,tl,eu,tr,es,ro,ht"
+    },
+    {
+      "topic": "entity:gta",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "fa,lv,tr,es,sv,ar,it,fr,ja,de,qst,el,en,pt,tl,pl,ru"
+    },
+    {
+      "topic": "entity:gta",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "es,it,in,ht,hu,sv,tr,und,lv,uk,en,pt,no,cs,pl,fr,de,ja"
+    },
+    {
+      "topic": "entity:haaland",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "tr,es,in,ro,ca,ht,cy,it,nl,fr,hi,et,pt,en,pl,tl,da,cs"
+    },
+    {
+      "topic": "entity:haaland",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "fr,et,nl,hi,de,en,pt,tl,und,tr,es,in,it"
+    },
+    {
+      "topic": "entity:hayden-panettiere",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "de,fr,en,pt,tr,es,it,ca,in,ht"
+    },
+    {
+      "topic": "entity:hayden-panettiere",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "tr,es,it,ca,el,fr,de,en,pt,fi"
+    },
+    {
+      "topic": "entity:hull-city",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "fr,nl,de,hi,en,pt,tl,tr,in,es,it,ca"
+    },
+    {
+      "topic": "entity:hull-city",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "fr,et,de,en,pl,pt,und,tr,in,es,it"
+    },
+    {
+      "topic": "entity:iriam",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "ja,pt,en"
+    },
+    {
+      "topic": "entity:iriam",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "pt,en,qht,ja"
+    },
+    {
+      "topic": "entity:israel-palestine",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "de,fr,et,nl,ja,en,pt,no,<NULL>,tr,es,in,sv,ca,ro"
+    },
+    {
+      "topic": "entity:israel-palestine",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,pt,tl,fr,nl,ja,et,de,es,ca,it,in,<NULL>,tr,am"
+    },
+    {
+      "topic": "entity:jungkook",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "ko,es,in,ca,ar,it,th,tr,und,en,pt,tl,cs,ja,fr,de,et"
+    },
+    {
+      "topic": "entity:jungkook",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,pt,ru,tl,ja,qme,fr,in,es,ca,my,it,ko,th,tr,und"
+    },
+    {
+      "topic": "entity:lake-ontario",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "th,zh,ro,es,nl,en,pl"
+    },
+    {
+      "topic": "entity:lake-ontario",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,tl,de,hi,nl,ja,fr,ar,ht,ro,in"
+    },
+    {
+      "topic": "entity:lcdf-mexico",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "pt,en,fr,es,hu,in,<NULL>"
+    },
+    {
+      "topic": "entity:lcdf-mexico",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "es,it,qme,en,qht"
+    },
+    {
+      "topic": "entity:mainoo",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "tl,en,pt,no,fi,et,fr,hi,in,hu,ht,es,tr"
+    },
+    {
+      "topic": "entity:mainoo",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "fr,de,et,en,pt,tl,pl,no,tr,es"
+    },
+    {
+      "topic": "entity:manchester-united",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "hi,fr,de,ja,en,pt,da,tr,es,it,in,ca"
+    },
+    {
+      "topic": "entity:manchester-united",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "es,in,ht,tr,en,pt,tl,nl,fr,de,et"
+    },
+    {
+      "topic": "entity:measles",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "en,qht,th,und"
+    },
+    {
+      "topic": "entity:measles",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en"
+    },
+    {
+      "topic": "entity:messi",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "fr,pt,en,tr,es,it,ar,in,ca,ht,hu,cy"
+    },
+    {
+      "topic": "entity:messi",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "fr,is,de,en,pt,da,fi,tr,ta,es,in,it,ht,ca"
+    },
+    {
+      "topic": "entity:michael-jackson",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "en,pt,fr,ja,de,et,es,ht,in,cy,tr"
+    },
+    {
+      "topic": "entity:michael-jackson",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "fr,ja,de,en,pt,pl,tr,es,lt,ar,it,ht"
+    },
+    {
+      "topic": "entity:nct",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "eu,tr,und,ko,in,th,es,zh,ht,ro,it,ja,fr,nl,pt,en,tl,no"
+    },
+    {
+      "topic": "entity:nct",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "tr,und,th,es,ko,in,zh,ar,ja,et,nl,en,tl,pt,no"
+    },
+    {
+      "topic": "entity:nepal",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "en,pt,tl,qht,da,ne,gu,sl,de,hi,ja,fr,nl,ar,es,lt,ca,it,th,ro,in,ur,vi,tr,ta,eu,und,lv,mr"
+    },
+    {
+      "topic": "entity:nepal",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "es,lt,ca,th,in,sv,it,ar,vi,tr,ta,mr,und,en,pt,pl,ne,gu,te,de,qme,hi,nl"
+    },
+    {
+      "topic": "entity:openai",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "ja,nl,de,fr,en,pl,pt,tl,tr,fa,<NULL>,vi,es,zh,ar,ko,in,ro,ht"
+    },
+    {
+      "topic": "entity:openai",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "tr,fa,es,in,zh,ko,th,ar,ht,ps,ja,fr,de,hi,en,ru,pt,pl"
+    },
+    {
+      "topic": "entity:peter-cullen",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "en,pt,el,fr,nl,cy,ko,es,in"
+    },
+    {
+      "topic": "entity:peter-cullen",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,pt,fr,nl,es,ht,ko,in,und,tr"
+    },
+    {
+      "topic": "entity:pfa",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "tr,und,es,ko,in,ar,nl,de,ja,sl,qme,qst,fr,en,tl,fi,te,pt,pl"
+    },
+    {
+      "topic": "entity:pfa",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "cy,in,ht,ar,es,und,en,tl,fi,pt,da,de,qme,ja,fr,et"
+    },
+    {
+      "topic": "entity:playstation",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "<NULL>,und,tr,ar,es,sv,it,ja,de,fr,qme,pt,en,pl"
+    },
+    {
+      "topic": "entity:playstation",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,pt,pl,ja,fr,de,qme,es,ar,in,it,fa,tr"
+    },
+    {
+      "topic": "entity:pondphuwin",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "hi,nl,et,ja,qme,en,pt,tl,pl,und,vi,eu,tr,th,ca,in,my,ro,es,hu,ur"
+    },
+    {
+      "topic": "entity:pondphuwin",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "tl,pt,en,pl,nl,ja,in,ro,th,my,ko,ca,es,zh,und,tr,vi"
+    },
+    {
+      "topic": "entity:rodri",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "fr,nl,pt,en,no,und,tr,es,in,ca,it,cy,ro"
+    },
+    {
+      "topic": "entity:rodri",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "es,ca,cy,in,ro,it,ar,ht,hu,tr,und,pt,en,pl,fr,nl"
+    },
+    {
+      "topic": "entity:shigure-mezzo",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "it,ko,en,ja,qme"
+    },
+    {
+      "topic": "entity:shigure-mezzo",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "ja,qme,und"
+    },
+    {
+      "topic": "entity:suica",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "ca,it,en,ja"
+    },
+    {
+      "topic": "entity:suica",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "ja,en,es,th"
+    },
+    {
+      "topic": "entity:tariffs",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "ta,zh,en"
+    },
+    {
+      "topic": "entity:tariffs",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,fi"
+    },
+    {
+      "topic": "entity:taylor-swift",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "ja,qme,fr,en,pt,pl,tl,<NULL>,tr,und,es,ca,ro,in,it,ht"
+    },
+    {
+      "topic": "entity:taylor-swift",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,pt,tl,fr,sl,es,it,<NULL>,tr"
+    },
+    {
+      "topic": "entity:tim-curry",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "es,ro,in,it,ca,fr,de,el,ja,en,pt"
+    },
+    {
+      "topic": "entity:tim-curry",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "tr,und,es,it,fr,de,en,pt,da"
+    },
+    {
+      "topic": "entity:trump",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "es,it,sv,ro,in,zh,tr,<NULL>,und,vi,en,pl,fi,pt,ru,da,ja,fr,de,nl"
+    },
+    {
+      "topic": "entity:trump",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "es,in,it,zh,sv,tr,fa,en,pl,pt,no,fr,nl"
+    },
+    {
+      "topic": "entity:ukraine-russia",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "fr,de,ja,en,pt,fi,da,und,ta,vi,it,ro,ur,in"
+    },
+    {
+      "topic": "entity:ukraine-russia",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,cs,de,fr,ja,ur,ca,ar,in,vi,uk"
+    },
+    {
+      "topic": "entity:venezuela",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "es,it,tr,vi,en,pt,nl,fr,de"
+    },
+    {
+      "topic": "entity:venezuela",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "fr,nl,en,pt,gu,tr,es,zh,it"
+    },
+    {
+      "topic": "entity:vmas",
+      "period": "baseline",
+      "sampled_authors": 300,
+      "unique_bodies": 300,
+      "languages": "lt,es,ko,ht,th,ar,in,ca,tr,und,fa,en,pt,pl,no,fr,ja,de"
+    },
+    {
+      "topic": "entity:vmas",
+      "period": "peak",
+      "sampled_authors": 200,
+      "unique_bodies": 200,
+      "languages": "en,pt,pl,nl,fr,el,ja,es,ar,in,it,ro,ca,ht,sv,tr,und,fa"
+    }
+  ]
+}

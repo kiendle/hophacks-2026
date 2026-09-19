@@ -1,0 +1,8 @@
+.env
+.env.*
+!.env.example
+
+# Local datasets and Python caches
+*.parquet
+__pycache__/
+*.py[cod]

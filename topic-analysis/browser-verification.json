@@ -1,0 +1,25 @@
+{
+  "report": "report.html",
+  "browser": "Chromium",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "search_query": "PlayStation",
+  "matching_rows": 1,
+  "strong_shift_filter_rows": 15,
+  "entity_filter_rows": 58,
+  "daily_chart_points": 32,
+  "horizontal_overflow": false,
+  "visual_confirmation": "Overview and selected PlayStation chart, metrics, confidence interval, and supporting posts inspected in screenshots.",
+  "local_download_links_exist": [
+    "topic-spikes.csv",
+    "sentiment-shifts.csv",
+    "trajectory-outliers.csv",
+    "daily-denominators.csv",
+    "entity-topics.json",
+    "topic-inventory.json",
+    "final-sentiment.json"
+  ],
+  "control_verification": "Filter select and native browser click/type exercised; direct fill helper timed out, native input worked."
+}

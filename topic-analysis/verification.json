@@ -1,0 +1,90 @@
+{
+  "input_ids_unique": {
+    "actual": 30984,
+    "expected": 30984,
+    "passed": true
+  },
+  "score_rows_complete": {
+    "actual": 30984,
+    "expected": 30984,
+    "passed": true
+  },
+  "score_ids_unique": {
+    "actual": 30984,
+    "expected": 30984,
+    "passed": true
+  },
+  "input_ids_missing_scores": {
+    "actual": 0,
+    "expected": 0,
+    "passed": true
+  },
+  "members_missing_inputs": {
+    "actual": 0,
+    "expected": 0,
+    "passed": true
+  },
+  "invalid_probabilities": {
+    "actual": 0,
+    "expected": 0,
+    "passed": true
+  },
+  "retweets_in_sentiment": {
+    "actual": 0,
+    "expected": 0,
+    "passed": true
+  },
+  "duplicate_author_strata": {
+    "actual": 0,
+    "expected": 0,
+    "passed": true
+  },
+  "duplicate_template_strata": {
+    "actual": 0,
+    "expected": 0,
+    "passed": true
+  },
+  "exceeded_sample_caps": {
+    "actual": 0,
+    "expected": 0,
+    "passed": true
+  },
+  "partial_day_in_sentiment": {
+    "actual": 0,
+    "expected": 0,
+    "passed": true
+  },
+  "sampled_topic_coverage": {
+    "actual": 73,
+    "expected": 73,
+    "passed": true
+  },
+  "analyzed_topic_coverage": {
+    "actual": 73,
+    "expected": 73,
+    "passed": true
+  },
+  "ranked_topic_count": {
+    "actual": 10441,
+    "expected": 10441,
+    "passed": true
+  },
+  "sample_periods_match_rankings": {
+    "passed": true
+  },
+  "daily_counts_reconcile_latest": {
+    "actual": 377270972,
+    "expected": 377270972,
+    "passed": true
+  },
+  "language_counts_reconcile_daily": {
+    "actual": 0,
+    "expected": 0,
+    "passed": true
+  },
+  "runtime": {
+    "duckdb": "1.5.5",
+    "input_posts": 30984,
+    "topic_memberships": 31724
+  }
+}

@@ -1,0 +1,414 @@
+{
+  "method": "Exact lexical matches against latest-state unique tweets; topic families overlap; whole-word ASCII aliases and substring non-ASCII aliases; missing creation dates excluded.",
+  "source": "topic-analysis/latest/*.parquet",
+  "sample_only": false,
+  "topics": [
+    {
+      "topic": "entity:trump",
+      "tweets": 1981443,
+      "distinct_ids": 1981443,
+      "authors": 461537,
+      "originals": 432018
+    },
+    {
+      "topic": "entity:israel-palestine",
+      "tweets": 1580859,
+      "distinct_ids": 1580859,
+      "authors": 403510,
+      "originals": 240961
+    },
+    {
+      "topic": "entity:ukraine-russia",
+      "tweets": 726160,
+      "distinct_ids": 726160,
+      "authors": 198376,
+      "originals": 169296
+    },
+    {
+      "topic": "entity:bts",
+      "tweets": 720334,
+      "distinct_ids": 720334,
+      "authors": 156678,
+      "originals": 131980
+    },
+    {
+      "topic": "entity:dolly-parton",
+      "tweets": 696806,
+      "distinct_ids": 696806,
+      "authors": 323300,
+      "originals": 106203
+    },
+    {
+      "topic": "entity:gta",
+      "tweets": 512189,
+      "distinct_ids": 512189,
+      "authors": 212031,
+      "originals": 159468
+    },
+    {
+      "topic": "entity:arsenal",
+      "tweets": 500489,
+      "distinct_ids": 500489,
+      "authors": 136274,
+      "originals": 156071
+    },
+    {
+      "topic": "entity:jungkook",
+      "tweets": 428774,
+      "distinct_ids": 428774,
+      "authors": 70784,
+      "originals": 73069
+    },
+    {
+      "topic": "entity:floods",
+      "tweets": 395852,
+      "distinct_ids": 395852,
+      "authors": 231749,
+      "originals": 128349
+    },
+    {
+      "topic": "entity:nepal",
+      "tweets": 326595,
+      "distinct_ids": 326595,
+      "authors": 163972,
+      "originals": 83863
+    },
+    {
+      "topic": "entity:manchester-united",
+      "tweets": 316518,
+      "distinct_ids": 316518,
+      "authors": 101608,
+      "originals": 111876
+    },
+    {
+      "topic": "entity:messi",
+      "tweets": 296808,
+      "distinct_ids": 296808,
+      "authors": 127188,
+      "originals": 80535
+    },
+    {
+      "topic": "entity:bbnaija",
+      "tweets": 292305,
+      "distinct_ids": 292305,
+      "authors": 14594,
+      "originals": 176570
+    },
+    {
+      "topic": "entity:enhypen",
+      "tweets": 289052,
+      "distinct_ids": 289052,
+      "authors": 34753,
+      "originals": 48448
+    },
+    {
+      "topic": "entity:iriam",
+      "tweets": 236577,
+      "distinct_ids": 236577,
+      "authors": 20451,
+      "originals": 140699
+    },
+    {
+      "topic": "entity:champions-league",
+      "tweets": 226767,
+      "distinct_ids": 226767,
+      "authors": 109169,
+      "originals": 71899
+    },
+    {
+      "topic": "entity:pondphuwin",
+      "tweets": 226175,
+      "distinct_ids": 226175,
+      "authors": 24633,
+      "originals": 39967
+    },
+    {
+      "topic": "entity:openai",
+      "tweets": 220767,
+      "distinct_ids": 220767,
+      "authors": 137296,
+      "originals": 102909
+    },
+    {
+      "topic": "entity:venezuela",
+      "tweets": 216423,
+      "distinct_ids": 216423,
+      "authors": 85713,
+      "originals": 57533
+    },
+    {
+      "topic": "entity:bb28",
+      "tweets": 204211,
+      "distinct_ids": 204211,
+      "authors": 8906,
+      "originals": 121738
+    },
+    {
+      "topic": "entity:deltarune",
+      "tweets": 197291,
+      "distinct_ids": 197291,
+      "authors": 49282,
+      "originals": 15865
+    },
+    {
+      "topic": "entity:nct",
+      "tweets": 194724,
+      "distinct_ids": 194724,
+      "authors": 45819,
+      "originals": 33233
+    },
+    {
+      "topic": "entity:gran-hermano",
+      "tweets": 185641,
+      "distinct_ids": 185641,
+      "authors": 9723,
+      "originals": 72153
+    },
+    {
+      "topic": "entity:tim-curry",
+      "tweets": 180965,
+      "distinct_ids": 180965,
+      "authors": 109962,
+      "originals": 33931
+    },
+    {
+      "topic": "entity:f1",
+      "tweets": 179198,
+      "distinct_ids": 179198,
+      "authors": 71615,
+      "originals": 56105
+    },
+    {
+      "topic": "entity:blue-archive",
+      "tweets": 178818,
+      "distinct_ids": 178818,
+      "authors": 42839,
+      "originals": 28325
+    },
+    {
+      "topic": "entity:lcdf-mexico",
+      "tweets": 171009,
+      "distinct_ids": 171009,
+      "authors": 10463,
+      "originals": 109561
+    },
+    {
+      "topic": "entity:bleach",
+      "tweets": 163870,
+      "distinct_ids": 163870,
+      "authors": 63258,
+      "originals": 50055
+    },
+    {
+      "topic": "entity:rodri",
+      "tweets": 158249,
+      "distinct_ids": 158249,
+      "authors": 61922,
+      "originals": 39242
+    },
+    {
+      "topic": "entity:hayden-panettiere",
+      "tweets": 147040,
+      "distinct_ids": 147040,
+      "authors": 78929,
+      "originals": 20165
+    },
+    {
+      "topic": "entity:lake-ontario",
+      "tweets": 122784,
+      "distinct_ids": 122784,
+      "authors": 76225,
+      "originals": 22039
+    },
+    {
+      "topic": "entity:davido",
+      "tweets": 120358,
+      "distinct_ids": 120358,
+      "authors": 37127,
+      "originals": 24519
+    },
+    {
+      "topic": "entity:tariffs",
+      "tweets": 106174,
+      "distinct_ids": 106174,
+      "authors": 54403,
+      "originals": 31553
+    },
+    {
+      "topic": "entity:vmas",
+      "tweets": 102085,
+      "distinct_ids": 102085,
+      "authors": 40855,
+      "originals": 13308
+    },
+    {
+      "topic": "entity:charlie-kirk",
+      "tweets": 98529,
+      "distinct_ids": 98529,
+      "authors": 68657,
+      "originals": 15721
+    },
+    {
+      "topic": "entity:baleba",
+      "tweets": 97699,
+      "distinct_ids": 97699,
+      "authors": 34519,
+      "originals": 23970
+    },
+    {
+      "topic": "entity:peter-cullen",
+      "tweets": 95823,
+      "distinct_ids": 95823,
+      "authors": 52001,
+      "originals": 11824
+    },
+    {
+      "topic": "entity:pfa",
+      "tweets": 93831,
+      "distinct_ids": 93831,
+      "authors": 38430,
+      "originals": 12171
+    },
+    {
+      "topic": "entity:taylor-swift",
+      "tweets": 88433,
+      "distinct_ids": 88433,
+      "authors": 41388,
+      "originals": 18727
+    },
+    {
+      "topic": "entity:playstation",
+      "tweets": 87487,
+      "distinct_ids": 87487,
+      "authors": 52322,
+      "originals": 21654
+    },
+    {
+      "topic": "entity:bruno-fernandes",
+      "tweets": 83070,
+      "distinct_ids": 83070,
+      "authors": 38188,
+      "originals": 18014
+    },
+    {
+      "topic": "entity:barcola",
+      "tweets": 82730,
+      "distinct_ids": 82730,
+      "authors": 35130,
+      "originals": 27776
+    },
+    {
+      "topic": "entity:haaland",
+      "tweets": 77492,
+      "distinct_ids": 77492,
+      "authors": 48687,
+      "originals": 31665
+    },
+    {
+      "topic": "entity:aew",
+      "tweets": 67445,
+      "distinct_ids": 67445,
+      "authors": 17590,
+      "originals": 23182
+    },
+    {
+      "topic": "entity:hull-city",
+      "tweets": 65630,
+      "distinct_ids": 65630,
+      "authors": 39789,
+      "originals": 27308
+    },
+    {
+      "topic": "entity:michael-jackson",
+      "tweets": 63122,
+      "distinct_ids": 63122,
+      "authors": 39449,
+      "originals": 12785
+    },
+    {
+      "topic": "entity:anthropic",
+      "tweets": 56352,
+      "distinct_ids": 56352,
+      "authors": 35120,
+      "originals": 26911
+    },
+    {
+      "topic": "entity:coventry",
+      "tweets": 55399,
+      "distinct_ids": 55399,
+      "authors": 32497,
+      "originals": 23498
+    },
+    {
+      "topic": "entity:dearborn",
+      "tweets": 53372,
+      "distinct_ids": 53372,
+      "authors": 26740,
+      "originals": 4286
+    },
+    {
+      "topic": "entity:measles",
+      "tweets": 49417,
+      "distinct_ids": 49417,
+      "authors": 28533,
+      "originals": 6982
+    },
+    {
+      "topic": "entity:blackpink",
+      "tweets": 47011,
+      "distinct_ids": 47011,
+      "authors": 21100,
+      "originals": 10119
+    },
+    {
+      "topic": "entity:enes-kanter",
+      "tweets": 45820,
+      "distinct_ids": 45820,
+      "authors": 28493,
+      "originals": 5584
+    },
+    {
+      "topic": "entity:mainoo",
+      "tweets": 38268,
+      "distinct_ids": 38268,
+      "authors": 19215,
+      "originals": 13694
+    },
+    {
+      "topic": "entity:shigure-mezzo",
+      "tweets": 20005,
+      "distinct_ids": 20005,
+      "authors": 11576,
+      "originals": 2808
+    },
+    {
+      "topic": "entity:suica",
+      "tweets": 17328,
+      "distinct_ids": 17328,
+      "authors": 12395,
+      "originals": 5909
+    },
+    {
+      "topic": "entity:gpt6-astra",
+      "tweets": 11584,
+      "distinct_ids": 11584,
+      "authors": 7785,
+      "originals": 4791
+    },
+    {
+      "topic": "entity:familymart",
+      "tweets": 10323,
+      "distinct_ids": 10323,
+      "authors": 4339,
+      "originals": 19
+    },
+    {
+      "topic": "entity:borzoi",
+      "tweets": 1947,
+      "distinct_ids": 1947,
+      "authors": 1611,
+      "originals": 638
+    }
+  ],
+  "elapsed_seconds": 214.65004224999575
+}

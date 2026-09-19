@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signal — Live Bluesky filter</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Signal home"><span class="brand-mark" aria-hidden="true">s</span>signal<span class="brand-note">/ stream lab</span></a>
+      <div class="stream-controls">
+        <span class="connection" id="connection" role="status" data-state="connecting"><span class="dot"></span><span id="connection-text">Connecting</span></span>
+        <button class="secondary" id="toggle-stream" type="button" aria-label="Stop live stream and pause queued sentiment analysis">Stop</button>
+      </div>
+    </header>
+    <p id="stream-feedback" class="filter-feedback" role="status" hidden>Stopped. Queued analyses are paused; already-running Jev requests may finish and be charged. Your posts, chart, filters, and costs are kept. Resume starts at the live tip, skipping posts published while stopped.</p>
+
+    <section class="intro">
+      <p class="eyebrow">BLUESKY · LIVE TEXT FILTER</p>
+      <h1>The whole stream.<br><span>Just your signal.</span></h1>
+      <p class="lede">Every new public post flows in. Your matches get a sentiment score, with every token metered.</p>
+    </section>
+
+    <section class="filter-panel" aria-labelledby="filter-label">
+      <form id="filter-form">
+        <label id="filter-label" for="query">What are you listening for?</label>
+        <div class="input-row">
+          <input id="query" name="query" type="search" placeholder="Try: music, Baltimore, or a phrase…" maxlength="300" autocomplete="off" spellcheck="false" aria-describedby="filter-help">
+          <button class="primary" type="submit">Add filter <span aria-hidden="true">+</span></button>
+        </div>
+        <p class="helper" id="filter-help">Match ANY filter · Case-insensitive text · No filter-count limit · One Jev analysis per collected post</p>
+      </form>
+      <div class="filter-manager">
+        <p id="filter-count">0 active filters · Match ANY</p>
+        <ul id="filters" class="filter-chips" aria-label="Active text filters"></ul>
+        <p class="helper">Adding or removing filters affects new arrivals. Previously collected posts stay saved.</p>
+        <p id="filter-feedback" class="filter-feedback" role="status"></p>
+      </div>
+      <div class="pipeline" aria-label="Pipeline: Jetstream to text filter to Jev sentiment to session storage"><span><i class="mini-dot"></i>All live posts</span><b aria-hidden="true">→</b><span>Text filter</span><b aria-hidden="true">→</b><span>Jev sentiment</span><b aria-hidden="true">→</b><span>Session storage</span></div>
+    </section>
+
+    <section class="metrics" aria-label="Stream metrics">
+      <div><p>Posts received <span>since connection</span></p><strong id="received">0</strong></div>
+      <div><p>Matches retained <span>newest 200</span></p><strong id="retained">0</strong></div>
+      <div><p>Storage <span>local to this tab</span></p><strong class="storage-value" id="storage-state">Session storage</strong></div>
+    </section>
+
+    <section class="analysis-panel" aria-label="Sentiment usage and estimated cost">
+      <div><p>Analyzed by Jev</p><strong id="analysis-count">0</strong><span id="analysis-queue">0 pending · 0 failed</span></div>
+      <div><p>Session cost estimate</p><strong id="session-cost">$0.000000</strong><span id="average-cost">Waiting for token usage</span></div>
+      <p class="pricing">−1 negative · 0 neutral · +1 positive<br>Actual input tokens × <a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" target="_blank" rel="noopener noreferrer">$0.042 / million</a>. Output tokens free.<br>Totals persist across filters and include posts no longer displayed. Estimates exclude unknown charges.</p>
+      <p id="cost-warning" class="cost-warning" role="status" hidden></p>
+    </section>
+
+    <section class="sentiment-widget" aria-labelledby="chart-title">
+      <div class="chart-heading">
+        <div><p class="eyebrow">LIVE SIGNAL / JEV</p><h2 id="chart-title">Sentiment over time</h2><p id="chart-status">Waiting for scored posts</p></div>
+        <div class="chart-latest"><span>Latest post</span><strong id="chart-latest">—</strong></div>
+      </div>
+      <div class="chart-legend"><span><i class="legend-point"></i>Post sentiment</span><span><i class="legend-line"></i>Moving average · up to 10 posts</span></div>
+      <div class="chart-plot" id="chart-plot">
+        <svg id="sentiment-chart" role="img" aria-labelledby="chart-title chart-summary"></svg>
+        <p id="chart-empty">Your first completed Jev score will appear here.</p>
+      </div>
+      <p id="chart-summary" class="sr-only">No completed sentiment scores yet.</p>
+      <div class="chart-stats">
+        <div><span>Mean sentiment</span><strong id="chart-mean">—</strong></div>
+        <div><span>Positive</span><strong id="chart-positive">0</strong></div>
+        <div><span>Neutral / mixed</span><strong id="chart-neutral">0</strong></div>
+        <div><span>Negative</span><strong id="chart-negative">0</strong></div>
+      </div>
+      <p class="chart-note">Completed scores from the newest 200 retained posts, plotted by local arrival time. Pending and failed analyses are excluded. Clear posts resets this chart.</p>
+    </section>
+
+    <section class="results" aria-labelledby="results-heading">
+      <div class="results-heading">
+        <div><h2 id="results-heading">Your live matches</h2><p id="active-filter">No active filters · Collection paused</p></div>
+        <button class="secondary" id="clear" type="button" aria-describedby="clear-help" disabled>Clear posts</button>
+      </div>
+      <p class="helper" id="clear-help">Clear saved posts and queued analyses. Keep filters and costs. New matching posts continue arriving.</p>
+      <p class="filter-feedback" id="collection-feedback" role="status"></p>
+      <p id="notice" class="notice" role="status" hidden></p>
+      <div id="empty" class="empty"><span class="empty-mark" aria-hidden="true">⌁</span><h3 id="empty-title">Find your corner of the conversation.</h3><p id="empty-description">Add words or phrases above. A match on any filter collects the post.</p></div>
+      <ol id="posts" class="posts" aria-label="Matching posts, newest first"></ol>
+    </section>
+    <footer><span>Powered by Bluesky Jetstream v2</span><span>Matches survive reloads in this tab. Closing it ends the session.</span></footer>
+  </main>
+</body>
+</html>

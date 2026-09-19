@@ -1,0 +1,1918 @@
+{
+  "method": {
+    "full_corpus": "Observation-level; repeated IDs retained.",
+    "sample": "hash(id) % 1000 = 0; all observations of selected IDs retained.",
+    "latest_sample": "Latest version per sampled ID; same-version ties are broken by added_at and otherwise unspecified.",
+    "time_zone": "UTC",
+    "duckdb_version": "1.5.5"
+  },
+  "schema": [
+    {
+      "column_name": "id",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "author_id",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "body",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "created_at",
+      "column_type": "TIMESTAMP WITH TIME ZONE",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "like_count",
+      "column_type": "INTEGER",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "reply_count",
+      "column_type": "INTEGER",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "retweet_count",
+      "column_type": "INTEGER",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "quote_count",
+      "column_type": "INTEGER",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "views_count",
+      "column_type": "INTEGER",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "bookmarks_count",
+      "column_type": "INTEGER",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "lang",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "source",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "reply_to_status_id",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "reply_to_user_id",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "conversation_id",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "poll",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "embed",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "quoting_id",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "added_at",
+      "column_type": "TIMESTAMP WITH TIME ZONE",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "media",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "synced",
+      "column_type": "UTINYINT",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "embedded",
+      "column_type": "UTINYINT",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "version",
+      "column_type": "TIMESTAMP WITH TIME ZONE",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    }
+  ],
+  "inventory": [
+    {
+      "parquet_files": 396,
+      "observations": 395352258,
+      "parquet_bytes": 55677219525,
+      "row_groups": 741
+    }
+  ],
+  "column_metadata": [
+    {
+      "column_name": "added_at",
+      "values_including_nulls": 395352258,
+      "nulls": null,
+      "missing_null_statistics": 741,
+      "compressed_bytes": 1543827673,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "author_id",
+      "values_including_nulls": 395352258,
+      "nulls": null,
+      "missing_null_statistics": 741,
+      "compressed_bytes": 3101957774,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "body",
+      "values_including_nulls": 395352258,
+      "nulls": null,
+      "missing_null_statistics": 741,
+      "compressed_bytes": 29045959199,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "bookmarks_count",
+      "values_including_nulls": 395352258,
+      "nulls": 564481,
+      "missing_null_statistics": 0,
+      "compressed_bytes": 80997871,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "conversation_id",
+      "values_including_nulls": 395352258,
+      "nulls": 177442,
+      "missing_null_statistics": 0,
+      "compressed_bytes": 2520362948,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "created_at",
+      "values_including_nulls": 395352258,
+      "nulls": 1309,
+      "missing_null_statistics": 0,
+      "compressed_bytes": 13760126,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "embed",
+      "values_including_nulls": 395352258,
+      "nulls": 395352258,
+      "missing_null_statistics": 0,
+      "compressed_bytes": 56316,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "embedded",
+      "values_including_nulls": 395352258,
+      "nulls": null,
+      "missing_null_statistics": 741,
+      "compressed_bytes": 65949,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "id",
+      "values_including_nulls": 395352258,
+      "nulls": null,
+      "missing_null_statistics": 741,
+      "compressed_bytes": 2497391258,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "lang",
+      "values_including_nulls": 395352258,
+      "nulls": 179328,
+      "missing_null_statistics": 0,
+      "compressed_bytes": 218338657,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "like_count",
+      "values_including_nulls": 395352258,
+      "nulls": 387105,
+      "missing_null_statistics": 0,
+      "compressed_bytes": 217906513,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "media",
+      "values_including_nulls": 395352258,
+      "nulls": 246669387,
+      "missing_null_statistics": 0,
+      "compressed_bytes": 9385132389,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "poll",
+      "values_including_nulls": 395352258,
+      "nulls": 395352258,
+      "missing_null_statistics": 0,
+      "compressed_bytes": 56316,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "quote_count",
+      "values_including_nulls": 395352258,
+      "nulls": 564481,
+      "missing_null_statistics": 0,
+      "compressed_bytes": 50773707,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "quoting_id",
+      "values_including_nulls": 395352258,
+      "nulls": 353330031,
+      "missing_null_statistics": 0,
+      "compressed_bytes": 369716994,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "reply_count",
+      "values_including_nulls": 395352258,
+      "nulls": 387105,
+      "missing_null_statistics": 0,
+      "compressed_bytes": 101010592,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "reply_to_status_id",
+      "values_including_nulls": 395352258,
+      "nulls": 384705277,
+      "missing_null_statistics": 0,
+      "compressed_bytes": 113929199,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "reply_to_user_id",
+      "values_including_nulls": 395352258,
+      "nulls": 384316851,
+      "missing_null_statistics": 0,
+      "compressed_bytes": 105105602,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "retweet_count",
+      "values_including_nulls": 395352258,
+      "nulls": 387105,
+      "missing_null_statistics": 0,
+      "compressed_bytes": 557410613,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "source",
+      "values_including_nulls": 395352258,
+      "nulls": 395352258,
+      "missing_null_statistics": 0,
+      "compressed_bytes": 56316,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "synced",
+      "values_including_nulls": 395352258,
+      "nulls": null,
+      "missing_null_statistics": 741,
+      "compressed_bytes": 65949,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "version",
+      "values_including_nulls": 395352258,
+      "nulls": null,
+      "missing_null_statistics": 741,
+      "compressed_bytes": 1643183755,
+      "compression": "ZSTD"
+    },
+    {
+      "column_name": "views_count",
+      "values_including_nulls": 395352258,
+      "nulls": 564409,
+      "missing_null_statistics": 0,
+      "compressed_bytes": 525953239,
+      "compression": "ZSTD"
+    }
+  ],
+  "full_exact_ids": {
+    "observations": 395352258,
+    "adjacent_id_descents": 0,
+    "distinct_tweets": 377270972,
+    "extra_observations": 18081286,
+    "method": "Count numeric ID runs, valid only when verified globally nondecreasing."
+  },
+  "sample_size": [
+    {
+      "observations": 396128,
+      "tweets": 377897,
+      "authors": 352890,
+      "observation_keys": 396128
+    }
+  ],
+  "sample_snapshot_distribution": [
+    {
+      "snapshots": 1,
+      "tweets": 362649
+    },
+    {
+      "snapshots": 2,
+      "tweets": 14619
+    },
+    {
+      "snapshots": 3,
+      "tweets": 136
+    },
+    {
+      "snapshots": 4,
+      "tweets": 104
+    },
+    {
+      "snapshots": 5,
+      "tweets": 80
+    },
+    {
+      "snapshots": 6,
+      "tweets": 61
+    },
+    {
+      "snapshots": 7,
+      "tweets": 50
+    },
+    {
+      "snapshots": 8,
+      "tweets": 42
+    },
+    {
+      "snapshots": 9,
+      "tweets": 26
+    },
+    {
+      "snapshots": 10,
+      "tweets": 28
+    },
+    {
+      "snapshots": 11,
+      "tweets": 18
+    },
+    {
+      "snapshots": 12,
+      "tweets": 21
+    },
+    {
+      "snapshots": 13,
+      "tweets": 9
+    },
+    {
+      "snapshots": 14,
+      "tweets": 13
+    },
+    {
+      "snapshots": 15,
+      "tweets": 11
+    },
+    {
+      "snapshots": 16,
+      "tweets": 6
+    },
+    {
+      "snapshots": 17,
+      "tweets": 9
+    },
+    {
+      "snapshots": 18,
+      "tweets": 6
+    },
+    {
+      "snapshots": 19,
+      "tweets": 2
+    },
+    {
+      "snapshots": 20,
+      "tweets": 6
+    },
+    {
+      "snapshots": 22,
+      "tweets": 1
+    }
+  ],
+  "sample_duplicate_keys": [
+    {
+      "repeated_keys": 0,
+      "extra_rows": 0,
+      "keys_with_conflicting_states": 0
+    }
+  ],
+  "sample_languages_latest": [
+    {
+      "language": "en",
+      "tweets": 138123
+    },
+    {
+      "language": "ja",
+      "tweets": 93293
+    },
+    {
+      "language": "es",
+      "tweets": 27466
+    },
+    {
+      "language": "pt",
+      "tweets": 17960
+    },
+    {
+      "language": "zxx",
+      "tweets": 14049
+    },
+    {
+      "language": "ko",
+      "tweets": 10623
+    },
+    {
+      "language": "th",
+      "tweets": 10266
+    },
+    {
+      "language": "tr",
+      "tweets": 7961
+    },
+    {
+      "language": "ar",
+      "tweets": 7612
+    },
+    {
+      "language": "in",
+      "tweets": 7326
+    },
+    {
+      "language": "fr",
+      "tweets": 7131
+    },
+    {
+      "language": "qme",
+      "tweets": 5543
+    },
+    {
+      "language": "und",
+      "tweets": 3936
+    },
+    {
+      "language": "hi",
+      "tweets": 2425
+    },
+    {
+      "language": "tl",
+      "tweets": 2250
+    },
+    {
+      "language": "fa",
+      "tweets": 1879
+    },
+    {
+      "language": "it",
+      "tweets": 1740
+    },
+    {
+      "language": "de",
+      "tweets": 1696
+    },
+    {
+      "language": "pl",
+      "tweets": 1683
+    },
+    {
+      "language": "zh",
+      "tweets": 1590
+    },
+    {
+      "language": "art",
+      "tweets": 1540
+    },
+    {
+      "language": "ur",
+      "tweets": 1120
+    },
+    {
+      "language": "ca",
+      "tweets": 858
+    },
+    {
+      "language": "et",
+      "tweets": 807
+    },
+    {
+      "language": "qst",
+      "tweets": 780
+    },
+    {
+      "language": "ru",
+      "tweets": 773
+    },
+    {
+      "language": "nl",
+      "tweets": 746
+    },
+    {
+      "language": "ta",
+      "tweets": 692
+    },
+    {
+      "language": "ht",
+      "tweets": 533
+    },
+    {
+      "language": "el",
+      "tweets": 490
+    },
+    {
+      "language": "qht",
+      "tweets": 483
+    },
+    {
+      "language": "iw",
+      "tweets": 337
+    },
+    {
+      "language": "qam",
+      "tweets": 295
+    },
+    {
+      "language": "sv",
+      "tweets": 281
+    },
+    {
+      "language": "vi",
+      "tweets": 269
+    },
+    {
+      "language": "fi",
+      "tweets": 265
+    },
+    {
+      "language": "cs",
+      "tweets": 251
+    },
+    {
+      "language": "uk",
+      "tweets": 235
+    },
+    {
+      "language": "te",
+      "tweets": 222
+    },
+    {
+      "language": "ro",
+      "tweets": 222
+    },
+    {
+      "language": "da",
+      "tweets": 204
+    },
+    {
+      "language": "eu",
+      "tweets": 202
+    },
+    {
+      "language": "<NULL>",
+      "tweets": 193
+    },
+    {
+      "language": "cy",
+      "tweets": 189
+    },
+    {
+      "language": "mr",
+      "tweets": 158
+    },
+    {
+      "language": "no",
+      "tweets": 157
+    },
+    {
+      "language": "sl",
+      "tweets": 145
+    },
+    {
+      "language": "sr",
+      "tweets": 109
+    },
+    {
+      "language": "ne",
+      "tweets": 101
+    },
+    {
+      "language": "hu",
+      "tweets": 95
+    },
+    {
+      "language": "lt",
+      "tweets": 88
+    },
+    {
+      "language": "lv",
+      "tweets": 87
+    },
+    {
+      "language": "ps",
+      "tweets": 78
+    },
+    {
+      "language": "my",
+      "tweets": 45
+    },
+    {
+      "language": "kn",
+      "tweets": 41
+    },
+    {
+      "language": "bn",
+      "tweets": 39
+    },
+    {
+      "language": "is",
+      "tweets": 39
+    },
+    {
+      "language": "ml",
+      "tweets": 35
+    },
+    {
+      "language": "gu",
+      "tweets": 19
+    },
+    {
+      "language": "ckb",
+      "tweets": 18
+    },
+    {
+      "language": "dv",
+      "tweets": 18
+    },
+    {
+      "language": "bg",
+      "tweets": 17
+    },
+    {
+      "language": "am",
+      "tweets": 17
+    },
+    {
+      "language": "or",
+      "tweets": 15
+    },
+    {
+      "language": "qct",
+      "tweets": 10
+    },
+    {
+      "language": "pa",
+      "tweets": 9
+    },
+    {
+      "language": "si",
+      "tweets": 7
+    },
+    {
+      "language": "sd",
+      "tweets": 3
+    },
+    {
+      "language": "hy",
+      "tweets": 3
+    },
+    {
+      "language": "lo",
+      "tweets": 2
+    },
+    {
+      "language": "ka",
+      "tweets": 2
+    },
+    {
+      "language": "km",
+      "tweets": 1
+    }
+  ],
+  "sample_quality_latest": [
+    {
+      "tweets": 377897,
+      "empty_body": 375,
+      "replies": 10228,
+      "quotes": 39402,
+      "with_media": 141231,
+      "with_tco_link": 162734,
+      "rt_prefixed": 222891,
+      "body_characters_p50_p90_p99": [
+        94.0,
+        140.0,
+        295.0
+      ],
+      "longest_body_characters": 7517,
+      "version_before_creation": 0,
+      "ingestion_before_creation": 0,
+      "version_after_added_at": 0,
+      "snowflake_time_mismatch_over_one_second": 0,
+      "ingest_delay_seconds_p50_p90_p99": [
+        79177.0,
+        412555.80000000005,
+        1225060.0399999947
+      ],
+      "observation_age_seconds_p50_p90_p99": [
+        79177.0,
+        412554.4,
+        1225057.9999999949
+      ]
+    }
+  ],
+  "sample_engagement_latest": [
+    {
+      "metric": "like_count",
+      "nonnull_tweets": 377522,
+      "zero_tweets": 271441,
+      "negative_tweets": 0,
+      "mean": 48.7640190505454,
+      "p50_p90_p99_p999": [
+        0.0,
+        13.0,
+        580.0,
+        8335.0
+      ],
+      "maximum": 266335
+    },
+    {
+      "metric": "reply_count",
+      "nonnull_tweets": 377522,
+      "zero_tweets": 327560,
+      "negative_tweets": 0,
+      "mean": 1.433153564560476,
+      "p50_p90_p99_p999": [
+        0.0,
+        1.0,
+        21.0,
+        191.47899999999208
+      ],
+      "maximum": 14385
+    },
+    {
+      "metric": "retweet_count",
+      "nonnull_tweets": 377522,
+      "zero_tweets": 112234,
+      "negative_tweets": 0,
+      "mean": 1426.267584405677,
+      "p50_p90_p99_p999": [
+        12.0,
+        2040.0,
+        18325.579999999958,
+        111039.14999997744
+      ],
+      "maximum": 1740895
+    },
+    {
+      "metric": "quote_count",
+      "nonnull_tweets": 377330,
+      "zero_tweets": 356476,
+      "negative_tweets": 0,
+      "mean": 0.5907242996846261,
+      "p50_p90_p99_p999": [
+        0.0,
+        0.0,
+        5.0,
+        94.0
+      ],
+      "maximum": 5298
+    },
+    {
+      "metric": "views_count",
+      "nonnull_tweets": 377330,
+      "zero_tweets": 129161,
+      "negative_tweets": 0,
+      "mean": 2924.2730474650834,
+      "p50_p90_p99_p999": [
+        4.0,
+        711.0,
+        27767.52000000025,
+        419446.5559999882
+      ],
+      "maximum": 30740085
+    },
+    {
+      "metric": "bookmarks_count",
+      "nonnull_tweets": 377330,
+      "zero_tweets": 347156,
+      "negative_tweets": 0,
+      "mean": 3.6471788620040813,
+      "p50_p90_p99_p999": [
+        0.0,
+        0.0,
+        36.0,
+        657.683999999892
+      ],
+      "maximum": 15363
+    }
+  ],
+  "sample_engagement_by_post_type": [
+    {
+      "post_type": "RT-prefixed",
+      "tweets": 222891,
+      "likes_p50_p90_p99": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "retweets_p50_p90_p99": [
+        170.0,
+        4075.0,
+        25184.600000000035
+      ],
+      "views_p50_p90_p99": [
+        0.0,
+        8.0,
+        142.0
+      ]
+    },
+    {
+      "post_type": "other",
+      "tweets": 105754,
+      "likes_p50_p90_p99": [
+        3.0,
+        88.0,
+        2638.320000000007
+      ],
+      "retweets_p50_p90_p99": [
+        0.0,
+        9.0,
+        328.22000000000116
+      ],
+      "views_p50_p90_p99": [
+        202.0,
+        4052.9000000000087,
+        121759.22000000023
+      ]
+    },
+    {
+      "post_type": "quote",
+      "tweets": 39024,
+      "likes_p50_p90_p99": [
+        1.0,
+        25.0,
+        520.3099999999904
+      ],
+      "retweets_p50_p90_p99": [
+        0.0,
+        2.0,
+        56.0
+      ],
+      "views_p50_p90_p99": [
+        158.0,
+        1877.0,
+        32758.30999999999
+      ]
+    },
+    {
+      "post_type": "reply",
+      "tweets": 10228,
+      "likes_p50_p90_p99": [
+        1.0,
+        14.0,
+        362.56999999999607
+      ],
+      "retweets_p50_p90_p99": [
+        0.0,
+        1.0,
+        19.729999999999563
+      ],
+      "views_p50_p90_p99": [
+        93.0,
+        1890.3999999999996,
+        42736.959999999766
+      ]
+    }
+  ],
+  "sample_repeated_tweet_coverage": [
+    {
+      "tweets_with_repeated_observations": 15248,
+      "snapshots_p50_p90_p99": [
+        2.0,
+        2.0,
+        9.0
+      ],
+      "span_seconds_p50_p90_p99": [
+        136075.0,
+        161299.80000000002,
+        881206.7400000013
+      ],
+      "maximum_snapshots": 22
+    }
+  ],
+  "sample_trajectory_changes": [
+    {
+      "transitions": 18231,
+      "same_version_transitions": 0,
+      "likes_increased": 3475,
+      "likes_decreased": 381,
+      "views_increased": 11622,
+      "views_decreased": 0,
+      "observation_interval_seconds_p50_p90_p99": [
+        134411.0,
+        151412.0,
+        525243.1000000003
+      ]
+    }
+  ],
+  "sample_top_hashtags_latest": [
+    {
+      "hashtag": "#bbnaija",
+      "tweets": 273
+    },
+    {
+      "hashtag": "#1",
+      "tweets": 243
+    },
+    {
+      "hashtag": "#bb28",
+      "tweets": 187
+    },
+    {
+      "hashtag": "#granhermano",
+      "tweets": 174
+    },
+    {
+      "hashtag": "#bts",
+      "tweets": 172
+    },
+    {
+      "hashtag": "#lacasadelosfamososmx",
+      "tweets": 166
+    },
+    {
+      "hashtag": "#pr",
+      "tweets": 162
+    },
+    {
+      "hashtag": "#rt",
+      "tweets": 145
+    },
+    {
+      "hashtag": "#iriam",
+      "tweets": 124
+    },
+    {
+      "hashtag": "#deltarune",
+      "tweets": 123
+    },
+    {
+      "hashtag": "#방탄소년단",
+      "tweets": 116
+    },
+    {
+      "hashtag": "#yahooニュース",
+      "tweets": 114
+    },
+    {
+      "hashtag": "#enhypen",
+      "tweets": 112
+    },
+    {
+      "hashtag": "#tiktok",
+      "tweets": 111
+    },
+    {
+      "hashtag": "#ブルアカ",
+      "tweets": 108
+    },
+    {
+      "hashtag": "#ウマ娘",
+      "tweets": 105
+    },
+    {
+      "hashtag": "#vtuber",
+      "tweets": 99
+    },
+    {
+      "hashtag": "#vrchat",
+      "tweets": 93
+    },
+    {
+      "hashtag": "#aiイラスト",
+      "tweets": 93
+    },
+    {
+      "hashtag": "#2",
+      "tweets": 92
+    },
+    {
+      "hashtag": "#pondphuwinconcertd3",
+      "tweets": 92
+    },
+    {
+      "hashtag": "#lacasadelosfamososméxico",
+      "tweets": 91
+    },
+    {
+      "hashtag": "#cortis",
+      "tweets": 90
+    },
+    {
+      "hashtag": "#irumudi",
+      "tweets": 90
+    },
+    {
+      "hashtag": "#straykids",
+      "tweets": 90
+    },
+    {
+      "hashtag": "#genshinimpact",
+      "tweets": 89
+    },
+    {
+      "hashtag": "#aiart",
+      "tweets": 89
+    },
+    {
+      "hashtag": "#pondphuwinconcertd1",
+      "tweets": 89
+    },
+    {
+      "hashtag": "#おはようvtuber",
+      "tweets": 88
+    },
+    {
+      "hashtag": "#nct127",
+      "tweets": 83
+    }
+  ],
+  "sample_repeated_bodies_latest": [
+    {
+      "body_excerpt": "RT @akiko_lawson: ＼7種類のアイスからランダムで無料券がもらえるチャンス♪／\n\n【応募方法】 \n① @akiko_lawson をフォロー \n② この投稿をリポスト \n③ ↓の画像をクリック。キャンペーンサイトの抽選に参加でローソンで使える無料券が当たる(^^…",
+      "tweets": 73,
+      "authors": 73
+    },
+    {
+      "body_excerpt": "RT @akiko_lawson: ＼7種類のアイスからランダムで無料券がもらえるチャンス／\n\n【応募方法】 \n① @akiko_lawson をフォロー \n② この投稿をリポスト \n③ ↓の画像をクリック。キャンペーンサイトの抽選に参加でローソンで使える無料券が当たる(^^)…",
+      "tweets": 45,
+      "authors": 45
+    },
+    {
+      "body_excerpt": "RT @akiko_lawson: ＼7種類のアイスからランダムで無料券がもらえるチャンス！／\n\n【応募方法】 \n① @akiko_lawson をフォロー \n② この投稿をリポスト \n③ ↓の画像をクリック。キャンペーンサイトの抽選に参加でローソンで使える無料券が当たる(^^…",
+      "tweets": 44,
+      "authors": 44
+    },
+    {
+      "body_excerpt": "RT @akiko_lawson: 5日間限定の無料券チャレンジ(^^)\n今日はワッフル無料の1日目です♪\n\n1）このアカウントをフォロー\n2）この投稿をリポスト\n3）抽選で毎日1万名様に無料券！結果は自動でお知らせ",
+      "tweets": 40,
+      "authors": 40
+    },
+    {
+      "body_excerpt": "RT @DollyParton: A message from the family of Dolly Parton. https://t.co/9DNRgRx0uH",
+      "tweets": 29,
+      "authors": 29
+    },
+    {
+      "body_excerpt": "RT @MarkRuffalo: The accusation that I am antisemitic is appalling and fundamentally dishonest. Criticizing the actions of the Israeli prim…",
+      "tweets": 24,
+      "authors": 24
+    },
+    {
+      "body_excerpt": "RT @akiko_lawson: ＼7種類のアイスからランダムで無料券がもらえるチャンス／\n\n【応募方法】 \n① @akiko_lawson をフォロー \n② この投稿をリポスト \n③ ↓の画像をクリック。キャンペーンサイトの抽選に参加でローソンで使える無料券が当たる♪ \n※…",
+      "tweets": 23,
+      "authors": 23
+    },
+    {
+      "body_excerpt": "RT @bang_dream_on: ＼その場で当たる！毎日応募できる！／\n豪華賞品プレゼントキャンペーン開催中✨\n\n総額300万分のえらべるPayが抽選で3,000名様に当たる🌟\n\n参加方法\n1.@bang_dream_onをフォロー\n2.この投稿をRP\n3.抽選サイトから事…",
+      "tweets": 18,
+      "authors": 18
+    },
+    {
+      "body_excerpt": "RT @DollyParton: Global icon and humanitarian, Dolly Parton, known to the world as a beloved singer, songwriter, philanthropist, actress, p…",
+      "tweets": 17,
+      "authors": 17
+    },
+    {
+      "body_excerpt": "RT @akindosushiroco: ／\nスシロー × ハローキティ\nコラボ大好評開催中🎀🍎❤\n＼\n\n抽選で20名さまに🧧お食事券🧧が当たる🎁\n\n1⃣ @akindosushiroco をフォロー📲\n2⃣この投稿をいいね❤＆リポスト🔃\n\n詳細はこちら：https://t.c…",
+      "tweets": 13,
+      "authors": 13
+    },
+    {
+      "body_excerpt": "RT @PopBase: The legendary Dolly Parton has died at the age of 80. https://t.co/BMTOzEgtyg",
+      "tweets": 11,
+      "authors": 11
+    },
+    {
+      "body_excerpt": "RT @bts_bighit: 0901\nCongratulations!\n\nHappy Jung Kook Day 🎂\n\n#정국 #JungKook #HAPPYJKDAY https://t.co/H4GTdArpz1",
+      "tweets": 11,
+      "authors": 11
+    },
+    {
+      "body_excerpt": "RT @calbee_PR: ＼合計1⃣0⃣0⃣様にその場で当たる🎯／\n\n#東北土産牛たん味２品発売記念 プレゼントキャンペーン✨\n堅あげポテト 牛たんしお味とじゃがりこ 牛たん味を２品同時にプレゼント🎁\nA賞、B賞どちらが当たるかはお楽しみ😊\n\n1⃣本アカウントをフォロー…",
+      "tweets": 11,
+      "authors": 11
+    },
+    {
+      "body_excerpt": "RT @DOLLDILAH: retweeting this because we need more awareness breast cancer is so scary",
+      "tweets": 11,
+      "authors": 11
+    },
+    {
+      "body_excerpt": "RT @curryichibanya: ＼猛暑に負けるな！パワーチャージ！🔥 ／\n#ココイチカレーで夏を乗り切ろうキャンペーン🍛\nすぐ使えるeギフト1,000円分(税込)が\nその場で当たる🎯\n\n■応募方法\n①@curryichibanyaをフォロー\n②本投稿を8/28 23:5…",
+      "tweets": 11,
+      "authors": 11
+    }
+  ],
+  "sample_top_liked_latest": [
+    {
+      "id": "2090824244766618099",
+      "lang": "en",
+      "created_at": "2026-08-21 15:32:00+00:00",
+      "version": "2026-09-01 13:28:44.536000+00:00",
+      "like_count": 266335,
+      "retweet_count": 12655,
+      "views_count": 5192601,
+      "body_excerpt": "Chinese people will tell you they’re from a city you’ve never heard of and then you google it and it has 14 million people"
+    },
+    {
+      "id": "2100345356097855871",
+      "lang": "en",
+      "created_at": "2026-09-16 22:05:30+00:00",
+      "version": "2026-09-17 12:39:01.050000+00:00",
+      "like_count": 217250,
+      "retweet_count": 25670,
+      "views_count": 2481533,
+      "body_excerpt": "We are joining Macklemore in donating to the people of Palestine with another $10,000 to the Palestine Children’s Relief Fund, which will help aid families amid the ongoing genocide.\n\nWe encourage our followers &amp; anyone with the means to join if they can: https://t.co/XXt2rHaCvl https://t.co/gte"
+    },
+    {
+      "id": "2093767571195474003",
+      "lang": "en",
+      "created_at": "2026-08-29 18:27:43+00:00",
+      "version": "2026-09-01 13:34:33.935000+00:00",
+      "like_count": 199366,
+      "retweet_count": 14719,
+      "views_count": 2596373,
+      "body_excerpt": "Probably not a good sign when celebrities have to fund social services because the president won't."
+    },
+    {
+      "id": "2089659622701371802",
+      "lang": "en",
+      "created_at": "2026-08-18 10:24:12+00:00",
+      "version": "2026-09-01 08:56:44.967000+00:00",
+      "like_count": 197476,
+      "retweet_count": 15772,
+      "views_count": 5259755,
+      "body_excerpt": "Someone will always be on this app going through worse shit than you are🤣🤣🤣"
+    },
+    {
+      "id": "2094802425064337874",
+      "lang": "in",
+      "created_at": "2026-09-01 14:59:52+00:00",
+      "version": "2026-09-07 16:50:42.457000+00:00",
+      "like_count": 187564,
+      "retweet_count": 31903,
+      "views_count": 3564430,
+      "body_excerpt": "January                                     September https://t.co/GreC0FSZVz"
+    },
+    {
+      "id": "2095495074260095394",
+      "lang": "ja",
+      "created_at": "2026-09-03 12:52:12+00:00",
+      "version": "2026-09-07 17:04:19.583000+00:00",
+      "like_count": 176837,
+      "retweet_count": 23704,
+      "views_count": 6292633,
+      "body_excerpt": "Swich2版僕のヒーローアカデミアAll's Justice本日発売！ https://t.co/1Vg4j9SH6z"
+    },
+    {
+      "id": "2094104526697415037",
+      "lang": "en",
+      "created_at": "2026-08-30 16:46:40+00:00",
+      "version": "2026-09-01 12:09:54.711000+00:00",
+      "like_count": 138136,
+      "retweet_count": 2550,
+      "views_count": 6730238,
+      "body_excerpt": "The fact even her imaginary food is drenched in sauce."
+    },
+    {
+      "id": "2092016733917688290",
+      "lang": "en",
+      "created_at": "2026-08-24 22:30:31+00:00",
+      "version": "2026-08-31 18:37:36.236000+00:00",
+      "like_count": 138058,
+      "retweet_count": 3543,
+      "views_count": 1612643,
+      "body_excerpt": "my dad's trying to stream https://t.co/uYHtepTHFv"
+    },
+    {
+      "id": "2097007877521297539",
+      "lang": "en",
+      "created_at": "2026-09-07 17:03:33+00:00",
+      "version": "2026-09-09 16:49:56.444000+00:00",
+      "like_count": 86186,
+      "retweet_count": 21941,
+      "views_count": 2406090,
+      "body_excerpt": "They took memory cards from us and made us pay for storage. They took CDs and DVDs and made us pay for streaming. They took software you could buy once and turned it into a monthly subscription. They took ownership, convenience, and basically everything that used to be a one-time"
+    },
+    {
+      "id": "2096331056366395404",
+      "lang": "en",
+      "created_at": "2026-09-05 20:14:06+00:00",
+      "version": "2026-09-08 08:06:35.131000+00:00",
+      "like_count": 83467,
+      "retweet_count": 9405,
+      "views_count": 1850798,
+      "body_excerpt": "In fact if you get to prison and other male criminals discover you killed a child they will kill you"
+    }
+  ],
+  "sample_nested_fields": [
+    {
+      "field": "media",
+      "example": "[{\"type\":\"photo\",\"url\":\"https://pbs.twimg.com/media/HQZeWRYWsAA8_E5.jpg\",\"expanded\":\"https://x.com/ItsMeMarwa7_/status/2091462822592979400/photo/1\",\"id_str\":\"2091462813675859968\",\"width\":576,\"height\":1024},{\"type\":\"photo\",\"url\":\"https://pbs.twimg.com/media/HQZeWRRXUAEKPLp.jpg\",\"expanded\":\"https://x.com/ItsMeMarwa7_/status/2091462822592979400/photo/1\",\"id_str\":\"2091462813646540801\",\"width\":576,\"height\":1024},{\"type\":\"photo\",\"url\":\"https://pbs.twimg.com/media/HQZeWRRWUAAV-D5.jpg\",\"expanded\":\"https://x.com/ItsMeMarwa7_/status/2091462822592979400/photo/1\",\"id_str\":\"2091462813646475264\",\"width\":576,\"height\":1024}]"
+    },
+    {
+      "field": "media",
+      "example": "[{\"type\":\"photo\",\"url\":\"https://pbs.twimg.com/media/HQFY4RdaIAAq8d1.jpg\",\"expanded\":\"https://x.com/tkbn_kkr/status/2090049435523076387/photo/1\",\"id_str\":\"2090049425859289088\",\"width\":2733,\"height\":4096},{\"type\":\"photo\",\"url\":\"https://pbs.twimg.com/media/HQFY4RhbMAAZY4f.jpg\",\"expanded\":\"https://x.com/tkbn_kkr/status/2090049435523076387/photo/1\",\"id_str\":\"2090049425876135936\",\"width\":2734,\"height\":4096},{\"type\":\"photo\",\"url\":\"https://pbs.twimg.com/media/HQFY4RfaYAAdhDH.jpg\",\"expanded\":\"https://x.com/tkbn_kkr/status/2090049435523076387/photo/1\",\"id_str\":\"2090049425867694080\",\"width\":2734,\"height\":4096}]"
+    }
+  ],
+  "sample_nested_validity": [
+    {
+      "field": "media",
+      "present": 141231,
+      "valid_json": 141231
+    },
+    {
+      "field": "poll",
+      "present": 0,
+      "valid_json": 0
+    },
+    {
+      "field": "embed",
+      "present": 0,
+      "valid_json": 0
+    }
+  ],
+  "full_coverage": [
+    {
+      "observations": 395352258,
+      "first_creation": "2026-08-17 00:00:00+00:00",
+      "last_creation": "2026-09-17 14:32:07+00:00",
+      "first_ingestion": "2026-08-17 00:00:19.582000+00:00",
+      "last_ingestion": "2026-09-17 15:40:28.684000+00:00",
+      "first_version": "2026-08-17 00:00:18.742000+00:00",
+      "last_version": "2026-09-17 15:40:27.872000+00:00",
+      "distinct_authors": 9589768,
+      "version_before_creation": 0,
+      "ingestion_before_creation": 0,
+      "version_after_added_at": 0,
+      "before_documented_window": 0,
+      "reply_observations": 10646981,
+      "quote_observations": 42022227
+    }
+  ],
+  "full_engagement": [
+    {
+      "like_count_max": 936192,
+      "like_count_negative_rows": 0,
+      "like_count_zero_rows": 278887191,
+      "reply_count_max": 201223,
+      "reply_count_negative_rows": 0,
+      "reply_count_zero_rows": 339392795,
+      "retweet_count_max": 3351909,
+      "retweet_count_negative_rows": 0,
+      "retweet_count_zero_rows": 118786918,
+      "quote_count_max": 56125,
+      "quote_count_negative_rows": 0,
+      "quote_count_zero_rows": 370115440,
+      "views_count_max": 275095090,
+      "views_count_negative_rows": 0,
+      "views_count_zero_rows": 131718737,
+      "bookmarks_count_max": 613720,
+      "bookmarks_count_negative_rows": 0,
+      "bookmarks_count_zero_rows": 359960063
+    }
+  ],
+  "full_daily_and_languages": [
+    {
+      "dimension": "day",
+      "value": "2026-08-28",
+      "observations": 29178486
+    },
+    {
+      "dimension": "day",
+      "value": "2026-08-30",
+      "observations": 26596994
+    },
+    {
+      "dimension": "day",
+      "value": "2026-08-26",
+      "observations": 26330932
+    },
+    {
+      "dimension": "day",
+      "value": "2026-08-23",
+      "observations": 25374007
+    },
+    {
+      "dimension": "day",
+      "value": "2026-08-21",
+      "observations": 25219502
+    },
+    {
+      "dimension": "day",
+      "value": "2026-08-29",
+      "observations": 24918246
+    },
+    {
+      "dimension": "day",
+      "value": "2026-08-27",
+      "observations": 24899335
+    },
+    {
+      "dimension": "day",
+      "value": "2026-08-24",
+      "observations": 24628267
+    },
+    {
+      "dimension": "day",
+      "value": "2026-08-20",
+      "observations": 24193655
+    },
+    {
+      "dimension": "day",
+      "value": "2026-08-19",
+      "observations": 23829819
+    },
+    {
+      "dimension": "day",
+      "value": "2026-08-22",
+      "observations": 23712893
+    },
+    {
+      "dimension": "day",
+      "value": "2026-08-18",
+      "observations": 23132320
+    },
+    {
+      "dimension": "day",
+      "value": "2026-08-25",
+      "observations": 22359683
+    },
+    {
+      "dimension": "day",
+      "value": "2026-08-17",
+      "observations": 22264074
+    },
+    {
+      "dimension": "day",
+      "value": "2026-08-31",
+      "observations": 20641425
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-01",
+      "observations": 5159954
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-07",
+      "observations": 2532099
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-08",
+      "observations": 2183224
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-15",
+      "observations": 1965897
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-06",
+      "observations": 1885174
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-14",
+      "observations": 1806193
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-09",
+      "observations": 1625356
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-05",
+      "observations": 1460257
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-04",
+      "observations": 1426670
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-16",
+      "observations": 1385010
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-03",
+      "observations": 1300784
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-13",
+      "observations": 1265266
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-02",
+      "observations": 1211318
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-12",
+      "observations": 942590
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-10",
+      "observations": 799139
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-11",
+      "observations": 794816
+    },
+    {
+      "dimension": "day",
+      "value": "2026-09-17",
+      "observations": 327564
+    },
+    {
+      "dimension": "day",
+      "value": null,
+      "observations": 1309
+    },
+    {
+      "dimension": "language",
+      "value": "en",
+      "observations": 145166454
+    },
+    {
+      "dimension": "language",
+      "value": "ja",
+      "observations": 97963448
+    },
+    {
+      "dimension": "language",
+      "value": "es",
+      "observations": 28404750
+    },
+    {
+      "dimension": "language",
+      "value": "pt",
+      "observations": 18493688
+    },
+    {
+      "dimension": "language",
+      "value": "zxx",
+      "observations": 14605001
+    },
+    {
+      "dimension": "language",
+      "value": "ko",
+      "observations": 11075518
+    },
+    {
+      "dimension": "language",
+      "value": "th",
+      "observations": 10353271
+    },
+    {
+      "dimension": "language",
+      "value": "tr",
+      "observations": 8316656
+    },
+    {
+      "dimension": "language",
+      "value": "ar",
+      "observations": 8225733
+    },
+    {
+      "dimension": "language",
+      "value": "fr",
+      "observations": 7665551
+    },
+    {
+      "dimension": "language",
+      "value": "in",
+      "observations": 7548480
+    },
+    {
+      "dimension": "language",
+      "value": "qme",
+      "observations": 5730913
+    },
+    {
+      "dimension": "language",
+      "value": "und",
+      "observations": 4113343
+    },
+    {
+      "dimension": "language",
+      "value": "hi",
+      "observations": 2570449
+    },
+    {
+      "dimension": "language",
+      "value": "tl",
+      "observations": 2297449
+    },
+    {
+      "dimension": "language",
+      "value": "fa",
+      "observations": 1943613
+    },
+    {
+      "dimension": "language",
+      "value": "it",
+      "observations": 1839540
+    },
+    {
+      "dimension": "language",
+      "value": "de",
+      "observations": 1776933
+    },
+    {
+      "dimension": "language",
+      "value": "pl",
+      "observations": 1742634
+    },
+    {
+      "dimension": "language",
+      "value": "zh",
+      "observations": 1697535
+    },
+    {
+      "dimension": "language",
+      "value": "art",
+      "observations": 1600670
+    },
+    {
+      "dimension": "language",
+      "value": "ur",
+      "observations": 1155931
+    },
+    {
+      "dimension": "language",
+      "value": "ca",
+      "observations": 890041
+    },
+    {
+      "dimension": "language",
+      "value": "et",
+      "observations": 832989
+    },
+    {
+      "dimension": "language",
+      "value": "ru",
+      "observations": 819314
+    },
+    {
+      "dimension": "language",
+      "value": "qst",
+      "observations": 811684
+    },
+    {
+      "dimension": "language",
+      "value": "nl",
+      "observations": 773215
+    },
+    {
+      "dimension": "language",
+      "value": "ta",
+      "observations": 727980
+    },
+    {
+      "dimension": "language",
+      "value": "ht",
+      "observations": 549045
+    },
+    {
+      "dimension": "language",
+      "value": "qht",
+      "observations": 518596
+    },
+    {
+      "dimension": "language",
+      "value": "el",
+      "observations": 492992
+    },
+    {
+      "dimension": "language",
+      "value": "iw",
+      "observations": 377235
+    },
+    {
+      "dimension": "language",
+      "value": "sv",
+      "observations": 324042
+    },
+    {
+      "dimension": "language",
+      "value": "qam",
+      "observations": 293920
+    },
+    {
+      "dimension": "language",
+      "value": "fi",
+      "observations": 281800
+    },
+    {
+      "dimension": "language",
+      "value": "uk",
+      "observations": 262999
+    },
+    {
+      "dimension": "language",
+      "value": "vi",
+      "observations": 257015
+    },
+    {
+      "dimension": "language",
+      "value": "cs",
+      "observations": 245223
+    },
+    {
+      "dimension": "language",
+      "value": "ro",
+      "observations": 237553
+    },
+    {
+      "dimension": "language",
+      "value": "da",
+      "observations": 210346
+    },
+    {
+      "dimension": "language",
+      "value": "te",
+      "observations": 208862
+    },
+    {
+      "dimension": "language",
+      "value": "eu",
+      "observations": 193657
+    },
+    {
+      "dimension": "language",
+      "value": "<NULL>",
+      "observations": 179328
+    },
+    {
+      "dimension": "language",
+      "value": "no",
+      "observations": 167049
+    },
+    {
+      "dimension": "language",
+      "value": "cy",
+      "observations": 164001
+    },
+    {
+      "dimension": "language",
+      "value": "mr",
+      "observations": 143165
+    },
+    {
+      "dimension": "language",
+      "value": "sl",
+      "observations": 141841
+    },
+    {
+      "dimension": "language",
+      "value": "sr",
+      "observations": 107480
+    },
+    {
+      "dimension": "language",
+      "value": "lv",
+      "observations": 105968
+    },
+    {
+      "dimension": "language",
+      "value": "hu",
+      "observations": 104592
+    },
+    {
+      "dimension": "language",
+      "value": "lt",
+      "observations": 100065
+    },
+    {
+      "dimension": "language",
+      "value": "ne",
+      "observations": 95489
+    },
+    {
+      "dimension": "language",
+      "value": "ps",
+      "observations": 75237
+    },
+    {
+      "dimension": "language",
+      "value": "my",
+      "observations": 50130
+    },
+    {
+      "dimension": "language",
+      "value": "is",
+      "observations": 49280
+    },
+    {
+      "dimension": "language",
+      "value": "ml",
+      "observations": 41639
+    },
+    {
+      "dimension": "language",
+      "value": "kn",
+      "observations": 38076
+    },
+    {
+      "dimension": "language",
+      "value": "bn",
+      "observations": 33273
+    },
+    {
+      "dimension": "language",
+      "value": "bg",
+      "observations": 23925
+    },
+    {
+      "dimension": "language",
+      "value": "dv",
+      "observations": 22978
+    },
+    {
+      "dimension": "language",
+      "value": "gu",
+      "observations": 19766
+    },
+    {
+      "dimension": "language",
+      "value": "am",
+      "observations": 16443
+    },
+    {
+      "dimension": "language",
+      "value": "or",
+      "observations": 15089
+    },
+    {
+      "dimension": "language",
+      "value": "ckb",
+      "observations": 14639
+    },
+    {
+      "dimension": "language",
+      "value": "pa",
+      "observations": 11476
+    },
+    {
+      "dimension": "language",
+      "value": "qct",
+      "observations": 10468
+    },
+    {
+      "dimension": "language",
+      "value": "sd",
+      "observations": 7433
+    },
+    {
+      "dimension": "language",
+      "value": "si",
+      "observations": 5747
+    },
+    {
+      "dimension": "language",
+      "value": "lo",
+      "observations": 3347
+    },
+    {
+      "dimension": "language",
+      "value": "hy",
+      "observations": 2968
+    },
+    {
+      "dimension": "language",
+      "value": "ka",
+      "observations": 2712
+    },
+    {
+      "dimension": "language",
+      "value": "km",
+      "observations": 2145
+    },
+    {
+      "dimension": "language",
+      "value": "bo",
+      "observations": 318
+    },
+    {
+      "dimension": "language",
+      "value": "ug",
+      "observations": 123
+    }
+  ]
+}

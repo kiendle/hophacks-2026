@@ -1,0 +1,1114 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-09-19T07:30:00.358941+00:00",
+  "purpose": "Independent evidence audit of requested peak-vs-baseline sentiment shifts; excerpts are sampled discourse, not fact verification.",
+  "inputs": {
+    "membership": "topic-analysis/sentiment-membership.parquet",
+    "sentiment_scores": "topic-analysis/final-sentiment.parquet",
+    "topic_evidence": "topic-analysis/topic-evidence.parquet",
+    "shift_results": "topic-analysis/sentiment-shifts.json"
+  },
+  "guardrails": [
+    "Whole-post polarity is not target-aware sentiment toward the named entity or hashtag.",
+    "Top-engagement rows are evidence of what was amplified in the topic extraction, not prevalence-weighted sentiment estimates.",
+    "User-generated death, violence, resignation, and event claims in excerpts are reported as text claims/discourse only and were not externally verified.",
+    "Quoted, reposted, sarcastic, fandom, sports-banter, and multilingual posts can make target stance indeterminate."
+  ],
+  "audits": [
+    {
+      "topic": "entity:playstation",
+      "label": "PlayStation",
+      "peak_day": "2026-09-10",
+      "mean_shift": -0.36866115625562706,
+      "shift_ci95": [
+        -0.46962444306000284,
+        -0.2739780995190962
+      ],
+      "language_adjusted_shift": -0.3642197280273608,
+      "language_adjusted_q": 5.892273927387617e-11,
+      "peak_sentiment": {
+        "n": 185,
+        "authors": 185,
+        "mean": -0.4306194460271178,
+        "negative_fraction": 0.6756756756756757,
+        "positive_fraction": 0.0972972972972973,
+        "mean_max_probability": 0.7519722704951828,
+        "languages": {
+          "ar": 1,
+          "de": 1,
+          "en": 129,
+          "es": 22,
+          "fr": 15,
+          "it": 1,
+          "pt": 16
+        }
+      },
+      "baseline_sentiment": {
+        "n": 267,
+        "authors": 267,
+        "mean": -0.061958289771490774,
+        "negative_fraction": 0.33707865168539325,
+        "positive_fraction": 0.22846441947565543,
+        "mean_max_probability": 0.7187605545985118,
+        "languages": {
+          "ar": 5,
+          "de": 5,
+          "en": 182,
+          "es": 30,
+          "fr": 21,
+          "it": 2,
+          "pt": 22
+        }
+      },
+      "sampling_note": "Two deterministic pseudo-random rows per period: first rows after SHA-256(seed=20260919, topic, period, id) ordering; not selected by sentiment score.",
+      "random_capped_samples": {
+        "peak": [
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2098158572639002867",
+            "lang": "en",
+            "day": "2026-09-10",
+            "body_excerpt": "Xbox really just stole Physint from PlayStation after Sony tried to cancel it 🤣😭 Kojima over here like \"bet\" and Xbox cooking again",
+            "predicted_label": "negative",
+            "negative": 0.8701125383377075,
+            "neutral": 0.11107940226793289,
+            "positive": 0.018808061257004738,
+            "sentiment_score": -0.8513044714927673,
+            "max_probability": 0.8701125383377075
+          },
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2097981997331476941",
+            "lang": "en",
+            "day": "2026-09-10",
+            "body_excerpt": "you either buy xbox games and support mass developer layoffs or buy playstation games and support the loss of physical media or buy nintendo games and pay 1 billion dollars. just can't win",
+            "predicted_label": "negative",
+            "negative": 0.748772144317627,
+            "neutral": 0.20987989008426666,
+            "positive": 0.041347991675138474,
+            "sentiment_score": -0.7074241638183594,
+            "max_probability": 0.748772144317627
+          }
+        ],
+        "baseline": [
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2098215213929812345",
+            "lang": "ja",
+            "day": "2026-09-11",
+            "body_excerpt": "カジュアル・アドベンチャー『ブルーイのハッピースナップ』 PlayStation®5、Nintendo Switch™ 2向けパッケージ版 2026年11月26日(木)発売決定！ https://t.co/bdnuNuL1Om ※セガは本作の国内およびアジア市場向けパッケージタイトルの製造・販売を担当しています https://t.co/x6VUh5UImY",
+            "predicted_label": "neutral",
+            "negative": 0.012059652246534824,
+            "neutral": 0.694145917892456,
+            "positive": 0.2937944829463959,
+            "sentiment_score": 0.281734824180603,
+            "max_probability": 0.694145917892456
+          },
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2100228490326876318",
+            "lang": "es",
+            "day": "2026-09-16",
+            "body_excerpt": "✅ +15 HORAS EN MARVELS WOLVERINE. Llevo un 75% del juego completado en Marvels Wolverine, sobra decir que con el tiempo que llevo jugado del juego, esta muy lejos de un 77, este juego huele a 90 fácil. ✅ La historia tiene unos giros importa",
+            "predicted_label": "positive",
+            "negative": 0.057219140231609344,
+            "neutral": 0.10818285495042801,
+            "positive": 0.8345980048179626,
+            "sentiment_score": 0.7773788571357727,
+            "max_probability": 0.8345980048179626
+          }
+        ]
+      },
+      "top_engagement_evidence": [
+        {
+          "source": "topic_evidence_top_engagement",
+          "id": "2097877506401681753",
+          "lang": "en",
+          "day": "2026-09-10",
+          "body_excerpt": "As confirmed earlier through our official channels, in mid-June of this year, we unexpectedly received notice from PlayStation Studios that they would cancel the PHYSINT project. PHYSINT is an important project both to me personally and to ",
+          "predicted_label": "neutral",
+          "negative": 0.20796650648117065,
+          "neutral": 0.45837435126304626,
+          "positive": 0.3336591124534607,
+          "sentiment_score": 0.12569260597229004,
+          "max_probability": 0.45837435126304626,
+          "topic": "entity:playstation",
+          "is_rt": false,
+          "like_count": 404798,
+          "views_count": 31671841,
+          "retweet_count": 41862,
+          "scored_in_final_sample": true
+        },
+        {
+          "source": "topic_evidence_top_engagement",
+          "id": "2098008819263504775",
+          "lang": "en",
+          "day": "2026-09-10",
+          "body_excerpt": "PlayStation thought the game was called physical and had to back out",
+          "topic": "entity:playstation",
+          "is_rt": false,
+          "like_count": 186968,
+          "views_count": 4336833,
+          "retweet_count": 22932,
+          "scored_in_final_sample": false
+        }
+      ],
+      "direction_assessment": "The sampled peak discourse supports a negative text-polarity shift: deterministic peak examples discuss disappointment, cancellation, and trade-offs among platforms; baseline examples include product announcements and game-play enthusiasm.",
+      "target_stance_confounds": [
+        "The model may score criticism of Sony, Xbox, game-industry policy, physical media, or a specific game rather than PlayStation itself.",
+        "Sarcasm and joking rivalry language (for example, emojis or exaggerated console-war phrasing) can reverse literal polarity.",
+        "High-engagement evidence is not sentiment-weighted and includes a long project-cancellation explanation plus sarcastic commentary."
+      ]
+    },
+    {
+      "topic": "entity:anthropic",
+      "label": "Anthropic / AI safety discourse",
+      "peak_day": "2026-09-09",
+      "mean_shift": -0.20986229285747746,
+      "shift_ci95": [
+        -0.30107393964418516,
+        -0.1222935017545152
+      ],
+      "language_adjusted_shift": -0.18592726184325226,
+      "language_adjusted_q": 0.0017243994553010917,
+      "peak_sentiment": {
+        "n": 178,
+        "authors": 178,
+        "mean": -0.36233468688605874,
+        "negative_fraction": 0.5730337078651685,
+        "positive_fraction": 0.08426966292134831,
+        "mean_max_probability": 0.685900930943114,
+        "languages": {
+          "ar": 2,
+          "de": 2,
+          "en": 143,
+          "es": 19,
+          "fr": 5,
+          "it": 2,
+          "pt": 5
+        }
+      },
+      "baseline_sentiment": {
+        "n": 249,
+        "authors": 249,
+        "mean": -0.1524723940285813,
+        "negative_fraction": 0.39759036144578314,
+        "positive_fraction": 0.20080321285140562,
+        "mean_max_probability": 0.6459606221641403,
+        "languages": {
+          "ar": 1,
+          "de": 2,
+          "en": 222,
+          "es": 7,
+          "fr": 13,
+          "it": 1,
+          "pt": 3
+        }
+      },
+      "sampling_note": "Two deterministic pseudo-random rows per period: first rows after SHA-256(seed=20260919, topic, period, id) ordering; not selected by sentiment score.",
+      "random_capped_samples": {
+        "peak": [
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2097681952639721728",
+            "lang": "en",
+            "day": "2026-09-09",
+            "body_excerpt": "10% chance we're all gonna die from AI? (anthropic exec) Don't like the odds. Very The Stand like. Don't let the machines read it?",
+            "predicted_label": "negative",
+            "negative": 0.9234558343887329,
+            "neutral": 0.06550996750593185,
+            "positive": 0.011034204624593258,
+            "sentiment_score": -0.9124216437339783,
+            "max_probability": 0.9234558343887329
+          },
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2097669549298536906",
+            "lang": "en",
+            "day": "2026-09-09",
+            "body_excerpt": "Rumor is that both anthropic and openai still use slack internally so solving a millenium price problem is easier and cheaper than building a javascript messaging app lol",
+            "predicted_label": "neutral",
+            "negative": 0.14283859729766846,
+            "neutral": 0.5244801640510559,
+            "positive": 0.33268120884895325,
+            "sentiment_score": 0.1898426115512848,
+            "max_probability": 0.5244801640510559
+          }
+        ],
+        "baseline": [
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2099622850097303576",
+            "lang": "zh",
+            "day": "2026-09-14",
+            "body_excerpt": "黄仁勋正在洛杉矶 All-In Summit 做台上访谈，手机突然响了，打来的是美国总统特朗普。黄仁勋接起电话，切成免提，现场观众直接听到了总统的声音。https://t.co/qhHCH2w2y4 两天前，Anthropic CEO Dario Amodei 发表了一篇近四千字的长文《We Must Pace the Frontier》，呼吁 AI",
+            "predicted_label": "neutral",
+            "negative": 0.22007179260253906,
+            "neutral": 0.5804683566093445,
+            "positive": 0.19945988059043884,
+            "sentiment_score": -0.02061191201210022,
+            "max_probability": 0.5804683566093445
+          },
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2098886041767727142",
+            "lang": "pt",
+            "day": "2026-09-12",
+            "body_excerpt": "Menos um IPO de IA. Não tem como sustentar esse nível de valuation. Nem OpenAI, nem Anthropic, nenhuma dá pra justificar quase 1 trilhão de dólares. Não existe horizonte de retorno pra uma fração disso. Especialmente porque claramente eles ",
+            "predicted_label": "negative",
+            "negative": 0.8688638210296631,
+            "neutral": 0.1116701290011406,
+            "positive": 0.0194660983979702,
+            "sentiment_score": -0.8493977189064026,
+            "max_probability": 0.8688638210296631
+          }
+        ]
+      },
+      "top_engagement_evidence": [
+        {
+          "source": "topic_evidence_top_engagement",
+          "id": "2097476196791709843",
+          "lang": "en",
+          "day": "2026-09-09",
+          "body_excerpt": "I resigned from Anthropic today. I spent the last three years doing pretraining research at both OpenAI and Anthropic. Neither company is acting responsibly. They are racing straight to self-improving superintelligence and gambling with our",
+          "topic": "entity:anthropic",
+          "is_rt": false,
+          "like_count": 801270,
+          "views_count": 172499348,
+          "retweet_count": 166942,
+          "scored_in_final_sample": false
+        },
+        {
+          "source": "topic_evidence_top_engagement",
+          "id": "2097476208908972230",
+          "lang": "en",
+          "day": "2026-09-09",
+          "body_excerpt": "A common response is “if they truly believe this, why are they still building it?” At OpenAI, many have not deeply internalized the civilizational stakes. At Anthropic, the stakes are well-understood, but they are locked in a race to get th",
+          "topic": "entity:anthropic",
+          "is_rt": false,
+          "like_count": 78348,
+          "views_count": 7626147,
+          "retweet_count": 5330,
+          "scored_in_final_sample": false
+        }
+      ],
+      "direction_assessment": "The sampled peak discourse supports a negative text-polarity shift: random peak examples discuss AI risk and an alleged resignation, while baseline examples mix valuation, regulation, benchmarks, and general AI discussion.",
+      "target_stance_confounds": [
+        "Many posts target AI development, OpenAI, regulators, or existential-risk claims while merely mentioning Anthropic.",
+        "Quoted/reshared claims and media summaries can be scored as the author's polarity even when the author is reporting someone else.",
+        "The highest-engagement evidence is a resignation/risk thread; its reach can make a repeated narrative look like broad independent stance."
+      ]
+    },
+    {
+      "topic": "entity:manchester-united",
+      "label": "Manchester United",
+      "peak_day": "2026-08-22",
+      "mean_shift": -0.22186125832516346,
+      "shift_ci95": [
+        -0.32297133188050897,
+        -0.11553803625485316
+      ],
+      "language_adjusted_shift": -0.20230625135789324,
+      "language_adjusted_q": 0.0017243994553010917,
+      "peak_sentiment": {
+        "n": 189,
+        "authors": 189,
+        "mean": -0.2349185943800621,
+        "negative_fraction": 0.5079365079365079,
+        "positive_fraction": 0.25396825396825395,
+        "mean_max_probability": 0.7181276177603101,
+        "languages": {
+          "de": 1,
+          "en": 174,
+          "es": 6,
+          "fr": 4,
+          "pt": 4
+        }
+      },
+      "baseline_sentiment": {
+        "n": 286,
+        "authors": 286,
+        "mean": -0.013057336054898642,
+        "negative_fraction": 0.3321678321678322,
+        "positive_fraction": 0.32517482517482516,
+        "mean_max_probability": 0.6946951044606162,
+        "languages": {
+          "de": 2,
+          "en": 263,
+          "es": 9,
+          "fr": 6,
+          "hi": 1,
+          "it": 1,
+          "pt": 4
+        }
+      },
+      "sampling_note": "Two deterministic pseudo-random rows per period: first rows after SHA-256(seed=20260919, topic, period, id) ordering; not selected by sentiment score.",
+      "random_capped_samples": {
+        "peak": [
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2091143085933686878",
+            "lang": "in",
+            "day": "2026-08-22",
+            "body_excerpt": "Man United Mu Hulli Gani ?",
+            "predicted_label": "neutral",
+            "negative": 0.3166886866092682,
+            "neutral": 0.4851570427417755,
+            "positive": 0.1981542408466339,
+            "sentiment_score": -0.11853444576263428,
+            "max_probability": 0.4851570427417755
+          },
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2091136808092385325",
+            "lang": "en",
+            "day": "2026-08-22",
+            "body_excerpt": "Season just Dey start and relegation team already cooking Man united.",
+            "predicted_label": "negative",
+            "negative": 0.4267304837703705,
+            "neutral": 0.39288949966430664,
+            "positive": 0.18038007616996765,
+            "sentiment_score": -0.24635040760040283,
+            "max_probability": 0.4267304837703705
+          }
+        ],
+        "baseline": [
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2091470573264068962",
+            "lang": "en",
+            "day": "2026-08-23",
+            "body_excerpt": "you people be saying we(MANCHESTER UNITED)are not the biggest club in ENGLAND,buh weather we loose to Chelsea, Man City or even to a smaller club,u people and press around the world 🌎 won't let us breathe 🤦🤦na loose we loose,we didn't kill ",
+            "predicted_label": "negative",
+            "negative": 0.5203041434288025,
+            "neutral": 0.2857683300971985,
+            "positive": 0.19392751157283783,
+            "sentiment_score": -0.32637661695480347,
+            "max_probability": 0.5203041434288025
+          },
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2093022524703473735",
+            "lang": "en",
+            "day": "2026-08-27",
+            "body_excerpt": "I feel sorry for our opponents #UCL #ChampionsLeague #UCLDraw #GGMU #ManchesterUnited #MUFC #RedDevils https://t.co/f7J8I2EyHV",
+            "predicted_label": "negative",
+            "negative": 0.920012354850769,
+            "neutral": 0.06772409379482269,
+            "positive": 0.012263620272278786,
+            "sentiment_score": -0.9077487587928772,
+            "max_probability": 0.920012354850769
+          }
+        ]
+      },
+      "top_engagement_evidence": [
+        {
+          "source": "topic_evidence_top_engagement",
+          "id": "2091142545203949680",
+          "lang": "en",
+          "day": "2026-08-22",
+          "body_excerpt": "He's online She's online no one texts ego win Manchester united loses",
+          "topic": "entity:manchester-united",
+          "is_rt": false,
+          "like_count": 126551,
+          "views_count": 1542194,
+          "retweet_count": 14368,
+          "scored_in_final_sample": false
+        },
+        {
+          "source": "topic_evidence_top_engagement",
+          "id": "2091149402245415344",
+          "lang": "en",
+          "day": "2026-08-22",
+          "body_excerpt": "Man United are playing two Mbeumos and still can't score a goal. https://t.co/QBz5HQha6W",
+          "topic": "entity:manchester-united",
+          "is_rt": false,
+          "like_count": 82168,
+          "views_count": 1195482,
+          "retweet_count": 4799,
+          "scored_in_final_sample": false
+        }
+      ],
+      "direction_assessment": "The sampled peak discourse supports a negative text-polarity shift: peak examples contain match-performance mockery and inability-to-score language, while baseline examples are mixed but include ordinary fandom and competitive banter.",
+      "target_stance_confounds": [
+        "Sports banter, irony, and rivalry insults often target a manager, opponent, agent, or match result rather than Manchester United.",
+        "One top-engagement evidence item is transfer/agent discourse where the entity appears as context, not necessarily the target.",
+        "Match-day composition and fan posting bursts can change wording without representing a stable club-level attitude."
+      ]
+    },
+    {
+      "topic": "#verzuz",
+      "label": "#verzuz",
+      "peak_day": "2026-08-21",
+      "mean_shift": -0.18227106697229128,
+      "shift_ci95": [
+        -0.3026552438977695,
+        -0.05303261825321545
+      ],
+      "language_adjusted_shift": -0.18933347472046896,
+      "language_adjusted_q": 0.008208736692135378,
+      "peak_sentiment": {
+        "n": 193,
+        "authors": 193,
+        "mean": 0.011308634103579842,
+        "negative_fraction": 0.3626943005181347,
+        "positive_fraction": 0.36787564766839376,
+        "mean_max_probability": 0.6893413045245749,
+        "languages": {
+          "de": 1,
+          "en": 191,
+          "fr": 1
+        }
+      },
+      "baseline_sentiment": {
+        "n": 124,
+        "authors": 124,
+        "mean": 0.19357970107587114,
+        "negative_fraction": 0.14516129032258066,
+        "positive_fraction": 0.4032258064516129,
+        "mean_max_probability": 0.7037292992876422,
+        "languages": {
+          "en": 123,
+          "fr": 1
+        }
+      },
+      "sampling_note": "Two deterministic pseudo-random rows per period: first rows after SHA-256(seed=20260919, topic, period, id) ordering; not selected by sentiment score.",
+      "random_capped_samples": {
+        "peak": [
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2090607600500900328",
+            "lang": "en",
+            "day": "2026-08-21",
+            "body_excerpt": "Joe got the Sheisty Mask on.He with the shits tonight! #Verzuz",
+            "predicted_label": "positive",
+            "negative": 0.0871705710887909,
+            "neutral": 0.30322927236557007,
+            "positive": 0.6096001863479614,
+            "sentiment_score": 0.5224295854568481,
+            "max_probability": 0.6096001863479614
+          },
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2090624001655689313",
+            "lang": "en",
+            "day": "2026-08-21",
+            "body_excerpt": "THEY SAY THIS IS A BIG RICH TOWN 🗣️🗣️ #Verzuz",
+            "predicted_label": "positive",
+            "negative": 0.22084413468837738,
+            "neutral": 0.36653459072113037,
+            "positive": 0.41262122988700867,
+            "sentiment_score": 0.1917770951986313,
+            "max_probability": 0.41262122988700867
+          }
+        ],
+        "baseline": [
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2093845844026110091",
+            "lang": "en",
+            "day": "2026-08-29",
+            "body_excerpt": "We can all agree Joe obliterated Donnel at the #VERZUZ https://t.co/OqgtxpsRSZ",
+            "predicted_label": "neutral",
+            "negative": 0.3968968093395233,
+            "neutral": 0.5206277966499329,
+            "positive": 0.082475446164608,
+            "sentiment_score": -0.3144213557243347,
+            "max_probability": 0.5206277966499329
+          },
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2090473918402314335",
+            "lang": "en",
+            "day": "2026-08-20",
+            "body_excerpt": "#VERZUZ is back 💃🏻",
+            "predicted_label": "positive",
+            "negative": 0.01680275984108448,
+            "neutral": 0.358855277299881,
+            "positive": 0.6243419051170349,
+            "sentiment_score": 0.6075391173362732,
+            "max_probability": 0.6243419051170349
+          }
+        ]
+      },
+      "top_engagement_evidence": [
+        {
+          "source": "topic_evidence_top_engagement",
+          "id": "2090606523475001726",
+          "lang": "en",
+          "day": "2026-08-21",
+          "body_excerpt": "The comments on the Verzuz live right now have me weak 😂😂😂 #Verzuz https://t.co/3Ml18O4X8s",
+          "topic": "#verzuz",
+          "is_rt": false,
+          "like_count": 22605,
+          "views_count": 569673,
+          "retweet_count": 2602,
+          "scored_in_final_sample": false
+        },
+        {
+          "source": "topic_evidence_top_engagement",
+          "id": "2090625394546286687",
+          "lang": "en",
+          "day": "2026-08-21",
+          "body_excerpt": "JOE x 50 CENT BIG RICH TOWN LIVE ON #VERZUZ https://t.co/twAB6sGPft",
+          "topic": "#verzuz",
+          "is_rt": false,
+          "like_count": 14923,
+          "views_count": 507851,
+          "retweet_count": 2797,
+          "scored_in_final_sample": false
+        }
+      ],
+      "direction_assessment": "The sampled peak discourse is event commentary: deterministic examples are excited or amused, while the aggregate shift is negative because the capped peak contains more negative/competitive commentary than the baseline.",
+      "target_stance_confounds": [
+        "The hashtag covers live entertainment reactions, jokes, performer comparisons, and slang; negative words can describe a performance or rival rather than the event.",
+        "Words such as obliterated or closing language may be metaphorical, and emojis/laughter are difficult polarity cues.",
+        "Top-engagement evidence is live-chat commentary and a performance clip, not a representative estimate of audience stance."
+      ]
+    },
+    {
+      "topic": "entity:jungkook",
+      "label": "Jungkook",
+      "peak_day": "2026-08-31",
+      "mean_shift": 0.4425368894107623,
+      "shift_ci95": [
+        0.33306782278366714,
+        0.545961055573386
+      ],
+      "language_adjusted_shift": 0.42253699824149293,
+      "language_adjusted_q": 2.86063480608313e-12,
+      "peak_sentiment": {
+        "n": 160,
+        "authors": 160,
+        "mean": 0.35263617208693177,
+        "negative_fraction": 0.1625,
+        "positive_fraction": 0.64375,
+        "mean_max_probability": 0.7094057062640786,
+        "languages": {
+          "en": 99,
+          "es": 28,
+          "fr": 1,
+          "it": 4,
+          "pt": 28
+        }
+      },
+      "baseline_sentiment": {
+        "n": 222,
+        "authors": 222,
+        "mean": -0.08990071732383054,
+        "negative_fraction": 0.3738738738738739,
+        "positive_fraction": 0.22972972972972974,
+        "mean_max_probability": 0.6774281463376036,
+        "languages": {
+          "ar": 1,
+          "de": 1,
+          "en": 121,
+          "es": 40,
+          "fr": 4,
+          "it": 4,
+          "pt": 51
+        }
+      },
+      "sampling_note": "Two deterministic pseudo-random rows per period: first rows after SHA-256(seed=20260919, topic, period, id) ordering; not selected by sentiment score.",
+      "random_capped_samples": {
+        "peak": [
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2094264041623752947",
+            "lang": "in",
+            "day": "2026-08-31",
+            "body_excerpt": "Hepi besdey Jungkook💜",
+            "predicted_label": "positive",
+            "negative": 0.05372437462210655,
+            "neutral": 0.3052447736263275,
+            "positive": 0.6410308480262756,
+            "sentiment_score": 0.5873064994812012,
+            "max_probability": 0.6410308480262756
+          },
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2094293057873293556",
+            "lang": "en",
+            "day": "2026-08-31",
+            "body_excerpt": "wts lfb ph bts jk golden pc poca Jungkook Golden Eu exclusive Photocard ₱ 1750 payo ir dop+ isf, lsf - claim to secure | eta mid to late september - prio payo / 50% nrdp rb after 1 week - STRICTLY reply “mine” to claim only - mention if pay",
+            "predicted_label": "neutral",
+            "negative": 0.1379040628671646,
+            "neutral": 0.7163600921630859,
+            "positive": 0.14573578536510468,
+            "sentiment_score": 0.007831722497940063,
+            "max_probability": 0.7163600921630859
+          }
+        ],
+        "baseline": [
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2093064391163826448",
+            "lang": "pt",
+            "day": "2026-08-27",
+            "body_excerpt": "botaram um asmr +18 do Jungkook na minha tl eu quero morrer",
+            "predicted_label": "negative",
+            "negative": 0.8273619413375854,
+            "neutral": 0.13615164160728455,
+            "positive": 0.03648635745048523,
+            "sentiment_score": -0.7908755540847778,
+            "max_probability": 0.8273619413375854
+          },
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2090070651608711510",
+            "lang": "in",
+            "day": "2026-08-19",
+            "body_excerpt": "ini tuh aslinya surprise yang ga surprise. kayaknya taehyung emang sengaja nganter jungkook deh. lihat aja itu outfit taehyung kayak habis cod musang https://t.co/MO5IFVsjPl",
+            "predicted_label": "negative",
+            "negative": 0.5113339424133301,
+            "neutral": 0.2976040840148926,
+            "positive": 0.19106200337409973,
+            "sentiment_score": -0.32027193903923035,
+            "max_probability": 0.5113339424133301
+          }
+        ]
+      },
+      "top_engagement_evidence": [
+        {
+          "source": "topic_evidence_top_engagement",
+          "id": "2094440078068322670",
+          "lang": "en",
+          "day": "2026-08-31",
+          "body_excerpt": "0901 Congratulations! Happy Jung Kook Day 🎂 #정국 #JungKook #HAPPYJKDAY https://t.co/H4GTdArpz1",
+          "topic": "entity:jungkook",
+          "is_rt": false,
+          "like_count": 346377,
+          "views_count": 4373061,
+          "retweet_count": 179047,
+          "scored_in_final_sample": false
+        },
+        {
+          "source": "topic_evidence_top_engagement",
+          "id": "2094432716204998783",
+          "lang": "en",
+          "day": "2026-08-31",
+          "body_excerpt": "happy birthday jungkook 🎂 https://t.co/y3UDbglo4Q",
+          "topic": "entity:jungkook",
+          "is_rt": false,
+          "like_count": 74076,
+          "views_count": 544573,
+          "retweet_count": 36937,
+          "scored_in_final_sample": false
+        }
+      ],
+      "direction_assessment": "The sampled peak discourse supports a strong positive text-polarity shift: peak examples are birthday/fandom praise, whereas baseline examples include complaints, explicit-content reactions, and disappointment.",
+      "target_stance_confounds": [
+        "Fandom slang, merchandise listings, shipping/trading posts, and references to BTS or other members can mention Jungkook without expressing stance toward him.",
+        "The peak is event/birthday-shaped and therefore not a generic day-to-day sentiment baseline.",
+        "Peak and baseline language composition differs; unsupported-language rows are reported separately and excluded from the primary language-adjusted test."
+      ]
+    },
+    {
+      "topic": "entity:mainoo",
+      "label": "Kobbie Mainoo",
+      "peak_day": "2026-08-30",
+      "mean_shift": 0.24897631761384392,
+      "shift_ci95": [
+        0.13821835524862894,
+        0.3551857628284647
+      ],
+      "language_adjusted_shift": 0.2560463708752019,
+      "language_adjusted_q": 0.00010572171267000146,
+      "peak_sentiment": {
+        "n": 182,
+        "authors": 182,
+        "mean": 0.12138188802278958,
+        "negative_fraction": 0.2967032967032967,
+        "positive_fraction": 0.5054945054945055,
+        "mean_max_probability": 0.7142293818376877,
+        "languages": {
+          "de": 1,
+          "en": 167,
+          "es": 2,
+          "fr": 8,
+          "pt": 4
+        }
+      },
+      "baseline_sentiment": {
+        "n": 269,
+        "authors": 269,
+        "mean": -0.12759442959105435,
+        "negative_fraction": 0.4200743494423792,
+        "positive_fraction": 0.26394052044609667,
+        "mean_max_probability": 0.6806157335472816,
+        "languages": {
+          "en": 250,
+          "es": 2,
+          "fr": 12,
+          "hi": 1,
+          "pt": 4
+        }
+      },
+      "sampling_note": "Two deterministic pseudo-random rows per period: first rows after SHA-256(seed=20260919, topic, period, id) ordering; not selected by sentiment score.",
+      "random_capped_samples": {
+        "peak": [
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2094129636913353210",
+            "lang": "en",
+            "day": "2026-08-30",
+            "body_excerpt": "When everyone is fit, Tielemans, Santos, Mainoo and Baleba I'll like to See More of Mainoo x Baleba in the Premiere League, wee need that Balinoo midfield Tielemans and Santos can come in off the bench or start slower paced games UCL we can",
+            "predicted_label": "positive",
+            "negative": 0.20611131191253662,
+            "neutral": 0.3591824173927307,
+            "positive": 0.4347062408924103,
+            "sentiment_score": 0.22859492897987366,
+            "max_probability": 0.4347062408924103
+          },
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2094104967602733176",
+            "lang": "en",
+            "day": "2026-08-30",
+            "body_excerpt": "Baleba and mainoo midfield🙏🏻. None of that tielemans nonsense",
+            "predicted_label": "positive",
+            "negative": 0.2577410042285919,
+            "neutral": 0.30152806639671326,
+            "positive": 0.4407309293746948,
+            "sentiment_score": 0.1829899251461029,
+            "max_probability": 0.4407309293746948
+          }
+        ],
+        "baseline": [
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2089457152071020821",
+            "lang": "en",
+            "day": "2026-08-17",
+            "body_excerpt": "would any of these players start for barca, psg, city or madrid? - shaw - maguire - yoro - dalot - santos - mainoo - tielemans - amad - cunha - sesko - mbeumo - mazraoui - dorgu - heaven - mount - zirkzee - rashford - ugarte if we’re being ",
+            "predicted_label": "neutral",
+            "negative": 0.33482611179351807,
+            "neutral": 0.5024305582046509,
+            "positive": 0.16274330019950867,
+            "sentiment_score": -0.1720828115940094,
+            "max_probability": 0.5024305582046509
+          },
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2091121393526071776",
+            "lang": "en",
+            "day": "2026-08-22",
+            "body_excerpt": "Kobbie Mainoo is on the bench for Manchester United today, and the irony is delicious. United fans almost lynched Amorim for benching him, but suddenly nobody has a problem with Michael Carrick doing the exact same thing. 😭",
+            "predicted_label": "negative",
+            "negative": 0.884325385093689,
+            "neutral": 0.07168374210596085,
+            "positive": 0.04399082809686661,
+            "sentiment_score": -0.8403345346450806,
+            "max_probability": 0.884325385093689
+          }
+        ]
+      },
+      "top_engagement_evidence": [
+        {
+          "source": "topic_evidence_top_engagement",
+          "id": "2094111812782305288",
+          "lang": "et",
+          "day": "2026-08-30",
+          "body_excerpt": "Kobbie Mainoo vs Ipswich https://t.co/yRWwCxrGtY",
+          "topic": "entity:mainoo",
+          "is_rt": false,
+          "like_count": 40479,
+          "views_count": 3883290,
+          "retweet_count": 8755,
+          "scored_in_final_sample": false
+        },
+        {
+          "source": "topic_evidence_top_engagement",
+          "id": "2094108939025547370",
+          "lang": "en",
+          "day": "2026-08-30",
+          "body_excerpt": "Tuchel didn’t give Kobbie Mainoo a single second. What a fucking idiot.",
+          "topic": "entity:mainoo",
+          "is_rt": false,
+          "like_count": 26781,
+          "views_count": 316616,
+          "retweet_count": 1933,
+          "scored_in_final_sample": false
+        }
+      ],
+      "direction_assessment": "The sampled peak discourse supports a positive text-polarity shift: peak examples praise line-up/partnership possibilities and match performance, while baseline examples include benching and manager criticism.",
+      "target_stance_confounds": [
+        "Many posts praise or attack a manager, teammates, or tactical choices; Mainoo is often the contextual subject rather than the sentiment target.",
+        "Football transfer/selection cycles and sarcasm can create rapid event-driven changes.",
+        "The highest-engagement evidence includes one performance clip and criticism of a manager, so engagement does not identify target stance."
+      ]
+    },
+    {
+      "topic": "entity:bruno-fernandes",
+      "label": "Bruno Fernandes",
+      "peak_day": "2026-08-25",
+      "mean_shift": 0.27789346845602664,
+      "shift_ci95": [
+        0.18005985398288585,
+        0.3730400052439864
+      ],
+      "language_adjusted_shift": 0.30747008749732707,
+      "language_adjusted_q": 6.209539938253495e-07,
+      "peak_sentiment": {
+        "n": 195,
+        "authors": 195,
+        "mean": 0.29849188547485916,
+        "negative_fraction": 0.16923076923076924,
+        "positive_fraction": 0.5384615384615384,
+        "mean_max_probability": 0.7023442037594624,
+        "languages": {
+          "de": 3,
+          "en": 179,
+          "es": 1,
+          "fr": 4,
+          "pt": 8
+        }
+      },
+      "baseline_sentiment": {
+        "n": 274,
+        "authors": 274,
+        "mean": 0.020598417018832516,
+        "negative_fraction": 0.30656934306569344,
+        "positive_fraction": 0.3613138686131387,
+        "mean_max_probability": 0.7150854154007278,
+        "languages": {
+          "de": 2,
+          "en": 233,
+          "es": 4,
+          "fr": 11,
+          "it": 1,
+          "pt": 23
+        }
+      },
+      "sampling_note": "Two deterministic pseudo-random rows per period: first rows after SHA-256(seed=20260919, topic, period, id) ordering; not selected by sentiment score.",
+      "random_capped_samples": {
+        "peak": [
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2092337974864212229",
+            "lang": "en",
+            "day": "2026-08-25",
+            "body_excerpt": "Tell yourselves the truth, no player deserves the PFA award more than Bruno Fernandes for his performances last season🏆 https://t.co/Tqu8QmkG7e",
+            "predicted_label": "neutral",
+            "negative": 0.30444028973579407,
+            "neutral": 0.34958794713020325,
+            "positive": 0.3459717929363251,
+            "sentiment_score": 0.041531503200531006,
+            "max_probability": 0.34958794713020325
+          },
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2092357303026536726",
+            "lang": "en",
+            "day": "2026-08-25",
+            "body_excerpt": "\"I want to win with my team more than these trophies.\" 🏆 Bruno Fernandes has his sights set on silverware with Man Utd and Portugal after being named PFA Players' Player of the Year 👏 https://t.co/pxNnbuaPKc",
+            "predicted_label": "positive",
+            "negative": 0.03806009143590927,
+            "neutral": 0.2727116048336029,
+            "positive": 0.6892282366752625,
+            "sentiment_score": 0.651168167591095,
+            "max_probability": 0.6892282366752625
+          }
+        ],
+        "baseline": [
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2094113741680103468",
+            "lang": "fr",
+            "day": "2026-08-30",
+            "body_excerpt": "Sisi captain ni BRUNO FERNANDES",
+            "predicted_label": "neutral",
+            "negative": 0.22028791904449463,
+            "neutral": 0.4597274363040924,
+            "positive": 0.3199845850467682,
+            "sentiment_score": 0.09969666600227356,
+            "max_probability": 0.4597274363040924
+          },
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2093020562754789754",
+            "lang": "pt",
+            "day": "2026-08-27",
+            "body_excerpt": "Ao mesmo tempo vai ser incrível ver Bruno Fernandes a jogar em Alvalade outra vez 🥹",
+            "predicted_label": "positive",
+            "negative": 0.03231798857450485,
+            "neutral": 0.10545995831489563,
+            "positive": 0.8622220158576965,
+            "sentiment_score": 0.8299040198326111,
+            "max_probability": 0.8622220158576965
+          }
+        ]
+      },
+      "top_engagement_evidence": [
+        {
+          "source": "topic_evidence_top_engagement",
+          "id": "2092334177320304857",
+          "lang": "en",
+          "day": "2026-08-25",
+          "body_excerpt": "Bruno Fernandes is the PFA Players’ Player of the Year 🏆 Voted for by the players. https://t.co/CPkxcnVNVY",
+          "topic": "entity:bruno-fernandes",
+          "is_rt": false,
+          "like_count": 102095,
+          "views_count": 6495079,
+          "retweet_count": 33328,
+          "scored_in_final_sample": false
+        },
+        {
+          "source": "topic_evidence_top_engagement",
+          "id": "2092341585946001743",
+          "lang": "en",
+          "day": "2026-08-25",
+          "body_excerpt": "Premier League Player of the Season. Man Utd Player of the Season. FWA Footballer of the Year. PFA Players’ Player of the Year. The 2025-26 season belongs to Bruno Fernandes. https://t.co/8Rx1uuKbMx",
+          "topic": "entity:bruno-fernandes",
+          "is_rt": false,
+          "like_count": 95445,
+          "views_count": 1577577,
+          "retweet_count": 20993,
+          "scored_in_final_sample": false
+        }
+      ],
+      "direction_assessment": "The sampled peak discourse supports a positive text-polarity shift: peak examples praise an award/performance and future team goals, while baseline examples are more mixed and include salary/return discussion.",
+      "target_stance_confounds": [
+        "Award and team-praise language may target the club, league, or award rather than Bruno Fernandes personally.",
+        "Sports headlines and reposts can repeat a positive template without independent author stance.",
+        "The peak is event-driven; compare against author/language-balanced baselines rather than interpreting it as general public opinion."
+      ]
+    },
+    {
+      "topic": "entity:charlie-kirk",
+      "label": "Charlie Kirk",
+      "peak_day": "2026-09-10",
+      "mean_shift": 0.2082549053074051,
+      "shift_ci95": [
+        0.1136784093195863,
+        0.2982021840239594
+      ],
+      "language_adjusted_shift": 0.23513346010277955,
+      "language_adjusted_q": 7.738814192030859e-05,
+      "peak_sentiment": {
+        "n": 192,
+        "authors": 192,
+        "mean": -0.2209130497649312,
+        "negative_fraction": 0.4895833333333333,
+        "positive_fraction": 0.2604166666666667,
+        "mean_max_probability": 0.6859247586689889,
+        "languages": {
+          "de": 7,
+          "en": 171,
+          "es": 5,
+          "fr": 6,
+          "pt": 3
+        }
+      },
+      "baseline_sentiment": {
+        "n": 279,
+        "authors": 279,
+        "mean": -0.4291679550723363,
+        "negative_fraction": 0.6236559139784946,
+        "positive_fraction": 0.10752688172043011,
+        "mean_max_probability": 0.7236308630649334,
+        "languages": {
+          "de": 1,
+          "en": 239,
+          "es": 18,
+          "fr": 6,
+          "it": 1,
+          "pt": 14
+        }
+      },
+      "sampling_note": "Two deterministic pseudo-random rows per period: first rows after SHA-256(seed=20260919, topic, period, id) ordering; not selected by sentiment score.",
+      "random_capped_samples": {
+        "peak": [
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2098041857141780749",
+            "lang": "en",
+            "day": "2026-09-10",
+            "body_excerpt": "Charlie kirk is burning in hell",
+            "predicted_label": "negative",
+            "negative": 0.9180317521095276,
+            "neutral": 0.06287552416324615,
+            "positive": 0.019092757254838943,
+            "sentiment_score": -0.8989390134811401,
+            "max_probability": 0.9180317521095276
+          },
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2097970475808759882",
+            "lang": "en",
+            "day": "2026-09-10",
+            "body_excerpt": "Never forget how they reacted when Charlie Kirk was murdered https://t.co/16ASWaHICM",
+            "predicted_label": "negative",
+            "negative": 0.7896293997764587,
+            "neutral": 0.18563885986804962,
+            "positive": 0.02473176270723343,
+            "sentiment_score": -0.7648976445198059,
+            "max_probability": 0.7896293997764587
+          }
+        ],
+        "baseline": [
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2094946425582821617",
+            "lang": "en",
+            "day": "2026-09-02",
+            "body_excerpt": "Judge sends Charlie Kirk murder case to trial with defendant Tyler Robinson facing potential death penalty https://t.co/QoTXhkZaIN",
+            "predicted_label": "neutral",
+            "negative": 0.28561538457870483,
+            "neutral": 0.6673357486724854,
+            "positive": 0.047048892825841904,
+            "sentiment_score": -0.23856648802757263,
+            "max_probability": 0.6673357486724854
+          },
+          {
+            "source": "capped_sentiment_sample",
+            "id": "2097810715260358688",
+            "lang": "en",
+            "day": "2026-09-09",
+            "body_excerpt": "God bless this young woman. God bless turning point USA God bless Charlie Kirk. God bless America. https://t.co/dLt6mwE68V",
+            "predicted_label": "positive",
+            "negative": 0.03157772868871689,
+            "neutral": 0.08864021301269531,
+            "positive": 0.8797820210456848,
+            "sentiment_score": 0.8482043147087097,
+            "max_probability": 0.8797820210456848
+          }
+        ]
+      },
+      "top_engagement_evidence": [
+        {
+          "source": "topic_evidence_top_engagement",
+          "id": "2098097633835516053",
+          "lang": "en",
+          "day": "2026-09-10",
+          "body_excerpt": "Erika Kirk and Charlie Kirk celebrating their first #kirkiversary tonight https://t.co/LmzhoVFS9n",
+          "topic": "entity:charlie-kirk",
+          "is_rt": false,
+          "like_count": 493200,
+          "views_count": 19705406,
+          "retweet_count": 38081,
+          "scored_in_final_sample": false
+        },
+        {
+          "source": "topic_evidence_top_engagement",
+          "id": "2097925265876046250",
+          "lang": "en",
+          "day": "2026-09-10",
+          "body_excerpt": "don’t forget to put a bullet under your pillow tonight so the spirit of charlie kirk can leave a quarter #kirkiversary https://t.co/MgSLVaH75n",
+          "topic": "entity:charlie-kirk",
+          "is_rt": false,
+          "like_count": 307732,
+          "views_count": 3756440,
+          "retweet_count": 22295,
+          "scored_in_final_sample": false
+        }
+      ],
+      "direction_assessment": "The relative positive shift is not a positive mean: both periods are negative on average, but the peak is less negative (peak mean about −0.221 versus baseline about −0.429). Peak samples mix hostile text and memorial/support language.",
+      "target_stance_confounds": [
+        "Several excerpts repeat or react to user-generated claims about death/violence; those claims are discourse evidence, not verified facts.",
+        "Political opposition, irony, celebration, condemnation, and references to other people can all co-occur with the entity string.",
+        "High-engagement evidence includes anniversary/celebration and violent-joke text; engagement may amplify polarized or ironic posts rather than representative stance."
+      ]
+    }
+  ]
+}

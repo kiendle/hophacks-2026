@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-09-19T06:40:52.046609+00:00",
+  "input": "topic-analysis/sentiment-pilot-input.parquet",
+  "output": {
+    "counts": {
+      "negative": 289,
+      "neutral": 335,
+      "positive": 176
+    },
+    "rows_written": 800
+  },
+  "rows": {
+    "input": 800,
+    "nonempty_body": 800,
+    "missing_or_blank_body": 0,
+    "unique_nonempty_body_strings": 797,
+    "deduplicated_inference_rows": 3,
+    "deduplication_fraction_of_nonempty": 0.00375,
+    "language_counts": {
+      "ar": 60,
+      "de": 60,
+      "en": 60,
+      "es": 60,
+      "fr": 60,
+      "hi": 60,
+      "it": 60,
+      "pt": 60,
+      "<NULL>": 20,
+      "ca": 20,
+      "fa": 20,
+      "in": 20,
+      "ja": 20,
+      "ko": 20,
+      "pl": 20,
+      "qme": 20,
+      "qst": 20,
+      "ru": 20,
+      "th": 20,
+      "tl": 20,
+      "tr": 20,
+      "und": 20,
+      "zh": 20,
+      "zxx": 20
+    },
+    "supported_finetune_language_rows": 480,
+    "unsupported_or_unlabelled_language_rows": 320,
+    "unsupported_or_unlabelled_language_counts": {
+      "<NULL>": 20,
+      "ca": 20,
+      "fa": 20,
+      "in": 20,
+      "ja": 20,
+      "ko": 20,
+      "pl": 20,
+      "qme": 20,
+      "qst": 20,
+      "ru": 20,
+      "th": 20,
+      "tl": 20,
+      "tr": 20,
+      "und": 20,
+      "zh": 20,
+      "zxx": 20
+    }
+  },
+  "model": {
+    "id": "cardiffnlp/twitter-xlm-roberta-base-sentiment",
+    "revision": "f2f1202b1bdeb07342385c3f807f9c07cd8f5cf8",
+    "card_url": "https://huggingface.co/cardiffnlp/twitter-xlm-roberta-base-sentiment",
+    "paper_url": "https://arxiv.org/abs/2104.12250",
+    "repository_url": "https://github.com/cardiffnlp/xlm-t",
+    "description": "XLM-R base continued pretraining on Twitter and fine-tuned for 3-way sentiment.",
+    "pretraining_corpus": "approximately 198M tweets; XLM-T language-model pretraining covers 30+ languages",
+    "fine_tuning_languages": {
+      "ar": "Arabic",
+      "en": "English",
+      "fr": "French",
+      "de": "German",
+      "hi": "Hindi",
+      "it": "Italian",
+      "pt": "Portuguese",
+      "es": "Spanish"
+    },
+    "label_mapping": {
+      "0": "negative",
+      "1": "neutral",
+      "2": "positive"
+    },
+    "limitations": [
+      "The sentiment head was fine-tuned on UMSAB benchmark data in eight languages, not this corpus.",
+      "The card says it can be used for more languages, but unsupported-language predictions are not covered by the eight-language benchmark claim.",
+      "Scores are text-level polarity and must not be interpreted as sentiment toward a discovered topic without target-aware validation.",
+      "Twitter slang, code-switching, sarcasm, quoted text, and retweet templates can produce uncertain or mis-targeted predictions.",
+      "Softmax probabilities are model confidence scores, not calibrated probabilities; compare strata with uncertainty intervals."
+    ]
+  },
+  "preprocessing": {
+    "normalization": "Collapse whitespace; replace tokens beginning with @ (length > 1) by @user and tokens beginning with http by http, following the model card.",
+    "max_length": 128,
+    "tokenizer_model_max_length": null,
+    "model_config_max_position_embeddings": 514,
+    "truncation": {
+      "unique_texts_checked": 797,
+      "unique_texts_truncated": 0,
+      "fraction_of_unique_texts_truncated": 0.0
+    },
+    "deduplicate_key": "exact raw body string before normalization; one prediction mapped back to every matching ID"
+  },
+  "runtime": {
+    "device_requested": "auto",
+    "device_used": "mps",
+    "torch_version": "2.14.0",
+    "transformers_version": "4.57.6",
+    "python_version": "3.13.13",
+    "mps_built": true,
+    "mps_available": true,
+    "cuda_available": false,
+    "batch_size": 32,
+    "read_batch_size": 65536,
+    "inference_seconds": 2.4463745829998516,
+    "elapsed_seconds": 3.2275122920400463,
+    "unique_texts_per_inference_second": 325.78821147768946,
+    "input_rows_per_elapsed_second": 247.8689243021708
+  },
+  "confidence": {
+    "unique_text_max_probability": {
+      "p50": 0.6825294494628906,
+      "p90": 0.8983657360076904,
+      "p99": 0.9552657604217529
+    },
+    "unique_text_mean_max_probability": 0.6814225316047668
+  },
+  "analysis_guidance": {
+    "topic_targeting": "Do not call this output topic-targeted sentiment; aggregate only after topic assignment and inspect target relevance.",
+    "recommended_shift_estimator": "For each topic/day, report mean sentiment_score and bootstrap or Wilson intervals on author-clustered samples; compare against daily language/RT composition baselines.",
+    "retweets_and_templates": "Keep RT-prefixed rows separate or downweight them; collapse identical text for inference but retain ID-level prevalence and author counts so templates cannot masquerade as independent language evidence.",
+    "author_concentration": "Use author-cluster bootstrap or effective sample size; report both tweet-weighted and author-weighted estimates.",
+    "unsupported_languages": "Do not silently pool unsupported language codes with supported ones; report them separately or exclude with counts and sensitivity bounds."
+  }
+}

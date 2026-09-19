@@ -1,0 +1,39 @@
+{
+  "duckdb_version": "1.5.5",
+  "threads": 6,
+  "files": [
+    "tweets-000000.parquet",
+    "tweets-000197.parquet",
+    "tweets-000395.parquet"
+  ],
+  "query": "SELECT lang, count(*) AS observations, sum(like_count) AS likes,\n count(*) FILTER (WHERE contains(lower(body), 'bts')) AS bts_substring_matches\n FROM read_parquet(?) GROUP BY lang ORDER BY lang NULLS LAST",
+  "caveats": [
+    "Only three shards, not full-corpus performance.",
+    "Local files may be warm in the operating system cache.",
+    "Repeated remote query may reuse DuckDB or network caches.",
+    "No Azure database or concurrent-user benchmark was run."
+  ],
+  "runs": [
+    {
+      "location": "public_s3_first_run",
+      "seconds": 10.831763750000391,
+      "observations": 2352258,
+      "bts_substring_matches": 6906,
+      "language_groups": 73
+    },
+    {
+      "location": "public_s3_repeat_run",
+      "seconds": 0.616127957997378,
+      "observations": 2352258,
+      "bts_substring_matches": 6906,
+      "language_groups": 73
+    },
+    {
+      "location": "local_parquet",
+      "seconds": 0.48175974999321625,
+      "observations": 2352258,
+      "bts_substring_matches": 6906,
+      "language_groups": 73
+    }
+  ]
+}

@@ -1,0 +1,3005 @@
+{
+  "method": "English 0.1% ID-sample lexical discovery only; complete days; within Aug/Sep regime; not confirmed full-corpus events. Ngrams formed after removing stopwords, so multiword candidates require evidence inspection.",
+  "candidates": [
+    {
+      "term": "tim curry",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 102,
+      "total_sample_tweets": 151,
+      "peak_per_10000_english_sample": 110.32990805840996,
+      "same_regime_baseline_tweets": 48,
+      "share_ratio": 27.018677343894602,
+      "score": 22.042238752956017
+    },
+    {
+      "term": "curry",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 104,
+      "total_sample_tweets": 166,
+      "peak_per_10000_english_sample": 112.49323958896701,
+      "same_regime_baseline_tweets": 60,
+      "share_ratio": 22.08222720390144,
+      "score": 20.779066321297602
+    },
+    {
+      "term": "dolly",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 369,
+      "total_sample_tweets": 944,
+      "peak_per_10000_english_sample": 458.6129753914989,
+      "same_regime_baseline_tweets": 569,
+      "share_ratio": 9.627324019235978,
+      "score": 19.320211736405795
+    },
+    {
+      "term": "parton",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 261,
+      "total_sample_tweets": 666,
+      "peak_per_10000_english_sample": 324.3847874720358,
+      "same_regime_baseline_tweets": 402,
+      "share_ratio": 9.640302971594675,
+      "score": 18.203355228856456
+    },
+    {
+      "term": "dolly parton",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 257,
+      "total_sample_tweets": 659,
+      "peak_per_10000_english_sample": 319.41337310464826,
+      "same_regime_baseline_tweets": 399,
+      "share_ratio": 9.564126775220611,
+      "score": 18.089505799234303
+    },
+    {
+      "term": "panettiere",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 65,
+      "total_sample_tweets": 118,
+      "peak_per_10000_english_sample": 81.35168961201502,
+      "same_regime_baseline_tweets": 53,
+      "share_ratio": 18.302436034931823,
+      "score": 17.571260227724277
+    },
+    {
+      "term": "hayden panettiere",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 63,
+      "total_sample_tweets": 116,
+      "peak_per_10000_english_sample": 78.84856070087609,
+      "same_regime_baseline_tweets": 53,
+      "share_ratio": 17.74358302623161,
+      "score": 17.256143585451113
+    },
+    {
+      "term": "hull",
+      "peak_day": "2026-08-22",
+      "peak_sample_tweets": 50,
+      "total_sample_tweets": 87,
+      "peak_per_10000_english_sample": 60.960741282613995,
+      "same_regime_baseline_tweets": 35,
+      "share_ratio": 20.679565875074903,
+      "score": 17.18260485779849
+    },
+    {
+      "term": "peter cullen",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 51,
+      "total_sample_tweets": 89,
+      "peak_per_10000_english_sample": 60.297942776069995,
+      "same_regime_baseline_tweets": 36,
+      "share_ratio": 19.847833303913966,
+      "score": 17.033454551517625
+    },
+    {
+      "term": "pfa",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 48,
+      "total_sample_tweets": 83,
+      "peak_per_10000_english_sample": 59.65697240865026,
+      "same_regime_baseline_tweets": 35,
+      "share_ratio": 20.27207760043547,
+      "score": 16.896034445371146
+    },
+    {
+      "term": "mainoo",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 25,
+      "total_sample_tweets": 37,
+      "peak_per_10000_english_sample": 30.22974607013301,
+      "same_regime_baseline_tweets": 10,
+      "share_ratio": 34.99421386254901,
+      "score": 16.710922107507947
+    },
+    {
+      "term": "tim",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 115,
+      "total_sample_tweets": 255,
+      "peak_per_10000_english_sample": 124.39156300703083,
+      "same_regime_baseline_tweets": 132,
+      "share_ratio": 11.144178614719676,
+      "score": 16.534024778923204
+    },
+    {
+      "term": "hayden",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 81,
+      "total_sample_tweets": 173,
+      "peak_per_10000_english_sample": 101.3767209011264,
+      "same_regime_baseline_tweets": 90,
+      "share_ratio": 13.46264547616068,
+      "score": 16.529119286825253
+    },
+    {
+      "term": "cullen",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 52,
+      "total_sample_tweets": 96,
+      "peak_per_10000_english_sample": 61.48025537952235,
+      "same_regime_baseline_tweets": 42,
+      "share_ratio": 17.37677239000577,
+      "score": 16.353982697673814
+    },
+    {
+      "term": "players player",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 24,
+      "total_sample_tweets": 35,
+      "peak_per_10000_english_sample": 29.82848620432513,
+      "same_regime_baseline_tweets": 11,
+      "share_ratio": 31.61208335809727,
+      "score": 16.037740469096224
+    },
+    {
+      "term": "optimus",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 36,
+      "total_sample_tweets": 64,
+      "peak_per_10000_english_sample": 42.5632537242847,
+      "same_regime_baseline_tweets": 26,
+      "share_ratio": 19.375179277625485,
+      "score": 15.440782414750643
+    },
+    {
+      "term": "hull city",
+      "peak_day": "2026-08-22",
+      "peak_sample_tweets": 34,
+      "total_sample_tweets": 60,
+      "peak_per_10000_english_sample": 41.45330407217752,
+      "same_regime_baseline_tweets": 25,
+      "share_ratio": 19.66786900058085,
+      "score": 15.280063779836825
+    },
+    {
+      "term": "optimus prime",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 28,
+      "total_sample_tweets": 48,
+      "peak_per_10000_english_sample": 33.10475289666588,
+      "same_regime_baseline_tweets": 18,
+      "share_ratio": 21.670646648540018,
+      "score": 14.94294869181734
+    },
+    {
+      "term": "player year",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 33,
+      "total_sample_tweets": 61,
+      "peak_per_10000_english_sample": 41.01416853094705,
+      "same_regime_baseline_tweets": 27,
+      "share_ratio": 18.075777534258958,
+      "score": 14.726031481061517
+    },
+    {
+      "term": "messi",
+      "peak_day": "2026-08-31",
+      "peak_sample_tweets": 58,
+      "total_sample_tweets": 169,
+      "peak_per_10000_english_sample": 84.4988344988345,
+      "same_regime_baseline_tweets": 96,
+      "share_ratio": 10.648413330364656,
+      "score": 13.914867977957412
+    },
+    {
+      "term": "songwriter",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 22,
+      "total_sample_tweets": 39,
+      "peak_per_10000_english_sample": 27.34277902063137,
+      "same_regime_baseline_tweets": 15,
+      "share_ratio": 21.5395038022585,
+      "score": 13.88683144022845
+    },
+    {
+      "term": "rip dolly",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 22,
+      "total_sample_tweets": 38,
+      "peak_per_10000_english_sample": 27.34277902063137,
+      "same_regime_baseline_tweets": 16,
+      "share_ratio": 20.23407932939435,
+      "score": 13.604016731908587
+    },
+    {
+      "term": "coventry",
+      "peak_day": "2026-08-21",
+      "peak_sample_tweets": 26,
+      "total_sample_tweets": 50,
+      "peak_per_10000_english_sample": 28.344053199607544,
+      "same_regime_baseline_tweets": 21,
+      "share_ratio": 15.890917709806786,
+      "score": 13.150819328837477
+    },
+    {
+      "term": "konsa",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 21,
+      "total_sample_tweets": 38,
+      "peak_per_10000_english_sample": 24.277456647398843,
+      "same_regime_baseline_tweets": 15,
+      "share_ratio": 19.048329299987692,
+      "score": 13.14185310218122
+    },
+    {
+      "term": "lionel messi",
+      "peak_day": "2026-08-31",
+      "peak_sample_tweets": 18,
+      "total_sample_tweets": 39,
+      "peak_per_10000_english_sample": 26.223776223776223,
+      "same_regime_baseline_tweets": 16,
+      "share_ratio": 19.694462468825183,
+      "score": 12.660257679517608
+    },
+    {
+      "term": "happy sunday",
+      "peak_day": "2026-08-23",
+      "peak_sample_tweets": 28,
+      "total_sample_tweets": 59,
+      "peak_per_10000_english_sample": 31.95617438940881,
+      "same_regime_baseline_tweets": 29,
+      "share_ratio": 13.085093913739781,
+      "score": 12.492170428012573
+    },
+    {
+      "term": "tzolis",
+      "peak_day": "2026-08-21",
+      "peak_sample_tweets": 20,
+      "total_sample_tweets": 36,
+      "peak_per_10000_english_sample": 21.803117845851958,
+      "same_regime_baseline_tweets": 15,
+      "share_ratio": 17.05154468800326,
+      "score": 12.457669868573493
+    },
+    {
+      "term": "lionel",
+      "peak_day": "2026-08-31",
+      "peak_sample_tweets": 18,
+      "total_sample_tweets": 40,
+      "peak_per_10000_english_sample": 26.223776223776223,
+      "same_regime_baseline_tweets": 17,
+      "share_ratio": 18.56906461346374,
+      "score": 12.41030750056541
+    },
+    {
+      "term": "ipswich",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 21,
+      "total_sample_tweets": 43,
+      "peak_per_10000_english_sample": 25.39298669891173,
+      "same_regime_baseline_tweets": 20,
+      "share_ratio": 15.112278870340392,
+      "score": 12.109620378947705
+    },
+    {
+      "term": "died age",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 19,
+      "total_sample_tweets": 37,
+      "peak_per_10000_english_sample": 23.61421824509073,
+      "same_regime_baseline_tweets": 18,
+      "share_ratio": 15.640396454612931,
+      "score": 11.884684586347033
+    },
+    {
+      "term": "enes",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 24,
+      "total_sample_tweets": 51,
+      "peak_per_10000_english_sample": 27.845457709711102,
+      "same_regime_baseline_tweets": 26,
+      "share_ratio": 12.745083833121743,
+      "score": 11.81929022056976
+    },
+    {
+      "term": "kanter",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 24,
+      "total_sample_tweets": 51,
+      "peak_per_10000_english_sample": 27.845457709711102,
+      "same_regime_baseline_tweets": 26,
+      "share_ratio": 12.745083833121743,
+      "score": 11.81929022056976
+    },
+    {
+      "term": "haaland",
+      "peak_day": "2026-08-23",
+      "peak_sample_tweets": 24,
+      "total_sample_tweets": 53,
+      "peak_per_10000_english_sample": 27.391006619493265,
+      "same_regime_baseline_tweets": 26,
+      "share_ratio": 12.52201473175164,
+      "score": 11.737292064831879
+    },
+    {
+      "term": "vmas",
+      "peak_day": "2026-08-18",
+      "peak_sample_tweets": 33,
+      "total_sample_tweets": 83,
+      "peak_per_10000_english_sample": 39.69686033922772,
+      "same_regime_baseline_tweets": 48,
+      "share_ratio": 9.897823569237332,
+      "score": 11.662066830852778
+    },
+    {
+      "term": "venezuela",
+      "peak_day": "2026-08-29",
+      "peak_sample_tweets": 21,
+      "total_sample_tweets": 47,
+      "peak_per_10000_english_sample": 25.865254341667693,
+      "same_regime_baseline_tweets": 24,
+      "share_ratio": 12.89643359806977,
+      "score": 11.402547279952005
+    },
+    {
+      "term": "enes kanter",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 22,
+      "total_sample_tweets": 48,
+      "peak_per_10000_english_sample": 25.525002900568513,
+      "same_regime_baseline_tweets": 25,
+      "share_ratio": 12.163675446976935,
+      "score": 11.301911861523472
+    },
+    {
+      "term": "lucia",
+      "peak_day": "2026-08-28",
+      "peak_sample_tweets": 24,
+      "total_sample_tweets": 52,
+      "peak_per_10000_english_sample": 24.089129780186692,
+      "same_regime_baseline_tweets": 27,
+      "share_ratio": 10.504841064194737,
+      "score": 10.921589116270919
+    },
+    {
+      "term": "champions league",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 35,
+      "total_sample_tweets": 107,
+      "peak_per_10000_english_sample": 41.38094112083235,
+      "same_regime_baseline_tweets": 60,
+      "share_ratio": 8.254137849168425,
+      "score": 10.912236347319329
+    },
+    {
+      "term": "carrick",
+      "peak_day": "2026-08-22",
+      "peak_sample_tweets": 22,
+      "total_sample_tweets": 55,
+      "peak_per_10000_english_sample": 26.822726164350158,
+      "same_regime_baseline_tweets": 31,
+      "share_ratio": 10.383657546890511,
+      "score": 10.586189783600851
+    },
+    {
+      "term": "kirk",
+      "peak_day": "2026-09-10",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 121,
+      "peak_per_10000_english_sample": 272.72727272727275,
+      "same_regime_baseline_tweets": 12,
+      "share_ratio": 23.498006042296073,
+      "score": 10.487046519477277
+    },
+    {
+      "term": "tear",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 26,
+      "total_sample_tweets": 73,
+      "peak_per_10000_english_sample": 30.165912518853695,
+      "same_regime_baseline_tweets": 40,
+      "share_ratio": 9.02014121623557,
+      "score": 10.458184817265032
+    },
+    {
+      "term": "jasper",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 16,
+      "total_sample_tweets": 35,
+      "peak_per_10000_english_sample": 20.02503128911139,
+      "same_regime_baseline_tweets": 19,
+      "share_ratio": 12.649422908464329,
+      "score": 10.372393097017463
+    },
+    {
+      "term": "aew",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 20,
+      "total_sample_tweets": 49,
+      "peak_per_10000_english_sample": 24.183796856106408,
+      "same_regime_baseline_tweets": 28,
+      "share_ratio": 10.364643321518642,
+      "score": 10.270996526170688
+    },
+    {
+      "term": "bruno fernandes",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 28,
+      "total_sample_tweets": 82,
+      "peak_per_10000_english_sample": 34.799900571712655,
+      "same_regime_baseline_tweets": 51,
+      "share_ratio": 8.211500155035766,
+      "score": 10.228652073529005
+    },
+    {
+      "term": "jung",
+      "peak_day": "2026-08-31",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 35,
+      "peak_per_10000_english_sample": 18.939393939393938,
+      "same_regime_baseline_tweets": 17,
+      "share_ratio": 13.550398501716783,
+      "score": 9.923550621343976
+    },
+    {
+      "term": "argentina",
+      "peak_day": "2026-08-31",
+      "peak_sample_tweets": 21,
+      "total_sample_tweets": 67,
+      "peak_per_10000_english_sample": 30.594405594405593,
+      "same_regime_baseline_tweets": 41,
+      "share_ratio": 9.100111443589363,
+      "score": 9.847703354601549
+    },
+    {
+      "term": "rodri",
+      "peak_day": "2026-08-18",
+      "peak_sample_tweets": 32,
+      "total_sample_tweets": 100,
+      "peak_per_10000_english_sample": 38.493925177432935,
+      "same_regime_baseline_tweets": 66,
+      "share_ratio": 7.003229447204733,
+      "score": 9.818264405239095
+    },
+    {
+      "term": "jungkook",
+      "peak_day": "2026-08-31",
+      "peak_sample_tweets": 55,
+      "total_sample_tweets": 267,
+      "peak_per_10000_english_sample": 80.12820512820512,
+      "same_regime_baseline_tweets": 182,
+      "share_ratio": 5.341785710722445,
+      "score": 9.73057161220964
+    },
+    {
+      "term": "youtube riser",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 35,
+      "peak_per_10000_english_sample": 18.773466833541928,
+      "same_regime_baseline_tweets": 20,
+      "share_ratio": 11.303142864991408,
+      "score": 9.70032326677069
+    },
+    {
+      "term": "youtube riser music",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 35,
+      "peak_per_10000_english_sample": 18.773466833541928,
+      "same_regime_baseline_tweets": 20,
+      "share_ratio": 11.303142864991408,
+      "score": 9.70032326677069
+    },
+    {
+      "term": "icon",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 34,
+      "total_sample_tweets": 117,
+      "peak_per_10000_english_sample": 42.257022122793934,
+      "same_regime_baseline_tweets": 78,
+      "share_ratio": 6.521302000429009,
+      "score": 9.617785476690472
+    },
+    {
+      "term": "barcola",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 24,
+      "total_sample_tweets": 69,
+      "peak_per_10000_english_sample": 28.37550248285647,
+      "same_regime_baseline_tweets": 43,
+      "share_ratio": 7.9227429670907545,
+      "score": 9.611563208148416
+    },
+    {
+      "term": "riser music",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 36,
+      "peak_per_10000_english_sample": 18.773466833541928,
+      "same_regime_baseline_tweets": 21,
+      "share_ratio": 10.77741528987553,
+      "score": 9.509811070813672
+    },
+    {
+      "term": "sunday",
+      "peak_day": "2026-08-23",
+      "peak_sample_tweets": 84,
+      "total_sample_tweets": 383,
+      "peak_per_10000_english_sample": 95.86852316822643,
+      "same_regime_baseline_tweets": 265,
+      "share_ratio": 4.310683959886984,
+      "score": 9.364739195354614
+    },
+    {
+      "term": "fernandes",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 28,
+      "total_sample_tweets": 94,
+      "peak_per_10000_english_sample": 34.799900571712655,
+      "same_regime_baseline_tweets": 62,
+      "share_ratio": 6.766276127749472,
+      "score": 9.288221041587457
+    },
+    {
+      "term": "michael jackson",
+      "peak_day": "2026-08-29",
+      "peak_sample_tweets": 16,
+      "total_sample_tweets": 43,
+      "peak_per_10000_english_sample": 19.706860450794434,
+      "same_regime_baseline_tweets": 25,
+      "share_ratio": 9.509135033323675,
+      "score": 9.206000115662855
+    },
+    {
+      "term": "month",
+      "peak_day": "2026-09-01",
+      "peak_sample_tweets": 41,
+      "total_sample_tweets": 491,
+      "peak_per_10000_english_sample": 238.92773892773891,
+      "same_regime_baseline_tweets": 39,
+      "share_ratio": 5.414094350611532,
+      "score": 9.107654422159888
+    },
+    {
+      "term": "riser",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 39,
+      "peak_per_10000_english_sample": 18.773466833541928,
+      "same_regime_baseline_tweets": 24,
+      "share_ratio": 9.457731784992811,
+      "score": 8.987330341145416
+    },
+    {
+      "term": "manchester united",
+      "peak_day": "2026-08-22",
+      "peak_sample_tweets": 47,
+      "total_sample_tweets": 193,
+      "peak_per_10000_english_sample": 57.303096805657155,
+      "same_regime_baseline_tweets": 138,
+      "share_ratio": 4.985655067640571,
+      "score": 8.972604177119306
+    },
+    {
+      "term": "concept photo",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 14,
+      "total_sample_tweets": 35,
+      "peak_per_10000_english_sample": 16.243183663998142,
+      "same_regime_baseline_tweets": 20,
+      "share_ratio": 9.750718691641675,
+      "score": 8.897322113454127
+    },
+    {
+      "term": "fundamentally",
+      "peak_day": "2026-08-22",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 40,
+      "peak_per_10000_english_sample": 18.2882223847842,
+      "same_regime_baseline_tweets": 24,
+      "share_ratio": 9.196953827245881,
+      "score": 8.87548929397298
+    },
+    {
+      "term": "lake america",
+      "peak_day": "2026-08-28",
+      "peak_sample_tweets": 27,
+      "total_sample_tweets": 80,
+      "peak_per_10000_english_sample": 27.100271002710027,
+      "same_regime_baseline_tweets": 52,
+      "share_ratio": 6.176315688860852,
+      "score": 8.75285651669482
+    },
+    {
+      "term": "tuesday",
+      "peak_day": "2026-08-18",
+      "peak_sample_tweets": 40,
+      "total_sample_tweets": 169,
+      "peak_per_10000_english_sample": 48.11740647179117,
+      "same_regime_baseline_tweets": 113,
+      "share_ratio": 5.113235569958427,
+      "score": 8.74262688037361
+    },
+    {
+      "term": "hip hop",
+      "peak_day": "2026-08-28",
+      "peak_sample_tweets": 20,
+      "total_sample_tweets": 57,
+      "peak_per_10000_english_sample": 20.074274816822243,
+      "same_regime_baseline_tweets": 33,
+      "share_ratio": 7.215478708424956,
+      "score": 8.680223043588786
+    },
+    {
+      "term": "florida",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 52,
+      "total_sample_tweets": 222,
+      "peak_per_10000_english_sample": 60.115606936416185,
+      "same_regime_baseline_tweets": 158,
+      "share_ratio": 4.548625329870145,
+      "score": 8.676797457775198
+    },
+    {
+      "term": "lanterns",
+      "peak_day": "2026-08-31",
+      "peak_sample_tweets": 18,
+      "total_sample_tweets": 66,
+      "peak_per_10000_english_sample": 26.223776223776223,
+      "same_regime_baseline_tweets": 42,
+      "share_ratio": 7.646085429073305,
+      "score": 8.641107845754679
+    },
+    {
+      "term": "gabriel",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 22,
+      "total_sample_tweets": 74,
+      "peak_per_10000_english_sample": 26.60217654171705,
+      "same_regime_baseline_tweets": 48,
+      "share_ratio": 6.684764928261333,
+      "score": 8.59400344206068
+    },
+    {
+      "term": "bruno",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 43,
+      "total_sample_tweets": 186,
+      "peak_per_10000_english_sample": 53.44270444941586,
+      "same_regime_baseline_tweets": 134,
+      "share_ratio": 4.7990121234771745,
+      "score": 8.562627631551292
+    },
+    {
+      "term": "lake",
+      "peak_day": "2026-08-28",
+      "peak_sample_tweets": 56,
+      "total_sample_tweets": 217,
+      "peak_per_10000_english_sample": 56.207969487102275,
+      "same_regime_baseline_tweets": 154,
+      "share_ratio": 4.311973265568344,
+      "score": 8.524159997853523
+    },
+    {
+      "term": "dearborn",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 23,
+      "total_sample_tweets": 74,
+      "peak_per_10000_english_sample": 26.589595375722542,
+      "same_regime_baseline_tweets": 50,
+      "share_ratio": 6.390378952355992,
+      "score": 8.504158967775602
+    },
+    {
+      "term": "bradley",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 42,
+      "peak_per_10000_english_sample": 17.734689051785292,
+      "same_regime_baseline_tweets": 26,
+      "share_ratio": 8.22781585762178,
+      "score": 8.430082366288364
+    },
+    {
+      "term": "aunt",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 14,
+      "total_sample_tweets": 35,
+      "peak_per_10000_english_sample": 15.143320713899405,
+      "same_regime_baseline_tweets": 21,
+      "share_ratio": 8.622069128573512,
+      "score": 8.416712449587651
+    },
+    {
+      "term": "ucl",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 22,
+      "total_sample_tweets": 77,
+      "peak_per_10000_english_sample": 26.01087727595176,
+      "same_regime_baseline_tweets": 49,
+      "share_ratio": 6.39405044653892,
+      "score": 8.39287182911493
+    },
+    {
+      "term": "rest peace",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 35,
+      "total_sample_tweets": 142,
+      "peak_per_10000_english_sample": 43.499875714640815,
+      "same_regime_baseline_tweets": 104,
+      "share_ratio": 5.040770639954383,
+      "score": 8.3626585869219
+    },
+    {
+      "term": "nct blingy",
+      "peak_day": "2026-08-21",
+      "peak_sample_tweets": 14,
+      "total_sample_tweets": 36,
+      "peak_per_10000_english_sample": 15.26218249209637,
+      "same_regime_baseline_tweets": 22,
+      "share_ratio": 8.308584647433568,
+      "score": 8.272017557304045
+    },
+    {
+      "term": "retirement",
+      "peak_day": "2026-08-31",
+      "peak_sample_tweets": 18,
+      "total_sample_tweets": 73,
+      "peak_per_10000_english_sample": 26.223776223776223,
+      "same_regime_baseline_tweets": 47,
+      "share_ratio": 6.841234331276116,
+      "score": 8.16862941016972
+    },
+    {
+      "term": "nepal",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 52,
+      "total_sample_tweets": 240,
+      "peak_per_10000_english_sample": 61.48025537952235,
+      "same_regime_baseline_tweets": 177,
+      "share_ratio": 4.160635642677438,
+      "score": 8.166112104274925
+    },
+    {
+      "term": "lake ontario",
+      "peak_day": "2026-08-28",
+      "peak_sample_tweets": 27,
+      "total_sample_tweets": 87,
+      "peak_per_10000_english_sample": 27.100271002710027,
+      "same_regime_baseline_tweets": 59,
+      "share_ratio": 5.449690313700751,
+      "score": 8.151152865354678
+    },
+    {
+      "term": "osun",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 46,
+      "peak_per_10000_english_sample": 18.773466833541928,
+      "same_regime_baseline_tweets": 30,
+      "share_ratio": 7.5971943846663565,
+      "score": 8.111116076894676
+    },
+    {
+      "term": "gta",
+      "peak_day": "2026-08-28",
+      "peak_sample_tweets": 59,
+      "total_sample_tweets": 250,
+      "peak_per_10000_english_sample": 59.21911070962562,
+      "same_regime_baseline_tweets": 179,
+      "share_ratio": 3.9084864285802143,
+      "score": 8.051979075450847
+    },
+    {
+      "term": "jolene",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 41,
+      "peak_per_10000_english_sample": 16.224986479177932,
+      "same_regime_baseline_tweets": 26,
+      "share_ratio": 7.477695607279435,
+      "score": 8.047698682515007
+    },
+    {
+      "term": "planning",
+      "peak_day": "2026-09-01",
+      "peak_sample_tweets": 8,
+      "total_sample_tweets": 99,
+      "peak_per_10000_english_sample": 46.62004662004662,
+      "same_regime_baseline_tweets": 3,
+      "share_ratio": 12.514851485148515,
+      "score": 8.010134388374036
+    },
+    {
+      "term": "man united",
+      "peak_day": "2026-08-22",
+      "peak_sample_tweets": 16,
+      "total_sample_tweets": 52,
+      "peak_per_10000_english_sample": 19.50743721043648,
+      "same_regime_baseline_tweets": 34,
+      "share_ratio": 6.952535922700603,
+      "score": 7.926025657653697
+    },
+    {
+      "term": "thursday",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 37,
+      "total_sample_tweets": 167,
+      "peak_per_10000_english_sample": 43.74556632773705,
+      "same_regime_baseline_tweets": 116,
+      "share_ratio": 4.527975638106961,
+      "score": 7.92581351864845
+    },
+    {
+      "term": "monday",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 60,
+      "total_sample_tweets": 321,
+      "peak_per_10000_english_sample": 75.09386733416771,
+      "same_regime_baseline_tweets": 238,
+      "share_ratio": 3.792175001908594,
+      "score": 7.905315446902651
+    },
+    {
+      "term": "champions",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 38,
+      "total_sample_tweets": 175,
+      "peak_per_10000_english_sample": 44.927878931189404,
+      "same_regime_baseline_tweets": 121,
+      "share_ratio": 4.457416237216845,
+      "score": 7.899399784274402
+    },
+    {
+      "term": "beloved",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 25,
+      "total_sample_tweets": 100,
+      "peak_per_10000_english_sample": 31.071339796172012,
+      "same_regime_baseline_tweets": 70,
+      "share_ratio": 5.367053666094672,
+      "score": 7.89805058355914
+    },
+    {
+      "term": "hip",
+      "peak_day": "2026-08-28",
+      "peak_sample_tweets": 23,
+      "total_sample_tweets": 77,
+      "peak_per_10000_english_sample": 23.085416039345578,
+      "same_regime_baseline_tweets": 49,
+      "share_ratio": 5.59781780064799,
+      "score": 7.897033238829
+    },
+    {
+      "term": "trillion",
+      "peak_day": "2026-08-20",
+      "peak_sample_tweets": 22,
+      "total_sample_tweets": 82,
+      "peak_per_10000_english_sample": 25.071225071225072,
+      "same_regime_baseline_tweets": 53,
+      "share_ratio": 5.687106509682311,
+      "score": 7.8628626151192895
+    },
+    {
+      "term": "jisoo",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 16,
+      "total_sample_tweets": 58,
+      "peak_per_10000_english_sample": 18.563638473140735,
+      "same_regime_baseline_tweets": 33,
+      "share_ratio": 6.7898725629393635,
+      "score": 7.82925783227628
+    },
+    {
+      "term": "friday",
+      "peak_day": "2026-08-21",
+      "peak_sample_tweets": 71,
+      "total_sample_tweets": 365,
+      "peak_per_10000_english_sample": 77.40106835277444,
+      "same_regime_baseline_tweets": 259,
+      "share_ratio": 3.552304976827786,
+      "score": 7.820976460248629
+    },
+    {
+      "term": "mini album",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 17,
+      "total_sample_tweets": 58,
+      "peak_per_10000_english_sample": 19.723865877712033,
+      "same_regime_baseline_tweets": 37,
+      "share_ratio": 6.433232791956689,
+      "score": 7.762220228023452
+    },
+    {
+      "term": "fields",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 17,
+      "total_sample_tweets": 57,
+      "peak_per_10000_english_sample": 20.556227327690447,
+      "same_regime_baseline_tweets": 39,
+      "share_ratio": 6.383903496890921,
+      "score": 7.730122500136127
+    },
+    {
+      "term": "flash",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 28,
+      "total_sample_tweets": 109,
+      "peak_per_10000_english_sample": 30.28664142779881,
+      "same_regime_baseline_tweets": 76,
+      "share_ratio": 4.762833318488546,
+      "score": 7.582544299960746
+    },
+    {
+      "term": "best pop",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 38,
+      "peak_per_10000_english_sample": 15.028901734104046,
+      "same_regime_baseline_tweets": 25,
+      "share_ratio": 7.270155779338669,
+      "score": 7.552945862742112
+    },
+    {
+      "term": "humanitarian",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 14,
+      "total_sample_tweets": 45,
+      "peak_per_10000_english_sample": 17.399950285856328,
+      "same_regime_baseline_tweets": 31,
+      "share_ratio": 6.830340006430475,
+      "score": 7.506599783669477
+    },
+    {
+      "term": "antisemitic",
+      "peak_day": "2026-08-22",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 52,
+      "peak_per_10000_english_sample": 18.2882223847842,
+      "same_regime_baseline_tweets": 34,
+      "share_ratio": 6.531170109203597,
+      "score": 7.506344468026448
+    },
+    {
+      "term": "spurs",
+      "peak_day": "2026-08-29",
+      "peak_sample_tweets": 18,
+      "total_sample_tweets": 68,
+      "peak_per_10000_english_sample": 22.17021800714374,
+      "same_regime_baseline_tweets": 46,
+      "share_ratio": 5.846770220880343,
+      "score": 7.501370209529381
+    },
+    {
+      "term": "peter",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 63,
+      "total_sample_tweets": 335,
+      "peak_per_10000_english_sample": 74.48569401749823,
+      "same_regime_baseline_tweets": 257,
+      "share_ratio": 3.4689275626465523,
+      "score": 7.463072918603532
+    },
+    {
+      "term": "transformers",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 12,
+      "total_sample_tweets": 36,
+      "peak_per_10000_english_sample": 14.187751241428234,
+      "same_regime_baseline_tweets": 23,
+      "share_ratio": 7.482399458715758,
+      "score": 7.447332994344006
+    },
+    {
+      "term": "tibet",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 46,
+      "peak_per_10000_english_sample": 16.224986479177932,
+      "same_regime_baseline_tweets": 31,
+      "share_ratio": 6.29075979660016,
+      "score": 7.356327431157364
+    },
+    {
+      "term": "library",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 17,
+      "total_sample_tweets": 63,
+      "peak_per_10000_english_sample": 21.128511061396967,
+      "same_regime_baseline_tweets": 44,
+      "share_ratio": 5.835296286005113,
+      "score": 7.355435132589422
+    },
+    {
+      "term": "rip",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 51,
+      "total_sample_tweets": 237,
+      "peak_per_10000_english_sample": 55.16495402920498,
+      "same_regime_baseline_tweets": 181,
+      "share_ratio": 3.6275429059040647,
+      "score": 7.345333143108877
+    },
+    {
+      "term": "michigan",
+      "peak_day": "2026-09-06",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 151,
+      "peak_per_10000_english_sample": 125.69832402234637,
+      "same_regime_baseline_tweets": 14,
+      "share_ratio": 8.99879767229356,
+      "score": 7.298578241674943
+    },
+    {
+      "term": "criticizing",
+      "peak_day": "2026-08-22",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 51,
+      "peak_per_10000_english_sample": 18.2882223847842,
+      "same_regime_baseline_tweets": 36,
+      "share_ratio": 6.173297774452714,
+      "score": 7.28093272182192
+    },
+    {
+      "term": "labor",
+      "peak_day": "2026-09-07",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 78,
+      "peak_per_10000_english_sample": 92.49743062692703,
+      "same_regime_baseline_tweets": 10,
+      "share_ratio": 8.909210912290995,
+      "score": 7.26534135146361
+    },
+    {
+      "term": "roster",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 22,
+      "total_sample_tweets": 92,
+      "peak_per_10000_english_sample": 26.60217654171705,
+      "same_regime_baseline_tweets": 65,
+      "share_ratio": 4.94978777130801,
+      "score": 7.234734844871221
+    },
+    {
+      "term": "sacred",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 52,
+      "peak_per_10000_english_sample": 16.224986479177932,
+      "same_regime_baseline_tweets": 32,
+      "share_ratio": 6.09719795670477,
+      "score": 7.2313172571409465
+    },
+    {
+      "term": "united",
+      "peak_day": "2026-08-22",
+      "peak_sample_tweets": 101,
+      "total_sample_tweets": 640,
+      "peak_per_10000_english_sample": 123.14069739088028,
+      "same_regime_baseline_tweets": 499,
+      "share_ratio": 2.9539894642905735,
+      "score": 7.2272816640109205
+    },
+    {
+      "term": "tariffs",
+      "peak_day": "2026-08-22",
+      "peak_sample_tweets": 20,
+      "total_sample_tweets": 82,
+      "peak_per_10000_english_sample": 24.384296513045598,
+      "same_regime_baseline_tweets": 57,
+      "share_ratio": 5.182799506013177,
+      "score": 7.2268790712741175
+    },
+    {
+      "term": "baleba",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 20,
+      "total_sample_tweets": 74,
+      "peak_per_10000_english_sample": 23.121387283236995,
+      "same_regime_baseline_tweets": 54,
+      "share_ratio": 5.165441975738076,
+      "score": 7.212144228783666
+    },
+    {
+      "term": "floods",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 20,
+      "total_sample_tweets": 77,
+      "peak_per_10000_english_sample": 21.63331530557058,
+      "same_regime_baseline_tweets": 51,
+      "share_ratio": 5.0889547618597595,
+      "score": 7.14661870614531
+    },
+    {
+      "term": "renaming",
+      "peak_day": "2026-08-28",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 38,
+      "peak_per_10000_english_sample": 13.048278630934458,
+      "same_regime_baseline_tweets": 24,
+      "share_ratio": 6.497163257113363,
+      "score": 7.12495325527319
+    },
+    {
+      "term": "imagination",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 37,
+      "peak_per_10000_english_sample": 13.671389510315684,
+      "same_regime_baseline_tweets": 23,
+      "share_ratio": 7.2613079011869095,
+      "score": 7.107403127410644
+    },
+    {
+      "term": "davido",
+      "peak_day": "2026-08-18",
+      "peak_sample_tweets": 23,
+      "total_sample_tweets": 98,
+      "peak_per_10000_english_sample": 27.667508721279923,
+      "same_regime_baseline_tweets": 71,
+      "share_ratio": 4.709756565301429,
+      "score": 7.105023967827509
+    },
+    {
+      "term": "leo",
+      "peak_day": "2026-08-31",
+      "peak_sample_tweets": 20,
+      "total_sample_tweets": 97,
+      "peak_per_10000_english_sample": 29.13752913752914,
+      "same_regime_baseline_tweets": 71,
+      "share_ratio": 5.0362138953544635,
+      "score": 7.1008601158749896
+    },
+    {
+      "term": "extended",
+      "peak_day": "2026-08-28",
+      "peak_sample_tweets": 19,
+      "total_sample_tweets": 64,
+      "peak_per_10000_english_sample": 19.07056107598113,
+      "same_regime_baseline_tweets": 44,
+      "share_ratio": 5.166907608965309,
+      "score": 7.09779173127726
+    },
+    {
+      "term": "saturday",
+      "peak_day": "2026-08-22",
+      "peak_sample_tweets": 47,
+      "total_sample_tweets": 265,
+      "peak_per_10000_english_sample": 57.303096805657155,
+      "same_regime_baseline_tweets": 195,
+      "share_ratio": 3.532036966077847,
+      "score": 7.047523152285765
+    },
+    {
+      "term": "wednesday",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 31,
+      "total_sample_tweets": 142,
+      "peak_per_10000_english_sample": 33.531638723634394,
+      "same_regime_baseline_tweets": 98,
+      "share_ratio": 4.0884273182751,
+      "score": 7.040801886746357
+    },
+    {
+      "term": "singer",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 20,
+      "total_sample_tweets": 88,
+      "peak_per_10000_english_sample": 24.85707183693761,
+      "same_regime_baseline_tweets": 61,
+      "share_ratio": 4.94610828051862,
+      "score": 7.021563294072034
+    },
+    {
+      "term": "nominated",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 20,
+      "total_sample_tweets": 89,
+      "peak_per_10000_english_sample": 23.121387283236995,
+      "same_regime_baseline_tweets": 57,
+      "share_ratio": 4.895940655264785,
+      "score": 6.976785210902365
+    },
+    {
+      "term": "farewell",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 39,
+      "peak_per_10000_english_sample": 13.671389510315684,
+      "same_regime_baseline_tweets": 24,
+      "share_ratio": 6.96492798685275,
+      "score": 6.958008073510669
+    },
+    {
+      "term": "lamine",
+      "peak_day": "2026-08-31",
+      "peak_sample_tweets": 12,
+      "total_sample_tweets": 55,
+      "peak_per_10000_english_sample": 17.482517482517483,
+      "same_regime_baseline_tweets": 33,
+      "share_ratio": 6.554228131012817,
+      "score": 6.957235041664042
+    },
+    {
+      "term": "carlos baleba",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 45,
+      "peak_per_10000_english_sample": 16.157096694009446,
+      "same_regime_baseline_tweets": 32,
+      "share_ratio": 6.163611857261665,
+      "score": 6.9242953197006
+    },
+    {
+      "term": "stake",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 27,
+      "total_sample_tweets": 127,
+      "peak_per_10000_english_sample": 31.213872832369944,
+      "same_regime_baseline_tweets": 89,
+      "share_ratio": 4.21948830147837,
+      "score": 6.921215535848934
+    },
+    {
+      "term": "debt",
+      "peak_day": "2026-08-20",
+      "peak_sample_tweets": 29,
+      "total_sample_tweets": 132,
+      "peak_per_10000_english_sample": 33.04843304843305,
+      "same_regime_baseline_tweets": 97,
+      "share_ratio": 4.09147617044153,
+      "score": 6.913346751654492
+    },
+    {
+      "term": "coal",
+      "peak_day": "2026-08-18",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 45,
+      "peak_per_10000_english_sample": 15.63815710333213,
+      "same_regime_baseline_tweets": 31,
+      "share_ratio": 6.141293515241074,
+      "score": 6.910483926609162
+    },
+    {
+      "term": "measles",
+      "peak_day": "2026-08-28",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 47,
+      "peak_per_10000_english_sample": 15.055706112616681,
+      "same_regime_baseline_tweets": 32,
+      "share_ratio": 5.623470648179601,
+      "score": 6.907796105420194
+    },
+    {
+      "term": "vouch",
+      "peak_day": "2026-08-23",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 52,
+      "peak_per_10000_english_sample": 17.11937913718329,
+      "same_regime_baseline_tweets": 37,
+      "share_ratio": 5.5982776066035225,
+      "score": 6.889835920729209
+    },
+    {
+      "term": "jude",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 43,
+      "peak_per_10000_english_sample": 14.061654948620877,
+      "same_regime_baseline_tweets": 28,
+      "share_ratio": 6.055790839851087,
+      "score": 6.857103240675702
+    },
+    {
+      "term": "combined",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 63,
+      "peak_per_10000_english_sample": 17.40341106856944,
+      "same_regime_baseline_tweets": 38,
+      "share_ratio": 5.550006026456142,
+      "score": 6.855196054422828
+    },
+    {
+      "term": "legend",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 38,
+      "total_sample_tweets": 212,
+      "peak_per_10000_english_sample": 47.22843649018146,
+      "same_regime_baseline_tweets": 157,
+      "share_ratio": 3.627146072380321,
+      "score": 6.809956050765606
+    },
+    {
+      "term": "ontario",
+      "peak_day": "2026-08-28",
+      "peak_sample_tweets": 31,
+      "total_sample_tweets": 129,
+      "peak_per_10000_english_sample": 31.115125966074476,
+      "same_regime_baseline_tweets": 95,
+      "share_ratio": 3.889226871186533,
+      "score": 6.79105195055221
+    },
+    {
+      "term": "died",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 51,
+      "total_sample_tweets": 309,
+      "peak_per_10000_english_sample": 63.385533184190905,
+      "same_regime_baseline_tweets": 232,
+      "share_ratio": 3.2867687283446316,
+      "score": 6.782981339250135
+    },
+    {
+      "term": "hop",
+      "peak_day": "2026-08-28",
+      "peak_sample_tweets": 22,
+      "total_sample_tweets": 86,
+      "peak_per_10000_english_sample": 22.081702298504467,
+      "same_regime_baseline_tweets": 59,
+      "share_ratio": 4.458837529391524,
+      "score": 6.76221888535909
+    },
+    {
+      "term": "tribute",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 20,
+      "total_sample_tweets": 79,
+      "peak_per_10000_english_sample": 21.63331530557058,
+      "same_regime_baseline_tweets": 56,
+      "share_ratio": 4.638604782934117,
+      "score": 6.739631710641823
+    },
+    {
+      "term": "sanchez",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 36,
+      "peak_per_10000_english_sample": 12.762501450284256,
+      "same_regime_baseline_tweets": 24,
+      "share_ratio": 6.470744353425825,
+      "score": 6.694168746350602
+    },
+    {
+      "term": "bleach",
+      "peak_day": "2026-08-23",
+      "peak_sample_tweets": 20,
+      "total_sample_tweets": 83,
+      "peak_per_10000_english_sample": 22.82583884957772,
+      "same_regime_baseline_tweets": 60,
+      "share_ratio": 4.589363807066337,
+      "score": 6.692755944450401
+    },
+    {
+      "term": "maniac",
+      "peak_day": "2026-08-29",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 39,
+      "peak_per_10000_english_sample": 13.548466559921172,
+      "same_regime_baseline_tweets": 26,
+      "share_ratio": 6.377481643275397,
+      "score": 6.6421227765676525
+    },
+    {
+      "term": "manchester",
+      "peak_day": "2026-08-22",
+      "peak_sample_tweets": 51,
+      "total_sample_tweets": 297,
+      "peak_per_10000_english_sample": 62.179956108266275,
+      "same_regime_baseline_tweets": 233,
+      "share_ratio": 3.206259996277541,
+      "score": 6.641611659642658
+    },
+    {
+      "term": "moon",
+      "peak_day": "2026-08-28",
+      "peak_sample_tweets": 34,
+      "total_sample_tweets": 157,
+      "peak_per_10000_english_sample": 34.126267188597815,
+      "same_regime_baseline_tweets": 112,
+      "share_ratio": 3.6159520942058077,
+      "score": 6.592950568138572
+    },
+    {
+      "term": "martinez",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 49,
+      "peak_per_10000_english_sample": 15.719467956469165,
+      "same_regime_baseline_tweets": 34,
+      "share_ratio": 5.638453896011733,
+      "score": 6.585238750836565
+    },
+    {
+      "term": "kicked",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 18,
+      "total_sample_tweets": 75,
+      "peak_per_10000_english_sample": 20.884093282283327,
+      "same_regime_baseline_tweets": 54,
+      "share_ratio": 4.679481257583175,
+      "score": 6.555347626051374
+    },
+    {
+      "term": "kobe",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 36,
+      "peak_per_10000_english_sample": 12.762501450284256,
+      "same_regime_baseline_tweets": 25,
+      "share_ratio": 6.216989672899323,
+      "score": 6.550751121931689
+    },
+    {
+      "term": "beef",
+      "peak_day": "2026-08-22",
+      "peak_sample_tweets": 24,
+      "total_sample_tweets": 116,
+      "peak_per_10000_english_sample": 29.261155815654718,
+      "same_regime_baseline_tweets": 87,
+      "share_ratio": 4.07039375838108,
+      "score": 6.5187654864958855
+    },
+    {
+      "term": "ogogo",
+      "peak_day": "2026-08-23",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 36,
+      "peak_per_10000_english_sample": 12.554211367267747,
+      "same_regime_baseline_tweets": 25,
+      "share_ratio": 6.108177654263805,
+      "score": 6.48745021392858
+    },
+    {
+      "term": "toronto",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 26,
+      "total_sample_tweets": 123,
+      "peak_per_10000_english_sample": 30.165912518853695,
+      "same_regime_baseline_tweets": 93,
+      "share_ratio": 3.907119992059257,
+      "score": 6.479963196968327
+    },
+    {
+      "term": "retired",
+      "peak_day": "2026-08-31",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 60,
+      "peak_per_10000_english_sample": 18.939393939393938,
+      "same_regime_baseline_tweets": 43,
+      "share_ratio": 5.45130974206997,
+      "score": 6.456725305867112
+    },
+    {
+      "term": "cia",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 17,
+      "total_sample_tweets": 75,
+      "peak_per_10000_english_sample": 21.128511061396967,
+      "same_regime_baseline_tweets": 55,
+      "share_ratio": 4.678751076166263,
+      "score": 6.434324421618783
+    },
+    {
+      "term": "bbc",
+      "peak_day": "2026-08-18",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 61,
+      "peak_per_10000_english_sample": 18.044027426921687,
+      "same_regime_baseline_tweets": 44,
+      "share_ratio": 4.991238549840124,
+      "score": 6.430736341384424
+    },
+    {
+      "term": "song year",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 38,
+      "peak_per_10000_english_sample": 12.716763005780347,
+      "same_regime_baseline_tweets": 26,
+      "share_ratio": 5.959393940715765,
+      "score": 6.399046170322484
+    },
+    {
+      "term": "jackson",
+      "peak_day": "2026-08-29",
+      "peak_sample_tweets": 28,
+      "total_sample_tweets": 151,
+      "peak_per_10000_english_sample": 34.48700578889026,
+      "same_regime_baseline_tweets": 113,
+      "share_ratio": 3.690168941646232,
+      "score": 6.342930930935378
+    },
+    {
+      "term": "primary",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 18,
+      "total_sample_tweets": 79,
+      "peak_per_10000_english_sample": 20.809248554913296,
+      "same_regime_baseline_tweets": 57,
+      "share_ratio": 4.418287908409684,
+      "score": 6.3113679459421865
+    },
+    {
+      "term": "passed away",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 20,
+      "total_sample_tweets": 95,
+      "peak_per_10000_english_sample": 24.85707183693761,
+      "same_regime_baseline_tweets": 72,
+      "share_ratio": 4.195664265543381,
+      "score": 6.29881015443285
+    },
+    {
+      "term": "legendary",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 28,
+      "total_sample_tweets": 152,
+      "peak_per_10000_english_sample": 34.799900571712655,
+      "same_regime_baseline_tweets": 116,
+      "share_ratio": 3.6299764633849096,
+      "score": 6.263036204783654
+    },
+    {
+      "term": "freedom",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 37,
+      "total_sample_tweets": 208,
+      "peak_per_10000_english_sample": 42.92841396913795,
+      "same_regime_baseline_tweets": 158,
+      "share_ratio": 3.261553353290345,
+      "score": 6.204118644817608
+    },
+    {
+      "term": "mbappe",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 37,
+      "peak_per_10000_english_sample": 10.81665765278529,
+      "same_regime_baseline_tweets": 22,
+      "share_ratio": 5.9660754200014425,
+      "score": 6.178853893778997
+    },
+    {
+      "term": "forest",
+      "peak_day": "2026-08-29",
+      "peak_sample_tweets": 18,
+      "total_sample_tweets": 87,
+      "peak_per_10000_english_sample": 22.17021800714374,
+      "same_regime_baseline_tweets": 63,
+      "share_ratio": 4.281493153873008,
+      "score": 6.177768699079977
+    },
+    {
+      "term": "endgame",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 42,
+      "peak_per_10000_english_sample": 13.671389510315684,
+      "same_regime_baseline_tweets": 30,
+      "share_ratio": 5.59477821894729,
+      "score": 6.172709253526701
+    },
+    {
+      "term": "bday",
+      "peak_day": "2026-08-31",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 48,
+      "peak_per_10000_english_sample": 14.56876456876457,
+      "same_regime_baseline_tweets": 31,
+      "share_ratio": 5.855110463704783,
+      "score": 6.113904918640939
+    },
+    {
+      "term": "september",
+      "peak_day": "2026-09-01",
+      "peak_sample_tweets": 49,
+      "total_sample_tweets": 514,
+      "peak_per_10000_english_sample": 285.54778554778557,
+      "same_regime_baseline_tweets": 86,
+      "share_ratio": 2.9489262425052436,
+      "score": 6.103498150531319
+    },
+    {
+      "term": "liam",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 52,
+      "peak_per_10000_english_sample": 15.028901734104046,
+      "same_regime_baseline_tweets": 37,
+      "share_ratio": 4.943705929950294,
+      "score": 6.0845919181696555
+    },
+    {
+      "term": "arsenal",
+      "peak_day": "2026-08-21",
+      "peak_sample_tweets": 61,
+      "total_sample_tweets": 378,
+      "peak_per_10000_english_sample": 66.49950942984847,
+      "same_regime_baseline_tweets": 287,
+      "share_ratio": 2.7579020104074843,
+      "score": 6.040355016680726
+    },
+    {
+      "term": "ocean",
+      "peak_day": "2026-08-20",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 57,
+      "peak_per_10000_english_sample": 14.814814814814815,
+      "same_regime_baseline_tweets": 37,
+      "share_ratio": 4.8681631722880585,
+      "score": 6.025964194866533
+    },
+    {
+      "term": "arday",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 54,
+      "peak_per_10000_english_sample": 16.270337922403005,
+      "same_regime_baseline_tweets": 41,
+      "share_ratio": 4.863031151008741,
+      "score": 6.021948361323342
+    },
+    {
+      "term": "ink",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 57,
+      "peak_per_10000_english_sample": 15.082956259426847,
+      "same_regime_baseline_tweets": 38,
+      "share_ratio": 4.833876216590833,
+      "score": 5.999053738670292
+    },
+    {
+      "term": "goals",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 42,
+      "total_sample_tweets": 265,
+      "peak_per_10000_english_sample": 50.78597339782346,
+      "same_regime_baseline_tweets": 203,
+      "share_ratio": 3.0093304304403325,
+      "score": 5.978211413210197
+    },
+    {
+      "term": "karmelo",
+      "peak_day": "2026-08-22",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 37,
+      "peak_per_10000_english_sample": 12.192148256522799,
+      "same_regime_baseline_tweets": 27,
+      "share_ratio": 5.550536943246928,
+      "score": 5.929101411061643
+    },
+    {
+      "term": "ver",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 19,
+      "total_sample_tweets": 91,
+      "peak_per_10000_english_sample": 22.044320686854622,
+      "same_regime_baseline_tweets": 68,
+      "share_ratio": 3.9243390858129965,
+      "score": 5.908931236891178
+    },
+    {
+      "term": "pondphuwin",
+      "peak_day": "2026-08-21",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 51,
+      "peak_per_10000_english_sample": 14.172026599803772,
+      "same_regime_baseline_tweets": 37,
+      "share_ratio": 4.641347285807717,
+      "score": 5.8443076519977515
+    },
+    {
+      "term": "nancy",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 35,
+      "peak_per_10000_english_sample": 11.264080100125156,
+      "same_regime_baseline_tweets": 24,
+      "share_ratio": 5.7966743198343025,
+      "score": 5.837572286082687
+    },
+    {
+      "term": "bts_worldtour_arirang",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 57,
+      "peak_per_10000_english_sample": 15.082956259426847,
+      "same_regime_baseline_tweets": 40,
+      "share_ratio": 4.595166279969065,
+      "score": 5.806235073251436
+    },
+    {
+      "term": "greatness",
+      "peak_day": "2026-08-22",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 39,
+      "peak_per_10000_english_sample": 12.192148256522799,
+      "same_regime_baseline_tweets": 28,
+      "share_ratio": 5.3557812610277375,
+      "score": 5.80553714675091
+    },
+    {
+      "term": "playstation",
+      "peak_day": "2026-08-23",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 36,
+      "peak_per_10000_english_sample": 10.271627482309976,
+      "same_regime_baseline_tweets": 22,
+      "share_ratio": 5.7186706734122,
+      "score": 5.792566866246774
+    },
+    {
+      "term": "premier league",
+      "peak_day": "2026-08-21",
+      "peak_sample_tweets": 38,
+      "total_sample_tweets": 210,
+      "peak_per_10000_english_sample": 41.425923907118715,
+      "same_regime_baseline_tweets": 166,
+      "share_ratio": 2.981179020747366,
+      "score": 5.773344562378313
+    },
+    {
+      "term": "south korea",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 14,
+      "total_sample_tweets": 64,
+      "peak_per_10000_english_sample": 17.521902377972467,
+      "same_regime_baseline_tweets": 49,
+      "share_ratio": 4.37909314645643,
+      "score": 5.769858787826856
+    },
+    {
+      "term": "chicago",
+      "peak_day": "2026-08-28",
+      "peak_sample_tweets": 29,
+      "total_sample_tweets": 148,
+      "peak_per_10000_english_sample": 29.10769848439225,
+      "same_regime_baseline_tweets": 107,
+      "share_ratio": 3.2357104179698073,
+      "score": 5.761908958573009
+    },
+    {
+      "term": "randy",
+      "peak_day": "2026-08-18",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 40,
+      "peak_per_10000_english_sample": 12.029351617947793,
+      "same_regime_baseline_tweets": 28,
+      "share_ratio": 5.279357583277414,
+      "score": 5.75581761944384
+    },
+    {
+      "term": "toxic",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 28,
+      "total_sample_tweets": 149,
+      "peak_per_10000_english_sample": 30.28664142779881,
+      "same_regime_baseline_tweets": 111,
+      "share_ratio": 3.2677735324159083,
+      "score": 5.752378416110702
+    },
+    {
+      "term": "coco",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 40,
+      "peak_per_10000_english_sample": 11.60227404571296,
+      "same_regime_baseline_tweets": 27,
+      "share_ratio": 5.263554102510018,
+      "score": 5.745446461337323
+    },
+    {
+      "term": "cortis",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 22,
+      "total_sample_tweets": 120,
+      "peak_per_10000_english_sample": 27.53441802252816,
+      "same_regime_baseline_tweets": 94,
+      "share_ratio": 3.5593614244596603,
+      "score": 5.743029006653768
+    },
+    {
+      "term": "liverpool",
+      "peak_day": "2026-08-29",
+      "peak_sample_tweets": 31,
+      "total_sample_tweets": 186,
+      "peak_per_10000_english_sample": 38.18204212341421,
+      "same_regime_baseline_tweets": 147,
+      "share_ratio": 3.1384541203974283,
+      "score": 5.718651801734636
+    },
+    {
+      "term": "sayed",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 18,
+      "total_sample_tweets": 94,
+      "peak_per_10000_english_sample": 22.371364653243848,
+      "same_regime_baseline_tweets": 71,
+      "share_ratio": 3.8392868471158517,
+      "score": 5.714680099474327
+    },
+    {
+      "term": "ao3",
+      "peak_day": "2026-08-18",
+      "peak_sample_tweets": 16,
+      "total_sample_tweets": 76,
+      "peak_per_10000_english_sample": 19.246962588716467,
+      "same_regime_baseline_tweets": 58,
+      "share_ratio": 4.04170598866293,
+      "score": 5.708823962412853
+    },
+    {
+      "term": "cfc",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 14,
+      "total_sample_tweets": 67,
+      "peak_per_10000_english_sample": 16.243183663998142,
+      "same_regime_baseline_tweets": 46,
+      "share_ratio": 4.298703939325899,
+      "score": 5.697471563515282
+    },
+    {
+      "term": "prime",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 39,
+      "total_sample_tweets": 244,
+      "peak_per_10000_english_sample": 46.11019153464176,
+      "same_regime_baseline_tweets": 190,
+      "share_ratio": 2.9167610698384894,
+      "score": 5.696984473868719
+    },
+    {
+      "term": "flood",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 19,
+      "total_sample_tweets": 100,
+      "peak_per_10000_english_sample": 22.463939465594702,
+      "same_regime_baseline_tweets": 73,
+      "share_ratio": 3.7320376075716966,
+      "score": 5.691782048125087
+    },
+    {
+      "term": "atlanta",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 12,
+      "total_sample_tweets": 56,
+      "peak_per_10000_english_sample": 15.018773466833542,
+      "same_regime_baseline_tweets": 40,
+      "share_ratio": 4.613987031706967,
+      "score": 5.658314061343414
+    },
+    {
+      "term": "yoongi",
+      "peak_day": "2026-08-23",
+      "peak_sample_tweets": 18,
+      "total_sample_tweets": 88,
+      "peak_per_10000_english_sample": 20.54325496461995,
+      "same_regime_baseline_tweets": 66,
+      "share_ratio": 3.767940906700164,
+      "score": 5.634997650194884
+    },
+    {
+      "term": "deported",
+      "peak_day": "2026-08-29",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 52,
+      "peak_per_10000_english_sample": 13.548466559921172,
+      "same_regime_baseline_tweets": 35,
+      "share_ratio": 4.760655311177409,
+      "score": 5.593922891796667
+    },
+    {
+      "term": "bellingham",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 12,
+      "total_sample_tweets": 49,
+      "peak_per_10000_english_sample": 12.979989183342347,
+      "same_regime_baseline_tweets": 35,
+      "share_ratio": 4.501565960765676,
+      "score": 5.5670352349420975
+    },
+    {
+      "term": "commercial",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 47,
+      "peak_per_10000_english_sample": 12.716763005780347,
+      "same_regime_baseline_tweets": 33,
+      "share_ratio": 4.714147445640829,
+      "score": 5.558728429747657
+    },
+    {
+      "term": "tragedy",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 49,
+      "peak_per_10000_english_sample": 13.00543863797588,
+      "same_regime_baseline_tweets": 34,
+      "share_ratio": 4.688970327461875,
+      "score": 5.539530703542273
+    },
+    {
+      "term": "brighton",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 59,
+      "peak_per_10000_english_sample": 15.719467956469165,
+      "same_regime_baseline_tweets": 45,
+      "share_ratio": 4.275311195877029,
+      "score": 5.531541846783794
+    },
+    {
+      "term": "lovely",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 19,
+      "total_sample_tweets": 108,
+      "peak_per_10000_english_sample": 23.61421824509073,
+      "same_regime_baseline_tweets": 80,
+      "share_ratio": 3.5943768249731582,
+      "score": 5.5293478748265095
+    },
+    {
+      "term": "outstanding",
+      "peak_day": "2026-08-18",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 41,
+      "peak_per_10000_english_sample": 12.029351617947793,
+      "same_regime_baseline_tweets": 30,
+      "share_ratio": 4.93317020076742,
+      "score": 5.521189985211456
+    },
+    {
+      "term": "scotland",
+      "peak_day": "2026-08-18",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 43,
+      "peak_per_10000_english_sample": 12.029351617947793,
+      "same_regime_baseline_tweets": 30,
+      "share_ratio": 4.93317020076742,
+      "score": 5.521189985211456
+    },
+    {
+      "term": "gop",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 60,
+      "peak_per_10000_english_sample": 15.028901734104046,
+      "same_regime_baseline_tweets": 43,
+      "share_ratio": 4.261815456853702,
+      "score": 5.519504281150783
+    },
+    {
+      "term": "actress",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 16,
+      "total_sample_tweets": 84,
+      "peak_per_10000_english_sample": 19.885657469550086,
+      "same_regime_baseline_tweets": 63,
+      "share_ratio": 3.855627714734987,
+      "score": 5.516169363019929
+    },
+    {
+      "term": "city council",
+      "peak_day": "2026-08-20",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 36,
+      "peak_per_10000_english_sample": 10.256410256410257,
+      "same_regime_baseline_tweets": 24,
+      "share_ratio": 5.243486410060834,
+      "score": 5.504390414202594
+    },
+    {
+      "term": "wnba",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 25,
+      "total_sample_tweets": 137,
+      "peak_per_10000_english_sample": 29.0056851142824,
+      "same_regime_baseline_tweets": 109,
+      "share_ratio": 3.21032164764962,
+      "score": 5.482457203792542
+    },
+    {
+      "term": "auto",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 81,
+      "peak_per_10000_english_sample": 17.734689051785292,
+      "same_regime_baseline_tweets": 55,
+      "share_ratio": 3.928596760846436,
+      "score": 5.473129215247516
+    },
+    {
+      "term": "cowboys",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 47,
+      "peak_per_10000_english_sample": 12.515644555694617,
+      "same_regime_baseline_tweets": 32,
+      "share_ratio": 4.829779655959108,
+      "score": 5.44791584226783
+    },
+    {
+      "term": "guilty",
+      "peak_day": "2026-09-01",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 117,
+      "peak_per_10000_english_sample": 52.44755244755245,
+      "same_regime_baseline_tweets": 9,
+      "share_ratio": 5.153174140943506,
+      "score": 5.44667603388875
+    },
+    {
+      "term": "years old",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 25,
+      "total_sample_tweets": 152,
+      "peak_per_10000_english_sample": 30.22974607013301,
+      "same_regime_baseline_tweets": 115,
+      "share_ratio": 3.1812921693226373,
+      "score": 5.439759927303719
+    },
+    {
+      "term": "weeks ago",
+      "peak_day": "2026-08-18",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 36,
+      "peak_per_10000_english_sample": 10.826416456153014,
+      "same_regime_baseline_tweets": 26,
+      "share_ratio": 5.137056839792848,
+      "score": 5.436269939139578
+    },
+    {
+      "term": "nico",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 39,
+      "peak_per_10000_english_sample": 11.185682326621924,
+      "same_regime_baseline_tweets": 27,
+      "share_ratio": 5.12596676344657,
+      "score": 5.4290906804819965
+    },
+    {
+      "term": "ronaldo",
+      "peak_day": "2026-08-21",
+      "peak_sample_tweets": 27,
+      "total_sample_tweets": 147,
+      "peak_per_10000_english_sample": 29.43420909190014,
+      "same_regime_baseline_tweets": 115,
+      "share_ratio": 3.0696741308252102,
+      "score": 5.391791836640112
+    },
+    {
+      "term": "int",
+      "peak_day": "2026-08-29",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 45,
+      "peak_per_10000_english_sample": 12.31678778174652,
+      "same_regime_baseline_tweets": 32,
+      "share_ratio": 4.74791777188329,
+      "score": 5.388777935956738
+    },
+    {
+      "term": "bts bts_worldtour_arirang bts_worldtour_arirang_na",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 44,
+      "peak_per_10000_english_sample": 11.60227404571296,
+      "same_regime_baseline_tweets": 30,
+      "share_ratio": 4.7458274694762475,
+      "score": 5.387254562794208
+    },
+    {
+      "term": "bts_worldtour_arirang bts_worldtour_arirang_na",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 44,
+      "peak_per_10000_english_sample": 11.60227404571296,
+      "same_regime_baseline_tweets": 30,
+      "share_ratio": 4.7458274694762475,
+      "score": 5.387254562794208
+    },
+    {
+      "term": "bts_worldtour_arirang_na",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 44,
+      "peak_per_10000_english_sample": 11.60227404571296,
+      "same_regime_baseline_tweets": 30,
+      "share_ratio": 4.7458274694762475,
+      "score": 5.387254562794208
+    },
+    {
+      "term": "layer",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 44,
+      "peak_per_10000_english_sample": 11.60227404571296,
+      "same_regime_baseline_tweets": 30,
+      "share_ratio": 4.7458274694762475,
+      "score": 5.387254562794208
+    },
+    {
+      "term": "moscow",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 12,
+      "total_sample_tweets": 58,
+      "peak_per_10000_english_sample": 14.914243102162565,
+      "same_regime_baseline_tweets": 43,
+      "share_ratio": 4.263886448722948,
+      "score": 5.36630757917098
+    },
+    {
+      "term": "taylor swift",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 12,
+      "total_sample_tweets": 56,
+      "peak_per_10000_english_sample": 12.979989183342347,
+      "same_regime_baseline_tweets": 37,
+      "share_ratio": 4.261482442858173,
+      "score": 5.364220659734747
+    },
+    {
+      "term": "bts world tour",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 65,
+      "peak_per_10000_english_sample": 15.082956259426847,
+      "same_regime_baseline_tweets": 45,
+      "share_ratio": 4.090202952499936,
+      "score": 5.363019547178159
+    },
+    {
+      "term": "world tour arirang",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 65,
+      "peak_per_10000_english_sample": 15.082956259426847,
+      "same_regime_baseline_tweets": 45,
+      "share_ratio": 4.090202952499936,
+      "score": 5.363019547178159
+    },
+    {
+      "term": "nick shirley",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 12,
+      "total_sample_tweets": 53,
+      "peak_per_10000_english_sample": 13.922728854855551,
+      "same_regime_baseline_tweets": 40,
+      "share_ratio": 4.254783592563949,
+      "score": 5.358399165501468
+    },
+    {
+      "term": "drive",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 29,
+      "total_sample_tweets": 187,
+      "peak_per_10000_english_sample": 33.52601156069364,
+      "same_regime_baseline_tweets": 136,
+      "share_ratio": 2.967833230230641,
+      "score": 5.337873270138683
+    },
+    {
+      "term": "psg",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 50,
+      "peak_per_10000_english_sample": 13.00543863797588,
+      "same_regime_baseline_tweets": 36,
+      "share_ratio": 4.43204044650506,
+      "score": 5.3375075392009474
+    },
+    {
+      "term": "school",
+      "peak_day": "2026-09-08",
+      "peak_sample_tweets": 14,
+      "total_sample_tweets": 673,
+      "peak_per_10000_english_sample": 154.6961325966851,
+      "same_regime_baseline_tweets": 39,
+      "share_ratio": 3.9135859390281387,
+      "score": 5.330772788505457
+    },
+    {
+      "term": "xabi",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 44,
+      "peak_per_10000_english_sample": 12.091898428053204,
+      "same_regime_baseline_tweets": 32,
+      "share_ratio": 4.655338857732765,
+      "score": 5.320656691539072
+    },
+    {
+      "term": "world tour",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 19,
+      "total_sample_tweets": 109,
+      "peak_per_10000_english_sample": 22.044320686854622,
+      "same_regime_baseline_tweets": 78,
+      "share_ratio": 3.424423278703061,
+      "score": 5.320004225746457
+    },
+    {
+      "term": "mining",
+      "peak_day": "2026-08-18",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 44,
+      "peak_per_10000_english_sample": 12.029351617947793,
+      "same_regime_baseline_tweets": 32,
+      "share_ratio": 4.629590496104809,
+      "score": 5.301469701248303
+    },
+    {
+      "term": "clock",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 14,
+      "total_sample_tweets": 74,
+      "peak_per_10000_english_sample": 16.243183663998142,
+      "same_regime_baseline_tweets": 51,
+      "share_ratio": 3.881354042303967,
+      "score": 5.298462799667128
+    },
+    {
+      "term": "shane",
+      "peak_day": "2026-08-23",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 62,
+      "peak_per_10000_english_sample": 14.836795252225519,
+      "same_regime_baseline_tweets": 45,
+      "share_ratio": 4.018614730014935,
+      "score": 5.295791780190953
+    },
+    {
+      "term": "shirley",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 60,
+      "peak_per_10000_english_sample": 15.082956259426847,
+      "same_regime_baseline_tweets": 46,
+      "share_ratio": 4.002241598682733,
+      "score": 5.280247702052572
+    },
+    {
+      "term": "oomfs",
+      "peak_day": "2026-08-18",
+      "peak_sample_tweets": 20,
+      "total_sample_tweets": 116,
+      "peak_per_10000_english_sample": 24.058703235895585,
+      "same_regime_baseline_tweets": 88,
+      "share_ratio": 3.319305534602991,
+      "score": 5.269707357857492
+    },
+    {
+      "term": "carlos",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 16,
+      "total_sample_tweets": 87,
+      "peak_per_10000_english_sample": 19.885657469550086,
+      "same_regime_baseline_tweets": 67,
+      "share_ratio": 3.6271460723803215,
+      "score": 5.266475691994595
+    },
+    {
+      "term": "colleagues",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 39,
+      "peak_per_10000_english_sample": 10.81665765278529,
+      "same_regime_baseline_tweets": 29,
+      "share_ratio": 4.5503965067807615,
+      "score": 5.241780512746068
+    },
+    {
+      "term": "korea",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 24,
+      "total_sample_tweets": 150,
+      "peak_per_10000_english_sample": 30.037546933667084,
+      "same_regime_baseline_tweets": 118,
+      "share_ratio": 3.090787262252313,
+      "score": 5.240247302687094
+    },
+    {
+      "term": "tottenham",
+      "peak_day": "2026-08-29",
+      "peak_sample_tweets": 16,
+      "total_sample_tweets": 85,
+      "peak_per_10000_english_sample": 19.706860450794434,
+      "same_regime_baseline_tweets": 67,
+      "share_ratio": 3.5923399014778323,
+      "score": 5.227062904709569
+    },
+    {
+      "term": "message",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 39,
+      "total_sample_tweets": 282,
+      "peak_per_10000_english_sample": 48.47129008202834,
+      "same_regime_baseline_tweets": 219,
+      "share_ratio": 2.670222465792512,
+      "score": 5.226994421066584
+    },
+    {
+      "term": "bts world",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 67,
+      "peak_per_10000_english_sample": 15.082956259426847,
+      "same_regime_baseline_tweets": 47,
+      "share_ratio": 3.9179838808157283,
+      "score": 5.199237094345722
+    },
+    {
+      "term": "tour arirang",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 67,
+      "peak_per_10000_english_sample": 15.082956259426847,
+      "same_regime_baseline_tweets": 47,
+      "share_ratio": 3.9179838808157283,
+      "score": 5.199237094345722
+    },
+    {
+      "term": "reporter",
+      "peak_day": "2026-08-18",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 68,
+      "peak_per_10000_english_sample": 15.63815710333213,
+      "same_regime_baseline_tweets": 49,
+      "share_ratio": 3.9080958733352285,
+      "score": 5.189616141029217
+    },
+    {
+      "term": "generous",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 35,
+      "peak_per_10000_english_sample": 9.73499188750676,
+      "same_regime_baseline_tweets": 25,
+      "share_ratio": 4.762833318488546,
+      "score": 5.185007303657879
+    },
+    {
+      "term": "cherki",
+      "peak_day": "2026-08-23",
+      "peak_sample_tweets": 8,
+      "total_sample_tweets": 35,
+      "peak_per_10000_english_sample": 9.130335539831089,
+      "same_regime_baseline_tweets": 22,
+      "share_ratio": 5.116705339368811,
+      "score": 5.174936621005208
+    },
+    {
+      "term": "cheat",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 12,
+      "total_sample_tweets": 61,
+      "peak_per_10000_english_sample": 14.187751241428234,
+      "same_regime_baseline_tweets": 43,
+      "share_ratio": 4.042215799536099,
+      "score": 5.168748320579394
+    },
+    {
+      "term": "rocky",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 59,
+      "peak_per_10000_english_sample": 14.061654948620877,
+      "same_regime_baseline_tweets": 44,
+      "share_ratio": 3.8784278412529436,
+      "score": 5.1606026097703745
+    },
+    {
+      "term": "flooding",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 8,
+      "total_sample_tweets": 35,
+      "peak_per_10000_english_sample": 9.458500827618822,
+      "same_regime_baseline_tweets": 23,
+      "share_ratio": 5.088031631926715,
+      "score": 5.157122591781422
+    },
+    {
+      "term": "queen",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 28,
+      "total_sample_tweets": 193,
+      "peak_per_10000_english_sample": 34.799900571712655,
+      "same_regime_baseline_tweets": 146,
+      "share_ratio": 2.886636573271959,
+      "score": 5.149906832266307
+    },
+    {
+      "term": "mini",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 20,
+      "total_sample_tweets": 119,
+      "peak_per_10000_english_sample": 23.20454809142592,
+      "same_regime_baseline_tweets": 87,
+      "share_ratio": 3.2297454424925425,
+      "score": 5.1495675454529835
+    },
+    {
+      "term": "frank",
+      "peak_day": "2026-08-20",
+      "peak_sample_tweets": 14,
+      "total_sample_tweets": 71,
+      "peak_per_10000_english_sample": 15.954415954415955,
+      "same_regime_baseline_tweets": 52,
+      "share_ratio": 3.734834179797717,
+      "score": 5.148123104452367
+    },
+    {
+      "term": "arena",
+      "peak_day": "2026-08-23",
+      "peak_sample_tweets": 16,
+      "total_sample_tweets": 84,
+      "peak_per_10000_english_sample": 18.260671079662178,
+      "same_regime_baseline_tweets": 63,
+      "share_ratio": 3.519364256119817,
+      "score": 5.143174232711484
+    },
+    {
+      "term": "free mint",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 55,
+      "peak_per_10000_english_sample": 13.301088270858525,
+      "same_regime_baseline_tweets": 39,
+      "share_ratio": 4.195136583671177,
+      "score": 5.140570573398129
+    },
+    {
+      "term": "discourse",
+      "peak_day": "2026-08-27",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 67,
+      "peak_per_10000_english_sample": 15.370063844880587,
+      "same_regime_baseline_tweets": 49,
+      "share_ratio": 3.8364302679233524,
+      "score": 5.119149806674535
+    },
+    {
+      "term": "aaron",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 48,
+      "peak_per_10000_english_sample": 12.091898428053204,
+      "same_regime_baseline_tweets": 34,
+      "share_ratio": 4.385464141342459,
+      "score": 5.114062082771457
+    },
+    {
+      "term": "roles",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 41,
+      "peak_per_10000_english_sample": 11.264080100125156,
+      "same_regime_baseline_tweets": 30,
+      "share_ratio": 4.65634494544067,
+      "score": 5.109892090693791
+    },
+    {
+      "term": "jennie",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 12,
+      "total_sample_tweets": 62,
+      "peak_per_10000_english_sample": 13.922728854855551,
+      "same_regime_baseline_tweets": 43,
+      "share_ratio": 3.9613502413526414,
+      "score": 5.093969576964724
+    },
+    {
+      "term": "translation",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 8,
+      "total_sample_tweets": 37,
+      "peak_per_10000_english_sample": 10.012515644555695,
+      "same_regime_baseline_tweets": 25,
+      "share_ratio": 4.983105994243523,
+      "score": 5.0910687953847695
+    },
+    {
+      "term": "lose",
+      "peak_day": "2026-09-09",
+      "peak_sample_tweets": 8,
+      "total_sample_tweets": 302,
+      "peak_per_10000_english_sample": 112.04481792717087,
+      "same_regime_baseline_tweets": 23,
+      "share_ratio": 4.982889450974557,
+      "score": 5.090931041775293
+    },
+    {
+      "term": "mark",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 46,
+      "total_sample_tweets": 328,
+      "peak_per_10000_english_sample": 53.370460610279615,
+      "same_regime_baseline_tweets": 256,
+      "share_ratio": 2.4991255206849297,
+      "score": 5.087674995048875
+    },
+    {
+      "term": "caring",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 41,
+      "peak_per_10000_english_sample": 10.442046641141664,
+      "same_regime_baseline_tweets": 28,
+      "share_ratio": 4.595166279969064,
+      "score": 5.065956762688831
+    },
+    {
+      "term": "premier",
+      "peak_day": "2026-08-21",
+      "peak_sample_tweets": 41,
+      "total_sample_tweets": 261,
+      "peak_per_10000_english_sample": 44.69639158399651,
+      "same_regime_baseline_tweets": 209,
+      "share_ratio": 2.5539102673166303,
+      "score": 5.055974981965092
+    },
+    {
+      "term": "meat",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 14,
+      "total_sample_tweets": 77,
+      "peak_per_10000_english_sample": 16.928657799274486,
+      "same_regime_baseline_tweets": 57,
+      "share_ratio": 3.6336702885408942,
+      "score": 5.0408391656834235
+    },
+    {
+      "term": "palmer",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 48,
+      "peak_per_10000_english_sample": 12.091898428053204,
+      "same_regime_baseline_tweets": 35,
+      "share_ratio": 4.2619299401778825,
+      "score": 5.01521445468739
+    },
+    {
+      "term": "hotel",
+      "peak_day": "2026-08-18",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 82,
+      "peak_per_10000_english_sample": 18.044027426921687,
+      "same_regime_baseline_tweets": 63,
+      "share_ratio": 3.497797093982449,
+      "score": 5.008533474478618
+    },
+    {
+      "term": "maresca",
+      "peak_day": "2026-08-23",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 40,
+      "peak_per_10000_english_sample": 10.271627482309976,
+      "same_regime_baseline_tweets": 28,
+      "share_ratio": 4.514740005325421,
+      "score": 5.007300343079113
+    },
+    {
+      "term": "jokes",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 14,
+      "total_sample_tweets": 69,
+      "peak_per_10000_english_sample": 15.143320713899405,
+      "same_regime_baseline_tweets": 51,
+      "share_ratio": 3.599504587656903,
+      "score": 5.003930712483954
+    },
+    {
+      "term": "aircraft",
+      "peak_day": "2026-08-20",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 43,
+      "peak_per_10000_english_sample": 10.256410256410257,
+      "same_regime_baseline_tweets": 28,
+      "share_ratio": 4.507558492859314,
+      "score": 5.002012007059633
+    },
+    {
+      "term": "delusional",
+      "peak_day": "2026-08-18",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 48,
+      "peak_per_10000_english_sample": 12.029351617947793,
+      "same_regime_baseline_tweets": 35,
+      "share_ratio": 4.238357496433981,
+      "score": 4.996027464396622
+    },
+    {
+      "term": "villa",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 21,
+      "total_sample_tweets": 119,
+      "peak_per_10000_english_sample": 24.277456647398843,
+      "same_regime_baseline_tweets": 96,
+      "share_ratio": 3.059576208806314,
+      "score": 4.986877192363444
+    },
+    {
+      "term": "independence",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 80,
+      "peak_per_10000_english_sample": 17.40341106856944,
+      "same_regime_baseline_tweets": 61,
+      "share_ratio": 3.4743940165619756,
+      "score": 4.981680320347895
+    },
+    {
+      "term": "dot",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 8,
+      "total_sample_tweets": 39,
+      "peak_per_10000_english_sample": 10.012515644555695,
+      "same_regime_baseline_tweets": 26,
+      "share_ratio": 4.795064258611693,
+      "score": 4.969133570076237
+    },
+    {
+      "term": "fox news",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 8,
+      "total_sample_tweets": 37,
+      "peak_per_10000_english_sample": 10.012515644555695,
+      "same_regime_baseline_tweets": 26,
+      "share_ratio": 4.795064258611693,
+      "score": 4.969133570076237
+    },
+    {
+      "term": "nixon",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 51,
+      "peak_per_10000_english_sample": 12.716763005780347,
+      "same_regime_baseline_tweets": 39,
+      "share_ratio": 3.9980744159232344,
+      "score": 4.9680870973724245
+    },
+    {
+      "term": "goal",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 51,
+      "total_sample_tweets": 387,
+      "peak_per_10000_english_sample": 61.668681983071345,
+      "same_regime_baseline_tweets": 310,
+      "share_ratio": 2.3899619394617635,
+      "score": 4.966664529656447
+    },
+    {
+      "term": "watson",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 46,
+      "peak_per_10000_english_sample": 11.60227404571296,
+      "same_regime_baseline_tweets": 34,
+      "share_ratio": 4.195586603450015,
+      "score": 4.960939670063441
+    },
+    {
+      "term": "covering",
+      "peak_day": "2026-08-17",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 54,
+      "peak_per_10000_english_sample": 12.515644555694617,
+      "same_regime_baseline_tweets": 37,
+      "share_ratio": 4.18580903516456,
+      "score": 4.952868259123613
+    },
+    {
+      "term": "wey dey",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 38,
+      "peak_per_10000_english_sample": 10.442046641141664,
+      "same_regime_baseline_tweets": 29,
+      "share_ratio": 4.439397931495535,
+      "score": 4.951396165512781
+    },
+    {
+      "term": "aston villa",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 16,
+      "total_sample_tweets": 84,
+      "peak_per_10000_english_sample": 18.497109826589597,
+      "same_regime_baseline_tweets": 67,
+      "share_ratio": 3.356837359842793,
+      "score": 4.949914511831122
+    },
+    {
+      "term": "ashley",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 41,
+      "peak_per_10000_english_sample": 10.404624277456648,
+      "same_regime_baseline_tweets": 29,
+      "share_ratio": 4.422335813044049,
+      "score": 4.938604266700692
+    },
+    {
+      "term": "rest",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 60,
+      "total_sample_tweets": 488,
+      "peak_per_10000_english_sample": 74.57121551081282,
+      "same_regime_baseline_tweets": 390,
+      "share_ratio": 2.2988953979875273,
+      "score": 4.936916243742417
+    },
+    {
+      "term": "assist",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 83,
+      "peak_per_10000_english_sample": 18.137847642079805,
+      "same_regime_baseline_tweets": 65,
+      "share_ratio": 3.4098537980121844,
+      "score": 4.906677663572232
+    },
+    {
+      "term": "meta",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 12,
+      "total_sample_tweets": 59,
+      "peak_per_10000_english_sample": 12.979989183342347,
+      "same_regime_baseline_tweets": 42,
+      "share_ratio": 3.7601315672277997,
+      "score": 4.901061994300372
+    },
+    {
+      "term": "nazi",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 57,
+      "peak_per_10000_english_sample": 13.671389510315684,
+      "same_regime_baseline_tweets": 43,
+      "share_ratio": 3.922775532825112,
+      "score": 4.899924764739847
+    },
+    {
+      "term": "shy",
+      "peak_day": "2026-08-23",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 50,
+      "peak_per_10000_english_sample": 11.41291942478886,
+      "same_regime_baseline_tweets": 34,
+      "share_ratio": 4.12215391790582,
+      "score": 4.899855303744309
+    },
+    {
+      "term": "pirates",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 49,
+      "peak_per_10000_english_sample": 11.898323418063818,
+      "same_regime_baseline_tweets": 37,
+      "share_ratio": 3.920563847429519,
+      "score": 4.897902970442202
+    },
+    {
+      "term": "caitlin clark",
+      "peak_day": "2026-08-29",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 49,
+      "peak_per_10000_english_sample": 12.31678778174652,
+      "same_regime_baseline_tweets": 37,
+      "share_ratio": 4.114862068965517,
+      "score": 4.89373035281252
+    },
+    {
+      "term": "stomach",
+      "peak_day": "2026-08-23",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 43,
+      "peak_per_10000_english_sample": 10.271627482309976,
+      "same_regime_baseline_tweets": 29,
+      "share_ratio": 4.361697971246594,
+      "score": 4.892739745903064
+    },
+    {
+      "term": "honor",
+      "peak_day": "2026-08-26",
+      "peak_sample_tweets": 25,
+      "total_sample_tweets": 154,
+      "peak_per_10000_english_sample": 27.041644131963224,
+      "same_regime_baseline_tweets": 115,
+      "share_ratio": 2.822540319295673,
+      "score": 4.87735158686734
+    },
+    {
+      "term": "tokyo",
+      "peak_day": "2026-08-31",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 55,
+      "peak_per_10000_english_sample": 13.111888111888112,
+      "same_regime_baseline_tweets": 38,
+      "share_ratio": 4.33430255105419,
+      "score": 4.8718092234532975
+    },
+    {
+      "term": "pattern",
+      "peak_day": "2026-08-29",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 59,
+      "peak_per_10000_english_sample": 13.548466559921172,
+      "same_regime_baseline_tweets": 43,
+      "share_ratio": 3.88513249532869,
+      "score": 4.865357266525601
+    },
+    {
+      "term": "bts bts_worldtour_arirang",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 49,
+      "peak_per_10000_english_sample": 11.60227404571296,
+      "same_regime_baseline_tweets": 35,
+      "share_ratio": 4.077401065324662,
+      "score": 4.862092041979374
+    },
+    {
+      "term": "midnight",
+      "peak_day": "2026-08-20",
+      "peak_sample_tweets": 14,
+      "total_sample_tweets": 83,
+      "peak_per_10000_english_sample": 15.954415954415955,
+      "same_regime_baseline_tweets": 56,
+      "share_ratio": 3.4704211405200023,
+      "score": 4.861250018096211
+    },
+    {
+      "term": "utd",
+      "peak_day": "2026-08-22",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 49,
+      "peak_per_10000_english_sample": 12.192148256522799,
+      "same_regime_baseline_tweets": 37,
+      "share_ratio": 4.07039375838108,
+      "score": 4.856141645411156
+    },
+    {
+      "term": "norway",
+      "peak_day": "2026-08-28",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 43,
+      "peak_per_10000_english_sample": 10.037137408411121,
+      "same_regime_baseline_tweets": 30,
+      "share_ratio": 4.05924771801436,
+      "score": 4.846655621029998
+    },
+    {
+      "term": "unlimited",
+      "peak_day": "2026-08-28",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 43,
+      "peak_per_10000_english_sample": 10.037137408411121,
+      "same_regime_baseline_tweets": 30,
+      "share_ratio": 4.05924771801436,
+      "score": 4.846655621029998
+    },
+    {
+      "term": "blingy",
+      "peak_day": "2026-08-21",
+      "peak_sample_tweets": 15,
+      "total_sample_tweets": 76,
+      "peak_per_10000_english_sample": 16.35233838438897,
+      "same_regime_baseline_tweets": 59,
+      "share_ratio": 3.358584637255818,
+      "score": 4.846078585268481
+    },
+    {
+      "term": "secretary",
+      "peak_day": "2026-09-01",
+      "peak_sample_tweets": 8,
+      "total_sample_tweets": 144,
+      "peak_per_10000_english_sample": 46.62004662004662,
+      "same_regime_baseline_tweets": 9,
+      "share_ratio": 4.610734757686295,
+      "score": 4.84487288514383
+    },
+    {
+      "term": "gavin",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 42,
+      "peak_per_10000_english_sample": 10.442046641141664,
+      "same_regime_baseline_tweets": 30,
+      "share_ratio": 4.293843900954699,
+      "score": 4.840654974442897
+    },
+    {
+      "term": "week",
+      "peak_day": "2026-08-24",
+      "peak_sample_tweets": 158,
+      "total_sample_tweets": 1449,
+      "peak_per_10000_english_sample": 183.31592992226476,
+      "same_regime_baseline_tweets": 1127,
+      "share_ratio": 1.937917131818439,
+      "score": 4.838303936671966
+    },
+    {
+      "term": "dsa",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 12,
+      "total_sample_tweets": 63,
+      "peak_per_10000_english_sample": 13.872832369942197,
+      "same_regime_baseline_tweets": 46,
+      "share_ratio": 3.6915366860441265,
+      "score": 4.832932715267306
+    },
+    {
+      "term": "tony",
+      "peak_day": "2026-08-21",
+      "peak_sample_tweets": 18,
+      "total_sample_tweets": 101,
+      "peak_per_10000_english_sample": 19.62280606126676,
+      "same_regime_baseline_tweets": 76,
+      "share_ratio": 3.117825881896978,
+      "score": 4.830470987410137
+    },
+    {
+      "term": "informed",
+      "peak_day": "2026-08-19",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 42,
+      "peak_per_10000_english_sample": 10.404624277456648,
+      "same_regime_baseline_tweets": 30,
+      "share_ratio": 4.277341196222933,
+      "score": 4.827863075630806
+    },
+    {
+      "term": "tennessee",
+      "peak_day": "2026-08-25",
+      "peak_sample_tweets": 11,
+      "total_sample_tweets": 61,
+      "peak_per_10000_english_sample": 13.671389510315684,
+      "same_regime_baseline_tweets": 44,
+      "share_ratio": 3.834623273660503,
+      "score": 4.818444836919833
+    },
+    {
+      "term": "yard",
+      "peak_day": "2026-08-29",
+      "peak_sample_tweets": 10,
+      "total_sample_tweets": 53,
+      "peak_per_10000_english_sample": 12.31678778174652,
+      "same_regime_baseline_tweets": 38,
+      "share_ratio": 4.007982534706673,
+      "score": 4.802687424301972
+    },
+    {
+      "term": "noise",
+      "peak_day": "2026-08-21",
+      "peak_sample_tweets": 13,
+      "total_sample_tweets": 71,
+      "peak_per_10000_english_sample": 14.172026599803772,
+      "same_regime_baseline_tweets": 49,
+      "share_ratio": 3.516172186217968,
+      "score": 4.787265093140893
+    },
+    {
+      "term": "settlers",
+      "peak_day": "2026-08-30",
+      "peak_sample_tweets": 9,
+      "total_sample_tweets": 41,
+      "peak_per_10000_english_sample": 10.882708585247883,
+      "same_regime_baseline_tweets": 32,
+      "share_ratio": 4.211973252234406,
+      "score": 4.776704197560862
+    }
+  ]
+}

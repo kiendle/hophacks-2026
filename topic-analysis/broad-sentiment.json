@@ -1,0 +1,5240 @@
+{
+  "schema_version": 1,
+  "sample_type": "macro-context language-stratified sample; not prevalence-representative",
+  "source": {
+    "input_dataset": "twitter-analysis/tweet-id-sample.parquet",
+    "input_method": "latest row per ID ordered by version DESC then added_at DESC; existing deterministic hash(id)%1000=0 ID sample",
+    "rows_scored": 20632,
+    "unique_ids": 20632,
+    "unique_nonempty_bodies": 20627,
+    "duplicate_body_rows_reused_by_scorer": 5,
+    "non_rt_rule": "exclude rows whose body starts with exact 'RT @'",
+    "author_selection": "one hash(id)-selected non-RT post per author/day/lang, then cap by hash(author_id)",
+    "daily_caps": {
+      "supported_finetune_languages": 100,
+      "unsupported_explicit_languages": 50
+    },
+    "supported_finetune_languages": [
+      "ar",
+      "en",
+      "fr",
+      "de",
+      "hi",
+      "it",
+      "pt",
+      "es"
+    ],
+    "unsupported_explicit_languages": [
+      "ja",
+      "ko",
+      "th",
+      "tr",
+      "in",
+      "zh",
+      "fa",
+      "ru"
+    ],
+    "unsupported_rows": 7470,
+    "unsupported_language_counts": {
+      "fa": 812,
+      "in": 946,
+      "ja": 1580,
+      "ko": 976,
+      "ru": 486,
+      "th": 844,
+      "tr": 1031,
+      "zh": 795
+    },
+    "language_counts": {
+      "ar": 1831,
+      "de": 614,
+      "en": 3123,
+      "es": 2191,
+      "fa": 812,
+      "fr": 1766,
+      "hi": 796,
+      "in": 946,
+      "it": 812,
+      "ja": 1580,
+      "ko": 976,
+      "pt": 2029,
+      "ru": 486,
+      "th": 844,
+      "tr": 1031,
+      "zh": 795
+    }
+  },
+  "outputs": {
+    "scored_parquet": "topic-analysis/broad-sentiment.parquet",
+    "daily_csv": "topic-analysis/broad-sentiment-daily.csv"
+  },
+  "scorer": {
+    "schema_version": 1,
+    "created_at_utc": "2026-09-19T06:51:29.758626+00:00",
+    "input": "topic-analysis/broad-sentiment-input.parquet",
+    "output": {
+      "counts": {
+        "negative": 7957,
+        "neutral": 6957,
+        "positive": 5718
+      },
+      "rows_written": 20632
+    },
+    "rows": {
+      "input": 20632,
+      "nonempty_body": 20632,
+      "missing_or_blank_body": 0,
+      "unique_nonempty_body_strings": 20627,
+      "deduplicated_inference_rows": 5,
+      "deduplication_fraction_of_nonempty": 0.0002423419930205506,
+      "language_counts": {
+        "en": 3123,
+        "es": 2191,
+        "pt": 2029,
+        "ar": 1831,
+        "fr": 1766,
+        "ja": 1580,
+        "tr": 1031,
+        "ko": 976,
+        "in": 946,
+        "th": 844,
+        "fa": 812,
+        "it": 812,
+        "hi": 796,
+        "zh": 795,
+        "de": 614,
+        "ru": 486
+      },
+      "supported_finetune_language_rows": 13162,
+      "unsupported_or_unlabelled_language_rows": 7470,
+      "unsupported_or_unlabelled_language_counts": {
+        "ja": 1580,
+        "tr": 1031,
+        "ko": 976,
+        "in": 946,
+        "th": 844,
+        "fa": 812,
+        "zh": 795,
+        "ru": 486
+      }
+    },
+    "model": {
+      "id": "cardiffnlp/twitter-xlm-roberta-base-sentiment",
+      "revision": "f2f1202b1bdeb07342385c3f807f9c07cd8f5cf8",
+      "card_url": "https://huggingface.co/cardiffnlp/twitter-xlm-roberta-base-sentiment",
+      "paper_url": "https://arxiv.org/abs/2104.12250",
+      "repository_url": "https://github.com/cardiffnlp/xlm-t",
+      "description": "XLM-R base continued pretraining on Twitter and fine-tuned for 3-way sentiment.",
+      "pretraining_corpus": "approximately 198M tweets; XLM-T language-model pretraining covers 30+ languages",
+      "fine_tuning_languages": {
+        "ar": "Arabic",
+        "en": "English",
+        "fr": "French",
+        "de": "German",
+        "hi": "Hindi",
+        "it": "Italian",
+        "pt": "Portuguese",
+        "es": "Spanish"
+      },
+      "label_mapping": {
+        "0": "negative",
+        "1": "neutral",
+        "2": "positive"
+      },
+      "limitations": [
+        "The sentiment head was fine-tuned on UMSAB benchmark data in eight languages, not this corpus.",
+        "The card says it can be used for more languages, but unsupported-language predictions are not covered by the eight-language benchmark claim.",
+        "Scores are text-level polarity and must not be interpreted as sentiment toward a discovered topic without target-aware validation.",
+        "Twitter slang, code-switching, sarcasm, quoted text, and retweet templates can produce uncertain or mis-targeted predictions.",
+        "Softmax probabilities are model confidence scores, not calibrated probabilities; compare strata with uncertainty intervals."
+      ]
+    },
+    "preprocessing": {
+      "normalization": "Collapse whitespace; replace tokens beginning with @ (length > 1) by @user and tokens beginning with http by http, following the model card.",
+      "max_length": 128,
+      "tokenizer_model_max_length": null,
+      "model_config_max_position_embeddings": 514,
+      "truncation": {
+        "unique_texts_checked": 20627,
+        "unique_texts_truncated": 62,
+        "fraction_of_unique_texts_truncated": 0.003005769137538178
+      },
+      "deduplicate_key": "exact raw body string before normalization; one prediction mapped back to every matching ID"
+    },
+    "runtime": {
+      "device_requested": "auto",
+      "device_used": "mps",
+      "torch_version": "2.14.0",
+      "transformers_version": "4.57.6",
+      "python_version": "3.13.13",
+      "mps_built": true,
+      "mps_available": true,
+      "cuda_available": false,
+      "batch_size": 64,
+      "read_batch_size": 65536,
+      "inference_seconds": 88.49142016697442,
+      "elapsed_seconds": 90.85836704203393,
+      "unique_texts_per_inference_second": 233.09604435185832,
+      "input_rows_per_elapsed_second": 227.07870140847885
+    },
+    "confidence": {
+      "unique_text_max_probability": {
+        "p50": 0.6810424327850342,
+        "p90": 0.9052185416221619,
+        "p99": 0.95330810546875
+      },
+      "unique_text_mean_max_probability": 0.679103434085846
+    },
+    "analysis_guidance": {
+      "topic_targeting": "Do not call this output topic-targeted sentiment; aggregate only after topic assignment and inspect target relevance.",
+      "recommended_shift_estimator": "For each topic/day, report mean sentiment_score and bootstrap or Wilson intervals on author-clustered samples; compare against daily language/RT composition baselines.",
+      "retweets_and_templates": "Keep RT-prefixed rows separate or downweight them; collapse identical text for inference but retain ID-level prevalence and author counts so templates cannot masquerade as independent language evidence.",
+      "author_concentration": "Use author-cluster bootstrap or effective sample size; report both tweet-weighted and author-weighted estimates.",
+      "unsupported_languages": "Do not silently pool unsupported language codes with supported ones; report them separately or exclude with counts and sensitivity bounds."
+    }
+  },
+  "summary_by_language": {
+    "ar": {
+      "n": 1831,
+      "authors": 1766,
+      "mean_score": 0.09234508995733777
+    },
+    "de": {
+      "n": 614,
+      "authors": 602,
+      "mean_score": -0.14395739431477816
+    },
+    "en": {
+      "n": 3123,
+      "authors": 3059,
+      "mean_score": -0.05094231892552488
+    },
+    "es": {
+      "n": 2191,
+      "authors": 2122,
+      "mean_score": -0.16540729808857021
+    },
+    "fa": {
+      "n": 812,
+      "authors": 790,
+      "mean_score": -0.20191334415997925
+    },
+    "fr": {
+      "n": 1766,
+      "authors": 1709,
+      "mean_score": -0.1117150730728715
+    },
+    "hi": {
+      "n": 796,
+      "authors": 777,
+      "mean_score": -0.035066954318864564
+    },
+    "in": {
+      "n": 946,
+      "authors": 934,
+      "mean_score": -0.08362231536691588
+    },
+    "it": {
+      "n": 812,
+      "authors": 796,
+      "mean_score": -0.21254560497722455
+    },
+    "ja": {
+      "n": 1580,
+      "authors": 1555,
+      "mean_score": 0.09180299932302176
+    },
+    "ko": {
+      "n": 976,
+      "authors": 951,
+      "mean_score": 0.02899200132796083
+    },
+    "pt": {
+      "n": 2029,
+      "authors": 1984,
+      "mean_score": -0.18919806860335917
+    },
+    "ru": {
+      "n": 486,
+      "authors": 477,
+      "mean_score": -0.09362983259414571
+    },
+    "th": {
+      "n": 844,
+      "authors": 833,
+      "mean_score": 0.059948480599758464
+    },
+    "tr": {
+      "n": 1031,
+      "authors": 1001,
+      "mean_score": -0.09732045659977874
+    },
+    "zh": {
+      "n": 795,
+      "authors": 773,
+      "mean_score": -0.1303823562210086
+    }
+  },
+  "daily": [
+    {
+      "day": "2026-08-17",
+      "lang": "ar",
+      "n": 100,
+      "mean_score": 0.11390182547271252,
+      "negative_fraction": 0.26,
+      "neutral_fraction": 0.27,
+      "positive_fraction": 0.47,
+      "mean_max_probability": 0.6895913138985634
+    },
+    {
+      "day": "2026-08-17",
+      "lang": "de",
+      "n": 32,
+      "mean_score": -0.22271402389742434,
+      "negative_fraction": 0.375,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.125,
+      "mean_max_probability": 0.711885224096477
+    },
+    {
+      "day": "2026-08-17",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.0380427473038435,
+      "negative_fraction": 0.33,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.29,
+      "mean_max_probability": 0.6933153301477433
+    },
+    {
+      "day": "2026-08-17",
+      "lang": "es",
+      "n": 100,
+      "mean_score": -0.18008957289159297,
+      "negative_fraction": 0.42,
+      "neutral_fraction": 0.35,
+      "positive_fraction": 0.23,
+      "mean_max_probability": 0.7117810475826264
+    },
+    {
+      "day": "2026-08-17",
+      "lang": "fa",
+      "n": 50,
+      "mean_score": -0.29327138751745224,
+      "negative_fraction": 0.54,
+      "neutral_fraction": 0.28,
+      "positive_fraction": 0.18,
+      "mean_max_probability": 0.6655617696046829
+    },
+    {
+      "day": "2026-08-17",
+      "lang": "fr",
+      "n": 100,
+      "mean_score": -0.17721675910055637,
+      "negative_fraction": 0.51,
+      "neutral_fraction": 0.23,
+      "positive_fraction": 0.26,
+      "mean_max_probability": 0.711939497590065
+    },
+    {
+      "day": "2026-08-17",
+      "lang": "hi",
+      "n": 49,
+      "mean_score": -0.04018121615660434,
+      "negative_fraction": 0.3877551020408163,
+      "neutral_fraction": 0.3877551020408163,
+      "positive_fraction": 0.22448979591836735,
+      "mean_max_probability": 0.5673377890976108
+    },
+    {
+      "day": "2026-08-17",
+      "lang": "in",
+      "n": 50,
+      "mean_score": -0.14217948734760286,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.22,
+      "mean_max_probability": 0.6144363385438919
+    },
+    {
+      "day": "2026-08-17",
+      "lang": "it",
+      "n": 42,
+      "mean_score": -0.41894054585801704,
+      "negative_fraction": 0.6666666666666666,
+      "neutral_fraction": 0.21428571428571427,
+      "positive_fraction": 0.11904761904761904,
+      "mean_max_probability": 0.7774245320331483
+    },
+    {
+      "day": "2026-08-17",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.1258723696321249,
+      "negative_fraction": 0.32,
+      "neutral_fraction": 0.32,
+      "positive_fraction": 0.36,
+      "mean_max_probability": 0.6783032810688019
+    },
+    {
+      "day": "2026-08-17",
+      "lang": "ko",
+      "n": 50,
+      "mean_score": -0.08636571310460567,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.26,
+      "positive_fraction": 0.34,
+      "mean_max_probability": 0.6290931749343872
+    },
+    {
+      "day": "2026-08-17",
+      "lang": "pt",
+      "n": 100,
+      "mean_score": -0.27039560712873933,
+      "negative_fraction": 0.49,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.13,
+      "mean_max_probability": 0.7006117117404937
+    },
+    {
+      "day": "2026-08-17",
+      "lang": "ru",
+      "n": 38,
+      "mean_score": -0.05464228036764421,
+      "negative_fraction": 0.39473684210526316,
+      "neutral_fraction": 0.39473684210526316,
+      "positive_fraction": 0.21052631578947367,
+      "mean_max_probability": 0.6503602109457317
+    },
+    {
+      "day": "2026-08-17",
+      "lang": "th",
+      "n": 50,
+      "mean_score": 0.04910978406667709,
+      "negative_fraction": 0.2,
+      "neutral_fraction": 0.42,
+      "positive_fraction": 0.38,
+      "mean_max_probability": 0.5870711570978164
+    },
+    {
+      "day": "2026-08-17",
+      "lang": "tr",
+      "n": 50,
+      "mean_score": -0.0534032142162323,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.22,
+      "mean_max_probability": 0.6357744497060775
+    },
+    {
+      "day": "2026-08-17",
+      "lang": "zh",
+      "n": 42,
+      "mean_score": -0.16465551565800393,
+      "negative_fraction": 0.40476190476190477,
+      "neutral_fraction": 0.47619047619047616,
+      "positive_fraction": 0.11904761904761904,
+      "mean_max_probability": 0.5370290463878995
+    },
+    {
+      "day": "2026-08-18",
+      "lang": "ar",
+      "n": 100,
+      "mean_score": 0.15455380715429784,
+      "negative_fraction": 0.27,
+      "neutral_fraction": 0.26,
+      "positive_fraction": 0.47,
+      "mean_max_probability": 0.6782736533880234
+    },
+    {
+      "day": "2026-08-18",
+      "lang": "de",
+      "n": 48,
+      "mean_score": -0.12088586882843326,
+      "negative_fraction": 0.3541666666666667,
+      "neutral_fraction": 0.4583333333333333,
+      "positive_fraction": 0.1875,
+      "mean_max_probability": 0.7176457531750202
+    },
+    {
+      "day": "2026-08-18",
+      "lang": "en",
+      "n": 100,
+      "mean_score": 0.0006042914465069771,
+      "negative_fraction": 0.27,
+      "neutral_fraction": 0.44,
+      "positive_fraction": 0.29,
+      "mean_max_probability": 0.6843189778923988
+    },
+    {
+      "day": "2026-08-18",
+      "lang": "es",
+      "n": 100,
+      "mean_score": -0.12135598424822092,
+      "negative_fraction": 0.35,
+      "neutral_fraction": 0.41,
+      "positive_fraction": 0.24,
+      "mean_max_probability": 0.7124920731782913
+    },
+    {
+      "day": "2026-08-18",
+      "lang": "fa",
+      "n": 50,
+      "mean_score": -0.1602909155189991,
+      "negative_fraction": 0.54,
+      "neutral_fraction": 0.18,
+      "positive_fraction": 0.28,
+      "mean_max_probability": 0.6224676257371903
+    },
+    {
+      "day": "2026-08-18",
+      "lang": "fr",
+      "n": 100,
+      "mean_score": -0.16292635306715966,
+      "negative_fraction": 0.56,
+      "neutral_fraction": 0.19,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.706649840772152
+    },
+    {
+      "day": "2026-08-18",
+      "lang": "hi",
+      "n": 37,
+      "mean_score": -0.05117878579610103,
+      "negative_fraction": 0.40540540540540543,
+      "neutral_fraction": 0.32432432432432434,
+      "positive_fraction": 0.2702702702702703,
+      "mean_max_probability": 0.5525748721651129
+    },
+    {
+      "day": "2026-08-18",
+      "lang": "in",
+      "n": 50,
+      "mean_score": -0.04097139880061149,
+      "negative_fraction": 0.36,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.28,
+      "mean_max_probability": 0.6362676084041595
+    },
+    {
+      "day": "2026-08-18",
+      "lang": "it",
+      "n": 41,
+      "mean_score": -0.3400016163543957,
+      "negative_fraction": 0.6341463414634146,
+      "neutral_fraction": 0.17073170731707318,
+      "positive_fraction": 0.1951219512195122,
+      "mean_max_probability": 0.7797412232654851
+    },
+    {
+      "day": "2026-08-18",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.09452430285513401,
+      "negative_fraction": 0.26,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.34,
+      "mean_max_probability": 0.6793173813819885
+    },
+    {
+      "day": "2026-08-18",
+      "lang": "ko",
+      "n": 50,
+      "mean_score": 0.016350136250257493,
+      "negative_fraction": 0.32,
+      "neutral_fraction": 0.28,
+      "positive_fraction": 0.4,
+      "mean_max_probability": 0.6367551964521408
+    },
+    {
+      "day": "2026-08-18",
+      "lang": "pt",
+      "n": 100,
+      "mean_score": -0.2420666990429163,
+      "negative_fraction": 0.52,
+      "neutral_fraction": 0.22,
+      "positive_fraction": 0.26,
+      "mean_max_probability": 0.7359493282437325
+    },
+    {
+      "day": "2026-08-18",
+      "lang": "ru",
+      "n": 32,
+      "mean_score": -0.0686076917918399,
+      "negative_fraction": 0.3125,
+      "neutral_fraction": 0.46875,
+      "positive_fraction": 0.21875,
+      "mean_max_probability": 0.6536350734531879
+    },
+    {
+      "day": "2026-08-18",
+      "lang": "th",
+      "n": 50,
+      "mean_score": 0.038804519549012186,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.26,
+      "positive_fraction": 0.36,
+      "mean_max_probability": 0.6316707688570022
+    },
+    {
+      "day": "2026-08-18",
+      "lang": "tr",
+      "n": 50,
+      "mean_score": -0.09135481297969818,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.22,
+      "mean_max_probability": 0.6650614845752716
+    },
+    {
+      "day": "2026-08-18",
+      "lang": "zh",
+      "n": 50,
+      "mean_score": -0.11240440413355827,
+      "negative_fraction": 0.36,
+      "neutral_fraction": 0.42,
+      "positive_fraction": 0.22,
+      "mean_max_probability": 0.578948900103569
+    },
+    {
+      "day": "2026-08-19",
+      "lang": "ar",
+      "n": 100,
+      "mean_score": 0.11488184243440629,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.39,
+      "mean_max_probability": 0.6814761206507682
+    },
+    {
+      "day": "2026-08-19",
+      "lang": "de",
+      "n": 31,
+      "mean_score": -0.18527125332865022,
+      "negative_fraction": 0.45161290322580644,
+      "neutral_fraction": 0.3548387096774194,
+      "positive_fraction": 0.1935483870967742,
+      "mean_max_probability": 0.7238197730433557
+    },
+    {
+      "day": "2026-08-19",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.027658642660826446,
+      "negative_fraction": 0.29,
+      "neutral_fraction": 0.46,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.7123928573727608
+    },
+    {
+      "day": "2026-08-19",
+      "lang": "es",
+      "n": 100,
+      "mean_score": -0.14795357756316663,
+      "negative_fraction": 0.44,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.22,
+      "mean_max_probability": 0.7415879398584366
+    },
+    {
+      "day": "2026-08-19",
+      "lang": "fa",
+      "n": 48,
+      "mean_score": -0.1493824419255058,
+      "negative_fraction": 0.4791666666666667,
+      "neutral_fraction": 0.2708333333333333,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.6062540523707867
+    },
+    {
+      "day": "2026-08-19",
+      "lang": "fr",
+      "n": 100,
+      "mean_score": -0.06537084009498358,
+      "negative_fraction": 0.43,
+      "neutral_fraction": 0.27,
+      "positive_fraction": 0.3,
+      "mean_max_probability": 0.6971928989887237
+    },
+    {
+      "day": "2026-08-19",
+      "lang": "hi",
+      "n": 37,
+      "mean_score": 0.03487092457913064,
+      "negative_fraction": 0.2702702702702703,
+      "neutral_fraction": 0.40540540540540543,
+      "positive_fraction": 0.32432432432432434,
+      "mean_max_probability": 0.5685048079168474
+    },
+    {
+      "day": "2026-08-19",
+      "lang": "in",
+      "n": 50,
+      "mean_score": -0.18535624608397483,
+      "negative_fraction": 0.46,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.18,
+      "mean_max_probability": 0.6762746846675873
+    },
+    {
+      "day": "2026-08-19",
+      "lang": "it",
+      "n": 44,
+      "mean_score": -0.20776378448036584,
+      "negative_fraction": 0.4090909090909091,
+      "neutral_fraction": 0.36363636363636365,
+      "positive_fraction": 0.22727272727272727,
+      "mean_max_probability": 0.7363193292509426
+    },
+    {
+      "day": "2026-08-19",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.15065061017870904,
+      "negative_fraction": 0.22,
+      "neutral_fraction": 0.32,
+      "positive_fraction": 0.46,
+      "mean_max_probability": 0.6469627833366394
+    },
+    {
+      "day": "2026-08-19",
+      "lang": "ko",
+      "n": 50,
+      "mean_score": 0.0474760314822197,
+      "negative_fraction": 0.34,
+      "neutral_fraction": 0.32,
+      "positive_fraction": 0.34,
+      "mean_max_probability": 0.656373815536499
+    },
+    {
+      "day": "2026-08-19",
+      "lang": "pt",
+      "n": 100,
+      "mean_score": -0.20870836418122052,
+      "negative_fraction": 0.47,
+      "neutral_fraction": 0.3,
+      "positive_fraction": 0.23,
+      "mean_max_probability": 0.7228160431981087
+    },
+    {
+      "day": "2026-08-19",
+      "lang": "ru",
+      "n": 23,
+      "mean_score": -0.12089083862045537,
+      "negative_fraction": 0.43478260869565216,
+      "neutral_fraction": 0.391304347826087,
+      "positive_fraction": 0.17391304347826086,
+      "mean_max_probability": 0.6075111588706141
+    },
+    {
+      "day": "2026-08-19",
+      "lang": "th",
+      "n": 50,
+      "mean_score": 0.1656866017729044,
+      "negative_fraction": 0.14,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.36,
+      "mean_max_probability": 0.6297423148155212
+    },
+    {
+      "day": "2026-08-19",
+      "lang": "tr",
+      "n": 50,
+      "mean_score": -0.100497667491436,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.22,
+      "mean_max_probability": 0.6362240290641785
+    },
+    {
+      "day": "2026-08-19",
+      "lang": "zh",
+      "n": 50,
+      "mean_score": -0.07586859479546547,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.46,
+      "positive_fraction": 0.16,
+      "mean_max_probability": 0.5896109223365784
+    },
+    {
+      "day": "2026-08-20",
+      "lang": "ar",
+      "n": 100,
+      "mean_score": 0.11526426523923874,
+      "negative_fraction": 0.28,
+      "neutral_fraction": 0.31,
+      "positive_fraction": 0.41,
+      "mean_max_probability": 0.7022854247689247
+    },
+    {
+      "day": "2026-08-20",
+      "lang": "de",
+      "n": 29,
+      "mean_score": -0.16258832144326177,
+      "negative_fraction": 0.4827586206896552,
+      "neutral_fraction": 0.2413793103448276,
+      "positive_fraction": 0.27586206896551724,
+      "mean_max_probability": 0.7394928099780247
+    },
+    {
+      "day": "2026-08-20",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.13287064781412483,
+      "negative_fraction": 0.41,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.23,
+      "mean_max_probability": 0.6801228830218315
+    },
+    {
+      "day": "2026-08-20",
+      "lang": "es",
+      "n": 100,
+      "mean_score": -0.19760204816237092,
+      "negative_fraction": 0.43,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.19,
+      "mean_max_probability": 0.7339405378699303
+    },
+    {
+      "day": "2026-08-20",
+      "lang": "fa",
+      "n": 50,
+      "mean_score": -0.13207577913999557,
+      "negative_fraction": 0.44,
+      "neutral_fraction": 0.3,
+      "positive_fraction": 0.26,
+      "mean_max_probability": 0.5917904531955719
+    },
+    {
+      "day": "2026-08-20",
+      "lang": "fr",
+      "n": 100,
+      "mean_score": 0.020918614119291305,
+      "negative_fraction": 0.35,
+      "neutral_fraction": 0.27,
+      "positive_fraction": 0.38,
+      "mean_max_probability": 0.7162854573130608
+    },
+    {
+      "day": "2026-08-20",
+      "lang": "hi",
+      "n": 48,
+      "mean_score": 0.040795724373310804,
+      "negative_fraction": 0.3125,
+      "neutral_fraction": 0.3541666666666667,
+      "positive_fraction": 0.3333333333333333,
+      "mean_max_probability": 0.5682009899367889
+    },
+    {
+      "day": "2026-08-20",
+      "lang": "in",
+      "n": 50,
+      "mean_score": -0.05064778700470925,
+      "negative_fraction": 0.44,
+      "neutral_fraction": 0.26,
+      "positive_fraction": 0.3,
+      "mean_max_probability": 0.5943081521987915
+    },
+    {
+      "day": "2026-08-20",
+      "lang": "it",
+      "n": 52,
+      "mean_score": -0.25793156686883706,
+      "negative_fraction": 0.4807692307692308,
+      "neutral_fraction": 0.40384615384615385,
+      "positive_fraction": 0.11538461538461539,
+      "mean_max_probability": 0.7814441569722615
+    },
+    {
+      "day": "2026-08-20",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.27280815146863463,
+      "negative_fraction": 0.18,
+      "neutral_fraction": 0.28,
+      "positive_fraction": 0.54,
+      "mean_max_probability": 0.7006090754270553
+    },
+    {
+      "day": "2026-08-20",
+      "lang": "ko",
+      "n": 50,
+      "mean_score": 0.03751925364136696,
+      "negative_fraction": 0.32,
+      "neutral_fraction": 0.3,
+      "positive_fraction": 0.38,
+      "mean_max_probability": 0.6039272838830948
+    },
+    {
+      "day": "2026-08-20",
+      "lang": "pt",
+      "n": 100,
+      "mean_score": -0.1114276566542685,
+      "negative_fraction": 0.37,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.23,
+      "mean_max_probability": 0.7026145002245903
+    },
+    {
+      "day": "2026-08-20",
+      "lang": "ru",
+      "n": 27,
+      "mean_score": -0.050740461934495856,
+      "negative_fraction": 0.25925925925925924,
+      "neutral_fraction": 0.5925925925925926,
+      "positive_fraction": 0.14814814814814814,
+      "mean_max_probability": 0.6567920192524239
+    },
+    {
+      "day": "2026-08-20",
+      "lang": "th",
+      "n": 50,
+      "mean_score": 0.09337480455636978,
+      "negative_fraction": 0.24,
+      "neutral_fraction": 0.44,
+      "positive_fraction": 0.32,
+      "mean_max_probability": 0.6412668228149414
+    },
+    {
+      "day": "2026-08-20",
+      "lang": "tr",
+      "n": 50,
+      "mean_score": -0.07981897622346878,
+      "negative_fraction": 0.34,
+      "neutral_fraction": 0.48,
+      "positive_fraction": 0.18,
+      "mean_max_probability": 0.6587394392490387
+    },
+    {
+      "day": "2026-08-20",
+      "lang": "zh",
+      "n": 50,
+      "mean_score": -0.08821821138262749,
+      "negative_fraction": 0.32,
+      "neutral_fraction": 0.48,
+      "positive_fraction": 0.2,
+      "mean_max_probability": 0.5636576902866364
+    },
+    {
+      "day": "2026-08-21",
+      "lang": "ar",
+      "n": 100,
+      "mean_score": 0.061390904784202574,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.18,
+      "positive_fraction": 0.44,
+      "mean_max_probability": 0.6963095033168792
+    },
+    {
+      "day": "2026-08-21",
+      "lang": "de",
+      "n": 33,
+      "mean_score": -0.17661332869620033,
+      "negative_fraction": 0.36363636363636365,
+      "neutral_fraction": 0.5151515151515151,
+      "positive_fraction": 0.12121212121212122,
+      "mean_max_probability": 0.6976598112872152
+    },
+    {
+      "day": "2026-08-21",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.061426570490002635,
+      "negative_fraction": 0.36,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.3,
+      "mean_max_probability": 0.6890423172712326
+    },
+    {
+      "day": "2026-08-21",
+      "lang": "es",
+      "n": 100,
+      "mean_score": -0.1848221667855978,
+      "negative_fraction": 0.44,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.18,
+      "mean_max_probability": 0.7157261919975281
+    },
+    {
+      "day": "2026-08-21",
+      "lang": "fa",
+      "n": 50,
+      "mean_score": -0.18765682786703108,
+      "negative_fraction": 0.48,
+      "neutral_fraction": 0.3,
+      "positive_fraction": 0.22,
+      "mean_max_probability": 0.6119028306007386
+    },
+    {
+      "day": "2026-08-21",
+      "lang": "fr",
+      "n": 100,
+      "mean_score": -0.12179806031286716,
+      "negative_fraction": 0.44,
+      "neutral_fraction": 0.26,
+      "positive_fraction": 0.3,
+      "mean_max_probability": 0.720715539753437
+    },
+    {
+      "day": "2026-08-21",
+      "lang": "hi",
+      "n": 69,
+      "mean_score": -0.07847329709624899,
+      "negative_fraction": 0.43478260869565216,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.2318840579710145,
+      "mean_max_probability": 0.5659514574900918
+    },
+    {
+      "day": "2026-08-21",
+      "lang": "in",
+      "n": 50,
+      "mean_score": -0.04022418841719627,
+      "negative_fraction": 0.36,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.3,
+      "mean_max_probability": 0.6462970507144928
+    },
+    {
+      "day": "2026-08-21",
+      "lang": "it",
+      "n": 41,
+      "mean_score": -0.2549109021883185,
+      "negative_fraction": 0.4634146341463415,
+      "neutral_fraction": 0.3170731707317073,
+      "positive_fraction": 0.21951219512195122,
+      "mean_max_probability": 0.7335849302570995
+    },
+    {
+      "day": "2026-08-21",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.08042074486613274,
+      "negative_fraction": 0.3,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.3,
+      "mean_max_probability": 0.6901748317480088
+    },
+    {
+      "day": "2026-08-21",
+      "lang": "ko",
+      "n": 50,
+      "mean_score": 0.06094149604439735,
+      "negative_fraction": 0.34,
+      "neutral_fraction": 0.24,
+      "positive_fraction": 0.42,
+      "mean_max_probability": 0.6727337253093719
+    },
+    {
+      "day": "2026-08-21",
+      "lang": "pt",
+      "n": 100,
+      "mean_score": -0.20217264346778394,
+      "negative_fraction": 0.48,
+      "neutral_fraction": 0.29,
+      "positive_fraction": 0.23,
+      "mean_max_probability": 0.7376493519544601
+    },
+    {
+      "day": "2026-08-21",
+      "lang": "ru",
+      "n": 38,
+      "mean_score": -0.1119843544928651,
+      "negative_fraction": 0.34210526315789475,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.15789473684210525,
+      "mean_max_probability": 0.6190150207594821
+    },
+    {
+      "day": "2026-08-21",
+      "lang": "th",
+      "n": 50,
+      "mean_score": 0.0729125751554966,
+      "negative_fraction": 0.3,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.34,
+      "mean_max_probability": 0.6090183770656585
+    },
+    {
+      "day": "2026-08-21",
+      "lang": "tr",
+      "n": 50,
+      "mean_score": -0.1909930546581745,
+      "negative_fraction": 0.58,
+      "neutral_fraction": 0.26,
+      "positive_fraction": 0.16,
+      "mean_max_probability": 0.6707234328985214
+    },
+    {
+      "day": "2026-08-21",
+      "lang": "zh",
+      "n": 50,
+      "mean_score": -0.10757526233792306,
+      "negative_fraction": 0.44,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.18,
+      "mean_max_probability": 0.5714815354347229
+    },
+    {
+      "day": "2026-08-22",
+      "lang": "ar",
+      "n": 100,
+      "mean_score": 0.1309623292274773,
+      "negative_fraction": 0.29,
+      "neutral_fraction": 0.22,
+      "positive_fraction": 0.49,
+      "mean_max_probability": 0.684703825712204
+    },
+    {
+      "day": "2026-08-22",
+      "lang": "de",
+      "n": 33,
+      "mean_score": -0.1789343679944674,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.5151515151515151,
+      "positive_fraction": 0.15151515151515152,
+      "mean_max_probability": 0.7993927652185614
+    },
+    {
+      "day": "2026-08-22",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.10254727385938167,
+      "negative_fraction": 0.43,
+      "neutral_fraction": 0.33,
+      "positive_fraction": 0.24,
+      "mean_max_probability": 0.684813521206379
+    },
+    {
+      "day": "2026-08-22",
+      "lang": "es",
+      "n": 100,
+      "mean_score": -0.09759199142456054,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.28,
+      "mean_max_probability": 0.7179563471674919
+    },
+    {
+      "day": "2026-08-22",
+      "lang": "fa",
+      "n": 50,
+      "mean_score": -0.214578255712986,
+      "negative_fraction": 0.58,
+      "neutral_fraction": 0.16,
+      "positive_fraction": 0.26,
+      "mean_max_probability": 0.5800200778245926
+    },
+    {
+      "day": "2026-08-22",
+      "lang": "fr",
+      "n": 100,
+      "mean_score": -0.04051849335432053,
+      "negative_fraction": 0.42,
+      "neutral_fraction": 0.23,
+      "positive_fraction": 0.35,
+      "mean_max_probability": 0.7627162116765976
+    },
+    {
+      "day": "2026-08-22",
+      "lang": "hi",
+      "n": 53,
+      "mean_score": -0.07127868398180548,
+      "negative_fraction": 0.4339622641509434,
+      "neutral_fraction": 0.32075471698113206,
+      "positive_fraction": 0.24528301886792453,
+      "mean_max_probability": 0.5548019690333672
+    },
+    {
+      "day": "2026-08-22",
+      "lang": "in",
+      "n": 50,
+      "mean_score": -0.09779885612428188,
+      "negative_fraction": 0.48,
+      "neutral_fraction": 0.24,
+      "positive_fraction": 0.28,
+      "mean_max_probability": 0.6094722896814346
+    },
+    {
+      "day": "2026-08-22",
+      "lang": "it",
+      "n": 57,
+      "mean_score": -0.15777620516325297,
+      "negative_fraction": 0.45614035087719296,
+      "neutral_fraction": 0.2631578947368421,
+      "positive_fraction": 0.2807017543859649,
+      "mean_max_probability": 0.7535713304553115
+    },
+    {
+      "day": "2026-08-22",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.04884646050632,
+      "negative_fraction": 0.3,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.34,
+      "mean_max_probability": 0.675570604801178
+    },
+    {
+      "day": "2026-08-22",
+      "lang": "ko",
+      "n": 50,
+      "mean_score": 0.21368940494954586,
+      "negative_fraction": 0.16,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.48,
+      "mean_max_probability": 0.6402426397800446
+    },
+    {
+      "day": "2026-08-22",
+      "lang": "pt",
+      "n": 100,
+      "mean_score": -0.1094372058659792,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.39,
+      "positive_fraction": 0.23,
+      "mean_max_probability": 0.7225313529372215
+    },
+    {
+      "day": "2026-08-22",
+      "lang": "ru",
+      "n": 31,
+      "mean_score": -0.07232412287304478,
+      "negative_fraction": 0.25806451612903225,
+      "neutral_fraction": 0.5806451612903226,
+      "positive_fraction": 0.16129032258064516,
+      "mean_max_probability": 0.6244059368487327
+    },
+    {
+      "day": "2026-08-22",
+      "lang": "th",
+      "n": 50,
+      "mean_score": 0.13499826639890672,
+      "negative_fraction": 0.2,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.42,
+      "mean_max_probability": 0.636367518901825
+    },
+    {
+      "day": "2026-08-22",
+      "lang": "tr",
+      "n": 50,
+      "mean_score": -0.005092968940734863,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.3,
+      "positive_fraction": 0.32,
+      "mean_max_probability": 0.6590226322412491
+    },
+    {
+      "day": "2026-08-22",
+      "lang": "zh",
+      "n": 50,
+      "mean_score": -0.21301443368196488,
+      "negative_fraction": 0.52,
+      "neutral_fraction": 0.32,
+      "positive_fraction": 0.16,
+      "mean_max_probability": 0.5988698077201843
+    },
+    {
+      "day": "2026-08-23",
+      "lang": "ar",
+      "n": 100,
+      "mean_score": 0.05841994486749172,
+      "negative_fraction": 0.31,
+      "neutral_fraction": 0.27,
+      "positive_fraction": 0.42,
+      "mean_max_probability": 0.6732037097215653
+    },
+    {
+      "day": "2026-08-23",
+      "lang": "de",
+      "n": 30,
+      "mean_score": -0.04563987987736861,
+      "negative_fraction": 0.36666666666666664,
+      "neutral_fraction": 0.43333333333333335,
+      "positive_fraction": 0.2,
+      "mean_max_probability": 0.732970177133878
+    },
+    {
+      "day": "2026-08-23",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.07287738051265479,
+      "negative_fraction": 0.36,
+      "neutral_fraction": 0.35,
+      "positive_fraction": 0.29,
+      "mean_max_probability": 0.6850691109895706
+    },
+    {
+      "day": "2026-08-23",
+      "lang": "es",
+      "n": 100,
+      "mean_score": -0.14046895729377865,
+      "negative_fraction": 0.41,
+      "neutral_fraction": 0.3,
+      "positive_fraction": 0.29,
+      "mean_max_probability": 0.6995105218887329
+    },
+    {
+      "day": "2026-08-23",
+      "lang": "fa",
+      "n": 50,
+      "mean_score": -0.27345343500375746,
+      "negative_fraction": 0.6,
+      "neutral_fraction": 0.28,
+      "positive_fraction": 0.12,
+      "mean_max_probability": 0.6012068653106689
+    },
+    {
+      "day": "2026-08-23",
+      "lang": "fr",
+      "n": 100,
+      "mean_score": -0.2203050784021616,
+      "negative_fraction": 0.58,
+      "neutral_fraction": 0.15,
+      "positive_fraction": 0.27,
+      "mean_max_probability": 0.746743394434452
+    },
+    {
+      "day": "2026-08-23",
+      "lang": "hi",
+      "n": 59,
+      "mean_score": -0.01499628717616453,
+      "negative_fraction": 0.4067796610169492,
+      "neutral_fraction": 0.3389830508474576,
+      "positive_fraction": 0.2542372881355932,
+      "mean_max_probability": 0.5689966299776303
+    },
+    {
+      "day": "2026-08-23",
+      "lang": "in",
+      "n": 50,
+      "mean_score": -0.1496628102660179,
+      "negative_fraction": 0.52,
+      "neutral_fraction": 0.24,
+      "positive_fraction": 0.24,
+      "mean_max_probability": 0.6179656380414963
+    },
+    {
+      "day": "2026-08-23",
+      "lang": "it",
+      "n": 46,
+      "mean_score": -0.16334017439056997,
+      "negative_fraction": 0.43478260869565216,
+      "neutral_fraction": 0.3695652173913043,
+      "positive_fraction": 0.1956521739130435,
+      "mean_max_probability": 0.7105653143447378
+    },
+    {
+      "day": "2026-08-23",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.17296672403812408,
+      "negative_fraction": 0.24,
+      "neutral_fraction": 0.32,
+      "positive_fraction": 0.44,
+      "mean_max_probability": 0.7321131843328476
+    },
+    {
+      "day": "2026-08-23",
+      "lang": "ko",
+      "n": 50,
+      "mean_score": -0.045103440061211586,
+      "negative_fraction": 0.44,
+      "neutral_fraction": 0.22,
+      "positive_fraction": 0.34,
+      "mean_max_probability": 0.6446871984004975
+    },
+    {
+      "day": "2026-08-23",
+      "lang": "pt",
+      "n": 100,
+      "mean_score": -0.23300447948276998,
+      "negative_fraction": 0.49,
+      "neutral_fraction": 0.31,
+      "positive_fraction": 0.2,
+      "mean_max_probability": 0.7131030470132828
+    },
+    {
+      "day": "2026-08-23",
+      "lang": "ru",
+      "n": 27,
+      "mean_score": 0.03771742226348983,
+      "negative_fraction": 0.18518518518518517,
+      "neutral_fraction": 0.48148148148148145,
+      "positive_fraction": 0.3333333333333333,
+      "mean_max_probability": 0.6172883300869553
+    },
+    {
+      "day": "2026-08-23",
+      "lang": "th",
+      "n": 50,
+      "mean_score": 0.054958634451031683,
+      "negative_fraction": 0.26,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.38,
+      "mean_max_probability": 0.6398734962940216
+    },
+    {
+      "day": "2026-08-23",
+      "lang": "tr",
+      "n": 50,
+      "mean_score": -0.15259299218654632,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.32,
+      "positive_fraction": 0.28,
+      "mean_max_probability": 0.6683244335651398
+    },
+    {
+      "day": "2026-08-23",
+      "lang": "zh",
+      "n": 50,
+      "mean_score": -0.13722877591848373,
+      "negative_fraction": 0.42,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.22,
+      "mean_max_probability": 0.5996557891368866
+    },
+    {
+      "day": "2026-08-24",
+      "lang": "ar",
+      "n": 100,
+      "mean_score": 0.1231277121976018,
+      "negative_fraction": 0.32,
+      "neutral_fraction": 0.22,
+      "positive_fraction": 0.46,
+      "mean_max_probability": 0.6890412148833275
+    },
+    {
+      "day": "2026-08-24",
+      "lang": "de",
+      "n": 45,
+      "mean_score": -0.17172454686628447,
+      "negative_fraction": 0.35555555555555557,
+      "neutral_fraction": 0.4666666666666667,
+      "positive_fraction": 0.17777777777777778,
+      "mean_max_probability": 0.7369324988789029
+    },
+    {
+      "day": "2026-08-24",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.10321497905999422,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.26,
+      "mean_max_probability": 0.7063826110959053
+    },
+    {
+      "day": "2026-08-24",
+      "lang": "es",
+      "n": 100,
+      "mean_score": -0.1757183269970119,
+      "negative_fraction": 0.43,
+      "neutral_fraction": 0.35,
+      "positive_fraction": 0.22,
+      "mean_max_probability": 0.7429632160067559
+    },
+    {
+      "day": "2026-08-24",
+      "lang": "fa",
+      "n": 50,
+      "mean_score": -0.31832098990678787,
+      "negative_fraction": 0.62,
+      "neutral_fraction": 0.26,
+      "positive_fraction": 0.12,
+      "mean_max_probability": 0.6417459219694137
+    },
+    {
+      "day": "2026-08-24",
+      "lang": "fr",
+      "n": 100,
+      "mean_score": -0.05639713956043124,
+      "negative_fraction": 0.45,
+      "neutral_fraction": 0.2,
+      "positive_fraction": 0.35,
+      "mean_max_probability": 0.7104997691512108
+    },
+    {
+      "day": "2026-08-24",
+      "lang": "hi",
+      "n": 50,
+      "mean_score": 0.019921016842126847,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.28,
+      "mean_max_probability": 0.5379885464906693
+    },
+    {
+      "day": "2026-08-24",
+      "lang": "in",
+      "n": 50,
+      "mean_score": -0.15560038480907679,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.28,
+      "positive_fraction": 0.22,
+      "mean_max_probability": 0.6185959094762802
+    },
+    {
+      "day": "2026-08-24",
+      "lang": "it",
+      "n": 50,
+      "mean_score": -0.2162503918260336,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.24,
+      "positive_fraction": 0.26,
+      "mean_max_probability": 0.7359722971916198
+    },
+    {
+      "day": "2026-08-24",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.046021700501441956,
+      "negative_fraction": 0.34,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.32,
+      "mean_max_probability": 0.6608130258321762
+    },
+    {
+      "day": "2026-08-24",
+      "lang": "ko",
+      "n": 50,
+      "mean_score": 0.0552970714867115,
+      "negative_fraction": 0.3,
+      "neutral_fraction": 0.32,
+      "positive_fraction": 0.38,
+      "mean_max_probability": 0.668358537554741
+    },
+    {
+      "day": "2026-08-24",
+      "lang": "pt",
+      "n": 100,
+      "mean_score": -0.1834843722358346,
+      "negative_fraction": 0.47,
+      "neutral_fraction": 0.3,
+      "positive_fraction": 0.23,
+      "mean_max_probability": 0.7021850380301475
+    },
+    {
+      "day": "2026-08-24",
+      "lang": "ru",
+      "n": 26,
+      "mean_score": -0.013031502755788656,
+      "negative_fraction": 0.34615384615384615,
+      "neutral_fraction": 0.46153846153846156,
+      "positive_fraction": 0.19230769230769232,
+      "mean_max_probability": 0.6531251966953278
+    },
+    {
+      "day": "2026-08-24",
+      "lang": "th",
+      "n": 50,
+      "mean_score": 0.09482168585062027,
+      "negative_fraction": 0.22,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.38,
+      "mean_max_probability": 0.6429830569028855
+    },
+    {
+      "day": "2026-08-24",
+      "lang": "tr",
+      "n": 50,
+      "mean_score": -0.005565766394138336,
+      "negative_fraction": 0.3,
+      "neutral_fraction": 0.44,
+      "positive_fraction": 0.26,
+      "mean_max_probability": 0.676219254732132
+    },
+    {
+      "day": "2026-08-24",
+      "lang": "zh",
+      "n": 42,
+      "mean_score": -0.14370107304837024,
+      "negative_fraction": 0.40476190476190477,
+      "neutral_fraction": 0.4523809523809524,
+      "positive_fraction": 0.14285714285714285,
+      "mean_max_probability": 0.5810245786394391
+    },
+    {
+      "day": "2026-08-25",
+      "lang": "ar",
+      "n": 100,
+      "mean_score": -0.02285495091229677,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.26,
+      "positive_fraction": 0.36,
+      "mean_max_probability": 0.6846962627768517
+    },
+    {
+      "day": "2026-08-25",
+      "lang": "de",
+      "n": 31,
+      "mean_score": -0.0288858097647467,
+      "negative_fraction": 0.2903225806451613,
+      "neutral_fraction": 0.4838709677419355,
+      "positive_fraction": 0.22580645161290322,
+      "mean_max_probability": 0.749001415506486
+    },
+    {
+      "day": "2026-08-25",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.11971004374325275,
+      "negative_fraction": 0.41,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.23,
+      "mean_max_probability": 0.7019614836573601
+    },
+    {
+      "day": "2026-08-25",
+      "lang": "es",
+      "n": 100,
+      "mean_score": -0.32028705552220343,
+      "negative_fraction": 0.54,
+      "neutral_fraction": 0.33,
+      "positive_fraction": 0.13,
+      "mean_max_probability": 0.7296609973907471
+    },
+    {
+      "day": "2026-08-25",
+      "lang": "fa",
+      "n": 36,
+      "mean_score": -0.19766903378897244,
+      "negative_fraction": 0.6111111111111112,
+      "neutral_fraction": 0.2222222222222222,
+      "positive_fraction": 0.16666666666666666,
+      "mean_max_probability": 0.5841456626852354
+    },
+    {
+      "day": "2026-08-25",
+      "lang": "fr",
+      "n": 100,
+      "mean_score": -0.10203550681471825,
+      "negative_fraction": 0.44,
+      "neutral_fraction": 0.26,
+      "positive_fraction": 0.3,
+      "mean_max_probability": 0.7022494477033615
+    },
+    {
+      "day": "2026-08-25",
+      "lang": "hi",
+      "n": 35,
+      "mean_score": -0.06419853738376073,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.2,
+      "mean_max_probability": 0.4906126686504909
+    },
+    {
+      "day": "2026-08-25",
+      "lang": "in",
+      "n": 50,
+      "mean_score": -0.07452355779707431,
+      "negative_fraction": 0.32,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.3,
+      "mean_max_probability": 0.645015903711319
+    },
+    {
+      "day": "2026-08-25",
+      "lang": "it",
+      "n": 51,
+      "mean_score": -0.2162044384315902,
+      "negative_fraction": 0.43137254901960786,
+      "neutral_fraction": 0.37254901960784315,
+      "positive_fraction": 0.19607843137254902,
+      "mean_max_probability": 0.7372062521822312
+    },
+    {
+      "day": "2026-08-25",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.11465427100658417,
+      "negative_fraction": 0.22,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.38,
+      "mean_max_probability": 0.65244460105896
+    },
+    {
+      "day": "2026-08-25",
+      "lang": "ko",
+      "n": 50,
+      "mean_score": 0.11336204335093499,
+      "negative_fraction": 0.3,
+      "neutral_fraction": 0.28,
+      "positive_fraction": 0.42,
+      "mean_max_probability": 0.6645669412612915
+    },
+    {
+      "day": "2026-08-25",
+      "lang": "pt",
+      "n": 100,
+      "mean_score": -0.19344974908977747,
+      "negative_fraction": 0.44,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.2,
+      "mean_max_probability": 0.7085242027044296
+    },
+    {
+      "day": "2026-08-25",
+      "lang": "ru",
+      "n": 32,
+      "mean_score": -0.16679923853371292,
+      "negative_fraction": 0.40625,
+      "neutral_fraction": 0.4375,
+      "positive_fraction": 0.15625,
+      "mean_max_probability": 0.6741244914010167
+    },
+    {
+      "day": "2026-08-25",
+      "lang": "th",
+      "n": 50,
+      "mean_score": -0.06701221942901611,
+      "negative_fraction": 0.34,
+      "neutral_fraction": 0.42,
+      "positive_fraction": 0.24,
+      "mean_max_probability": 0.6546100527048111
+    },
+    {
+      "day": "2026-08-25",
+      "lang": "tr",
+      "n": 50,
+      "mean_score": -0.17367611870169639,
+      "negative_fraction": 0.52,
+      "neutral_fraction": 0.24,
+      "positive_fraction": 0.24,
+      "mean_max_probability": 0.662211109995842
+    },
+    {
+      "day": "2026-08-25",
+      "lang": "zh",
+      "n": 44,
+      "mean_score": -0.05558488441800529,
+      "negative_fraction": 0.3409090909090909,
+      "neutral_fraction": 0.4090909090909091,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.5763152688741684
+    },
+    {
+      "day": "2026-08-26",
+      "lang": "ar",
+      "n": 100,
+      "mean_score": 0.1284274487197399,
+      "negative_fraction": 0.27,
+      "neutral_fraction": 0.31,
+      "positive_fraction": 0.42,
+      "mean_max_probability": 0.6972900670766831
+    },
+    {
+      "day": "2026-08-26",
+      "lang": "de",
+      "n": 46,
+      "mean_score": -0.06306555571601442,
+      "negative_fraction": 0.30434782608695654,
+      "neutral_fraction": 0.45652173913043476,
+      "positive_fraction": 0.2391304347826087,
+      "mean_max_probability": 0.720925857839377
+    },
+    {
+      "day": "2026-08-26",
+      "lang": "en",
+      "n": 100,
+      "mean_score": 0.007669921852648258,
+      "negative_fraction": 0.31,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.31,
+      "mean_max_probability": 0.6895918935537338
+    },
+    {
+      "day": "2026-08-26",
+      "lang": "es",
+      "n": 100,
+      "mean_score": -0.1650412709824741,
+      "negative_fraction": 0.43,
+      "neutral_fraction": 0.37,
+      "positive_fraction": 0.2,
+      "mean_max_probability": 0.7146397694945336
+    },
+    {
+      "day": "2026-08-26",
+      "lang": "fa",
+      "n": 50,
+      "mean_score": -0.19907499209046364,
+      "negative_fraction": 0.54,
+      "neutral_fraction": 0.28,
+      "positive_fraction": 0.18,
+      "mean_max_probability": 0.6288703924417496
+    },
+    {
+      "day": "2026-08-26",
+      "lang": "fr",
+      "n": 100,
+      "mean_score": -0.05086546622216701,
+      "negative_fraction": 0.47,
+      "neutral_fraction": 0.2,
+      "positive_fraction": 0.33,
+      "mean_max_probability": 0.7458851176500321
+    },
+    {
+      "day": "2026-08-26",
+      "lang": "hi",
+      "n": 56,
+      "mean_score": -0.02754899420376335,
+      "negative_fraction": 0.32142857142857145,
+      "neutral_fraction": 0.4642857142857143,
+      "positive_fraction": 0.21428571428571427,
+      "mean_max_probability": 0.5322835397507463
+    },
+    {
+      "day": "2026-08-26",
+      "lang": "in",
+      "n": 50,
+      "mean_score": -0.13631274908781052,
+      "negative_fraction": 0.46,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.2,
+      "mean_max_probability": 0.5884573274850845
+    },
+    {
+      "day": "2026-08-26",
+      "lang": "it",
+      "n": 69,
+      "mean_score": -0.2727808709917725,
+      "negative_fraction": 0.5072463768115942,
+      "neutral_fraction": 0.3188405797101449,
+      "positive_fraction": 0.17391304347826086,
+      "mean_max_probability": 0.7236419587895491
+    },
+    {
+      "day": "2026-08-26",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.027653411626815796,
+      "negative_fraction": 0.34,
+      "neutral_fraction": 0.3,
+      "positive_fraction": 0.36,
+      "mean_max_probability": 0.6635465854406357
+    },
+    {
+      "day": "2026-08-26",
+      "lang": "ko",
+      "n": 50,
+      "mean_score": -0.08548887647688388,
+      "negative_fraction": 0.44,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.18,
+      "mean_max_probability": 0.5997101205587387
+    },
+    {
+      "day": "2026-08-26",
+      "lang": "pt",
+      "n": 100,
+      "mean_score": -0.24000131469219924,
+      "negative_fraction": 0.46,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.16,
+      "mean_max_probability": 0.6977554324269295
+    },
+    {
+      "day": "2026-08-26",
+      "lang": "ru",
+      "n": 48,
+      "mean_score": -0.13279400599033883,
+      "negative_fraction": 0.3958333333333333,
+      "neutral_fraction": 0.4583333333333333,
+      "positive_fraction": 0.14583333333333334,
+      "mean_max_probability": 0.6829041590293249
+    },
+    {
+      "day": "2026-08-26",
+      "lang": "th",
+      "n": 50,
+      "mean_score": 0.003034575879573822,
+      "negative_fraction": 0.24,
+      "neutral_fraction": 0.52,
+      "positive_fraction": 0.24,
+      "mean_max_probability": 0.5951526480913162
+    },
+    {
+      "day": "2026-08-26",
+      "lang": "tr",
+      "n": 50,
+      "mean_score": -0.08916281849145889,
+      "negative_fraction": 0.36,
+      "neutral_fraction": 0.42,
+      "positive_fraction": 0.22,
+      "mean_max_probability": 0.6606205213069916
+    },
+    {
+      "day": "2026-08-26",
+      "lang": "zh",
+      "n": 47,
+      "mean_score": -0.11250537729009669,
+      "negative_fraction": 0.40425531914893614,
+      "neutral_fraction": 0.2765957446808511,
+      "positive_fraction": 0.3191489361702128,
+      "mean_max_probability": 0.5820553486651563
+    },
+    {
+      "day": "2026-08-27",
+      "lang": "ar",
+      "n": 100,
+      "mean_score": 0.10965502358973027,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.35,
+      "positive_fraction": 0.4,
+      "mean_max_probability": 0.6975788253545762
+    },
+    {
+      "day": "2026-08-27",
+      "lang": "de",
+      "n": 54,
+      "mean_score": -0.212200151687419,
+      "negative_fraction": 0.4074074074074074,
+      "neutral_fraction": 0.5185185185185185,
+      "positive_fraction": 0.07407407407407407,
+      "mean_max_probability": 0.6972456960766403
+    },
+    {
+      "day": "2026-08-27",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.08087704118341207,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.35,
+      "positive_fraction": 0.27,
+      "mean_max_probability": 0.7091179811954498
+    },
+    {
+      "day": "2026-08-27",
+      "lang": "es",
+      "n": 100,
+      "mean_score": -0.19916171746328473,
+      "negative_fraction": 0.42,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.2,
+      "mean_max_probability": 0.7343782910704613
+    },
+    {
+      "day": "2026-08-27",
+      "lang": "fa",
+      "n": 50,
+      "mean_score": -0.22686719104647637,
+      "negative_fraction": 0.56,
+      "neutral_fraction": 0.26,
+      "positive_fraction": 0.18,
+      "mean_max_probability": 0.5989422965049743
+    },
+    {
+      "day": "2026-08-27",
+      "lang": "fr",
+      "n": 100,
+      "mean_score": -0.20654918424785138,
+      "negative_fraction": 0.54,
+      "neutral_fraction": 0.17,
+      "positive_fraction": 0.29,
+      "mean_max_probability": 0.7478131115436554
+    },
+    {
+      "day": "2026-08-27",
+      "lang": "hi",
+      "n": 56,
+      "mean_score": -0.02044472244701215,
+      "negative_fraction": 0.4107142857142857,
+      "neutral_fraction": 0.32142857142857145,
+      "positive_fraction": 0.26785714285714285,
+      "mean_max_probability": 0.5676363467105797
+    },
+    {
+      "day": "2026-08-27",
+      "lang": "in",
+      "n": 50,
+      "mean_score": -0.001511637270450592,
+      "negative_fraction": 0.36,
+      "neutral_fraction": 0.26,
+      "positive_fraction": 0.38,
+      "mean_max_probability": 0.610461151599884
+    },
+    {
+      "day": "2026-08-27",
+      "lang": "it",
+      "n": 58,
+      "mean_score": -0.09646903049072315,
+      "negative_fraction": 0.3275862068965517,
+      "neutral_fraction": 0.3620689655172414,
+      "positive_fraction": 0.3103448275862069,
+      "mean_max_probability": 0.7312496032180458
+    },
+    {
+      "day": "2026-08-27",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.06346420362591744,
+      "negative_fraction": 0.3,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.32,
+      "mean_max_probability": 0.7020730692148208
+    },
+    {
+      "day": "2026-08-27",
+      "lang": "ko",
+      "n": 50,
+      "mean_score": 0.04904583640396595,
+      "negative_fraction": 0.32,
+      "neutral_fraction": 0.32,
+      "positive_fraction": 0.36,
+      "mean_max_probability": 0.6440492630004883
+    },
+    {
+      "day": "2026-08-27",
+      "lang": "pt",
+      "n": 100,
+      "mean_score": -0.23902476351708174,
+      "negative_fraction": 0.46,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.18,
+      "mean_max_probability": 0.7094735726714134
+    },
+    {
+      "day": "2026-08-27",
+      "lang": "ru",
+      "n": 25,
+      "mean_score": 0.011683260798454284,
+      "negative_fraction": 0.24,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.36,
+      "mean_max_probability": 0.6168675577640533
+    },
+    {
+      "day": "2026-08-27",
+      "lang": "th",
+      "n": 50,
+      "mean_score": 0.061035864800214765,
+      "negative_fraction": 0.32,
+      "neutral_fraction": 0.3,
+      "positive_fraction": 0.38,
+      "mean_max_probability": 0.6095811307430268
+    },
+    {
+      "day": "2026-08-27",
+      "lang": "tr",
+      "n": 50,
+      "mean_score": -0.16949135020375253,
+      "negative_fraction": 0.44,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.22,
+      "mean_max_probability": 0.6733799576759338
+    },
+    {
+      "day": "2026-08-27",
+      "lang": "zh",
+      "n": 50,
+      "mean_score": -0.2347468051314354,
+      "negative_fraction": 0.54,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.1,
+      "mean_max_probability": 0.5976936048269272
+    },
+    {
+      "day": "2026-08-28",
+      "lang": "ar",
+      "n": 100,
+      "mean_score": 0.15482346726581453,
+      "negative_fraction": 0.3,
+      "neutral_fraction": 0.24,
+      "positive_fraction": 0.46,
+      "mean_max_probability": 0.6756490767002106
+    },
+    {
+      "day": "2026-08-28",
+      "lang": "de",
+      "n": 48,
+      "mean_score": -0.07836936763487756,
+      "negative_fraction": 0.22916666666666666,
+      "neutral_fraction": 0.5625,
+      "positive_fraction": 0.20833333333333334,
+      "mean_max_probability": 0.7073939573019743
+    },
+    {
+      "day": "2026-08-28",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.1932405925542116,
+      "negative_fraction": 0.46,
+      "neutral_fraction": 0.33,
+      "positive_fraction": 0.21,
+      "mean_max_probability": 0.7012943994998931
+    },
+    {
+      "day": "2026-08-28",
+      "lang": "es",
+      "n": 100,
+      "mean_score": -0.15281489841639995,
+      "negative_fraction": 0.42,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.24,
+      "mean_max_probability": 0.7206454646587371
+    },
+    {
+      "day": "2026-08-28",
+      "lang": "fa",
+      "n": 50,
+      "mean_score": -0.21328118845820426,
+      "negative_fraction": 0.54,
+      "neutral_fraction": 0.22,
+      "positive_fraction": 0.24,
+      "mean_max_probability": 0.6680074977874756
+    },
+    {
+      "day": "2026-08-28",
+      "lang": "fr",
+      "n": 100,
+      "mean_score": -0.1849206707626581,
+      "negative_fraction": 0.49,
+      "neutral_fraction": 0.22,
+      "positive_fraction": 0.29,
+      "mean_max_probability": 0.706456726193428
+    },
+    {
+      "day": "2026-08-28",
+      "lang": "hi",
+      "n": 43,
+      "mean_score": -0.008096706208794616,
+      "negative_fraction": 0.4186046511627907,
+      "neutral_fraction": 0.2558139534883721,
+      "positive_fraction": 0.32558139534883723,
+      "mean_max_probability": 0.5885259516017382
+    },
+    {
+      "day": "2026-08-28",
+      "lang": "in",
+      "n": 50,
+      "mean_score": -0.09901370048522949,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.24,
+      "positive_fraction": 0.26,
+      "mean_max_probability": 0.6130811303853989
+    },
+    {
+      "day": "2026-08-28",
+      "lang": "it",
+      "n": 63,
+      "mean_score": -0.11384448719521363,
+      "negative_fraction": 0.4126984126984127,
+      "neutral_fraction": 0.2857142857142857,
+      "positive_fraction": 0.30158730158730157,
+      "mean_max_probability": 0.6993258586005558
+    },
+    {
+      "day": "2026-08-28",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.0937542501091957,
+      "negative_fraction": 0.26,
+      "neutral_fraction": 0.3,
+      "positive_fraction": 0.44,
+      "mean_max_probability": 0.6886714595556259
+    },
+    {
+      "day": "2026-08-28",
+      "lang": "ko",
+      "n": 50,
+      "mean_score": 0.07101172000169755,
+      "negative_fraction": 0.3,
+      "neutral_fraction": 0.26,
+      "positive_fraction": 0.44,
+      "mean_max_probability": 0.6434846556186676
+    },
+    {
+      "day": "2026-08-28",
+      "lang": "pt",
+      "n": 100,
+      "mean_score": -0.10653606813400984,
+      "negative_fraction": 0.36,
+      "neutral_fraction": 0.39,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.678340454697609
+    },
+    {
+      "day": "2026-08-28",
+      "lang": "ru",
+      "n": 38,
+      "mean_score": -0.0493104165714038,
+      "negative_fraction": 0.3157894736842105,
+      "neutral_fraction": 0.39473684210526316,
+      "positive_fraction": 0.2894736842105263,
+      "mean_max_probability": 0.6935113158665205
+    },
+    {
+      "day": "2026-08-28",
+      "lang": "th",
+      "n": 50,
+      "mean_score": 0.09002689056098462,
+      "negative_fraction": 0.22,
+      "neutral_fraction": 0.44,
+      "positive_fraction": 0.34,
+      "mean_max_probability": 0.6187548512220382
+    },
+    {
+      "day": "2026-08-28",
+      "lang": "tr",
+      "n": 50,
+      "mean_score": -0.05214830815792084,
+      "negative_fraction": 0.32,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.18,
+      "mean_max_probability": 0.6640455090999603
+    },
+    {
+      "day": "2026-08-28",
+      "lang": "zh",
+      "n": 50,
+      "mean_score": -0.13907836735248566,
+      "negative_fraction": 0.42,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.18,
+      "mean_max_probability": 0.542894474864006
+    },
+    {
+      "day": "2026-08-29",
+      "lang": "ar",
+      "n": 100,
+      "mean_score": -0.01816861629486084,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.3,
+      "positive_fraction": 0.32,
+      "mean_max_probability": 0.7000383639335632
+    },
+    {
+      "day": "2026-08-29",
+      "lang": "de",
+      "n": 37,
+      "mean_score": -0.22478883018767512,
+      "negative_fraction": 0.43243243243243246,
+      "neutral_fraction": 0.4594594594594595,
+      "positive_fraction": 0.10810810810810811,
+      "mean_max_probability": 0.7026081133533169
+    },
+    {
+      "day": "2026-08-29",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.12960587106645108,
+      "negative_fraction": 0.44,
+      "neutral_fraction": 0.28,
+      "positive_fraction": 0.28,
+      "mean_max_probability": 0.6979817199707031
+    },
+    {
+      "day": "2026-08-29",
+      "lang": "es",
+      "n": 100,
+      "mean_score": -0.25485954934731125,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.3,
+      "positive_fraction": 0.2,
+      "mean_max_probability": 0.70617113083601
+    },
+    {
+      "day": "2026-08-29",
+      "lang": "fa",
+      "n": 50,
+      "mean_score": -0.18045567631721496,
+      "negative_fraction": 0.52,
+      "neutral_fraction": 0.26,
+      "positive_fraction": 0.22,
+      "mean_max_probability": 0.5988555616140365
+    },
+    {
+      "day": "2026-08-29",
+      "lang": "fr",
+      "n": 100,
+      "mean_score": -0.10825743291527033,
+      "negative_fraction": 0.46,
+      "neutral_fraction": 0.25,
+      "positive_fraction": 0.29,
+      "mean_max_probability": 0.7279399651288986
+    },
+    {
+      "day": "2026-08-29",
+      "lang": "hi",
+      "n": 49,
+      "mean_score": -0.0730076580479437,
+      "negative_fraction": 0.40816326530612246,
+      "neutral_fraction": 0.3673469387755102,
+      "positive_fraction": 0.22448979591836735,
+      "mean_max_probability": 0.5378832439987027
+    },
+    {
+      "day": "2026-08-29",
+      "lang": "in",
+      "n": 50,
+      "mean_score": -0.024318341612815857,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.26,
+      "mean_max_probability": 0.6021442514657974
+    },
+    {
+      "day": "2026-08-29",
+      "lang": "it",
+      "n": 55,
+      "mean_score": -0.20899360179901122,
+      "negative_fraction": 0.4727272727272727,
+      "neutral_fraction": 0.3090909090909091,
+      "positive_fraction": 0.21818181818181817,
+      "mean_max_probability": 0.7611226374452764
+    },
+    {
+      "day": "2026-08-29",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": -0.021470909714698793,
+      "negative_fraction": 0.36,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.28,
+      "mean_max_probability": 0.6900255382061005
+    },
+    {
+      "day": "2026-08-29",
+      "lang": "ko",
+      "n": 50,
+      "mean_score": 0.10933523796498776,
+      "negative_fraction": 0.28,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.34,
+      "mean_max_probability": 0.6124757826328278
+    },
+    {
+      "day": "2026-08-29",
+      "lang": "pt",
+      "n": 100,
+      "mean_score": -0.1593005981296301,
+      "negative_fraction": 0.42,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.18,
+      "mean_max_probability": 0.6999251449108124
+    },
+    {
+      "day": "2026-08-29",
+      "lang": "ru",
+      "n": 29,
+      "mean_score": -0.1270517146792905,
+      "negative_fraction": 0.3793103448275862,
+      "neutral_fraction": 0.5172413793103449,
+      "positive_fraction": 0.10344827586206896,
+      "mean_max_probability": 0.6261665194199003
+    },
+    {
+      "day": "2026-08-29",
+      "lang": "th",
+      "n": 50,
+      "mean_score": 0.13349116645753384,
+      "negative_fraction": 0.2,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.42,
+      "mean_max_probability": 0.6462666410207748
+    },
+    {
+      "day": "2026-08-29",
+      "lang": "tr",
+      "n": 50,
+      "mean_score": -0.04544139929115772,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.26,
+      "mean_max_probability": 0.6688880580663681
+    },
+    {
+      "day": "2026-08-29",
+      "lang": "zh",
+      "n": 50,
+      "mean_score": -0.11204326204955578,
+      "negative_fraction": 0.42,
+      "neutral_fraction": 0.46,
+      "positive_fraction": 0.12,
+      "mean_max_probability": 0.5515075796842575
+    },
+    {
+      "day": "2026-08-30",
+      "lang": "ar",
+      "n": 100,
+      "mean_score": 0.11582918852567672,
+      "negative_fraction": 0.26,
+      "neutral_fraction": 0.33,
+      "positive_fraction": 0.41,
+      "mean_max_probability": 0.6947398763895035
+    },
+    {
+      "day": "2026-08-30",
+      "lang": "de",
+      "n": 38,
+      "mean_score": -0.0416949057069264,
+      "negative_fraction": 0.2631578947368421,
+      "neutral_fraction": 0.5789473684210527,
+      "positive_fraction": 0.15789473684210525,
+      "mean_max_probability": 0.7394669173579467
+    },
+    {
+      "day": "2026-08-30",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.0636747407540679,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.31,
+      "positive_fraction": 0.31,
+      "mean_max_probability": 0.6891206207871438
+    },
+    {
+      "day": "2026-08-30",
+      "lang": "es",
+      "n": 100,
+      "mean_score": -0.12755116490647198,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.35,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.7416480550169945
+    },
+    {
+      "day": "2026-08-30",
+      "lang": "fa",
+      "n": 50,
+      "mean_score": -0.28042343087494376,
+      "negative_fraction": 0.6,
+      "neutral_fraction": 0.22,
+      "positive_fraction": 0.18,
+      "mean_max_probability": 0.6414361196756363
+    },
+    {
+      "day": "2026-08-30",
+      "lang": "fr",
+      "n": 100,
+      "mean_score": -0.1527032444998622,
+      "negative_fraction": 0.53,
+      "neutral_fraction": 0.14,
+      "positive_fraction": 0.33,
+      "mean_max_probability": 0.7558439579606057
+    },
+    {
+      "day": "2026-08-30",
+      "lang": "hi",
+      "n": 52,
+      "mean_score": -0.04776067601946684,
+      "negative_fraction": 0.40384615384615385,
+      "neutral_fraction": 0.38461538461538464,
+      "positive_fraction": 0.21153846153846154,
+      "mean_max_probability": 0.5398776009678841
+    },
+    {
+      "day": "2026-08-30",
+      "lang": "in",
+      "n": 50,
+      "mean_score": -0.07632581502199173,
+      "negative_fraction": 0.46,
+      "neutral_fraction": 0.3,
+      "positive_fraction": 0.24,
+      "mean_max_probability": 0.5699441927671433
+    },
+    {
+      "day": "2026-08-30",
+      "lang": "it",
+      "n": 55,
+      "mean_score": -0.26655395193533465,
+      "negative_fraction": 0.4909090909090909,
+      "neutral_fraction": 0.36363636363636365,
+      "positive_fraction": 0.14545454545454545,
+      "mean_max_probability": 0.7319017979231748
+    },
+    {
+      "day": "2026-08-30",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.14998268634080886,
+      "negative_fraction": 0.22,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.44,
+      "mean_max_probability": 0.6572247099876404
+    },
+    {
+      "day": "2026-08-30",
+      "lang": "ko",
+      "n": 50,
+      "mean_score": -0.005032615661621094,
+      "negative_fraction": 0.26,
+      "neutral_fraction": 0.44,
+      "positive_fraction": 0.3,
+      "mean_max_probability": 0.617893950343132
+    },
+    {
+      "day": "2026-08-30",
+      "lang": "pt",
+      "n": 100,
+      "mean_score": -0.18067714240401983,
+      "negative_fraction": 0.48,
+      "neutral_fraction": 0.26,
+      "positive_fraction": 0.26,
+      "mean_max_probability": 0.6936395356059074
+    },
+    {
+      "day": "2026-08-30",
+      "lang": "ru",
+      "n": 29,
+      "mean_score": -0.14033521454909753,
+      "negative_fraction": 0.41379310344827586,
+      "neutral_fraction": 0.4482758620689655,
+      "positive_fraction": 0.13793103448275862,
+      "mean_max_probability": 0.6954853339441891
+    },
+    {
+      "day": "2026-08-30",
+      "lang": "th",
+      "n": 50,
+      "mean_score": 0.09042451038956642,
+      "negative_fraction": 0.22,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.4,
+      "mean_max_probability": 0.6146705085039139
+    },
+    {
+      "day": "2026-08-30",
+      "lang": "tr",
+      "n": 50,
+      "mean_score": -0.07452441841363906,
+      "negative_fraction": 0.48,
+      "neutral_fraction": 0.24,
+      "positive_fraction": 0.28,
+      "mean_max_probability": 0.6885200101137161
+    },
+    {
+      "day": "2026-08-30",
+      "lang": "zh",
+      "n": 50,
+      "mean_score": -0.17118647933006287,
+      "negative_fraction": 0.48,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.14,
+      "mean_max_probability": 0.5692902451753616
+    },
+    {
+      "day": "2026-08-31",
+      "lang": "ar",
+      "n": 100,
+      "mean_score": 0.10563139215111733,
+      "negative_fraction": 0.29,
+      "neutral_fraction": 0.26,
+      "positive_fraction": 0.45,
+      "mean_max_probability": 0.6809052792191506
+    },
+    {
+      "day": "2026-08-31",
+      "lang": "de",
+      "n": 30,
+      "mean_score": -0.15592822780211765,
+      "negative_fraction": 0.36666666666666664,
+      "neutral_fraction": 0.4666666666666667,
+      "positive_fraction": 0.16666666666666666,
+      "mean_max_probability": 0.6940783351659775
+    },
+    {
+      "day": "2026-08-31",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.14560066673904656,
+      "negative_fraction": 0.41,
+      "neutral_fraction": 0.41,
+      "positive_fraction": 0.18,
+      "mean_max_probability": 0.6854036131501198
+    },
+    {
+      "day": "2026-08-31",
+      "lang": "es",
+      "n": 100,
+      "mean_score": -0.1143852875009179,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.35,
+      "positive_fraction": 0.27,
+      "mean_max_probability": 0.7131115725636482
+    },
+    {
+      "day": "2026-08-31",
+      "lang": "fa",
+      "n": 50,
+      "mean_score": -0.08449611052870751,
+      "negative_fraction": 0.42,
+      "neutral_fraction": 0.32,
+      "positive_fraction": 0.26,
+      "mean_max_probability": 0.6010724556446075
+    },
+    {
+      "day": "2026-08-31",
+      "lang": "fr",
+      "n": 100,
+      "mean_score": -0.12722619712352753,
+      "negative_fraction": 0.48,
+      "neutral_fraction": 0.24,
+      "positive_fraction": 0.28,
+      "mean_max_probability": 0.7105508273839951
+    },
+    {
+      "day": "2026-08-31",
+      "lang": "hi",
+      "n": 44,
+      "mean_score": -0.10072901557114991,
+      "negative_fraction": 0.38636363636363635,
+      "neutral_fraction": 0.38636363636363635,
+      "positive_fraction": 0.22727272727272727,
+      "mean_max_probability": 0.5403848947449164
+    },
+    {
+      "day": "2026-08-31",
+      "lang": "in",
+      "n": 50,
+      "mean_score": -0.0700656944513321,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.26,
+      "mean_max_probability": 0.6522331100702286
+    },
+    {
+      "day": "2026-08-31",
+      "lang": "it",
+      "n": 37,
+      "mean_score": -0.17748086104119146,
+      "negative_fraction": 0.43243243243243246,
+      "neutral_fraction": 0.32432432432432434,
+      "positive_fraction": 0.24324324324324326,
+      "mean_max_probability": 0.7611391906802719
+    },
+    {
+      "day": "2026-08-31",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.11202409237623215,
+      "negative_fraction": 0.3,
+      "neutral_fraction": 0.28,
+      "positive_fraction": 0.42,
+      "mean_max_probability": 0.6547186052799225
+    },
+    {
+      "day": "2026-08-31",
+      "lang": "ko",
+      "n": 50,
+      "mean_score": 0.00630992516875267,
+      "negative_fraction": 0.34,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.32,
+      "mean_max_probability": 0.6352129977941513
+    },
+    {
+      "day": "2026-08-31",
+      "lang": "pt",
+      "n": 100,
+      "mean_score": -0.24180409621447324,
+      "negative_fraction": 0.45,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.19,
+      "mean_max_probability": 0.7363257846236229
+    },
+    {
+      "day": "2026-08-31",
+      "lang": "ru",
+      "n": 14,
+      "mean_score": -0.08308660558291844,
+      "negative_fraction": 0.35714285714285715,
+      "neutral_fraction": 0.42857142857142855,
+      "positive_fraction": 0.21428571428571427,
+      "mean_max_probability": 0.6607343639646258
+    },
+    {
+      "day": "2026-08-31",
+      "lang": "th",
+      "n": 50,
+      "mean_score": -0.04314950205385685,
+      "negative_fraction": 0.34,
+      "neutral_fraction": 0.42,
+      "positive_fraction": 0.24,
+      "mean_max_probability": 0.6237249022722244
+    },
+    {
+      "day": "2026-08-31",
+      "lang": "tr",
+      "n": 50,
+      "mean_score": -0.18715033374726772,
+      "negative_fraction": 0.46,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.2,
+      "mean_max_probability": 0.6493864977359771
+    },
+    {
+      "day": "2026-08-31",
+      "lang": "zh",
+      "n": 50,
+      "mean_score": -0.14881955444812775,
+      "negative_fraction": 0.42,
+      "neutral_fraction": 0.44,
+      "positive_fraction": 0.14,
+      "mean_max_probability": 0.5822961115837098
+    },
+    {
+      "day": "2026-09-01",
+      "lang": "ar",
+      "n": 67,
+      "mean_score": 0.10229278522640911,
+      "negative_fraction": 0.31343283582089554,
+      "neutral_fraction": 0.26865671641791045,
+      "positive_fraction": 0.417910447761194,
+      "mean_max_probability": 0.6691456281427127
+    },
+    {
+      "day": "2026-09-01",
+      "lang": "de",
+      "n": 6,
+      "mean_score": -0.3685172696908315,
+      "negative_fraction": 0.6666666666666666,
+      "neutral_fraction": 0.16666666666666666,
+      "positive_fraction": 0.16666666666666666,
+      "mean_max_probability": 0.7199683537085851
+    },
+    {
+      "day": "2026-09-01",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.049571065343916414,
+      "negative_fraction": 0.34,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.28,
+      "mean_max_probability": 0.6990229144692421
+    },
+    {
+      "day": "2026-09-01",
+      "lang": "es",
+      "n": 100,
+      "mean_score": -0.14718012448400258,
+      "negative_fraction": 0.39,
+      "neutral_fraction": 0.39,
+      "positive_fraction": 0.22,
+      "mean_max_probability": 0.7106224021315575
+    },
+    {
+      "day": "2026-09-01",
+      "lang": "fa",
+      "n": 6,
+      "mean_score": -0.15956358114878336,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.16666666666666666,
+      "mean_max_probability": 0.5178552120923996
+    },
+    {
+      "day": "2026-09-01",
+      "lang": "fr",
+      "n": 30,
+      "mean_score": -0.052927504976590475,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.23333333333333334,
+      "positive_fraction": 0.36666666666666664,
+      "mean_max_probability": 0.6674534598986308
+    },
+    {
+      "day": "2026-09-01",
+      "lang": "hi",
+      "n": 13,
+      "mean_score": -0.21853364889438337,
+      "negative_fraction": 0.3076923076923077,
+      "neutral_fraction": 0.6153846153846154,
+      "positive_fraction": 0.07692307692307693,
+      "mean_max_probability": 0.552942502957124
+    },
+    {
+      "day": "2026-09-01",
+      "lang": "in",
+      "n": 43,
+      "mean_score": -0.17826452604386694,
+      "negative_fraction": 0.5116279069767442,
+      "neutral_fraction": 0.27906976744186046,
+      "positive_fraction": 0.20930232558139536,
+      "mean_max_probability": 0.6665057269639747
+    },
+    {
+      "day": "2026-09-01",
+      "lang": "it",
+      "n": 7,
+      "mean_score": -0.3256952807839428,
+      "negative_fraction": 0.42857142857142855,
+      "neutral_fraction": 0.5714285714285714,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.7514033998761859
+    },
+    {
+      "day": "2026-09-01",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.058702836334705355,
+      "negative_fraction": 0.3,
+      "neutral_fraction": 0.32,
+      "positive_fraction": 0.38,
+      "mean_max_probability": 0.7055369603633881
+    },
+    {
+      "day": "2026-09-01",
+      "lang": "ko",
+      "n": 50,
+      "mean_score": -0.042312244772911074,
+      "negative_fraction": 0.46,
+      "neutral_fraction": 0.18,
+      "positive_fraction": 0.36,
+      "mean_max_probability": 0.6350349068641663
+    },
+    {
+      "day": "2026-09-01",
+      "lang": "pt",
+      "n": 100,
+      "mean_score": -0.17971600227057935,
+      "negative_fraction": 0.46,
+      "neutral_fraction": 0.32,
+      "positive_fraction": 0.22,
+      "mean_max_probability": 0.7110683792829513
+    },
+    {
+      "day": "2026-09-01",
+      "lang": "ru",
+      "n": 7,
+      "mean_score": -0.21768011152744293,
+      "negative_fraction": 0.42857142857142855,
+      "neutral_fraction": 0.42857142857142855,
+      "positive_fraction": 0.14285714285714285,
+      "mean_max_probability": 0.7555121438843864
+    },
+    {
+      "day": "2026-09-01",
+      "lang": "th",
+      "n": 29,
+      "mean_score": 0.12377483372030587,
+      "negative_fraction": 0.27586206896551724,
+      "neutral_fraction": 0.3448275862068966,
+      "positive_fraction": 0.3793103448275862,
+      "mean_max_probability": 0.6412374664997232
+    },
+    {
+      "day": "2026-09-01",
+      "lang": "tr",
+      "n": 42,
+      "mean_score": -0.22335333607736088,
+      "negative_fraction": 0.40476190476190477,
+      "neutral_fraction": 0.5476190476190477,
+      "positive_fraction": 0.047619047619047616,
+      "mean_max_probability": 0.6879512071609497
+    },
+    {
+      "day": "2026-09-01",
+      "lang": "zh",
+      "n": 15,
+      "mean_score": -0.20119344343741735,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.2,
+      "mean_max_probability": 0.5656686147054036
+    },
+    {
+      "day": "2026-09-02",
+      "lang": "ar",
+      "n": 11,
+      "mean_score": 0.20438905940814453,
+      "negative_fraction": 0.18181818181818182,
+      "neutral_fraction": 0.45454545454545453,
+      "positive_fraction": 0.36363636363636365,
+      "mean_max_probability": 0.7201871330087836
+    },
+    {
+      "day": "2026-09-02",
+      "lang": "de",
+      "n": 3,
+      "mean_score": -0.1901111751794815,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.6666666666666666,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.8018627166748047
+    },
+    {
+      "day": "2026-09-02",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.06837442934513092,
+      "negative_fraction": 0.36,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.3,
+      "mean_max_probability": 0.7078046920895577
+    },
+    {
+      "day": "2026-09-02",
+      "lang": "es",
+      "n": 37,
+      "mean_score": -0.16654942667967565,
+      "negative_fraction": 0.35135135135135137,
+      "neutral_fraction": 0.5135135135135135,
+      "positive_fraction": 0.13513513513513514,
+      "mean_max_probability": 0.6897814225506138
+    },
+    {
+      "day": "2026-09-02",
+      "lang": "fa",
+      "n": 7,
+      "mean_score": -0.3490632495709828,
+      "negative_fraction": 0.8571428571428571,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.14285714285714285,
+      "mean_max_probability": 0.5914469659328461
+    },
+    {
+      "day": "2026-09-02",
+      "lang": "fr",
+      "n": 12,
+      "mean_score": -0.3030138636628787,
+      "negative_fraction": 0.6666666666666666,
+      "neutral_fraction": 0.16666666666666666,
+      "positive_fraction": 0.16666666666666666,
+      "mean_max_probability": 0.8026082540551821
+    },
+    {
+      "day": "2026-09-02",
+      "lang": "hi",
+      "n": 4,
+      "mean_score": 0.24473483115434647,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.25,
+      "positive_fraction": 0.5,
+      "mean_max_probability": 0.515809029340744
+    },
+    {
+      "day": "2026-09-02",
+      "lang": "in",
+      "n": 3,
+      "mean_score": 0.17015198866526285,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.6666666666666666,
+      "positive_fraction": 0.3333333333333333,
+      "mean_max_probability": 0.6159389813741049
+    },
+    {
+      "day": "2026-09-02",
+      "lang": "it",
+      "n": 1,
+      "mean_score": -0.4468441307544708,
+      "negative_fraction": 1.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.49409019947052
+    },
+    {
+      "day": "2026-09-02",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.1745852781832218,
+      "negative_fraction": 0.22,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.42,
+      "mean_max_probability": 0.6785128980875015
+    },
+    {
+      "day": "2026-09-02",
+      "lang": "pt",
+      "n": 13,
+      "mean_score": -0.20860769485051817,
+      "negative_fraction": 0.46153846153846156,
+      "neutral_fraction": 0.3076923076923077,
+      "positive_fraction": 0.23076923076923078,
+      "mean_max_probability": 0.7706265472448789
+    },
+    {
+      "day": "2026-09-02",
+      "lang": "ru",
+      "n": 3,
+      "mean_score": -0.13087558249632517,
+      "negative_fraction": 0.6666666666666666,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.3333333333333333,
+      "mean_max_probability": 0.622141977151235
+    },
+    {
+      "day": "2026-09-02",
+      "lang": "th",
+      "n": 1,
+      "mean_score": -0.16456693410873413,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 1.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.6246433854103088
+    },
+    {
+      "day": "2026-09-02",
+      "lang": "tr",
+      "n": 9,
+      "mean_score": -0.1257067190276252,
+      "negative_fraction": 0.5555555555555556,
+      "neutral_fraction": 0.2222222222222222,
+      "positive_fraction": 0.2222222222222222,
+      "mean_max_probability": 0.7234442432721456
+    },
+    {
+      "day": "2026-09-02",
+      "lang": "zh",
+      "n": 4,
+      "mean_score": -0.16047805920243263,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.6553723812103271
+    },
+    {
+      "day": "2026-09-03",
+      "lang": "ar",
+      "n": 11,
+      "mean_score": 0.22822584211826324,
+      "negative_fraction": 0.2727272727272727,
+      "neutral_fraction": 0.18181818181818182,
+      "positive_fraction": 0.5454545454545454,
+      "mean_max_probability": 0.6885412606326017
+    },
+    {
+      "day": "2026-09-03",
+      "lang": "de",
+      "n": 3,
+      "mean_score": -0.8815115292867025,
+      "negative_fraction": 1.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.9030124743779501
+    },
+    {
+      "day": "2026-09-03",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.03692559897899628,
+      "negative_fraction": 0.35,
+      "neutral_fraction": 0.31,
+      "positive_fraction": 0.34,
+      "mean_max_probability": 0.699572052359581
+    },
+    {
+      "day": "2026-09-03",
+      "lang": "es",
+      "n": 42,
+      "mean_score": -0.03921045877394222,
+      "negative_fraction": 0.38095238095238093,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.2857142857142857,
+      "mean_max_probability": 0.7075266916127432
+    },
+    {
+      "day": "2026-09-03",
+      "lang": "fa",
+      "n": 1,
+      "mean_score": -0.023400962352752686,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 1.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.5774893760681152
+    },
+    {
+      "day": "2026-09-03",
+      "lang": "fr",
+      "n": 16,
+      "mean_score": -0.0055330663453787565,
+      "negative_fraction": 0.375,
+      "neutral_fraction": 0.375,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.7881027664989233
+    },
+    {
+      "day": "2026-09-03",
+      "lang": "in",
+      "n": 11,
+      "mean_score": -0.16173970597711476,
+      "negative_fraction": 0.5454545454545454,
+      "neutral_fraction": 0.2727272727272727,
+      "positive_fraction": 0.18181818181818182,
+      "mean_max_probability": 0.5923912091688677
+    },
+    {
+      "day": "2026-09-03",
+      "lang": "it",
+      "n": 5,
+      "mean_score": 0.05791026279330254,
+      "negative_fraction": 0.2,
+      "neutral_fraction": 0.6,
+      "positive_fraction": 0.2,
+      "mean_max_probability": 0.6894869089126587
+    },
+    {
+      "day": "2026-09-03",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.05150336727499962,
+      "negative_fraction": 0.3,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.34,
+      "mean_max_probability": 0.667606749534607
+    },
+    {
+      "day": "2026-09-03",
+      "lang": "ko",
+      "n": 6,
+      "mean_score": 0.1748209297657013,
+      "negative_fraction": 0.16666666666666666,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.3333333333333333,
+      "mean_max_probability": 0.5562667548656464
+    },
+    {
+      "day": "2026-09-03",
+      "lang": "pt",
+      "n": 18,
+      "mean_score": -0.16778738796710968,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.4444444444444444,
+      "positive_fraction": 0.2222222222222222,
+      "mean_max_probability": 0.7258231358395683
+    },
+    {
+      "day": "2026-09-03",
+      "lang": "th",
+      "n": 2,
+      "mean_score": 0.2669636160135269,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 1.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.5890722572803497
+    },
+    {
+      "day": "2026-09-03",
+      "lang": "tr",
+      "n": 11,
+      "mean_score": 0.024847342209382492,
+      "negative_fraction": 0.2727272727272727,
+      "neutral_fraction": 0.45454545454545453,
+      "positive_fraction": 0.2727272727272727,
+      "mean_max_probability": 0.6413837508721785
+    },
+    {
+      "day": "2026-09-03",
+      "lang": "zh",
+      "n": 5,
+      "mean_score": 0.13072728365659714,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.6,
+      "positive_fraction": 0.4,
+      "mean_max_probability": 0.5620309174060821
+    },
+    {
+      "day": "2026-09-04",
+      "lang": "ar",
+      "n": 18,
+      "mean_score": -0.0015794804526699914,
+      "negative_fraction": 0.3888888888888889,
+      "neutral_fraction": 0.16666666666666666,
+      "positive_fraction": 0.4444444444444444,
+      "mean_max_probability": 0.6920247856113646
+    },
+    {
+      "day": "2026-09-04",
+      "lang": "de",
+      "n": 5,
+      "mean_score": -0.2415062326937914,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.2,
+      "mean_max_probability": 0.8055864334106445
+    },
+    {
+      "day": "2026-09-04",
+      "lang": "en",
+      "n": 100,
+      "mean_score": 0.0817098294198513,
+      "negative_fraction": 0.26,
+      "neutral_fraction": 0.35,
+      "positive_fraction": 0.39,
+      "mean_max_probability": 0.7256051334738731
+    },
+    {
+      "day": "2026-09-04",
+      "lang": "es",
+      "n": 33,
+      "mean_score": -0.09932020261432185,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.42424242424242425,
+      "positive_fraction": 0.24242424242424243,
+      "mean_max_probability": 0.7573441330230597
+    },
+    {
+      "day": "2026-09-04",
+      "lang": "fa",
+      "n": 7,
+      "mean_score": -0.5705312958785466,
+      "negative_fraction": 1.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.6579427889415196
+    },
+    {
+      "day": "2026-09-04",
+      "lang": "fr",
+      "n": 15,
+      "mean_score": 0.10638393561045328,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.2,
+      "positive_fraction": 0.4666666666666667,
+      "mean_max_probability": 0.6922227581342061
+    },
+    {
+      "day": "2026-09-04",
+      "lang": "hi",
+      "n": 5,
+      "mean_score": 0.057808423042297365,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.2,
+      "positive_fraction": 0.4,
+      "mean_max_probability": 0.5901070713996888
+    },
+    {
+      "day": "2026-09-04",
+      "lang": "in",
+      "n": 8,
+      "mean_score": -0.11378527525812387,
+      "negative_fraction": 0.375,
+      "neutral_fraction": 0.375,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.7231241017580032
+    },
+    {
+      "day": "2026-09-04",
+      "lang": "it",
+      "n": 5,
+      "mean_score": 0.12875310368835927,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.8,
+      "positive_fraction": 0.2,
+      "mean_max_probability": 0.790735912322998
+    },
+    {
+      "day": "2026-09-04",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.03796829797327519,
+      "negative_fraction": 0.3,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.36,
+      "mean_max_probability": 0.7687586617469787
+    },
+    {
+      "day": "2026-09-04",
+      "lang": "ko",
+      "n": 12,
+      "mean_score": 0.18478448688983917,
+      "negative_fraction": 0.08333333333333333,
+      "neutral_fraction": 0.6666666666666666,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.5279300411542257
+    },
+    {
+      "day": "2026-09-04",
+      "lang": "pt",
+      "n": 21,
+      "mean_score": -0.15343361312434786,
+      "negative_fraction": 0.5238095238095238,
+      "neutral_fraction": 0.19047619047619047,
+      "positive_fraction": 0.2857142857142857,
+      "mean_max_probability": 0.7367043523561387
+    },
+    {
+      "day": "2026-09-04",
+      "lang": "ru",
+      "n": 1,
+      "mean_score": -0.5096968412399292,
+      "negative_fraction": 1.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.6343085765838623
+    },
+    {
+      "day": "2026-09-04",
+      "lang": "th",
+      "n": 4,
+      "mean_score": -0.2544684186577797,
+      "negative_fraction": 0.75,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.6153873652219772
+    },
+    {
+      "day": "2026-09-04",
+      "lang": "tr",
+      "n": 17,
+      "mean_score": -0.004297042155967039,
+      "negative_fraction": 0.35294117647058826,
+      "neutral_fraction": 0.29411764705882354,
+      "positive_fraction": 0.35294117647058826,
+      "mean_max_probability": 0.7388855867526111
+    },
+    {
+      "day": "2026-09-04",
+      "lang": "zh",
+      "n": 3,
+      "mean_score": 0.10659812887509663,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.3333333333333333,
+      "mean_max_probability": 0.5188094874223074
+    },
+    {
+      "day": "2026-09-05",
+      "lang": "ar",
+      "n": 20,
+      "mean_score": 0.058984522521495816,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.35,
+      "positive_fraction": 0.4,
+      "mean_max_probability": 0.6558895617723465
+    },
+    {
+      "day": "2026-09-05",
+      "lang": "de",
+      "n": 1,
+      "mean_score": 0.1382024586200714,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 1.0,
+      "mean_max_probability": 0.4291984438896179
+    },
+    {
+      "day": "2026-09-05",
+      "lang": "en",
+      "n": 100,
+      "mean_score": 0.018442594911903143,
+      "negative_fraction": 0.34,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.28,
+      "mean_max_probability": 0.6909969148039817
+    },
+    {
+      "day": "2026-09-05",
+      "lang": "es",
+      "n": 45,
+      "mean_score": -0.21744055565860537,
+      "negative_fraction": 0.4444444444444444,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.15555555555555556,
+      "mean_max_probability": 0.7195223569869995
+    },
+    {
+      "day": "2026-09-05",
+      "lang": "fa",
+      "n": 5,
+      "mean_score": -0.45943596959114075,
+      "negative_fraction": 0.8,
+      "neutral_fraction": 0.2,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.6061810791492462
+    },
+    {
+      "day": "2026-09-05",
+      "lang": "fr",
+      "n": 16,
+      "mean_score": 0.4556373206432909,
+      "negative_fraction": 0.125,
+      "neutral_fraction": 0.125,
+      "positive_fraction": 0.75,
+      "mean_max_probability": 0.7473254799842834
+    },
+    {
+      "day": "2026-09-05",
+      "lang": "hi",
+      "n": 3,
+      "mean_score": -0.009602099657058716,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 1.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.5120412607987722
+    },
+    {
+      "day": "2026-09-05",
+      "lang": "in",
+      "n": 9,
+      "mean_score": -0.04188445003496276,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.5555555555555556,
+      "positive_fraction": 0.1111111111111111,
+      "mean_max_probability": 0.609685586558448
+    },
+    {
+      "day": "2026-09-05",
+      "lang": "it",
+      "n": 4,
+      "mean_score": -0.24527096934616566,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.25,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.7768692225217819
+    },
+    {
+      "day": "2026-09-05",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.0023352861404418944,
+      "negative_fraction": 0.32,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.32,
+      "mean_max_probability": 0.7063380634784698
+    },
+    {
+      "day": "2026-09-05",
+      "lang": "ko",
+      "n": 9,
+      "mean_score": 0.22553656333022648,
+      "negative_fraction": 0.2222222222222222,
+      "neutral_fraction": 0.2222222222222222,
+      "positive_fraction": 0.5555555555555556,
+      "mean_max_probability": 0.6910646756490072
+    },
+    {
+      "day": "2026-09-05",
+      "lang": "pt",
+      "n": 30,
+      "mean_score": -0.12995028557876745,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.36666666666666664,
+      "positive_fraction": 0.23333333333333334,
+      "mean_max_probability": 0.6916526585817337
+    },
+    {
+      "day": "2026-09-05",
+      "lang": "th",
+      "n": 4,
+      "mean_score": 0.12782122194766998,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.25,
+      "positive_fraction": 0.5,
+      "mean_max_probability": 0.5182316526770592
+    },
+    {
+      "day": "2026-09-05",
+      "lang": "tr",
+      "n": 15,
+      "mean_score": -0.16899455587069193,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.26666666666666666,
+      "mean_max_probability": 0.6823079427083333
+    },
+    {
+      "day": "2026-09-05",
+      "lang": "zh",
+      "n": 5,
+      "mean_score": -0.24126864075660706,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.6,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.6035277247428894
+    },
+    {
+      "day": "2026-09-06",
+      "lang": "ar",
+      "n": 28,
+      "mean_score": -0.0142402925661632,
+      "negative_fraction": 0.35714285714285715,
+      "neutral_fraction": 0.39285714285714285,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.7160516445125852
+    },
+    {
+      "day": "2026-09-06",
+      "lang": "de",
+      "n": 4,
+      "mean_score": -0.5228631999343634,
+      "negative_fraction": 0.75,
+      "neutral_fraction": 0.25,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.734525129199028
+    },
+    {
+      "day": "2026-09-06",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.03618186514824629,
+      "negative_fraction": 0.35,
+      "neutral_fraction": 0.37,
+      "positive_fraction": 0.28,
+      "mean_max_probability": 0.6825141966342926
+    },
+    {
+      "day": "2026-09-06",
+      "lang": "es",
+      "n": 49,
+      "mean_score": -0.30466007806208667,
+      "negative_fraction": 0.5918367346938775,
+      "neutral_fraction": 0.20408163265306123,
+      "positive_fraction": 0.20408163265306123,
+      "mean_max_probability": 0.7646282540292156
+    },
+    {
+      "day": "2026-09-06",
+      "lang": "fa",
+      "n": 7,
+      "mean_score": -0.39087854964392527,
+      "negative_fraction": 0.8571428571428571,
+      "neutral_fraction": 0.14285714285714285,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.5904348109449659
+    },
+    {
+      "day": "2026-09-06",
+      "lang": "fr",
+      "n": 27,
+      "mean_score": -0.27755700990005777,
+      "negative_fraction": 0.6666666666666666,
+      "neutral_fraction": 0.14814814814814814,
+      "positive_fraction": 0.18518518518518517,
+      "mean_max_probability": 0.7186092535654703
+    },
+    {
+      "day": "2026-09-06",
+      "lang": "hi",
+      "n": 3,
+      "mean_score": -0.08023677269617717,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.3333333333333333,
+      "mean_max_probability": 0.48872125148773193
+    },
+    {
+      "day": "2026-09-06",
+      "lang": "in",
+      "n": 15,
+      "mean_score": 0.02946682497859001,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.26666666666666666,
+      "mean_max_probability": 0.5944951295852661
+    },
+    {
+      "day": "2026-09-06",
+      "lang": "it",
+      "n": 2,
+      "mean_score": 0.44105569273233414,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.5,
+      "mean_max_probability": 0.8574875593185425
+    },
+    {
+      "day": "2026-09-06",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.05126358576118946,
+      "negative_fraction": 0.34,
+      "neutral_fraction": 0.3,
+      "positive_fraction": 0.36,
+      "mean_max_probability": 0.6809114158153534
+    },
+    {
+      "day": "2026-09-06",
+      "lang": "ko",
+      "n": 12,
+      "mean_score": 0.1309026274830103,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.6452350417772929
+    },
+    {
+      "day": "2026-09-06",
+      "lang": "pt",
+      "n": 32,
+      "mean_score": -0.16503060422837734,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.28125,
+      "positive_fraction": 0.21875,
+      "mean_max_probability": 0.7254857523366809
+    },
+    {
+      "day": "2026-09-06",
+      "lang": "ru",
+      "n": 1,
+      "mean_score": -0.6938462853431702,
+      "negative_fraction": 1.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.7205719351768494
+    },
+    {
+      "day": "2026-09-06",
+      "lang": "th",
+      "n": 1,
+      "mean_score": -0.6415851712226868,
+      "negative_fraction": 1.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.7045868039131165
+    },
+    {
+      "day": "2026-09-06",
+      "lang": "tr",
+      "n": 25,
+      "mean_score": 0.03222804754972458,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.24,
+      "positive_fraction": 0.36,
+      "mean_max_probability": 0.7168940770626068
+    },
+    {
+      "day": "2026-09-06",
+      "lang": "zh",
+      "n": 1,
+      "mean_score": 0.028395608067512512,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 1.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.8776431679725647
+    },
+    {
+      "day": "2026-09-07",
+      "lang": "ar",
+      "n": 42,
+      "mean_score": 0.12868028985602514,
+      "negative_fraction": 0.23809523809523808,
+      "neutral_fraction": 0.30952380952380953,
+      "positive_fraction": 0.4523809523809524,
+      "mean_max_probability": 0.6970567171062741
+    },
+    {
+      "day": "2026-09-07",
+      "lang": "de",
+      "n": 4,
+      "mean_score": 0.26082149147987366,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.75,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.8182583004236221
+    },
+    {
+      "day": "2026-09-07",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.01785105910152197,
+      "negative_fraction": 0.37,
+      "neutral_fraction": 0.32,
+      "positive_fraction": 0.31,
+      "mean_max_probability": 0.711435566842556
+    },
+    {
+      "day": "2026-09-07",
+      "lang": "es",
+      "n": 70,
+      "mean_score": -0.0040361437946558,
+      "negative_fraction": 0.2571428571428571,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.24285714285714285,
+      "mean_max_probability": 0.7085218110254833
+    },
+    {
+      "day": "2026-09-07",
+      "lang": "fa",
+      "n": 9,
+      "mean_score": -0.014829368227057986,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.4444444444444444,
+      "positive_fraction": 0.2222222222222222,
+      "mean_max_probability": 0.6121800806787279
+    },
+    {
+      "day": "2026-09-07",
+      "lang": "fr",
+      "n": 24,
+      "mean_score": -0.4183327592909336,
+      "negative_fraction": 0.7916666666666666,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.20833333333333334,
+      "mean_max_probability": 0.751548190911611
+    },
+    {
+      "day": "2026-09-07",
+      "lang": "hi",
+      "n": 9,
+      "mean_score": 0.10170290039645301,
+      "negative_fraction": 0.2222222222222222,
+      "neutral_fraction": 0.4444444444444444,
+      "positive_fraction": 0.3333333333333333,
+      "mean_max_probability": 0.5363751815425025
+    },
+    {
+      "day": "2026-09-07",
+      "lang": "in",
+      "n": 24,
+      "mean_score": -0.010715514731903871,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.375,
+      "positive_fraction": 0.2916666666666667,
+      "mean_max_probability": 0.6225083830455939
+    },
+    {
+      "day": "2026-09-07",
+      "lang": "it",
+      "n": 3,
+      "mean_score": -0.5982409516970316,
+      "negative_fraction": 0.6666666666666666,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.6967663168907166
+    },
+    {
+      "day": "2026-09-07",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.19255592353641987,
+      "negative_fraction": 0.22,
+      "neutral_fraction": 0.36,
+      "positive_fraction": 0.42,
+      "mean_max_probability": 0.6790026956796646
+    },
+    {
+      "day": "2026-09-07",
+      "lang": "ko",
+      "n": 18,
+      "mean_score": -0.1465886611905363,
+      "negative_fraction": 0.4444444444444444,
+      "neutral_fraction": 0.3888888888888889,
+      "positive_fraction": 0.16666666666666666,
+      "mean_max_probability": 0.6411934180392159
+    },
+    {
+      "day": "2026-09-07",
+      "lang": "pt",
+      "n": 43,
+      "mean_score": -0.11739472178525703,
+      "negative_fraction": 0.4186046511627907,
+      "neutral_fraction": 0.37209302325581395,
+      "positive_fraction": 0.20930232558139536,
+      "mean_max_probability": 0.7354843450147052
+    },
+    {
+      "day": "2026-09-07",
+      "lang": "ru",
+      "n": 3,
+      "mean_score": -0.5069588621457418,
+      "negative_fraction": 0.6666666666666666,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.7234187126159668
+    },
+    {
+      "day": "2026-09-07",
+      "lang": "th",
+      "n": 7,
+      "mean_score": 0.14445914115224565,
+      "negative_fraction": 0.42857142857142855,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.5714285714285714,
+      "mean_max_probability": 0.6683705363954816
+    },
+    {
+      "day": "2026-09-07",
+      "lang": "tr",
+      "n": 33,
+      "mean_score": -0.08619307184761221,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.3939393939393939,
+      "positive_fraction": 0.2727272727272727,
+      "mean_max_probability": 0.6498180907784086
+    },
+    {
+      "day": "2026-09-07",
+      "lang": "zh",
+      "n": 4,
+      "mean_score": 0.0522332563996315,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.25,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.6152247115969658
+    },
+    {
+      "day": "2026-09-08",
+      "lang": "ar",
+      "n": 27,
+      "mean_score": 0.016535021088741445,
+      "negative_fraction": 0.37037037037037035,
+      "neutral_fraction": 0.2962962962962963,
+      "positive_fraction": 0.3333333333333333,
+      "mean_max_probability": 0.672925568289227
+    },
+    {
+      "day": "2026-09-08",
+      "lang": "de",
+      "n": 5,
+      "mean_score": 0.10543141961097717,
+      "negative_fraction": 0.2,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.4,
+      "mean_max_probability": 0.6100540518760681
+    },
+    {
+      "day": "2026-09-08",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.051686319001019,
+      "negative_fraction": 0.34,
+      "neutral_fraction": 0.42,
+      "positive_fraction": 0.24,
+      "mean_max_probability": 0.6911721915006638
+    },
+    {
+      "day": "2026-09-08",
+      "lang": "es",
+      "n": 48,
+      "mean_score": -0.10028662354064484,
+      "negative_fraction": 0.375,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.2916666666666667,
+      "mean_max_probability": 0.7374751480917136
+    },
+    {
+      "day": "2026-09-08",
+      "lang": "fa",
+      "n": 7,
+      "mean_score": 0.3135179174797876,
+      "negative_fraction": 0.14285714285714285,
+      "neutral_fraction": 0.2857142857142857,
+      "positive_fraction": 0.5714285714285714,
+      "mean_max_probability": 0.5571397202355521
+    },
+    {
+      "day": "2026-09-08",
+      "lang": "fr",
+      "n": 26,
+      "mean_score": 0.08201688757309547,
+      "negative_fraction": 0.34615384615384615,
+      "neutral_fraction": 0.23076923076923078,
+      "positive_fraction": 0.4230769230769231,
+      "mean_max_probability": 0.6893103260260361
+    },
+    {
+      "day": "2026-09-08",
+      "lang": "hi",
+      "n": 4,
+      "mean_score": -0.17064785584807396,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.5766104832291603
+    },
+    {
+      "day": "2026-09-08",
+      "lang": "in",
+      "n": 8,
+      "mean_score": -0.04512607026845217,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.7691775485873222
+    },
+    {
+      "day": "2026-09-08",
+      "lang": "it",
+      "n": 4,
+      "mean_score": -0.47105808928608894,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.6515577360987663
+    },
+    {
+      "day": "2026-09-08",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": -0.037454281225800516,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.28,
+      "positive_fraction": 0.32,
+      "mean_max_probability": 0.6891428458690644
+    },
+    {
+      "day": "2026-09-08",
+      "lang": "ko",
+      "n": 14,
+      "mean_score": 0.12006635112421853,
+      "negative_fraction": 0.21428571428571427,
+      "neutral_fraction": 0.14285714285714285,
+      "positive_fraction": 0.6428571428571429,
+      "mean_max_probability": 0.6376789425100599
+    },
+    {
+      "day": "2026-09-08",
+      "lang": "pt",
+      "n": 38,
+      "mean_score": -0.36331364747725037,
+      "negative_fraction": 0.5789473684210527,
+      "neutral_fraction": 0.2631578947368421,
+      "positive_fraction": 0.15789473684210525,
+      "mean_max_probability": 0.7541344048161256
+    },
+    {
+      "day": "2026-09-08",
+      "lang": "ru",
+      "n": 4,
+      "mean_score": -0.2898569777607918,
+      "negative_fraction": 0.75,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.8003172725439072
+    },
+    {
+      "day": "2026-09-08",
+      "lang": "th",
+      "n": 7,
+      "mean_score": -0.08479231808866773,
+      "negative_fraction": 0.42857142857142855,
+      "neutral_fraction": 0.42857142857142855,
+      "positive_fraction": 0.14285714285714285,
+      "mean_max_probability": 0.6289246422903878
+    },
+    {
+      "day": "2026-09-08",
+      "lang": "tr",
+      "n": 24,
+      "mean_score": 0.1207086897144715,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.4583333333333333,
+      "positive_fraction": 0.2916666666666667,
+      "mean_max_probability": 0.6377699573834738
+    },
+    {
+      "day": "2026-09-08",
+      "lang": "zh",
+      "n": 7,
+      "mean_score": 0.016268402338027954,
+      "negative_fraction": 0.2857142857142857,
+      "neutral_fraction": 0.5714285714285714,
+      "positive_fraction": 0.14285714285714285,
+      "mean_max_probability": 0.5144427801881518
+    },
+    {
+      "day": "2026-09-09",
+      "lang": "ar",
+      "n": 10,
+      "mean_score": 0.09089909791946411,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.2,
+      "positive_fraction": 0.4,
+      "mean_max_probability": 0.6695647239685059
+    },
+    {
+      "day": "2026-09-09",
+      "lang": "de",
+      "n": 7,
+      "mean_score": 0.1621273926326207,
+      "negative_fraction": 0.14285714285714285,
+      "neutral_fraction": 0.42857142857142855,
+      "positive_fraction": 0.42857142857142855,
+      "mean_max_probability": 0.686371351991381
+    },
+    {
+      "day": "2026-09-09",
+      "lang": "en",
+      "n": 100,
+      "mean_score": 0.0016302510723471642,
+      "negative_fraction": 0.28,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.34,
+      "mean_max_probability": 0.6779821717739105
+    },
+    {
+      "day": "2026-09-09",
+      "lang": "es",
+      "n": 42,
+      "mean_score": -0.20252248879876875,
+      "negative_fraction": 0.4523809523809524,
+      "neutral_fraction": 0.2857142857142857,
+      "positive_fraction": 0.2619047619047619,
+      "mean_max_probability": 0.7666238149007162
+    },
+    {
+      "day": "2026-09-09",
+      "lang": "fa",
+      "n": 5,
+      "mean_score": -0.08549281358718872,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.2,
+      "positive_fraction": 0.4,
+      "mean_max_probability": 0.6235367238521576
+    },
+    {
+      "day": "2026-09-09",
+      "lang": "fr",
+      "n": 19,
+      "mean_score": 0.04795822187473899,
+      "negative_fraction": 0.3157894736842105,
+      "neutral_fraction": 0.15789473684210525,
+      "positive_fraction": 0.5263157894736842,
+      "mean_max_probability": 0.6848967294943961
+    },
+    {
+      "day": "2026-09-09",
+      "lang": "hi",
+      "n": 4,
+      "mean_score": -0.01169152557849884,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.5758129060268402
+    },
+    {
+      "day": "2026-09-09",
+      "lang": "in",
+      "n": 12,
+      "mean_score": -0.10900130122900009,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.4166666666666667,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.6024061565597852
+    },
+    {
+      "day": "2026-09-09",
+      "lang": "it",
+      "n": 2,
+      "mean_score": 0.6829556822776794,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 1.0,
+      "mean_max_probability": 0.7609560191631317
+    },
+    {
+      "day": "2026-09-09",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.04278906837105751,
+      "negative_fraction": 0.36,
+      "neutral_fraction": 0.28,
+      "positive_fraction": 0.36,
+      "mean_max_probability": 0.7001644539833068
+    },
+    {
+      "day": "2026-09-09",
+      "lang": "ko",
+      "n": 18,
+      "mean_score": 0.1158130443137553,
+      "negative_fraction": 0.1111111111111111,
+      "neutral_fraction": 0.4444444444444444,
+      "positive_fraction": 0.4444444444444444,
+      "mean_max_probability": 0.647536156906022
+    },
+    {
+      "day": "2026-09-09",
+      "lang": "pt",
+      "n": 40,
+      "mean_score": -0.12921412931755186,
+      "negative_fraction": 0.375,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.225,
+      "mean_max_probability": 0.7058526553213597
+    },
+    {
+      "day": "2026-09-09",
+      "lang": "ru",
+      "n": 1,
+      "mean_score": -0.25904184579849243,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 1.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.5523380637168884
+    },
+    {
+      "day": "2026-09-09",
+      "lang": "th",
+      "n": 8,
+      "mean_score": 0.07548534497618675,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.5849837847054005
+    },
+    {
+      "day": "2026-09-09",
+      "lang": "tr",
+      "n": 15,
+      "mean_score": -0.044364268084367116,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.5333333333333333,
+      "positive_fraction": 0.13333333333333333,
+      "mean_max_probability": 0.5936229248841604
+    },
+    {
+      "day": "2026-09-09",
+      "lang": "zh",
+      "n": 4,
+      "mean_score": -0.0642344020307064,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.6166165694594383
+    },
+    {
+      "day": "2026-09-10",
+      "lang": "ar",
+      "n": 8,
+      "mean_score": 0.11974125728011131,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.375,
+      "positive_fraction": 0.375,
+      "mean_max_probability": 0.7006326504051685
+    },
+    {
+      "day": "2026-09-10",
+      "lang": "en",
+      "n": 100,
+      "mean_score": 0.10178003842011094,
+      "negative_fraction": 0.27,
+      "neutral_fraction": 0.35,
+      "positive_fraction": 0.38,
+      "mean_max_probability": 0.6977111941576004
+    },
+    {
+      "day": "2026-09-10",
+      "lang": "es",
+      "n": 28,
+      "mean_score": 0.03135741076299122,
+      "negative_fraction": 0.32142857142857145,
+      "neutral_fraction": 0.42857142857142855,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.6393007040023804
+    },
+    {
+      "day": "2026-09-10",
+      "lang": "fa",
+      "n": 2,
+      "mean_score": 0.39088480174541473,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.5,
+      "mean_max_probability": 0.5525844544172287
+    },
+    {
+      "day": "2026-09-10",
+      "lang": "fr",
+      "n": 8,
+      "mean_score": -0.18156297225505114,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.125,
+      "positive_fraction": 0.375,
+      "mean_max_probability": 0.7005453035235405
+    },
+    {
+      "day": "2026-09-10",
+      "lang": "in",
+      "n": 4,
+      "mean_score": 0.186289981007576,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.25,
+      "positive_fraction": 0.5,
+      "mean_max_probability": 0.7512411773204803
+    },
+    {
+      "day": "2026-09-10",
+      "lang": "it",
+      "n": 1,
+      "mean_score": 0.694478452205658,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 1.0,
+      "mean_max_probability": 0.7182092070579529
+    },
+    {
+      "day": "2026-09-10",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.12226147234439849,
+      "negative_fraction": 0.22,
+      "neutral_fraction": 0.42,
+      "positive_fraction": 0.36,
+      "mean_max_probability": 0.6938037204742432
+    },
+    {
+      "day": "2026-09-10",
+      "lang": "ko",
+      "n": 3,
+      "mean_score": -0.10234691699345906,
+      "negative_fraction": 0.6666666666666666,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.4798087974389394
+    },
+    {
+      "day": "2026-09-10",
+      "lang": "pt",
+      "n": 23,
+      "mean_score": -0.24150197580456734,
+      "negative_fraction": 0.4782608695652174,
+      "neutral_fraction": 0.43478260869565216,
+      "positive_fraction": 0.08695652173913043,
+      "mean_max_probability": 0.6437220482722573
+    },
+    {
+      "day": "2026-09-10",
+      "lang": "ru",
+      "n": 1,
+      "mean_score": -0.03215490281581879,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 1.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.5488110780715942
+    },
+    {
+      "day": "2026-09-10",
+      "lang": "tr",
+      "n": 4,
+      "mean_score": -0.4055702146142721,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.8152760863304138
+    },
+    {
+      "day": "2026-09-10",
+      "lang": "zh",
+      "n": 1,
+      "mean_score": -0.27581244707107544,
+      "negative_fraction": 1.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.42653775215148926
+    },
+    {
+      "day": "2026-09-11",
+      "lang": "ar",
+      "n": 6,
+      "mean_score": 0.15029910455147424,
+      "negative_fraction": 0.16666666666666666,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.5,
+      "mean_max_probability": 0.6277664403120676
+    },
+    {
+      "day": "2026-09-11",
+      "lang": "en",
+      "n": 100,
+      "mean_score": 0.08549897149205207,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.42,
+      "positive_fraction": 0.33,
+      "mean_max_probability": 0.6864851215481758
+    },
+    {
+      "day": "2026-09-11",
+      "lang": "es",
+      "n": 23,
+      "mean_score": -0.05381020579649055,
+      "negative_fraction": 0.34782608695652173,
+      "neutral_fraction": 0.34782608695652173,
+      "positive_fraction": 0.30434782608695654,
+      "mean_max_probability": 0.6955251525277677
+    },
+    {
+      "day": "2026-09-11",
+      "lang": "fa",
+      "n": 2,
+      "mean_score": 0.01859317719936371,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 1.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.4572877138853073
+    },
+    {
+      "day": "2026-09-11",
+      "lang": "fr",
+      "n": 13,
+      "mean_score": -0.20365404394956735,
+      "negative_fraction": 0.46153846153846156,
+      "neutral_fraction": 0.3076923076923077,
+      "positive_fraction": 0.23076923076923078,
+      "mean_max_probability": 0.6541803410420051
+    },
+    {
+      "day": "2026-09-11",
+      "lang": "hi",
+      "n": 1,
+      "mean_score": -0.35020774602890015,
+      "negative_fraction": 1.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.5130179524421692
+    },
+    {
+      "day": "2026-09-11",
+      "lang": "in",
+      "n": 4,
+      "mean_score": 0.13441665470600128,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.75,
+      "mean_max_probability": 0.6585291624069214
+    },
+    {
+      "day": "2026-09-11",
+      "lang": "it",
+      "n": 4,
+      "mean_score": 0.11384553834795952,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.25,
+      "positive_fraction": 0.5,
+      "mean_max_probability": 0.8088263869285583
+    },
+    {
+      "day": "2026-09-11",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.08154898226261138,
+      "negative_fraction": 0.22,
+      "neutral_fraction": 0.48,
+      "positive_fraction": 0.3,
+      "mean_max_probability": 0.6676524984836578
+    },
+    {
+      "day": "2026-09-11",
+      "lang": "ko",
+      "n": 2,
+      "mean_score": -0.22560470551252365,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.6011093258857727
+    },
+    {
+      "day": "2026-09-11",
+      "lang": "pt",
+      "n": 19,
+      "mean_score": -0.08895093594726763,
+      "negative_fraction": 0.3157894736842105,
+      "neutral_fraction": 0.5263157894736842,
+      "positive_fraction": 0.15789473684210525,
+      "mean_max_probability": 0.6455238163471222
+    },
+    {
+      "day": "2026-09-11",
+      "lang": "ru",
+      "n": 1,
+      "mean_score": -0.6835166811943054,
+      "negative_fraction": 1.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.7201631665229797
+    },
+    {
+      "day": "2026-09-11",
+      "lang": "th",
+      "n": 4,
+      "mean_score": -0.06725817918777466,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.574735976755619
+    },
+    {
+      "day": "2026-09-11",
+      "lang": "tr",
+      "n": 17,
+      "mean_score": -0.34792955526534247,
+      "negative_fraction": 0.5882352941176471,
+      "neutral_fraction": 0.29411764705882354,
+      "positive_fraction": 0.11764705882352941,
+      "mean_max_probability": 0.6558981082018684
+    },
+    {
+      "day": "2026-09-11",
+      "lang": "zh",
+      "n": 4,
+      "mean_score": -0.3682755120098591,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.6106483489274979
+    },
+    {
+      "day": "2026-09-12",
+      "lang": "ar",
+      "n": 22,
+      "mean_score": 0.002479300410910086,
+      "negative_fraction": 0.36363636363636365,
+      "neutral_fraction": 0.3181818181818182,
+      "positive_fraction": 0.3181818181818182,
+      "mean_max_probability": 0.7150049927559766
+    },
+    {
+      "day": "2026-09-12",
+      "lang": "de",
+      "n": 1,
+      "mean_score": -0.16923891007900238,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 1.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.7478384375572205
+    },
+    {
+      "day": "2026-09-12",
+      "lang": "en",
+      "n": 100,
+      "mean_score": 0.053429887890815736,
+      "negative_fraction": 0.27,
+      "neutral_fraction": 0.39,
+      "positive_fraction": 0.34,
+      "mean_max_probability": 0.7134021404385567
+    },
+    {
+      "day": "2026-09-12",
+      "lang": "es",
+      "n": 27,
+      "mean_score": -0.10408466364498492,
+      "negative_fraction": 0.4444444444444444,
+      "neutral_fraction": 0.25925925925925924,
+      "positive_fraction": 0.2962962962962963,
+      "mean_max_probability": 0.7728126556785019
+    },
+    {
+      "day": "2026-09-12",
+      "lang": "fa",
+      "n": 4,
+      "mean_score": -0.36286165192723274,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.25,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.6187346205115318
+    },
+    {
+      "day": "2026-09-12",
+      "lang": "fr",
+      "n": 7,
+      "mean_score": -0.23889856891972677,
+      "negative_fraction": 0.5714285714285714,
+      "neutral_fraction": 0.2857142857142857,
+      "positive_fraction": 0.14285714285714285,
+      "mean_max_probability": 0.7891039337430682
+    },
+    {
+      "day": "2026-09-12",
+      "lang": "hi",
+      "n": 2,
+      "mean_score": -0.4333488792181015,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.6961191147565842
+    },
+    {
+      "day": "2026-09-12",
+      "lang": "in",
+      "n": 9,
+      "mean_score": 0.028447818838887744,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.3333333333333333,
+      "mean_max_probability": 0.6754626168145074
+    },
+    {
+      "day": "2026-09-12",
+      "lang": "it",
+      "n": 1,
+      "mean_score": 0.24167615175247192,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 1.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.6958467364311218
+    },
+    {
+      "day": "2026-09-12",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.25084918409585955,
+      "negative_fraction": 0.18,
+      "neutral_fraction": 0.34,
+      "positive_fraction": 0.48,
+      "mean_max_probability": 0.6806276857852935
+    },
+    {
+      "day": "2026-09-12",
+      "lang": "ko",
+      "n": 8,
+      "mean_score": -0.1236143708229065,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.375,
+      "positive_fraction": 0.125,
+      "mean_max_probability": 0.6260693855583668
+    },
+    {
+      "day": "2026-09-12",
+      "lang": "pt",
+      "n": 26,
+      "mean_score": -0.37016022878770644,
+      "negative_fraction": 0.5384615384615384,
+      "neutral_fraction": 0.34615384615384615,
+      "positive_fraction": 0.11538461538461539,
+      "mean_max_probability": 0.711884699188746
+    },
+    {
+      "day": "2026-09-12",
+      "lang": "ru",
+      "n": 2,
+      "mean_score": -0.3945921063423157,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.7257043421268463
+    },
+    {
+      "day": "2026-09-12",
+      "lang": "th",
+      "n": 3,
+      "mean_score": 0.40315572917461395,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.6666666666666666,
+      "positive_fraction": 0.3333333333333333,
+      "mean_max_probability": 0.6219547490278879
+    },
+    {
+      "day": "2026-09-12",
+      "lang": "tr",
+      "n": 10,
+      "mean_score": -0.08042669147253037,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.3,
+      "positive_fraction": 0.3,
+      "mean_max_probability": 0.6770942509174347
+    },
+    {
+      "day": "2026-09-12",
+      "lang": "zh",
+      "n": 3,
+      "mean_score": 0.1483756105105082,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 1.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.5750417311986288
+    },
+    {
+      "day": "2026-09-13",
+      "lang": "ar",
+      "n": 15,
+      "mean_score": 0.07715634951988856,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.26666666666666666,
+      "positive_fraction": 0.4,
+      "mean_max_probability": 0.6746677199999491
+    },
+    {
+      "day": "2026-09-13",
+      "lang": "de",
+      "n": 2,
+      "mean_score": -0.28947636019438505,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.7803333401679993
+    },
+    {
+      "day": "2026-09-13",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.11034795062616468,
+      "negative_fraction": 0.43,
+      "neutral_fraction": 0.32,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.7018895900249481
+    },
+    {
+      "day": "2026-09-13",
+      "lang": "es",
+      "n": 33,
+      "mean_score": -0.05755887615183989,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.42424242424242425,
+      "positive_fraction": 0.24242424242424243,
+      "mean_max_probability": 0.7139605744318529
+    },
+    {
+      "day": "2026-09-13",
+      "lang": "fa",
+      "n": 3,
+      "mean_score": 0.10195166865984599,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.3333333333333333,
+      "mean_max_probability": 0.5412853360176086
+    },
+    {
+      "day": "2026-09-13",
+      "lang": "fr",
+      "n": 9,
+      "mean_score": 0.1902996086412006,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.2222222222222222,
+      "positive_fraction": 0.4444444444444444,
+      "mean_max_probability": 0.6911899149417877
+    },
+    {
+      "day": "2026-09-13",
+      "lang": "in",
+      "n": 10,
+      "mean_score": 0.009183461964130401,
+      "negative_fraction": 0.6,
+      "neutral_fraction": 0.1,
+      "positive_fraction": 0.3,
+      "mean_max_probability": 0.5903550982475281
+    },
+    {
+      "day": "2026-09-13",
+      "lang": "it",
+      "n": 4,
+      "mean_score": -0.2614228967577219,
+      "negative_fraction": 0.25,
+      "neutral_fraction": 0.75,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.7156132757663727
+    },
+    {
+      "day": "2026-09-13",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.09743903800845147,
+      "negative_fraction": 0.28,
+      "neutral_fraction": 0.3,
+      "positive_fraction": 0.42,
+      "mean_max_probability": 0.6887923747301101
+    },
+    {
+      "day": "2026-09-13",
+      "lang": "ko",
+      "n": 17,
+      "mean_score": -0.061972532202215755,
+      "negative_fraction": 0.35294117647058826,
+      "neutral_fraction": 0.4117647058823529,
+      "positive_fraction": 0.23529411764705882,
+      "mean_max_probability": 0.7204466514727649
+    },
+    {
+      "day": "2026-09-13",
+      "lang": "pt",
+      "n": 31,
+      "mean_score": -0.13704850969295349,
+      "negative_fraction": 0.3870967741935484,
+      "neutral_fraction": 0.3225806451612903,
+      "positive_fraction": 0.2903225806451613,
+      "mean_max_probability": 0.7263209762111786
+    },
+    {
+      "day": "2026-09-13",
+      "lang": "th",
+      "n": 2,
+      "mean_score": 0.11119905114173889,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.5,
+      "mean_max_probability": 0.7006083726882935
+    },
+    {
+      "day": "2026-09-13",
+      "lang": "tr",
+      "n": 13,
+      "mean_score": 0.12510739008967692,
+      "negative_fraction": 0.3076923076923077,
+      "neutral_fraction": 0.3076923076923077,
+      "positive_fraction": 0.38461538461538464,
+      "mean_max_probability": 0.6147638811514928
+    },
+    {
+      "day": "2026-09-13",
+      "lang": "zh",
+      "n": 2,
+      "mean_score": 0.2819642648100853,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 1.0,
+      "mean_max_probability": 0.4875943511724472
+    },
+    {
+      "day": "2026-09-14",
+      "lang": "ar",
+      "n": 15,
+      "mean_score": 0.26666282216707865,
+      "negative_fraction": 0.2,
+      "neutral_fraction": 0.2,
+      "positive_fraction": 0.6,
+      "mean_max_probability": 0.7626779397328695
+    },
+    {
+      "day": "2026-09-14",
+      "lang": "de",
+      "n": 3,
+      "mean_score": -0.6689379115899404,
+      "negative_fraction": 0.6666666666666666,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.8151128093401591
+    },
+    {
+      "day": "2026-09-14",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.036491532772779466,
+      "negative_fraction": 0.32,
+      "neutral_fraction": 0.39,
+      "positive_fraction": 0.29,
+      "mean_max_probability": 0.6985595917701721
+    },
+    {
+      "day": "2026-09-14",
+      "lang": "es",
+      "n": 47,
+      "mean_score": -0.3599709400788267,
+      "negative_fraction": 0.574468085106383,
+      "neutral_fraction": 0.2978723404255319,
+      "positive_fraction": 0.1276595744680851,
+      "mean_max_probability": 0.7387102176534369
+    },
+    {
+      "day": "2026-09-14",
+      "lang": "fa",
+      "n": 7,
+      "mean_score": 0.021940124886376516,
+      "negative_fraction": 0.42857142857142855,
+      "neutral_fraction": 0.14285714285714285,
+      "positive_fraction": 0.42857142857142855,
+      "mean_max_probability": 0.6106905681746346
+    },
+    {
+      "day": "2026-09-14",
+      "lang": "fr",
+      "n": 16,
+      "mean_score": 0.054870765656232834,
+      "negative_fraction": 0.4375,
+      "neutral_fraction": 0.0625,
+      "positive_fraction": 0.5,
+      "mean_max_probability": 0.7278809733688831
+    },
+    {
+      "day": "2026-09-14",
+      "lang": "hi",
+      "n": 2,
+      "mean_score": 0.339227594435215,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.5,
+      "mean_max_probability": 0.6523268520832062
+    },
+    {
+      "day": "2026-09-14",
+      "lang": "in",
+      "n": 2,
+      "mean_score": -0.5577123835682869,
+      "negative_fraction": 1.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.6691688895225525
+    },
+    {
+      "day": "2026-09-14",
+      "lang": "it",
+      "n": 3,
+      "mean_score": -0.35588738322257996,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.6666666666666666,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.7769717772801717
+    },
+    {
+      "day": "2026-09-14",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.08968730181455613,
+      "negative_fraction": 0.28,
+      "neutral_fraction": 0.38,
+      "positive_fraction": 0.34,
+      "mean_max_probability": 0.6651477557420731
+    },
+    {
+      "day": "2026-09-14",
+      "lang": "ko",
+      "n": 20,
+      "mean_score": -0.08125348836183548,
+      "negative_fraction": 0.4,
+      "neutral_fraction": 0.45,
+      "positive_fraction": 0.15,
+      "mean_max_probability": 0.6504566982388497
+    },
+    {
+      "day": "2026-09-14",
+      "lang": "pt",
+      "n": 33,
+      "mean_score": -0.08280081369660118,
+      "negative_fraction": 0.48484848484848486,
+      "neutral_fraction": 0.21212121212121213,
+      "positive_fraction": 0.30303030303030304,
+      "mean_max_probability": 0.7313185596104824
+    },
+    {
+      "day": "2026-09-14",
+      "lang": "ru",
+      "n": 2,
+      "mean_score": -0.4177311062812805,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.80538609623909
+    },
+    {
+      "day": "2026-09-14",
+      "lang": "th",
+      "n": 4,
+      "mean_score": 0.07436677813529968,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.75,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.4893562123179436
+    },
+    {
+      "day": "2026-09-14",
+      "lang": "tr",
+      "n": 22,
+      "mean_score": -0.14510513249446044,
+      "negative_fraction": 0.36363636363636365,
+      "neutral_fraction": 0.4090909090909091,
+      "positive_fraction": 0.22727272727272727,
+      "mean_max_probability": 0.6914300999858163
+    },
+    {
+      "day": "2026-09-14",
+      "lang": "zh",
+      "n": 2,
+      "mean_score": 0.1955122947692871,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 1.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.62847700715065
+    },
+    {
+      "day": "2026-09-15",
+      "lang": "ar",
+      "n": 20,
+      "mean_score": 0.0160989286378026,
+      "negative_fraction": 0.3,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.3,
+      "mean_max_probability": 0.7090188041329384
+    },
+    {
+      "day": "2026-09-15",
+      "lang": "de",
+      "n": 4,
+      "mean_score": -0.48017096146941185,
+      "negative_fraction": 0.75,
+      "neutral_fraction": 0.25,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.6166189089417458
+    },
+    {
+      "day": "2026-09-15",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.1240302088111639,
+      "negative_fraction": 0.38,
+      "neutral_fraction": 0.4,
+      "positive_fraction": 0.22,
+      "mean_max_probability": 0.6722845235466957
+    },
+    {
+      "day": "2026-09-15",
+      "lang": "es",
+      "n": 39,
+      "mean_score": -0.3741877312079454,
+      "negative_fraction": 0.5641025641025641,
+      "neutral_fraction": 0.3076923076923077,
+      "positive_fraction": 0.1282051282051282,
+      "mean_max_probability": 0.753619657877164
+    },
+    {
+      "day": "2026-09-15",
+      "lang": "fa",
+      "n": 3,
+      "mean_score": -0.23015280067920685,
+      "negative_fraction": 0.3333333333333333,
+      "neutral_fraction": 0.6666666666666666,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.644658108552297
+    },
+    {
+      "day": "2026-09-15",
+      "lang": "fr",
+      "n": 17,
+      "mean_score": -0.2592311133356655,
+      "negative_fraction": 0.5882352941176471,
+      "neutral_fraction": 0.29411764705882354,
+      "positive_fraction": 0.11764705882352941,
+      "mean_max_probability": 0.7170354986892027
+    },
+    {
+      "day": "2026-09-15",
+      "lang": "hi",
+      "n": 6,
+      "mean_score": 0.10332765678564708,
+      "negative_fraction": 0.16666666666666666,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.3333333333333333,
+      "mean_max_probability": 0.5453210125366846
+    },
+    {
+      "day": "2026-09-15",
+      "lang": "in",
+      "n": 17,
+      "mean_score": -0.1560697901774855,
+      "negative_fraction": 0.47058823529411764,
+      "neutral_fraction": 0.35294117647058826,
+      "positive_fraction": 0.17647058823529413,
+      "mean_max_probability": 0.590387307545718
+    },
+    {
+      "day": "2026-09-15",
+      "lang": "it",
+      "n": 3,
+      "mean_score": -0.2240341529250145,
+      "negative_fraction": 0.6666666666666666,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.5574017067750295
+    },
+    {
+      "day": "2026-09-15",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.09676350861787796,
+      "negative_fraction": 0.3,
+      "neutral_fraction": 0.28,
+      "positive_fraction": 0.42,
+      "mean_max_probability": 0.6905724090337754
+    },
+    {
+      "day": "2026-09-15",
+      "lang": "ko",
+      "n": 22,
+      "mean_score": 0.1347253962673924,
+      "negative_fraction": 0.2727272727272727,
+      "neutral_fraction": 0.22727272727272727,
+      "positive_fraction": 0.5,
+      "mean_max_probability": 0.65768248249184
+    },
+    {
+      "day": "2026-09-15",
+      "lang": "pt",
+      "n": 35,
+      "mean_score": -0.13454707818371908,
+      "negative_fraction": 0.4857142857142857,
+      "neutral_fraction": 0.22857142857142856,
+      "positive_fraction": 0.2857142857142857,
+      "mean_max_probability": 0.6952046045235225
+    },
+    {
+      "day": "2026-09-15",
+      "lang": "ru",
+      "n": 2,
+      "mean_score": -0.6826212108135223,
+      "negative_fraction": 1.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.7125987708568573
+    },
+    {
+      "day": "2026-09-15",
+      "lang": "th",
+      "n": 12,
+      "mean_score": -0.11989722059418757,
+      "negative_fraction": 0.4166666666666667,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.6393631647030512
+    },
+    {
+      "day": "2026-09-15",
+      "lang": "tr",
+      "n": 12,
+      "mean_score": -0.11814352218061686,
+      "negative_fraction": 0.4166666666666667,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.25,
+      "mean_max_probability": 0.7214752485354742
+    },
+    {
+      "day": "2026-09-15",
+      "lang": "zh",
+      "n": 7,
+      "mean_score": -0.08294738190514701,
+      "negative_fraction": 0.42857142857142855,
+      "neutral_fraction": 0.2857142857142857,
+      "positive_fraction": 0.2857142857142857,
+      "mean_max_probability": 0.6592577525547573
+    },
+    {
+      "day": "2026-09-16",
+      "lang": "ar",
+      "n": 10,
+      "mean_score": -0.11046400144696236,
+      "negative_fraction": 0.3,
+      "neutral_fraction": 0.6,
+      "positive_fraction": 0.1,
+      "mean_max_probability": 0.6335699021816253
+    },
+    {
+      "day": "2026-09-16",
+      "lang": "de",
+      "n": 1,
+      "mean_score": -0.018563363701105118,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 1.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.900627076625824
+    },
+    {
+      "day": "2026-09-16",
+      "lang": "en",
+      "n": 100,
+      "mean_score": -0.13012336876243352,
+      "negative_fraction": 0.35,
+      "neutral_fraction": 0.42,
+      "positive_fraction": 0.23,
+      "mean_max_probability": 0.7203605371713638
+    },
+    {
+      "day": "2026-09-16",
+      "lang": "es",
+      "n": 21,
+      "mean_score": -0.11484063487677347,
+      "negative_fraction": 0.38095238095238093,
+      "neutral_fraction": 0.42857142857142855,
+      "positive_fraction": 0.19047619047619047,
+      "mean_max_probability": 0.75253921463376
+    },
+    {
+      "day": "2026-09-16",
+      "lang": "fa",
+      "n": 2,
+      "mean_score": 0.5186919271945953,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 1.0,
+      "mean_max_probability": 0.604346513748169
+    },
+    {
+      "day": "2026-09-16",
+      "lang": "fr",
+      "n": 9,
+      "mean_score": -0.4415869977739122,
+      "negative_fraction": 0.6666666666666666,
+      "neutral_fraction": 0.2222222222222222,
+      "positive_fraction": 0.1111111111111111,
+      "mean_max_probability": 0.7778385976950327
+    },
+    {
+      "day": "2026-09-16",
+      "lang": "hi",
+      "n": 2,
+      "mean_score": -0.19104695320129395,
+      "negative_fraction": 1.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.45502573251724243
+    },
+    {
+      "day": "2026-09-16",
+      "lang": "in",
+      "n": 15,
+      "mean_score": 0.1353828767935435,
+      "negative_fraction": 0.26666666666666666,
+      "neutral_fraction": 0.26666666666666666,
+      "positive_fraction": 0.4666666666666667,
+      "mean_max_probability": 0.5658430476983388
+    },
+    {
+      "day": "2026-09-16",
+      "lang": "it",
+      "n": 2,
+      "mean_score": 0.10514726117253304,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 1.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.7708253562450409
+    },
+    {
+      "day": "2026-09-16",
+      "lang": "ja",
+      "n": 50,
+      "mean_score": 0.11971738584339618,
+      "negative_fraction": 0.26,
+      "neutral_fraction": 0.24,
+      "positive_fraction": 0.5,
+      "mean_max_probability": 0.6785896092653274
+    },
+    {
+      "day": "2026-09-16",
+      "lang": "ko",
+      "n": 13,
+      "mean_score": -0.2727430858291112,
+      "negative_fraction": 0.5384615384615384,
+      "neutral_fraction": 0.3076923076923077,
+      "positive_fraction": 0.15384615384615385,
+      "mean_max_probability": 0.7047973664907309
+    },
+    {
+      "day": "2026-09-16",
+      "lang": "pt",
+      "n": 22,
+      "mean_score": -0.24542986110530116,
+      "negative_fraction": 0.4090909090909091,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.09090909090909091,
+      "mean_max_probability": 0.6684390943158757
+    },
+    {
+      "day": "2026-09-16",
+      "lang": "ru",
+      "n": 1,
+      "mean_score": 0.7118109464645386,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 1.0,
+      "mean_max_probability": 0.7282919883728027
+    },
+    {
+      "day": "2026-09-16",
+      "lang": "th",
+      "n": 6,
+      "mean_score": -0.3138550619284312,
+      "negative_fraction": 0.8333333333333334,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.16666666666666666,
+      "mean_max_probability": 0.557823454340299
+    },
+    {
+      "day": "2026-09-16",
+      "lang": "tr",
+      "n": 12,
+      "mean_score": -0.23439315830667815,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.16666666666666666,
+      "mean_max_probability": 0.6248873521884283
+    },
+    {
+      "day": "2026-09-16",
+      "lang": "zh",
+      "n": 3,
+      "mean_score": -0.41079287727673847,
+      "negative_fraction": 0.6666666666666666,
+      "neutral_fraction": 0.3333333333333333,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.7474296490351359
+    },
+    {
+      "day": "2026-09-17",
+      "lang": "ar",
+      "n": 1,
+      "mean_score": -0.9145150184631348,
+      "negative_fraction": 1.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.9312652945518494
+    },
+    {
+      "day": "2026-09-17",
+      "lang": "en",
+      "n": 23,
+      "mean_score": -0.03810352572928304,
+      "negative_fraction": 0.2608695652173913,
+      "neutral_fraction": 0.43478260869565216,
+      "positive_fraction": 0.30434782608695654,
+      "mean_max_probability": 0.6426092463990917
+    },
+    {
+      "day": "2026-09-17",
+      "lang": "es",
+      "n": 7,
+      "mean_score": -0.18913135996886662,
+      "negative_fraction": 0.5714285714285714,
+      "neutral_fraction": 0.14285714285714285,
+      "positive_fraction": 0.2857142857142857,
+      "mean_max_probability": 0.7915194886071342
+    },
+    {
+      "day": "2026-09-17",
+      "lang": "fa",
+      "n": 1,
+      "mean_score": -0.8111777901649475,
+      "negative_fraction": 1.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.8571258187294006
+    },
+    {
+      "day": "2026-09-17",
+      "lang": "fr",
+      "n": 2,
+      "mean_score": 0.4040931537747383,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.5,
+      "positive_fraction": 0.5,
+      "mean_max_probability": 0.7214876711368561
+    },
+    {
+      "day": "2026-09-17",
+      "lang": "hi",
+      "n": 1,
+      "mean_score": -0.4852173924446106,
+      "negative_fraction": 1.0,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.0,
+      "mean_max_probability": 0.6441023945808411
+    },
+    {
+      "day": "2026-09-17",
+      "lang": "in",
+      "n": 2,
+      "mean_score": -0.0342046320438385,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.5,
+      "mean_max_probability": 0.5067507326602936
+    },
+    {
+      "day": "2026-09-17",
+      "lang": "ja",
+      "n": 30,
+      "mean_score": -0.10619087691108385,
+      "negative_fraction": 0.43333333333333335,
+      "neutral_fraction": 0.26666666666666666,
+      "positive_fraction": 0.3,
+      "mean_max_probability": 0.6862880021333695
+    },
+    {
+      "day": "2026-09-17",
+      "lang": "ko",
+      "n": 2,
+      "mean_score": -0.24603426456451416,
+      "negative_fraction": 0.5,
+      "neutral_fraction": 0.0,
+      "positive_fraction": 0.5,
+      "mean_max_probability": 0.6995855867862701
+    },
+    {
+      "day": "2026-09-17",
+      "lang": "pt",
+      "n": 5,
+      "mean_score": 0.47044663429260253,
+      "negative_fraction": 0.0,
+      "neutral_fraction": 0.2,
+      "positive_fraction": 0.8,
+      "mean_max_probability": 0.6449575901031495
+    }
+  ]
+}

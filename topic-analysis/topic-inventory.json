@@ -1,0 +1,6656 @@
+{
+  "method": {
+    "time_zone": "UTC",
+    "source_id_order": "globally nondecreasing numeric id; prior full scan verified and streaming boundaries checked",
+    "deduplication": "Arrow run-end encoding over each sorted source batch; max(version, added_at) selected per contiguous ID run; trailing run carried across batch/file boundaries",
+    "latest_tie_break": "version DESC, then added_at DESC; exact ties retain the later physical row",
+    "memory_bound": {
+      "duckdb_threads": 4,
+      "duckdb_memory_limit": "5GB",
+      "latest_batch_rows": 262144,
+      "latest_pending_rows": "one trailing ID run",
+      "aggregate_partition": "one UTC day"
+    },
+    "hashtag_regex": "#[\\p{L}\\p{M}\\p{N}_]+",
+    "hashtag_normalization": "Unicode regex extraction including combining marks, lower() case normalization, distinct (id, topic) before aggregation",
+    "engagement_policy": "likes/views/retweets in hashtag-daily and daily denominators sum only non-RT-prefixed rows; counts include every latest unique tweet",
+    "partial_day_policy": "last observed created_at UTC date is marked partial_day and excluded from ranked comparisons"
+  },
+  "source_inventory": {
+    "file_count": 396,
+    "observation_rows": 395352258,
+    "compressed_bytes": 55677219525,
+    "row_groups": 741,
+    "files": [
+      {
+        "file": "tweets-000000.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143194864
+      },
+      {
+        "file": "tweets-000001.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144011155
+      },
+      {
+        "file": "tweets-000002.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145602601
+      },
+      {
+        "file": "tweets-000003.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145357388
+      },
+      {
+        "file": "tweets-000004.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147120241
+      },
+      {
+        "file": "tweets-000005.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149620841
+      },
+      {
+        "file": "tweets-000006.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 150928171
+      },
+      {
+        "file": "tweets-000007.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 151401098
+      },
+      {
+        "file": "tweets-000008.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 150759857
+      },
+      {
+        "file": "tweets-000009.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 150702556
+      },
+      {
+        "file": "tweets-000010.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149848093
+      },
+      {
+        "file": "tweets-000011.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149497027
+      },
+      {
+        "file": "tweets-000012.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149148303
+      },
+      {
+        "file": "tweets-000013.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148275896
+      },
+      {
+        "file": "tweets-000014.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146294468
+      },
+      {
+        "file": "tweets-000015.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143632372
+      },
+      {
+        "file": "tweets-000016.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140268348
+      },
+      {
+        "file": "tweets-000017.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 136189335
+      },
+      {
+        "file": "tweets-000018.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 134321655
+      },
+      {
+        "file": "tweets-000019.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 135877978
+      },
+      {
+        "file": "tweets-000020.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140600134
+      },
+      {
+        "file": "tweets-000021.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142118690
+      },
+      {
+        "file": "tweets-000022.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141917745
+      },
+      {
+        "file": "tweets-000023.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141856385
+      },
+      {
+        "file": "tweets-000024.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144013475
+      },
+      {
+        "file": "tweets-000025.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146120996
+      },
+      {
+        "file": "tweets-000026.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147170975
+      },
+      {
+        "file": "tweets-000027.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149224191
+      },
+      {
+        "file": "tweets-000028.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 150244908
+      },
+      {
+        "file": "tweets-000029.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 151283119
+      },
+      {
+        "file": "tweets-000030.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149423818
+      },
+      {
+        "file": "tweets-000031.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 150019765
+      },
+      {
+        "file": "tweets-000032.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148176071
+      },
+      {
+        "file": "tweets-000033.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148157008
+      },
+      {
+        "file": "tweets-000034.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148661065
+      },
+      {
+        "file": "tweets-000035.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148499115
+      },
+      {
+        "file": "tweets-000036.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147351607
+      },
+      {
+        "file": "tweets-000037.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145090097
+      },
+      {
+        "file": "tweets-000038.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141597990
+      },
+      {
+        "file": "tweets-000039.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138311137
+      },
+      {
+        "file": "tweets-000040.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 134743924
+      },
+      {
+        "file": "tweets-000041.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 133139065
+      },
+      {
+        "file": "tweets-000042.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 135045347
+      },
+      {
+        "file": "tweets-000043.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 139959015
+      },
+      {
+        "file": "tweets-000044.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141345557
+      },
+      {
+        "file": "tweets-000045.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 139909816
+      },
+      {
+        "file": "tweets-000046.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140253702
+      },
+      {
+        "file": "tweets-000047.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141512475
+      },
+      {
+        "file": "tweets-000048.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146594736
+      },
+      {
+        "file": "tweets-000049.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146551336
+      },
+      {
+        "file": "tweets-000050.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148801351
+      },
+      {
+        "file": "tweets-000051.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149797463
+      },
+      {
+        "file": "tweets-000052.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 151011965
+      },
+      {
+        "file": "tweets-000053.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149845791
+      },
+      {
+        "file": "tweets-000054.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149443793
+      },
+      {
+        "file": "tweets-000055.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149442845
+      },
+      {
+        "file": "tweets-000056.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148254166
+      },
+      {
+        "file": "tweets-000057.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147667606
+      },
+      {
+        "file": "tweets-000058.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148064258
+      },
+      {
+        "file": "tweets-000059.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147595724
+      },
+      {
+        "file": "tweets-000060.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146251375
+      },
+      {
+        "file": "tweets-000061.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144369274
+      },
+      {
+        "file": "tweets-000062.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142040359
+      },
+      {
+        "file": "tweets-000063.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137618837
+      },
+      {
+        "file": "tweets-000064.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 134478568
+      },
+      {
+        "file": "tweets-000065.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 133615671
+      },
+      {
+        "file": "tweets-000066.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 136012474
+      },
+      {
+        "file": "tweets-000067.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140605927
+      },
+      {
+        "file": "tweets-000068.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142301721
+      },
+      {
+        "file": "tweets-000069.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140872047
+      },
+      {
+        "file": "tweets-000070.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140526855
+      },
+      {
+        "file": "tweets-000071.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142755611
+      },
+      {
+        "file": "tweets-000072.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145831770
+      },
+      {
+        "file": "tweets-000073.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146921908
+      },
+      {
+        "file": "tweets-000074.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148921660
+      },
+      {
+        "file": "tweets-000075.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149991345
+      },
+      {
+        "file": "tweets-000076.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 150917577
+      },
+      {
+        "file": "tweets-000077.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 150558695
+      },
+      {
+        "file": "tweets-000078.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 150277234
+      },
+      {
+        "file": "tweets-000079.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149410153
+      },
+      {
+        "file": "tweets-000080.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149087843
+      },
+      {
+        "file": "tweets-000081.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148767587
+      },
+      {
+        "file": "tweets-000082.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148531697
+      },
+      {
+        "file": "tweets-000083.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147559108
+      },
+      {
+        "file": "tweets-000084.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145674009
+      },
+      {
+        "file": "tweets-000085.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143981162
+      },
+      {
+        "file": "tweets-000086.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141533802
+      },
+      {
+        "file": "tweets-000087.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138050279
+      },
+      {
+        "file": "tweets-000088.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 134355369
+      },
+      {
+        "file": "tweets-000089.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 133322622
+      },
+      {
+        "file": "tweets-000090.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 135659691
+      },
+      {
+        "file": "tweets-000091.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140234888
+      },
+      {
+        "file": "tweets-000092.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141945496
+      },
+      {
+        "file": "tweets-000093.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140881784
+      },
+      {
+        "file": "tweets-000094.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140704335
+      },
+      {
+        "file": "tweets-000095.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 139584512
+      },
+      {
+        "file": "tweets-000096.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146051602
+      },
+      {
+        "file": "tweets-000097.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145552736
+      },
+      {
+        "file": "tweets-000098.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147889925
+      },
+      {
+        "file": "tweets-000099.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148923751
+      },
+      {
+        "file": "tweets-000100.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 150656483
+      },
+      {
+        "file": "tweets-000101.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 150159532
+      },
+      {
+        "file": "tweets-000102.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149848169
+      },
+      {
+        "file": "tweets-000103.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149107976
+      },
+      {
+        "file": "tweets-000104.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148053326
+      },
+      {
+        "file": "tweets-000105.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147343450
+      },
+      {
+        "file": "tweets-000106.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148086840
+      },
+      {
+        "file": "tweets-000107.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147565631
+      },
+      {
+        "file": "tweets-000108.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146640748
+      },
+      {
+        "file": "tweets-000109.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145396380
+      },
+      {
+        "file": "tweets-000110.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144160005
+      },
+      {
+        "file": "tweets-000111.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142399644
+      },
+      {
+        "file": "tweets-000112.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 139111568
+      },
+      {
+        "file": "tweets-000113.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 135455232
+      },
+      {
+        "file": "tweets-000114.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 131759270
+      },
+      {
+        "file": "tweets-000115.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 133030482
+      },
+      {
+        "file": "tweets-000116.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 136748347
+      },
+      {
+        "file": "tweets-000117.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140439726
+      },
+      {
+        "file": "tweets-000118.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142321824
+      },
+      {
+        "file": "tweets-000119.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143402838
+      },
+      {
+        "file": "tweets-000120.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143039404
+      },
+      {
+        "file": "tweets-000121.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144830688
+      },
+      {
+        "file": "tweets-000122.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147039237
+      },
+      {
+        "file": "tweets-000123.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147927129
+      },
+      {
+        "file": "tweets-000124.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148968361
+      },
+      {
+        "file": "tweets-000125.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149319006
+      },
+      {
+        "file": "tweets-000126.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 150551050
+      },
+      {
+        "file": "tweets-000127.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149543060
+      },
+      {
+        "file": "tweets-000128.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148460382
+      },
+      {
+        "file": "tweets-000129.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146286224
+      },
+      {
+        "file": "tweets-000130.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148239353
+      },
+      {
+        "file": "tweets-000131.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147173043
+      },
+      {
+        "file": "tweets-000132.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146301208
+      },
+      {
+        "file": "tweets-000133.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145751494
+      },
+      {
+        "file": "tweets-000134.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144051560
+      },
+      {
+        "file": "tweets-000135.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 127381753
+      },
+      {
+        "file": "tweets-000136.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138028159
+      },
+      {
+        "file": "tweets-000137.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 134951565
+      },
+      {
+        "file": "tweets-000138.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 132231779
+      },
+      {
+        "file": "tweets-000139.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 133019302
+      },
+      {
+        "file": "tweets-000140.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 135872078
+      },
+      {
+        "file": "tweets-000141.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 139659694
+      },
+      {
+        "file": "tweets-000142.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140827925
+      },
+      {
+        "file": "tweets-000143.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141991319
+      },
+      {
+        "file": "tweets-000144.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143627607
+      },
+      {
+        "file": "tweets-000145.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144029114
+      },
+      {
+        "file": "tweets-000146.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143497659
+      },
+      {
+        "file": "tweets-000147.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145527325
+      },
+      {
+        "file": "tweets-000148.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148188082
+      },
+      {
+        "file": "tweets-000149.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147979624
+      },
+      {
+        "file": "tweets-000150.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148701941
+      },
+      {
+        "file": "tweets-000151.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148019488
+      },
+      {
+        "file": "tweets-000152.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147563380
+      },
+      {
+        "file": "tweets-000153.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149372207
+      },
+      {
+        "file": "tweets-000154.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148342117
+      },
+      {
+        "file": "tweets-000155.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147898314
+      },
+      {
+        "file": "tweets-000156.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146029848
+      },
+      {
+        "file": "tweets-000157.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145724204
+      },
+      {
+        "file": "tweets-000158.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143877862
+      },
+      {
+        "file": "tweets-000159.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142969462
+      },
+      {
+        "file": "tweets-000160.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 139603771
+      },
+      {
+        "file": "tweets-000161.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 136283783
+      },
+      {
+        "file": "tweets-000162.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 134569229
+      },
+      {
+        "file": "tweets-000163.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 131975975
+      },
+      {
+        "file": "tweets-000164.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 132123528
+      },
+      {
+        "file": "tweets-000165.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137104404
+      },
+      {
+        "file": "tweets-000166.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141070222
+      },
+      {
+        "file": "tweets-000167.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140709222
+      },
+      {
+        "file": "tweets-000168.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140619201
+      },
+      {
+        "file": "tweets-000169.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141400898
+      },
+      {
+        "file": "tweets-000170.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145243118
+      },
+      {
+        "file": "tweets-000171.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146238061
+      },
+      {
+        "file": "tweets-000172.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147045099
+      },
+      {
+        "file": "tweets-000173.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148827361
+      },
+      {
+        "file": "tweets-000174.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149715883
+      },
+      {
+        "file": "tweets-000175.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 150471752
+      },
+      {
+        "file": "tweets-000176.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 150104234
+      },
+      {
+        "file": "tweets-000177.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149215249
+      },
+      {
+        "file": "tweets-000178.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148523620
+      },
+      {
+        "file": "tweets-000179.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148727707
+      },
+      {
+        "file": "tweets-000180.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148043200
+      },
+      {
+        "file": "tweets-000181.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147555476
+      },
+      {
+        "file": "tweets-000182.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146910018
+      },
+      {
+        "file": "tweets-000183.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145283491
+      },
+      {
+        "file": "tweets-000184.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143238504
+      },
+      {
+        "file": "tweets-000185.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140560375
+      },
+      {
+        "file": "tweets-000186.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137648257
+      },
+      {
+        "file": "tweets-000187.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 133380451
+      },
+      {
+        "file": "tweets-000188.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 130225194
+      },
+      {
+        "file": "tweets-000189.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 133402468
+      },
+      {
+        "file": "tweets-000190.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138538091
+      },
+      {
+        "file": "tweets-000191.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140967794
+      },
+      {
+        "file": "tweets-000192.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140625897
+      },
+      {
+        "file": "tweets-000193.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141474568
+      },
+      {
+        "file": "tweets-000194.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143796509
+      },
+      {
+        "file": "tweets-000195.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146323290
+      },
+      {
+        "file": "tweets-000196.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147486722
+      },
+      {
+        "file": "tweets-000197.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148143953
+      },
+      {
+        "file": "tweets-000198.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 149258949
+      },
+      {
+        "file": "tweets-000199.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148867375
+      },
+      {
+        "file": "tweets-000200.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147691411
+      },
+      {
+        "file": "tweets-000201.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146660931
+      },
+      {
+        "file": "tweets-000202.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146579722
+      },
+      {
+        "file": "tweets-000203.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146351702
+      },
+      {
+        "file": "tweets-000204.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145716478
+      },
+      {
+        "file": "tweets-000205.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143535908
+      },
+      {
+        "file": "tweets-000206.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141252962
+      },
+      {
+        "file": "tweets-000207.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 139260435
+      },
+      {
+        "file": "tweets-000208.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 129853851
+      },
+      {
+        "file": "tweets-000209.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 125834460
+      },
+      {
+        "file": "tweets-000210.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 125288688
+      },
+      {
+        "file": "tweets-000211.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 129746871
+      },
+      {
+        "file": "tweets-000212.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 135540850
+      },
+      {
+        "file": "tweets-000213.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 139072751
+      },
+      {
+        "file": "tweets-000214.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138424866
+      },
+      {
+        "file": "tweets-000215.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138129763
+      },
+      {
+        "file": "tweets-000216.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138266458
+      },
+      {
+        "file": "tweets-000217.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142342043
+      },
+      {
+        "file": "tweets-000218.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144156868
+      },
+      {
+        "file": "tweets-000219.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145716607
+      },
+      {
+        "file": "tweets-000220.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146569742
+      },
+      {
+        "file": "tweets-000221.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147843056
+      },
+      {
+        "file": "tweets-000222.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 148141522
+      },
+      {
+        "file": "tweets-000223.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147365589
+      },
+      {
+        "file": "tweets-000224.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146394440
+      },
+      {
+        "file": "tweets-000225.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145814663
+      },
+      {
+        "file": "tweets-000226.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143639572
+      },
+      {
+        "file": "tweets-000227.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144508027
+      },
+      {
+        "file": "tweets-000228.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144971174
+      },
+      {
+        "file": "tweets-000229.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144863651
+      },
+      {
+        "file": "tweets-000230.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144374289
+      },
+      {
+        "file": "tweets-000231.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141616675
+      },
+      {
+        "file": "tweets-000232.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137019344
+      },
+      {
+        "file": "tweets-000233.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 135583386
+      },
+      {
+        "file": "tweets-000234.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 135015655
+      },
+      {
+        "file": "tweets-000235.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 132073972
+      },
+      {
+        "file": "tweets-000236.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 129145518
+      },
+      {
+        "file": "tweets-000237.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 128423889
+      },
+      {
+        "file": "tweets-000238.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 132538515
+      },
+      {
+        "file": "tweets-000239.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 136176291
+      },
+      {
+        "file": "tweets-000240.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137363185
+      },
+      {
+        "file": "tweets-000241.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137064960
+      },
+      {
+        "file": "tweets-000242.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 136707189
+      },
+      {
+        "file": "tweets-000243.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138354402
+      },
+      {
+        "file": "tweets-000244.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141613368
+      },
+      {
+        "file": "tweets-000245.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143500987
+      },
+      {
+        "file": "tweets-000246.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145705358
+      },
+      {
+        "file": "tweets-000247.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146374040
+      },
+      {
+        "file": "tweets-000248.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145707575
+      },
+      {
+        "file": "tweets-000249.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145645914
+      },
+      {
+        "file": "tweets-000250.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145152189
+      },
+      {
+        "file": "tweets-000251.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144248112
+      },
+      {
+        "file": "tweets-000252.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143838117
+      },
+      {
+        "file": "tweets-000253.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143958394
+      },
+      {
+        "file": "tweets-000254.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143164128
+      },
+      {
+        "file": "tweets-000255.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141145600
+      },
+      {
+        "file": "tweets-000256.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 139387282
+      },
+      {
+        "file": "tweets-000257.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137745813
+      },
+      {
+        "file": "tweets-000258.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 134569489
+      },
+      {
+        "file": "tweets-000259.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 133061960
+      },
+      {
+        "file": "tweets-000260.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 130106145
+      },
+      {
+        "file": "tweets-000261.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 127682460
+      },
+      {
+        "file": "tweets-000262.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 129955840
+      },
+      {
+        "file": "tweets-000263.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 134191867
+      },
+      {
+        "file": "tweets-000264.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 136665217
+      },
+      {
+        "file": "tweets-000265.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137077661
+      },
+      {
+        "file": "tweets-000266.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 135609037
+      },
+      {
+        "file": "tweets-000267.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 136172722
+      },
+      {
+        "file": "tweets-000268.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138042612
+      },
+      {
+        "file": "tweets-000269.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140885635
+      },
+      {
+        "file": "tweets-000270.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141553456
+      },
+      {
+        "file": "tweets-000271.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142509201
+      },
+      {
+        "file": "tweets-000272.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144451800
+      },
+      {
+        "file": "tweets-000273.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145186028
+      },
+      {
+        "file": "tweets-000274.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144589878
+      },
+      {
+        "file": "tweets-000275.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144678187
+      },
+      {
+        "file": "tweets-000276.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144134313
+      },
+      {
+        "file": "tweets-000277.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144868079
+      },
+      {
+        "file": "tweets-000278.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143110594
+      },
+      {
+        "file": "tweets-000279.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141861103
+      },
+      {
+        "file": "tweets-000280.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142366234
+      },
+      {
+        "file": "tweets-000281.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142315751
+      },
+      {
+        "file": "tweets-000282.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142327323
+      },
+      {
+        "file": "tweets-000283.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142380442
+      },
+      {
+        "file": "tweets-000284.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140294077
+      },
+      {
+        "file": "tweets-000285.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140031249
+      },
+      {
+        "file": "tweets-000286.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137958830
+      },
+      {
+        "file": "tweets-000287.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 134697565
+      },
+      {
+        "file": "tweets-000288.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 133758930
+      },
+      {
+        "file": "tweets-000289.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 130511957
+      },
+      {
+        "file": "tweets-000290.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 129209004
+      },
+      {
+        "file": "tweets-000291.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 128790107
+      },
+      {
+        "file": "tweets-000292.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 132247737
+      },
+      {
+        "file": "tweets-000293.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 134266184
+      },
+      {
+        "file": "tweets-000294.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 136298705
+      },
+      {
+        "file": "tweets-000295.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 136530219
+      },
+      {
+        "file": "tweets-000296.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 135110356
+      },
+      {
+        "file": "tweets-000297.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 136635312
+      },
+      {
+        "file": "tweets-000298.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138130926
+      },
+      {
+        "file": "tweets-000299.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 139402945
+      },
+      {
+        "file": "tweets-000300.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140624582
+      },
+      {
+        "file": "tweets-000301.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140988329
+      },
+      {
+        "file": "tweets-000302.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141586182
+      },
+      {
+        "file": "tweets-000303.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142867932
+      },
+      {
+        "file": "tweets-000304.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142367190
+      },
+      {
+        "file": "tweets-000305.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140583912
+      },
+      {
+        "file": "tweets-000306.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140128995
+      },
+      {
+        "file": "tweets-000307.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138602130
+      },
+      {
+        "file": "tweets-000308.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138529938
+      },
+      {
+        "file": "tweets-000309.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138652229
+      },
+      {
+        "file": "tweets-000310.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137718200
+      },
+      {
+        "file": "tweets-000311.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 136180006
+      },
+      {
+        "file": "tweets-000312.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 134434595
+      },
+      {
+        "file": "tweets-000313.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 132277685
+      },
+      {
+        "file": "tweets-000314.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 129751270
+      },
+      {
+        "file": "tweets-000315.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 128398998
+      },
+      {
+        "file": "tweets-000316.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 126643042
+      },
+      {
+        "file": "tweets-000317.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 127694513
+      },
+      {
+        "file": "tweets-000318.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 130909205
+      },
+      {
+        "file": "tweets-000319.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 131533203
+      },
+      {
+        "file": "tweets-000320.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 132294951
+      },
+      {
+        "file": "tweets-000321.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 132392129
+      },
+      {
+        "file": "tweets-000322.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 133675779
+      },
+      {
+        "file": "tweets-000323.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 134324495
+      },
+      {
+        "file": "tweets-000324.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 134598448
+      },
+      {
+        "file": "tweets-000325.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 134822536
+      },
+      {
+        "file": "tweets-000326.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 135190779
+      },
+      {
+        "file": "tweets-000327.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137277906
+      },
+      {
+        "file": "tweets-000328.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137714095
+      },
+      {
+        "file": "tweets-000329.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 135930669
+      },
+      {
+        "file": "tweets-000330.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 135879046
+      },
+      {
+        "file": "tweets-000331.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 136181999
+      },
+      {
+        "file": "tweets-000332.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 135504633
+      },
+      {
+        "file": "tweets-000333.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 134389140
+      },
+      {
+        "file": "tweets-000334.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 134673176
+      },
+      {
+        "file": "tweets-000335.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 134227740
+      },
+      {
+        "file": "tweets-000336.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 133638983
+      },
+      {
+        "file": "tweets-000337.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 130926579
+      },
+      {
+        "file": "tweets-000338.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 129003489
+      },
+      {
+        "file": "tweets-000339.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 126932600
+      },
+      {
+        "file": "tweets-000340.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 126028549
+      },
+      {
+        "file": "tweets-000341.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 124003634
+      },
+      {
+        "file": "tweets-000342.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 122818627
+      },
+      {
+        "file": "tweets-000343.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 124287176
+      },
+      {
+        "file": "tweets-000344.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 130240552
+      },
+      {
+        "file": "tweets-000345.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 132321511
+      },
+      {
+        "file": "tweets-000346.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 133568017
+      },
+      {
+        "file": "tweets-000347.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 133465492
+      },
+      {
+        "file": "tweets-000348.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 134283439
+      },
+      {
+        "file": "tweets-000349.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137385368
+      },
+      {
+        "file": "tweets-000350.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137338608
+      },
+      {
+        "file": "tweets-000351.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138349833
+      },
+      {
+        "file": "tweets-000352.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 139751736
+      },
+      {
+        "file": "tweets-000353.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140206189
+      },
+      {
+        "file": "tweets-000354.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 139101514
+      },
+      {
+        "file": "tweets-000355.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138344653
+      },
+      {
+        "file": "tweets-000356.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137266845
+      },
+      {
+        "file": "tweets-000357.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137124417
+      },
+      {
+        "file": "tweets-000358.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 136437316
+      },
+      {
+        "file": "tweets-000359.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 136336107
+      },
+      {
+        "file": "tweets-000360.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 133780221
+      },
+      {
+        "file": "tweets-000361.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 132186189
+      },
+      {
+        "file": "tweets-000362.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 130584051
+      },
+      {
+        "file": "tweets-000363.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 129144305
+      },
+      {
+        "file": "tweets-000364.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 125876633
+      },
+      {
+        "file": "tweets-000365.parquet",
+        "observations": 1000000,
+        "row_groups": 1,
+        "bytes": 127693154
+      },
+      {
+        "file": "tweets-000366.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 136091098
+      },
+      {
+        "file": "tweets-000367.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138265345
+      },
+      {
+        "file": "tweets-000368.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 140975706
+      },
+      {
+        "file": "tweets-000369.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144214342
+      },
+      {
+        "file": "tweets-000370.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143215728
+      },
+      {
+        "file": "tweets-000371.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 134391700
+      },
+      {
+        "file": "tweets-000372.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 124068667
+      },
+      {
+        "file": "tweets-000373.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 126092171
+      },
+      {
+        "file": "tweets-000374.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 127051890
+      },
+      {
+        "file": "tweets-000375.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 134981646
+      },
+      {
+        "file": "tweets-000376.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 136525032
+      },
+      {
+        "file": "tweets-000377.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 136165022
+      },
+      {
+        "file": "tweets-000378.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142577418
+      },
+      {
+        "file": "tweets-000379.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 134709905
+      },
+      {
+        "file": "tweets-000380.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 146358316
+      },
+      {
+        "file": "tweets-000381.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 137539371
+      },
+      {
+        "file": "tweets-000382.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141325218
+      },
+      {
+        "file": "tweets-000383.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 142364991
+      },
+      {
+        "file": "tweets-000384.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 139608279
+      },
+      {
+        "file": "tweets-000385.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 141050647
+      },
+      {
+        "file": "tweets-000386.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145412467
+      },
+      {
+        "file": "tweets-000387.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 147470836
+      },
+      {
+        "file": "tweets-000388.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 143620137
+      },
+      {
+        "file": "tweets-000389.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 138354407
+      },
+      {
+        "file": "tweets-000390.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 145982068
+      },
+      {
+        "file": "tweets-000391.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 133729404
+      },
+      {
+        "file": "tweets-000392.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 144527897
+      },
+      {
+        "file": "tweets-000393.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 135322732
+      },
+      {
+        "file": "tweets-000394.parquet",
+        "observations": 1000000,
+        "row_groups": 2,
+        "bytes": 136962595
+      },
+      {
+        "file": "tweets-000395.parquet",
+        "observations": 352258,
+        "row_groups": 1,
+        "bytes": 48657592
+      }
+    ]
+  },
+  "source_schema": [
+    {
+      "column_name": "id",
+      "column_type": "VARCHAR",
+      "nullable": true
+    },
+    {
+      "column_name": "author_id",
+      "column_type": "VARCHAR",
+      "nullable": true
+    },
+    {
+      "column_name": "body",
+      "column_type": "VARCHAR",
+      "nullable": true
+    },
+    {
+      "column_name": "created_at",
+      "column_type": "TIMESTAMP WITH TIME ZONE",
+      "nullable": true
+    },
+    {
+      "column_name": "like_count",
+      "column_type": "INTEGER",
+      "nullable": true
+    },
+    {
+      "column_name": "reply_count",
+      "column_type": "INTEGER",
+      "nullable": true
+    },
+    {
+      "column_name": "retweet_count",
+      "column_type": "INTEGER",
+      "nullable": true
+    },
+    {
+      "column_name": "quote_count",
+      "column_type": "INTEGER",
+      "nullable": true
+    },
+    {
+      "column_name": "views_count",
+      "column_type": "INTEGER",
+      "nullable": true
+    },
+    {
+      "column_name": "bookmarks_count",
+      "column_type": "INTEGER",
+      "nullable": true
+    },
+    {
+      "column_name": "lang",
+      "column_type": "VARCHAR",
+      "nullable": true
+    },
+    {
+      "column_name": "source",
+      "column_type": "VARCHAR",
+      "nullable": true
+    },
+    {
+      "column_name": "reply_to_status_id",
+      "column_type": "VARCHAR",
+      "nullable": true
+    },
+    {
+      "column_name": "reply_to_user_id",
+      "column_type": "VARCHAR",
+      "nullable": true
+    },
+    {
+      "column_name": "conversation_id",
+      "column_type": "VARCHAR",
+      "nullable": true
+    },
+    {
+      "column_name": "poll",
+      "column_type": "VARCHAR",
+      "nullable": true
+    },
+    {
+      "column_name": "embed",
+      "column_type": "VARCHAR",
+      "nullable": true
+    },
+    {
+      "column_name": "quoting_id",
+      "column_type": "VARCHAR",
+      "nullable": true
+    },
+    {
+      "column_name": "added_at",
+      "column_type": "TIMESTAMP WITH TIME ZONE",
+      "nullable": true
+    },
+    {
+      "column_name": "media",
+      "column_type": "VARCHAR",
+      "nullable": true
+    },
+    {
+      "column_name": "synced",
+      "column_type": "UTINYINT",
+      "nullable": true
+    },
+    {
+      "column_name": "embedded",
+      "column_type": "UTINYINT",
+      "nullable": true
+    },
+    {
+      "column_name": "version",
+      "column_type": "TIMESTAMP WITH TIME ZONE",
+      "nullable": true
+    }
+  ],
+  "projected_latest_schema": [
+    {
+      "column_name": "id",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "author_id",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "body",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "created_at",
+      "column_type": "TIMESTAMP WITH TIME ZONE",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "version",
+      "column_type": "TIMESTAMP WITH TIME ZONE",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "added_at",
+      "column_type": "TIMESTAMP WITH TIME ZONE",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "lang",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "like_count",
+      "column_type": "INTEGER",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "reply_count",
+      "column_type": "INTEGER",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "retweet_count",
+      "column_type": "INTEGER",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "quote_count",
+      "column_type": "INTEGER",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "views_count",
+      "column_type": "INTEGER",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "bookmarks_count",
+      "column_type": "INTEGER",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "reply_to_status_id",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "quoting_id",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "conversation_id",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "media",
+      "column_type": "VARCHAR",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    },
+    {
+      "column_name": "is_rt",
+      "column_type": "BOOLEAN",
+      "null": "YES",
+      "key": null,
+      "default": null,
+      "extra": null
+    }
+  ],
+  "omitted_source_columns": [
+    "embed",
+    "embedded",
+    "poll",
+    "reply_to_user_id",
+    "source",
+    "synced"
+  ],
+  "latest_output": {
+    "directory": "latest",
+    "files": 378,
+    "rows": 377270972,
+    "source_shards_processed": 396,
+    "per_source_stage": [],
+    "non_overlapping_ids": true
+  },
+  "daily_denominators": {
+    "path": "daily-denominators.csv",
+    "schema": [
+      {
+        "column_name": "day",
+        "column_type": "CSV"
+      },
+      {
+        "column_name": "lang",
+        "column_type": "CSV"
+      },
+      {
+        "column_name": "tweets",
+        "column_type": "CSV"
+      },
+      {
+        "column_name": "authors",
+        "column_type": "CSV"
+      },
+      {
+        "column_name": "originals",
+        "column_type": "CSV"
+      },
+      {
+        "column_name": "rt_tweets",
+        "column_type": "CSV"
+      },
+      {
+        "column_name": "likes",
+        "column_type": "CSV"
+      },
+      {
+        "column_name": "views",
+        "column_type": "CSV"
+      },
+      {
+        "column_name": "retweets",
+        "column_type": "CSV"
+      },
+      {
+        "column_name": "body_nonnull",
+        "column_type": "CSV"
+      },
+      {
+        "column_name": "body_null_or_empty",
+        "column_type": "CSV"
+      },
+      {
+        "column_name": "created_at_null",
+        "column_type": "CSV"
+      },
+      {
+        "column_name": "partial_day",
+        "column_type": "CSV"
+      }
+    ],
+    "rows": 2372,
+    "partial_day": "2026-09-17",
+    "language_rows_include_all_total": true
+  },
+  "hashtag_discovery": {
+    "path": "hashtag-daily.parquet",
+    "schema": [
+      {
+        "column_name": "topic",
+        "column_type": "VARCHAR",
+        "null": "YES",
+        "key": null,
+        "default": null,
+        "extra": null
+      },
+      {
+        "column_name": "day",
+        "column_type": "DATE",
+        "null": "YES",
+        "key": null,
+        "default": null,
+        "extra": null
+      },
+      {
+        "column_name": "tweets",
+        "column_type": "BIGINT",
+        "null": "YES",
+        "key": null,
+        "default": null,
+        "extra": null
+      },
+      {
+        "column_name": "authors",
+        "column_type": "BIGINT",
+        "null": "YES",
+        "key": null,
+        "default": null,
+        "extra": null
+      },
+      {
+        "column_name": "originals",
+        "column_type": "BIGINT",
+        "null": "YES",
+        "key": null,
+        "default": null,
+        "extra": null
+      },
+      {
+        "column_name": "likes",
+        "column_type": "DOUBLE",
+        "null": "YES",
+        "key": null,
+        "default": null,
+        "extra": null
+      },
+      {
+        "column_name": "views",
+        "column_type": "DOUBLE",
+        "null": "YES",
+        "key": null,
+        "default": null,
+        "extra": null
+      },
+      {
+        "column_name": "retweets",
+        "column_type": "DOUBLE",
+        "null": "YES",
+        "key": null,
+        "default": null,
+        "extra": null
+      }
+    ],
+    "topic_day_rows": 11785131,
+    "topics": 3994031,
+    "hashtag_mentions": 105047663,
+    "singleton_topic_days": 6469433,
+    "elapsed_seconds": 0.0,
+    "latest_tweets_with_created_at": 377270560,
+    "tweets_with_hashtags_with_created_at": 54695197,
+    "latest_tweets": 377270972,
+    "tweets_with_hashtags": 54695204,
+    "tagged_tweets_without_created_at": 7,
+    "fraction_tweets_with_hashtags": 0.14497591402287902,
+    "ranking_policy": {
+      "complete_days_only": true,
+      "partial_day_excluded": "2026-09-17",
+      "volume_min_tweets": 100,
+      "share_spike_min_tweets_per_day": 20,
+      "full_discovery_thresholded": false
+    },
+    "top_volume_complete_days": [
+      {
+        "topic": "#bbnaija",
+        "tweets": 283341,
+        "originals": 174148,
+        "author_topic_days": 60213,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#1",
+        "tweets": 247801,
+        "originals": 63190,
+        "author_topic_days": 204577,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#bb28",
+        "tweets": 203378,
+        "originals": 121381,
+        "author_topic_days": 44645,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#granhermano",
+        "tweets": 175031,
+        "originals": 70048,
+        "author_topic_days": 41320,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#lacasadelosfamososmx",
+        "tweets": 163397,
+        "originals": 105717,
+        "author_topic_days": 38978,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#bts",
+        "tweets": 156231,
+        "originals": 14048,
+        "author_topic_days": 107552,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#pr",
+        "tweets": 138253,
+        "originals": 75785,
+        "author_topic_days": 79377,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#rt",
+        "tweets": 134346,
+        "originals": 5638,
+        "author_topic_days": 70214,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#deltarune",
+        "tweets": 128147,
+        "originals": 5060,
+        "author_topic_days": 82794,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#iriam",
+        "tweets": 120659,
+        "originals": 107255,
+        "author_topic_days": 74988,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#enhypen",
+        "tweets": 119524,
+        "originals": 15275,
+        "author_topic_days": 53452,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#tiktok",
+        "tweets": 113573,
+        "originals": 77161,
+        "author_topic_days": 83246,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#genshinimpact",
+        "tweets": 102461,
+        "originals": 6431,
+        "author_topic_days": 75628,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#yahooニュース",
+        "tweets": 101598,
+        "originals": 56289,
+        "author_topic_days": 80440,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#straykids",
+        "tweets": 98452,
+        "originals": 10838,
+        "author_topic_days": 56138,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#방탄소년단",
+        "tweets": 98341,
+        "originals": 3981,
+        "author_topic_days": 74780,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#ブルアカ",
+        "tweets": 95725,
+        "originals": 6981,
+        "author_topic_days": 61783,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#pondphuwinconcertd3",
+        "tweets": 95476,
+        "originals": 13900,
+        "author_topic_days": 27753,
+        "active_days": 21,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#ウマ娘",
+        "tweets": 93066,
+        "originals": 12314,
+        "author_topic_days": 63641,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#aiイラスト",
+        "tweets": 92910,
+        "originals": 44544,
+        "author_topic_days": 42095,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#cortis",
+        "tweets": 88581,
+        "originals": 9513,
+        "author_topic_days": 43458,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#vrchat",
+        "tweets": 87911,
+        "originals": 32317,
+        "author_topic_days": 59031,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#2",
+        "tweets": 85972,
+        "originals": 26301,
+        "author_topic_days": 77527,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#pondphuwinconcertd1",
+        "tweets": 84814,
+        "originals": 13215,
+        "author_topic_days": 22172,
+        "active_days": 19,
+        "last_day": "2026-09-15"
+      },
+      {
+        "topic": "#lacasadelosfamososméxico",
+        "tweets": 84643,
+        "originals": 59467,
+        "author_topic_days": 30036,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#おはようvtuber",
+        "tweets": 82564,
+        "originals": 50033,
+        "author_topic_days": 65762,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#nct127",
+        "tweets": 79477,
+        "originals": 9102,
+        "author_topic_days": 41263,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#gemmhouse",
+        "tweets": 78399,
+        "originals": 5050,
+        "author_topic_days": 43649,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#irumudi",
+        "tweets": 76382,
+        "originals": 19846,
+        "author_topic_days": 30760,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#art",
+        "tweets": 75576,
+        "originals": 19241,
+        "author_topic_days": 65105,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#alphadriveone",
+        "tweets": 73527,
+        "originals": 6980,
+        "author_topic_days": 32239,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#fanart",
+        "tweets": 73152,
+        "originals": 8074,
+        "author_topic_days": 66636,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#vtuber",
+        "tweets": 72566,
+        "originals": 43955,
+        "author_topic_days": 56769,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#バニーの日",
+        "tweets": 72299,
+        "originals": 9703,
+        "author_topic_days": 52703,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#pondphuwinconcertd2",
+        "tweets": 71682,
+        "originals": 10178,
+        "author_topic_days": 21615,
+        "active_days": 22,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#ff14",
+        "tweets": 70110,
+        "originals": 25069,
+        "author_topic_days": 39878,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#cfc",
+        "tweets": 69188,
+        "originals": 22993,
+        "author_topic_days": 40916,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#f1",
+        "tweets": 68872,
+        "originals": 18513,
+        "author_topic_days": 44345,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#toxic",
+        "tweets": 67863,
+        "originals": 24589,
+        "author_topic_days": 32887,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#rt이벤트",
+        "tweets": 67748,
+        "originals": 1130,
+        "author_topic_days": 21469,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#bts_worldtour_arirang",
+        "tweets": 67520,
+        "originals": 4498,
+        "author_topic_days": 53398,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#aiart",
+        "tweets": 65460,
+        "originals": 32201,
+        "author_topic_days": 35070,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#코르티스",
+        "tweets": 64383,
+        "originals": 6524,
+        "author_topic_days": 33876,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#ateez",
+        "tweets": 64042,
+        "originals": 6401,
+        "author_topic_days": 33043,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#jo1",
+        "tweets": 63650,
+        "originals": 9888,
+        "author_topic_days": 15343,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#ald1",
+        "tweets": 62486,
+        "originals": 6355,
+        "author_topic_days": 28727,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#マシュマロを投げ合おう",
+        "tweets": 62187,
+        "originals": 57799,
+        "author_topic_days": 29211,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#sb19",
+        "tweets": 61997,
+        "originals": 8303,
+        "author_topic_days": 20613,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#c108",
+        "tweets": 61327,
+        "originals": 9568,
+        "author_topic_days": 41586,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#ちいかわ",
+        "tweets": 60249,
+        "originals": 16554,
+        "author_topic_days": 51897,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#spiderman",
+        "tweets": 59505,
+        "originals": 5251,
+        "author_topic_days": 48055,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#映画ちいかわ",
+        "tweets": 58360,
+        "originals": 4554,
+        "author_topic_days": 51545,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#bleach",
+        "tweets": 57818,
+        "originals": 9319,
+        "author_topic_days": 39481,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#シンデレラガール総選挙2026",
+        "tweets": 57761,
+        "originals": 44746,
+        "author_topic_days": 26221,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#알파드라이브원",
+        "tweets": 57545,
+        "originals": 4697,
+        "author_topic_days": 26700,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#初音ミク",
+        "tweets": 56692,
+        "originals": 6120,
+        "author_topic_days": 43745,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#perthsanta",
+        "tweets": 55766,
+        "originals": 8972,
+        "author_topic_days": 23953,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#oc",
+        "tweets": 55377,
+        "originals": 14338,
+        "author_topic_days": 48008,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#jungkook",
+        "tweets": 54901,
+        "originals": 6811,
+        "author_topic_days": 38502,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#jin",
+        "tweets": 54843,
+        "originals": 7768,
+        "author_topic_days": 29047,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#스트레이키즈",
+        "tweets": 54784,
+        "originals": 4053,
+        "author_topic_days": 33409,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#3",
+        "tweets": 54495,
+        "originals": 16626,
+        "author_topic_days": 49614,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#breaking",
+        "tweets": 54365,
+        "originals": 10704,
+        "author_topic_days": 44541,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#the_sin_bliss",
+        "tweets": 54201,
+        "originals": 7069,
+        "author_topic_days": 27996,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#原神",
+        "tweets": 54160,
+        "originals": 7615,
+        "author_topic_days": 45084,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#イラスト",
+        "tweets": 53903,
+        "originals": 14543,
+        "author_topic_days": 44820,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#toxicthemovie",
+        "tweets": 53562,
+        "originals": 16678,
+        "author_topic_days": 17959,
+        "active_days": 29,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#nctdream",
+        "tweets": 53263,
+        "originals": 2950,
+        "author_topic_days": 26436,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#kengnamping",
+        "tweets": 53184,
+        "originals": 7401,
+        "author_topic_days": 22056,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#evan",
+        "tweets": 52813,
+        "originals": 4767,
+        "author_topic_days": 24916,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#williamest",
+        "tweets": 52530,
+        "originals": 12733,
+        "author_topic_days": 24976,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#vishwanathandsons",
+        "tweets": 51849,
+        "originals": 7548,
+        "author_topic_days": 15380,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#에이티즈",
+        "tweets": 51616,
+        "originals": 3933,
+        "author_topic_days": 26924,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#ucl",
+        "tweets": 51062,
+        "originals": 9622,
+        "author_topic_days": 40555,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#日向坂46",
+        "tweets": 50802,
+        "originals": 8923,
+        "author_topic_days": 22965,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#엔하이픈",
+        "tweets": 49964,
+        "originals": 4308,
+        "author_topic_days": 28156,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#mufc",
+        "tweets": 49957,
+        "originals": 27339,
+        "author_topic_days": 29744,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#shorts",
+        "tweets": 49657,
+        "originals": 28486,
+        "author_topic_days": 40484,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#mrfanboyep1",
+        "tweets": 49265,
+        "originals": 9215,
+        "author_topic_days": 15165,
+        "active_days": 15,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#newprofilepic",
+        "tweets": 48971,
+        "originals": 33606,
+        "author_topic_days": 46899,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#youmaniacseriesep1",
+        "tweets": 47748,
+        "originals": 14146,
+        "author_topic_days": 11288,
+        "active_days": 14,
+        "last_day": "2026-09-09"
+      },
+      {
+        "topic": "#プレゼント",
+        "tweets": 47572,
+        "originals": 1658,
+        "author_topic_days": 38221,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#phuwintang",
+        "tweets": 47451,
+        "originals": 8167,
+        "author_topic_days": 27266,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#vivant",
+        "tweets": 47383,
+        "originals": 23743,
+        "author_topic_days": 28108,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#urgente",
+        "tweets": 46970,
+        "originals": 3930,
+        "author_topic_days": 40439,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#jimin",
+        "tweets": 45901,
+        "originals": 5813,
+        "author_topic_days": 28294,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#nikke",
+        "tweets": 45848,
+        "originals": 9510,
+        "author_topic_days": 30569,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#cosplay",
+        "tweets": 45774,
+        "originals": 9243,
+        "author_topic_days": 35992,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#bloodyparadise",
+        "tweets": 45666,
+        "originals": 6660,
+        "author_topic_days": 26163,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#วอลเลย์บอลหญิง",
+        "tweets": 45460,
+        "originals": 11520,
+        "author_topic_days": 17722,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#fortnite",
+        "tweets": 45287,
+        "originals": 13495,
+        "author_topic_days": 30843,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#阪神タイガース",
+        "tweets": 45276,
+        "originals": 22918,
+        "author_topic_days": 21715,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#honkaistarrail",
+        "tweets": 45260,
+        "originals": 3405,
+        "author_topic_days": 35000,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#andteam",
+        "tweets": 45193,
+        "originals": 8174,
+        "author_topic_days": 21072,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#dutchgp",
+        "tweets": 44694,
+        "originals": 11441,
+        "author_topic_days": 25539,
+        "active_days": 21,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#ppnaravit",
+        "tweets": 44689,
+        "originals": 8028,
+        "author_topic_days": 26483,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#wutheringwaves",
+        "tweets": 44442,
+        "originals": 5497,
+        "author_topic_days": 26868,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#bts_worldtour_arirang_na",
+        "tweets": 44291,
+        "originals": 676,
+        "author_topic_days": 40972,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#tlefirstone",
+        "tweets": 44192,
+        "originals": 6455,
+        "author_topic_days": 19413,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      },
+      {
+        "topic": "#seventeen",
+        "tweets": 44144,
+        "originals": 4047,
+        "author_topic_days": 29010,
+        "active_days": 31,
+        "last_day": "2026-09-16"
+      }
+    ],
+    "top_normalized_share_spikes": [
+      {
+        "topic": "#emmys",
+        "day": "2026-09-15",
+        "tweets": 5544,
+        "authors": 3656,
+        "originals": 786,
+        "likes": 2260125.0,
+        "views": 114888584.0,
+        "retweets": 208341.0,
+        "denominator_tweets": 1952018,
+        "share": 0.0028401377446314532,
+        "baseline_share": 1.9631578204272695e-05,
+        "share_ratio_vs_baseline": 144.67190131526533,
+        "topic_tweets": 7400
+      },
+      {
+        "topic": "#pondphuwinconcertd1",
+        "day": "2026-08-21",
+        "tweets": 67756,
+        "authors": 13556,
+        "originals": 11529,
+        "likes": 4499218.0,
+        "views": 82242431.0,
+        "retweets": 2265423.0,
+        "denominator_tweets": 24588010,
+        "share": 0.0027556520434146563,
+        "baseline_share": 0.0002849790066797898,
+        "share_ratio_vs_baseline": 9.669666813425954,
+        "topic_tweets": 84814
+      },
+      {
+        "topic": "#pondphuwinconcertd3",
+        "day": "2026-08-23",
+        "tweets": 66237,
+        "authors": 14311,
+        "originals": 10779,
+        "likes": 4660335.0,
+        "views": 65307620.0,
+        "retweets": 2309300.0,
+        "denominator_tweets": 24684948,
+        "share": 0.0026832950995076027,
+        "baseline_share": 0.0003424893452582014,
+        "share_ratio_vs_baseline": 7.834681973784256,
+        "topic_tweets": 95476
+      },
+      {
+        "topic": "#pondphuwinconcertd2",
+        "day": "2026-08-22",
+        "tweets": 51227,
+        "authors": 11233,
+        "originals": 8173,
+        "likes": 3608037.0,
+        "views": 51184362.0,
+        "retweets": 1779036.0,
+        "denominator_tweets": 23075821,
+        "share": 0.002219942683729433,
+        "baseline_share": 0.00023899642705642804,
+        "share_ratio_vs_baseline": 9.288601972301851,
+        "topic_tweets": 71682
+      },
+      {
+        "topic": "#ballondor",
+        "day": "2026-09-08",
+        "tweets": 4525,
+        "authors": 2976,
+        "originals": 297,
+        "likes": 1496778.0,
+        "views": 85744133.0,
+        "retweets": 246132.0,
+        "denominator_tweets": 2116466,
+        "share": 0.002137997964531441,
+        "baseline_share": 1.58497234321657e-05,
+        "share_ratio_vs_baseline": 134.8918152219963,
+        "topic_tweets": 5960
+      },
+      {
+        "topic": "#happyrmday",
+        "day": "2026-09-11",
+        "tweets": 1623,
+        "authors": 1174,
+        "originals": 246,
+        "likes": 334463.0,
+        "views": 3946887.0,
+        "retweets": 161357.0,
+        "denominator_tweets": 787434,
+        "share": 0.00206112512286744,
+        "baseline_share": 9.05441599423572e-06,
+        "share_ratio_vs_baseline": 227.63755544030744,
+        "topic_tweets": 2727
+      },
+      {
+        "topic": "#バニーの日",
+        "day": "2026-08-21",
+        "tweets": 46895,
+        "authors": 31623,
+        "originals": 7121,
+        "likes": 2687465.0,
+        "views": 81531167.0,
+        "retweets": 249721.0,
+        "denominator_tweets": 24588010,
+        "share": 0.0019072303940009785,
+        "baseline_share": 0.00019180317197171778,
+        "share_ratio_vs_baseline": 9.943685364505901,
+        "topic_tweets": 72299
+      },
+      {
+        "topic": "#neverforget",
+        "day": "2026-09-11",
+        "tweets": 1387,
+        "authors": 1227,
+        "originals": 838,
+        "likes": 464266.0,
+        "views": 23064045.0,
+        "retweets": 66528.0,
+        "denominator_tweets": 787434,
+        "share": 0.0017614174648287984,
+        "baseline_share": 1.195138646084439e-05,
+        "share_ratio_vs_baseline": 147.38185151987386,
+        "topic_tweets": 4505
+      },
+      {
+        "topic": "#italiangp",
+        "day": "2026-09-06",
+        "tweets": 3043,
+        "authors": 1825,
+        "originals": 834,
+        "likes": 1602414.0,
+        "views": 57765033.0,
+        "retweets": 192510.0,
+        "denominator_tweets": 1759979,
+        "share": 0.0017289979028158858,
+        "baseline_share": 2.376216837509061e-05,
+        "share_ratio_vs_baseline": 72.76263157146713,
+        "topic_tweets": 8957
+      },
+      {
+        "topic": "#mchoicemintawards2026",
+        "day": "2026-09-12",
+        "tweets": 1521,
+        "authors": 650,
+        "originals": 206,
+        "likes": 497407.0,
+        "views": 13065829.0,
+        "retweets": 313156.0,
+        "denominator_tweets": 938116,
+        "share": 0.0016213346750295272,
+        "baseline_share": 6.563301098548803e-05,
+        "share_ratio_vs_baseline": 24.70303663788969,
+        "topic_tweets": 2469
+      },
+      {
+        "topic": "#happyjkday",
+        "day": "2026-08-31",
+        "tweets": 30559,
+        "authors": 17291,
+        "originals": 6709,
+        "likes": 867813.0,
+        "views": 9806666.0,
+        "retweets": 383928.0,
+        "denominator_tweets": 19049099,
+        "share": 0.0016042228558946542,
+        "baseline_share": 9.90843433669614e-05,
+        "share_ratio_vs_baseline": 16.190477742314684,
+        "topic_tweets": 35106
+      },
+      {
+        "topic": "#f1",
+        "day": "2026-09-06",
+        "tweets": 2696,
+        "authors": 1695,
+        "originals": 709,
+        "likes": 1425670.0,
+        "views": 52573244.0,
+        "retweets": 174243.0,
+        "denominator_tweets": 1759979,
+        "share": 0.0015318364594122998,
+        "baseline_share": 0.00018271162893036068,
+        "share_ratio_vs_baseline": 8.383902373264643,
+        "topic_tweets": 68872
+      },
+      {
+        "topic": "#nintendodirectjp",
+        "day": "2026-09-09",
+        "tweets": 2387,
+        "authors": 1792,
+        "originals": 132,
+        "likes": 1069488.0,
+        "views": 114521862.0,
+        "retweets": 466073.0,
+        "denominator_tweets": 1616782,
+        "share": 0.0014763895194280984,
+        "baseline_share": 1.1511065610876165e-05,
+        "share_ratio_vs_baseline": 128.2582837537769,
+        "topic_tweets": 3771
+      },
+      {
+        "topic": "#ucl",
+        "day": "2026-09-10",
+        "tweets": 1138,
+        "authors": 807,
+        "originals": 270,
+        "likes": 1445448.0,
+        "views": 69149353.0,
+        "retweets": 131585.0,
+        "denominator_tweets": 792456,
+        "share": 0.0014360418748801196,
+        "baseline_share": 0.0001354631954414287,
+        "share_ratio_vs_baseline": 10.600974458047776,
+        "topic_tweets": 51062
+      },
+      {
+        "topic": "#rm",
+        "day": "2026-09-11",
+        "tweets": 1060,
+        "authors": 959,
+        "originals": 33,
+        "likes": 278888.0,
+        "views": 3399646.0,
+        "retweets": 137448.0,
+        "denominator_tweets": 787434,
+        "share": 0.0013461445657667818,
+        "baseline_share": 6.042281421358309e-05,
+        "share_ratio_vs_baseline": 22.278746584169653,
+        "topic_tweets": 22776
+      },
+      {
+        "topic": "#granhermano",
+        "day": "2026-09-01",
+        "tweets": 6117,
+        "authors": 1611,
+        "originals": 2840,
+        "likes": 588804.0,
+        "views": 12495049.0,
+        "retweets": 84968.0,
+        "denominator_tweets": 4780189,
+        "share": 0.0012796565156733342,
+        "baseline_share": 0.0004643425357664938,
+        "share_ratio_vs_baseline": 2.7558459910656157,
+        "topic_tweets": 175031
+      },
+      {
+        "topic": "#wishjaspermv",
+        "day": "2026-08-19",
+        "tweets": 29689,
+        "authors": 6305,
+        "originals": 3939,
+        "likes": 769712.0,
+        "views": 10444313.0,
+        "retweets": 363474.0,
+        "denominator_tweets": 23307289,
+        "share": 0.0012738075200423352,
+        "baseline_share": 0.00014057117715788104,
+        "share_ratio_vs_baseline": 9.061655068959633,
+        "topic_tweets": 43241
+      },
+      {
+        "topic": "#今月描いた絵を晒そう",
+        "day": "2026-08-31",
+        "tweets": 23434,
+        "authors": 17192,
+        "originals": 3747,
+        "likes": 1082528.0,
+        "views": 15119644.0,
+        "retweets": 95485.0,
+        "denominator_tweets": 19049099,
+        "share": 0.0012301894173577447,
+        "baseline_share": 9.807034479423631e-05,
+        "share_ratio_vs_baseline": 12.543949141188746,
+        "topic_tweets": 36967
+      },
+      {
+        "topic": "#grabfoodถูกกว่าชัวร์trip",
+        "day": "2026-08-26",
+        "tweets": 30511,
+        "authors": 5721,
+        "originals": 3493,
+        "likes": 1749784.0,
+        "views": 22768743.0,
+        "retweets": 998748.0,
+        "denominator_tweets": 25180337,
+        "share": 0.0012116994303928497,
+        "baseline_share": 0.000207891771604259,
+        "share_ratio_vs_baseline": 5.828510772900769,
+        "topic_tweets": 35017
+      },
+      {
+        "topic": "#spanishgp",
+        "day": "2026-09-13",
+        "tweets": 1522,
+        "authors": 958,
+        "originals": 503,
+        "likes": 725510.0,
+        "views": 53322430.0,
+        "retweets": 90793.0,
+        "denominator_tweets": 1259578,
+        "share": 0.0012083412063405364,
+        "baseline_share": 8.863392267631766e-06,
+        "share_ratio_vs_baseline": 136.32942894260466,
+        "topic_tweets": 3341
+      },
+      {
+        "topic": "#สั่งฟ้องสว",
+        "day": "2026-09-16",
+        "tweets": 1654,
+        "authors": 870,
+        "originals": 54,
+        "likes": 92119.0,
+        "views": 4999295.0,
+        "retweets": 168585.0,
+        "denominator_tweets": 1375354,
+        "share": 0.00120259947620758,
+        "baseline_share": 1.7710906134727234e-05,
+        "share_ratio_vs_baseline": 67.90163456682457,
+        "topic_tweets": 6658
+      },
+      {
+        "topic": "#남준",
+        "day": "2026-09-11",
+        "tweets": 937,
+        "authors": 889,
+        "originals": 19,
+        "likes": 263105.0,
+        "views": 3296391.0,
+        "retweets": 131994.0,
+        "denominator_tweets": 787434,
+        "share": 0.001189940998229693,
+        "baseline_share": 7.323785761179317e-06,
+        "share_ratio_vs_baseline": 162.47621613088828,
+        "topic_tweets": 2751
+      },
+      {
+        "topic": "#youmaniacseriesep1",
+        "day": "2026-08-29",
+        "tweets": 27305,
+        "authors": 5461,
+        "originals": 9311,
+        "likes": 2569057.0,
+        "views": 32518998.0,
+        "retweets": 1414938.0,
+        "denominator_tweets": 22965648,
+        "share": 0.0011889496869411217,
+        "baseline_share": 0.0002697547350492472,
+        "share_ratio_vs_baseline": 4.407521101433359,
+        "topic_tweets": 47748
+      },
+      {
+        "topic": "#บวงสรวงmagiclover",
+        "day": "2026-08-20",
+        "tweets": 26021,
+        "authors": 6170,
+        "originals": 2241,
+        "likes": 1641796.0,
+        "views": 20574766.0,
+        "retweets": 938318.0,
+        "denominator_tweets": 23627881,
+        "share": 0.0011012836910766564,
+        "baseline_share": 9.13333177571086e-05,
+        "share_ratio_vs_baseline": 12.057852688603791,
+        "topic_tweets": 30960
+      },
+      {
+        "topic": "#วอลเลย์บอลหญิง",
+        "day": "2026-08-30",
+        "tweets": 25644,
+        "authors": 8891,
+        "originals": 5158,
+        "likes": 1293718.0,
+        "views": 54977368.0,
+        "retweets": 1256246.0,
+        "denominator_tweets": 23713430,
+        "share": 0.001081412516029946,
+        "baseline_share": 0.00012060156015759955,
+        "share_ratio_vs_baseline": 8.966820285050865,
+        "topic_tweets": 45460
+      },
+      {
+        "topic": "#bbnaija",
+        "day": "2026-08-30",
+        "tweets": 24933,
+        "authors": 4894,
+        "originals": 16564,
+        "likes": 1021231.0,
+        "views": 43818104.0,
+        "retweets": 85374.0,
+        "denominator_tweets": 23713430,
+        "share": 0.0010514295064020683,
+        "baseline_share": 0.0007516798648617337,
+        "share_ratio_vs_baseline": 1.39877300903287,
+        "topic_tweets": 283341
+      },
+      {
+        "topic": "#c108",
+        "day": "2026-08-17",
+        "tweets": 22777,
+        "authors": 13998,
+        "originals": 2799,
+        "likes": 797043.0,
+        "views": 36943381.0,
+        "retweets": 82456.0,
+        "denominator_tweets": 21847048,
+        "share": 0.0010425664831239443,
+        "baseline_share": 0.0001626953779099232,
+        "share_ratio_vs_baseline": 6.408089132692906,
+        "topic_tweets": 61327
+      },
+      {
+        "topic": "#bts",
+        "day": "2026-09-07",
+        "tweets": 2473,
+        "authors": 1663,
+        "originals": 104,
+        "likes": 584720.0,
+        "views": 9881333.0,
+        "retweets": 176355.0,
+        "denominator_tweets": 2402641,
+        "share": 0.0010292840253704153,
+        "baseline_share": 0.0004144677154637469,
+        "share_ratio_vs_baseline": 2.483387696961516,
+        "topic_tweets": 156231
+      },
+      {
+        "topic": "#bb28",
+        "day": "2026-09-04",
+        "tweets": 1219,
+        "authors": 515,
+        "originals": 820,
+        "likes": 221863.0,
+        "views": 10869110.0,
+        "retweets": 10294.0,
+        "denominator_tweets": 1186569,
+        "share": 0.001027331743876673,
+        "baseline_share": 0.0005395447448687259,
+        "share_ratio_vs_baseline": 1.904071448470188,
+        "topic_tweets": 203378
+      },
+      {
+        "topic": "#jungkook",
+        "day": "2026-08-31",
+        "tweets": 19233,
+        "authors": 14525,
+        "originals": 1676,
+        "likes": 576664.0,
+        "views": 6899745.0,
+        "retweets": 259097.0,
+        "denominator_tweets": 19049099,
+        "share": 0.0010096540524042632,
+        "baseline_share": 0.00014564773986388855,
+        "share_ratio_vs_baseline": 6.932164229584408,
+        "topic_tweets": 54901
+      },
+      {
+        "topic": "#ucl",
+        "day": "2026-09-09",
+        "tweets": 1591,
+        "authors": 1077,
+        "originals": 459,
+        "likes": 1118845.0,
+        "views": 48662915.0,
+        "retweets": 78834.0,
+        "denominator_tweets": 1616782,
+        "share": 0.0009840535087599937,
+        "baseline_share": 0.0001354631954414287,
+        "share_ratio_vs_baseline": 7.2643606667722285,
+        "topic_tweets": 51062
+      },
+      {
+        "topic": "#iriamメンテ中のフォロー祭り",
+        "day": "2026-08-18",
+        "tweets": 21824,
+        "authors": 5019,
+        "originals": 2004,
+        "likes": 200563.0,
+        "views": 2586428.0,
+        "retweets": 36675.0,
+        "denominator_tweets": 22666648,
+        "share": 0.0009628243223259125,
+        "baseline_share": 7.738452441332924e-05,
+        "share_ratio_vs_baseline": 12.442078433967465,
+        "topic_tweets": 28495
+      },
+      {
+        "topic": "#appleevent",
+        "day": "2026-09-09",
+        "tweets": 1556,
+        "authors": 988,
+        "originals": 848,
+        "likes": 1343572.0,
+        "views": 134551853.0,
+        "retweets": 91434.0,
+        "denominator_tweets": 1616782,
+        "share": 0.0009624055685924262,
+        "baseline_share": 9.132362845092038e-06,
+        "share_ratio_vs_baseline": 105.38407035695558,
+        "topic_tweets": 3412
+      },
+      {
+        "topic": "#ポケモン性格診断",
+        "day": "2026-08-24",
+        "tweets": 22808,
+        "authors": 22242,
+        "originals": 21935,
+        "likes": 102538.0,
+        "views": 8934017.0,
+        "retweets": 4057.0,
+        "denominator_tweets": 23808769,
+        "share": 0.0009579663694498443,
+        "baseline_share": 0.00011932995025603737,
+        "share_ratio_vs_baseline": 8.027878729475772,
+        "topic_tweets": 31134
+      },
+      {
+        "topic": "#bb28",
+        "day": "2026-08-28",
+        "tweets": 26328,
+        "authors": 4355,
+        "originals": 15064,
+        "likes": 1363722.0,
+        "views": 61498477.0,
+        "retweets": 66485.0,
+        "denominator_tweets": 27497512,
+        "share": 0.0009574684429631306,
+        "baseline_share": 0.0005395447448687259,
+        "share_ratio_vs_baseline": 1.7745858004716324,
+        "topic_tweets": 203378
+      },
+      {
+        "topic": "#gmmtvstarlympics2026",
+        "day": "2026-09-16",
+        "tweets": 1311,
+        "authors": 675,
+        "originals": 93,
+        "likes": 261583.0,
+        "views": 11339488.0,
+        "retweets": 162204.0,
+        "denominator_tweets": 1375354,
+        "share": 0.0009532091374293455,
+        "baseline_share": 1.0733722452614897e-05,
+        "share_ratio_vs_baseline": 88.80508524767467,
+        "topic_tweets": 1335
+      },
+      {
+        "topic": "#mrfanboyep1",
+        "day": "2026-08-30",
+        "tweets": 22572,
+        "authors": 6841,
+        "originals": 2712,
+        "likes": 619719.0,
+        "views": 6219896.0,
+        "retweets": 270051.0,
+        "denominator_tweets": 23713430,
+        "share": 0.0009518656727432514,
+        "baseline_share": 0.0005689667374642302,
+        "share_ratio_vs_baseline": 1.6729724429683261,
+        "topic_tweets": 49265
+      },
+      {
+        "topic": "#bbnaija",
+        "day": "2026-08-23",
+        "tweets": 23017,
+        "authors": 4509,
+        "originals": 14685,
+        "likes": 770615.0,
+        "views": 38408839.0,
+        "retweets": 62305.0,
+        "denominator_tweets": 24684948,
+        "share": 0.0009324305645691455,
+        "baseline_share": 0.0007516798648617337,
+        "share_ratio_vs_baseline": 1.2404623406277613,
+        "topic_tweets": 283341
+      },
+      {
+        "topic": "#fileninsultanları",
+        "day": "2026-09-06",
+        "tweets": 1641,
+        "authors": 1202,
+        "originals": 1081,
+        "likes": 344076.0,
+        "views": 14507479.0,
+        "retweets": 37970.0,
+        "denominator_tweets": 1759979,
+        "share": 0.0009323974888336736,
+        "baseline_share": 1.5017014574482177e-05,
+        "share_ratio_vs_baseline": 62.08940426934525,
+        "topic_tweets": 5613
+      },
+      {
+        "topic": "#italiangp",
+        "day": "2026-09-05",
+        "tweets": 1229,
+        "authors": 857,
+        "originals": 319,
+        "likes": 664600.0,
+        "views": 31735686.0,
+        "retweets": 76677.0,
+        "denominator_tweets": 1318308,
+        "share": 0.0009322555882236928,
+        "baseline_share": 2.376216837509061e-05,
+        "share_ratio_vs_baseline": 39.23276586159355,
+        "topic_tweets": 8957
+      },
+      {
+        "topic": "#bb28",
+        "day": "2026-08-21",
+        "tweets": 22893,
+        "authors": 3812,
+        "originals": 13790,
+        "likes": 1200340.0,
+        "views": 54457218.0,
+        "retweets": 64132.0,
+        "denominator_tweets": 24588010,
+        "share": 0.0009310635549603242,
+        "baseline_share": 0.0005395447448687259,
+        "share_ratio_vs_baseline": 1.7256466007964861,
+        "topic_tweets": 203378
+      },
+      {
+        "topic": "#bbnaija",
+        "day": "2026-08-17",
+        "tweets": 20105,
+        "authors": 4355,
+        "originals": 12386,
+        "likes": 722824.0,
+        "views": 38220589.0,
+        "retweets": 61417.0,
+        "denominator_tweets": 21847048,
+        "share": 0.0009202616298549809,
+        "baseline_share": 0.0007516798648617337,
+        "share_ratio_vs_baseline": 1.224273354753565,
+        "topic_tweets": 283341
+      },
+      {
+        "topic": "#ufcparis",
+        "day": "2026-09-05",
+        "tweets": 1206,
+        "authors": 618,
+        "originals": 677,
+        "likes": 294466.0,
+        "views": 45024956.0,
+        "retweets": 24853.0,
+        "denominator_tweets": 1318308,
+        "share": 0.000914808982422924,
+        "baseline_share": 6.533877055883197e-06,
+        "share_ratio_vs_baseline": 140.01013098329068,
+        "topic_tweets": 2413
+      },
+      {
+        "topic": "#aewallin",
+        "day": "2026-08-30",
+        "tweets": 21684,
+        "authors": 7312,
+        "originals": 12040,
+        "likes": 1186635.0,
+        "views": 71821023.0,
+        "retweets": 146511.0,
+        "denominator_tweets": 23713430,
+        "share": 0.0009144185383556913,
+        "baseline_share": 8.243626043729512e-05,
+        "share_ratio_vs_baseline": 11.092431091670404,
+        "topic_tweets": 30646
+      },
+      {
+        "topic": "#mrfanboyep1",
+        "day": "2026-08-29",
+        "tweets": 20958,
+        "authors": 5472,
+        "originals": 6008,
+        "likes": 2599537.0,
+        "views": 28885854.0,
+        "retweets": 1204369.0,
+        "denominator_tweets": 22965648,
+        "share": 0.0009125803896323761,
+        "baseline_share": 0.0005689667374642302,
+        "share_ratio_vs_baseline": 1.6039257298230871,
+        "topic_tweets": 49265
+      },
+      {
+        "topic": "#genshinimpact",
+        "day": "2026-09-12",
+        "tweets": 850,
+        "authors": 563,
+        "originals": 231,
+        "likes": 771847.0,
+        "views": 32321438.0,
+        "retweets": 93187.0,
+        "denominator_tweets": 938116,
+        "share": 0.0009060713174063762,
+        "baseline_share": 0.00027182042356594386,
+        "share_ratio_vs_baseline": 3.3333452487486195,
+        "topic_tweets": 102461
+      },
+      {
+        "topic": "#4elementsinfinitebonds",
+        "day": "2026-09-12",
+        "tweets": 841,
+        "authors": 253,
+        "originals": 102,
+        "likes": 328656.0,
+        "views": 8011130.0,
+        "retweets": 126718.0,
+        "denominator_tweets": 938116,
+        "share": 0.0008964776211044264,
+        "baseline_share": 0.00021320604143007952,
+        "share_ratio_vs_baseline": 4.204747741158284,
+        "topic_tweets": 1728
+      },
+      {
+        "topic": "#fbvbjk",
+        "day": "2026-09-05",
+        "tweets": 1170,
+        "authors": 660,
+        "originals": 787,
+        "likes": 337000.0,
+        "views": 18698082.0,
+        "retweets": 26097.0,
+        "denominator_tweets": 1318308,
+        "share": 0.0008875012516043292,
+        "baseline_share": 6.164716250972606e-06,
+        "share_ratio_vs_baseline": 143.96465554506395,
+        "topic_tweets": 1529
+      },
+      {
+        "topic": "#gemmhouseopenhouse",
+        "day": "2026-08-24",
+        "tweets": 21123,
+        "authors": 8471,
+        "originals": 2121,
+        "likes": 1084005.0,
+        "views": 18579695.0,
+        "retweets": 517531.0,
+        "denominator_tweets": 23808769,
+        "share": 0.000887194125828177,
+        "baseline_share": 0.00012761415998806456,
+        "share_ratio_vs_baseline": 6.952160527571189,
+        "topic_tweets": 24643
+      },
+      {
+        "topic": "#number_i",
+        "day": "2026-09-02",
+        "tweets": 803,
+        "authors": 231,
+        "originals": 100,
+        "likes": 509279.0,
+        "views": 13089554.0,
+        "retweets": 124465.0,
+        "denominator_tweets": 911916,
+        "share": 0.0008805635606788344,
+        "baseline_share": 6.921723066590256e-05,
+        "share_ratio_vs_baseline": 12.721739257803234,
+        "topic_tweets": 26091
+      },
+      {
+        "topic": "#f1",
+        "day": "2026-09-13",
+        "tweets": 1100,
+        "authors": 660,
+        "originals": 429,
+        "likes": 516677.0,
+        "views": 40137265.0,
+        "retweets": 59877.0,
+        "denominator_tweets": 1259578,
+        "share": 0.0008733083620069579,
+        "baseline_share": 0.00018271162893036068,
+        "share_ratio_vs_baseline": 4.779708697905669,
+        "topic_tweets": 68872
+      },
+      {
+        "topic": "#lacasadelosfamososmx",
+        "day": "2026-08-24",
+        "tweets": 20639,
+        "authors": 4097,
+        "originals": 13576,
+        "likes": 2461928.0,
+        "views": 58779741.0,
+        "retweets": 180659.0,
+        "denominator_tweets": 23808769,
+        "share": 0.0008668654813694904,
+        "baseline_share": 0.00043347851133020886,
+        "share_ratio_vs_baseline": 1.9997888216173705,
+        "topic_tweets": 163397
+      },
+      {
+        "topic": "#bbnaija",
+        "day": "2026-08-22",
+        "tweets": 19905,
+        "authors": 3814,
+        "originals": 11819,
+        "likes": 723006.0,
+        "views": 38671127.0,
+        "retweets": 65507.0,
+        "denominator_tweets": 23075821,
+        "share": 0.0008625911944801443,
+        "baseline_share": 0.0007516798648617337,
+        "share_ratio_vs_baseline": 1.1475512845336253,
+        "topic_tweets": 283341
+      },
+      {
+        "topic": "#pondphuwinconcertd3",
+        "day": "2026-08-24",
+        "tweets": 20518,
+        "authors": 7755,
+        "originals": 2253,
+        "likes": 287445.0,
+        "views": 4447567.0,
+        "retweets": 152889.0,
+        "denominator_tweets": 23808769,
+        "share": 0.0008617833202548187,
+        "baseline_share": 0.0003424893452582014,
+        "share_ratio_vs_baseline": 2.5162339564319107,
+        "topic_tweets": 95476
+      },
+      {
+        "topic": "#f1",
+        "day": "2026-09-05",
+        "tweets": 1130,
+        "authors": 820,
+        "originals": 296,
+        "likes": 605735.0,
+        "views": 28850843.0,
+        "retweets": 68337.0,
+        "denominator_tweets": 1318308,
+        "share": 0.0008571593284725572,
+        "baseline_share": 0.00018271162893036068,
+        "share_ratio_vs_baseline": 4.691323335523749,
+        "topic_tweets": 68872
+      },
+      {
+        "topic": "#bb28",
+        "day": "2026-09-11",
+        "tweets": 673,
+        "authors": 319,
+        "originals": 409,
+        "likes": 127446.0,
+        "views": 8409699.0,
+        "retweets": 6183.0,
+        "denominator_tweets": 787434,
+        "share": 0.000854674804491551,
+        "baseline_share": 0.0005395447448687259,
+        "share_ratio_vs_baseline": 1.584066590620761,
+        "topic_tweets": 203378
+      },
+      {
+        "topic": "#1",
+        "day": "2026-09-04",
+        "tweets": 1011,
+        "authors": 889,
+        "originals": 373,
+        "likes": 207580.0,
+        "views": 10143501.0,
+        "retweets": 35418.0,
+        "denominator_tweets": 1186569,
+        "share": 0.0008520364176040332,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.2960794012732768,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#straykids",
+        "day": "2026-09-14",
+        "tweets": 1525,
+        "authors": 887,
+        "originals": 92,
+        "likes": 361765.0,
+        "views": 5621499.0,
+        "retweets": 105420.0,
+        "denominator_tweets": 1792336,
+        "share": 0.0008508449308611779,
+        "baseline_share": 0.0002611848834279804,
+        "share_ratio_vs_baseline": 3.257634667420526,
+        "topic_tweets": 98452
+      },
+      {
+        "topic": "#bbnaija",
+        "day": "2026-08-25",
+        "tweets": 18188,
+        "authors": 3703,
+        "originals": 12071,
+        "likes": 746510.0,
+        "views": 33238460.0,
+        "retweets": 66592.0,
+        "denominator_tweets": 21398956,
+        "share": 0.0008499480068093042,
+        "baseline_share": 0.0007516798648617337,
+        "share_ratio_vs_baseline": 1.1307313745402057,
+        "topic_tweets": 283341
+      },
+      {
+        "topic": "#zelda",
+        "day": "2026-09-08",
+        "tweets": 1796,
+        "authors": 1435,
+        "originals": 218,
+        "likes": 523242.0,
+        "views": 45755965.0,
+        "retweets": 78372.0,
+        "denominator_tweets": 2116466,
+        "share": 0.0008485843854803243,
+        "baseline_share": 1.878795092468368e-05,
+        "share_ratio_vs_baseline": 45.16641484119756,
+        "topic_tweets": 7082
+      },
+      {
+        "topic": "#bbnaija",
+        "day": "2026-08-24",
+        "tweets": 20137,
+        "authors": 3998,
+        "originals": 12369,
+        "likes": 728874.0,
+        "views": 34827151.0,
+        "retweets": 66569.0,
+        "denominator_tweets": 23808769,
+        "share": 0.000845780812943332,
+        "baseline_share": 0.0007516798648617337,
+        "share_ratio_vs_baseline": 1.1251875332578019,
+        "topic_tweets": 283341
+      },
+      {
+        "topic": "#loveislandusa",
+        "day": "2026-09-01",
+        "tweets": 4009,
+        "authors": 1906,
+        "originals": 1817,
+        "likes": 1145858.0,
+        "views": 22290606.0,
+        "retweets": 98977.0,
+        "denominator_tweets": 4780189,
+        "share": 0.0008386697680782078,
+        "baseline_share": 2.1740646403245233e-05,
+        "share_ratio_vs_baseline": 38.57611924330913,
+        "topic_tweets": 8195
+      },
+      {
+        "topic": "#bts",
+        "day": "2026-09-02",
+        "tweets": 763,
+        "authors": 677,
+        "originals": 53,
+        "likes": 359835.0,
+        "views": 4374577.0,
+        "retweets": 137014.0,
+        "denominator_tweets": 911916,
+        "share": 0.0008366998714793906,
+        "baseline_share": 0.0004144677154637469,
+        "share_ratio_vs_baseline": 2.0187335231725085,
+        "topic_tweets": 156231
+      },
+      {
+        "topic": "#bbnaija",
+        "day": "2026-08-21",
+        "tweets": 20487,
+        "authors": 3827,
+        "originals": 12358,
+        "likes": 746217.0,
+        "views": 37914952.0,
+        "retweets": 64259.0,
+        "denominator_tweets": 24588010,
+        "share": 0.0008332109837274346,
+        "baseline_share": 0.0007516798648617337,
+        "share_ratio_vs_baseline": 1.1084652159476136,
+        "topic_tweets": 283341
+      },
+      {
+        "topic": "#1",
+        "day": "2026-08-31",
+        "tweets": 15814,
+        "authors": 12326,
+        "originals": 3837,
+        "likes": 571244.0,
+        "views": 24050450.0,
+        "retweets": 120245.0,
+        "denominator_tweets": 19049099,
+        "share": 0.000830170497827745,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.2628179495014917,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#สั่งฟ้องสว",
+        "day": "2026-09-15",
+        "tweets": 1618,
+        "authors": 975,
+        "originals": 22,
+        "likes": 36667.0,
+        "views": 988832.0,
+        "retweets": 76360.0,
+        "denominator_tweets": 1952018,
+        "share": 0.0008288857992088188,
+        "baseline_share": 1.7710906134727234e-05,
+        "share_ratio_vs_baseline": 46.800869074877774,
+        "topic_tweets": 6658
+      },
+      {
+        "topic": "#happyrmday",
+        "day": "2026-09-12",
+        "tweets": 772,
+        "authors": 542,
+        "originals": 96,
+        "likes": 4745.0,
+        "views": 56561.0,
+        "retweets": 1032.0,
+        "denominator_tweets": 938116,
+        "share": 0.000822925949456144,
+        "baseline_share": 9.05441599423572e-06,
+        "share_ratio_vs_baseline": 90.88669550637394,
+        "topic_tweets": 2727
+      },
+      {
+        "topic": "#1",
+        "day": "2026-09-05",
+        "tweets": 1079,
+        "authors": 961,
+        "originals": 402,
+        "likes": 217741.0,
+        "views": 15093289.0,
+        "retweets": 32671.0,
+        "denominator_tweets": 1318308,
+        "share": 0.0008184733764795481,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.2450248156396508,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#starmagicallstargames2026",
+        "day": "2026-08-23",
+        "tweets": 20191,
+        "authors": 4931,
+        "originals": 4366,
+        "likes": 1781411.0,
+        "views": 42624945.0,
+        "retweets": 527537.0,
+        "denominator_tweets": 24684948,
+        "share": 0.0008179478441680331,
+        "baseline_share": 9.056318273732448e-05,
+        "share_ratio_vs_baseline": 9.031792163714739,
+        "topic_tweets": 32668
+      },
+      {
+        "topic": "#1",
+        "day": "2026-09-14",
+        "tweets": 1465,
+        "authors": 1311,
+        "originals": 381,
+        "likes": 199129.0,
+        "views": 15064708.0,
+        "retweets": 38844.0,
+        "denominator_tweets": 1792336,
+        "share": 0.0008173690647289348,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.2433449863706405,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#toxic",
+        "day": "2026-08-26",
+        "tweets": 20488,
+        "authors": 8600,
+        "originals": 8959,
+        "likes": 1646499.0,
+        "views": 90679135.0,
+        "retweets": 167983.0,
+        "denominator_tweets": 25180337,
+        "share": 0.0008136507466123269,
+        "baseline_share": 0.00018003483671304835,
+        "share_ratio_vs_baseline": 4.519407251770824,
+        "topic_tweets": 67863
+      },
+      {
+        "topic": "#정국",
+        "day": "2026-08-31",
+        "tweets": 15476,
+        "authors": 13199,
+        "originals": 943,
+        "likes": 434292.0,
+        "views": 5414722.0,
+        "retweets": 210861.0,
+        "denominator_tweets": 19049099,
+        "share": 0.0008124268764627661,
+        "baseline_share": 0.00010060653246495046,
+        "share_ratio_vs_baseline": 8.075289512098047,
+        "topic_tweets": 37923
+      },
+      {
+        "topic": "#ファミマのシューで45周年お祝い",
+        "day": "2026-09-05",
+        "tweets": 1067,
+        "authors": 952,
+        "originals": 2,
+        "likes": 25180.0,
+        "views": 1954114.0,
+        "retweets": 132019.0,
+        "denominator_tweets": 1318308,
+        "share": 0.0008093707995400165,
+        "baseline_share": 0.0005070589537130636,
+        "share_ratio_vs_baseline": 1.5962065034316033,
+        "topic_tweets": 10301
+      },
+      {
+        "topic": "#bts",
+        "day": "2026-09-03",
+        "tweets": 817,
+        "authors": 674,
+        "originals": 66,
+        "likes": 311244.0,
+        "views": 4839623.0,
+        "retweets": 116498.0,
+        "denominator_tweets": 1017155,
+        "share": 0.0008032207480669121,
+        "baseline_share": 0.0004144677154637469,
+        "share_ratio_vs_baseline": 1.9379573320160544,
+        "topic_tweets": 156231
+      },
+      {
+        "topic": "#happyjkday",
+        "day": "2026-09-01",
+        "tweets": 3822,
+        "authors": 2679,
+        "originals": 643,
+        "likes": 60600.0,
+        "views": 734630.0,
+        "retweets": 15784.0,
+        "denominator_tweets": 4780189,
+        "share": 0.0007995499759528336,
+        "baseline_share": 9.90843433669614e-05,
+        "share_ratio_vs_baseline": 8.069387642724541,
+        "topic_tweets": 35106
+      },
+      {
+        "topic": "#1",
+        "day": "2026-09-09",
+        "tweets": 1292,
+        "authors": 1121,
+        "originals": 302,
+        "likes": 154157.0,
+        "views": 8723380.0,
+        "retweets": 23213.0,
+        "denominator_tweets": 1616782,
+        "share": 0.0007991182484713462,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.2155826671561618,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#방탄소년단",
+        "day": "2026-09-07",
+        "tweets": 1902,
+        "authors": 1346,
+        "originals": 43,
+        "likes": 459165.0,
+        "views": 8144242.0,
+        "retweets": 144790.0,
+        "denominator_tweets": 2402641,
+        "share": 0.0007916288783884068,
+        "baseline_share": 0.00026089040975491636,
+        "share_ratio_vs_baseline": 3.034334911475177,
+        "topic_tweets": 98341
+      },
+      {
+        "topic": "#bts",
+        "day": "2026-08-29",
+        "tweets": 18062,
+        "authors": 11716,
+        "originals": 933,
+        "likes": 512055.0,
+        "views": 8255131.0,
+        "retweets": 178130.0,
+        "denominator_tweets": 22965648,
+        "share": 0.0007864790055129296,
+        "baseline_share": 0.0004144677154637469,
+        "share_ratio_vs_baseline": 1.8975639746341646,
+        "topic_tweets": 156231
+      },
+      {
+        "topic": "#youmaniacseriesep1",
+        "day": "2026-08-30",
+        "tweets": 18592,
+        "authors": 4627,
+        "originals": 4641,
+        "likes": 566320.0,
+        "views": 7572827.0,
+        "retweets": 295832.0,
+        "denominator_tweets": 23713430,
+        "share": 0.000784028291141349,
+        "baseline_share": 0.0002697547350492472,
+        "share_ratio_vs_baseline": 2.906448670857305,
+        "topic_tweets": 47748
+      },
+      {
+        "topic": "#初音ミク生誕祭2026",
+        "day": "2026-08-31",
+        "tweets": 14874,
+        "authors": 9927,
+        "originals": 1471,
+        "likes": 540279.0,
+        "views": 9319551.0,
+        "retweets": 71573.0,
+        "denominator_tweets": 19049099,
+        "share": 0.0007808243319014721,
+        "baseline_share": 6.990106606261432e-05,
+        "share_ratio_vs_baseline": 11.170420937529677,
+        "topic_tweets": 24392
+      },
+      {
+        "topic": "#1",
+        "day": "2026-09-02",
+        "tweets": 711,
+        "authors": 651,
+        "originals": 320,
+        "likes": 152108.0,
+        "views": 12433125.0,
+        "retweets": 23402.0,
+        "denominator_tweets": 911916,
+        "share": 0.0007796770755201137,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.1860096309829669,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#1",
+        "day": "2026-08-30",
+        "tweets": 18349,
+        "authors": 13897,
+        "originals": 4229,
+        "likes": 714952.0,
+        "views": 22521778.0,
+        "retweets": 143866.0,
+        "denominator_tweets": 23713430,
+        "share": 0.0007737809334204288,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.1770406853317104,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#1",
+        "day": "2026-08-28",
+        "tweets": 21200,
+        "authors": 16538,
+        "originals": 4835,
+        "likes": 857896.0,
+        "views": 35278037.0,
+        "retweets": 138101.0,
+        "denominator_tweets": 27497512,
+        "share": 0.000770978843467729,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.1727782723723892,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#lisa",
+        "day": "2026-09-04",
+        "tweets": 913,
+        "authors": 575,
+        "originals": 113,
+        "likes": 352850.0,
+        "views": 8989405.0,
+        "retweets": 139581.0,
+        "denominator_tweets": 1186569,
+        "share": 0.0007694453504178855,
+        "baseline_share": 0.00011525062863894847,
+        "share_ratio_vs_baseline": 6.676278988710475,
+        "topic_tweets": 43443
+      },
+      {
+        "topic": "#bbnaija",
+        "day": "2026-08-20",
+        "tweets": 18075,
+        "authors": 3784,
+        "originals": 11046,
+        "likes": 670804.0,
+        "views": 33598194.0,
+        "retweets": 59160.0,
+        "denominator_tweets": 23627881,
+        "share": 0.000764986077253394,
+        "baseline_share": 0.0007516798648617337,
+        "share_ratio_vs_baseline": 1.017701967305068,
+        "topic_tweets": 283341
+      },
+      {
+        "topic": "#1",
+        "day": "2026-08-29",
+        "tweets": 17554,
+        "authors": 13955,
+        "originals": 4456,
+        "likes": 544216.0,
+        "views": 23000955.0,
+        "retweets": 93308.0,
+        "denominator_tweets": 22965648,
+        "share": 0.0007643590113372808,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.1627084820595668,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#bts",
+        "day": "2026-08-24",
+        "tweets": 18172,
+        "authors": 12233,
+        "originals": 975,
+        "likes": 544331.0,
+        "views": 9366045.0,
+        "retweets": 182872.0,
+        "denominator_tweets": 23808769,
+        "share": 0.0007632481964943253,
+        "baseline_share": 0.0004144677154637469,
+        "share_ratio_vs_baseline": 1.8415142314289275,
+        "topic_tweets": 156231
+      },
+      {
+        "topic": "#kirkiversary",
+        "day": "2026-09-10",
+        "tweets": 601,
+        "authors": 549,
+        "originals": 84,
+        "likes": 1540706.0,
+        "views": 34470903.0,
+        "retweets": 143965.0,
+        "denominator_tweets": 792456,
+        "share": 0.0007584017282978487,
+        "baseline_share": 5.009219739273517e-06,
+        "share_ratio_vs_baseline": 151.40116979732238,
+        "topic_tweets": 1751
+      },
+      {
+        "topic": "#ucl",
+        "day": "2026-09-08",
+        "tweets": 1605,
+        "authors": 1049,
+        "originals": 618,
+        "likes": 983365.0,
+        "views": 49969277.0,
+        "retweets": 62363.0,
+        "denominator_tweets": 2116466,
+        "share": 0.0007583396095188867,
+        "baseline_share": 0.0001354631954414287,
+        "share_ratio_vs_baseline": 5.598122848407013,
+        "topic_tweets": 51062
+      },
+      {
+        "topic": "#nctdream",
+        "day": "2026-08-24",
+        "tweets": 18025,
+        "authors": 5610,
+        "originals": 286,
+        "likes": 603744.0,
+        "views": 11604597.0,
+        "retweets": 377694.0,
+        "denominator_tweets": 23808769,
+        "share": 0.0007570740007599721,
+        "baseline_share": 0.00014130226349921303,
+        "share_ratio_vs_baseline": 5.3578334982877935,
+        "topic_tweets": 53263
+      },
+      {
+        "topic": "#tlefirstone",
+        "day": "2026-09-01",
+        "tweets": 3579,
+        "authors": 1127,
+        "originals": 628,
+        "likes": 225288.0,
+        "views": 4361097.0,
+        "retweets": 161544.0,
+        "denominator_tweets": 4780189,
+        "share": 0.0007487151658647806,
+        "baseline_share": 0.00011723766270313769,
+        "share_ratio_vs_baseline": 6.38630239294887,
+        "topic_tweets": 44192
+      },
+      {
+        "topic": "#ucldraw",
+        "day": "2026-08-27",
+        "tweets": 17599,
+        "authors": 12630,
+        "originals": 3028,
+        "likes": 1974690.0,
+        "views": 112273663.0,
+        "retweets": 156175.0,
+        "denominator_tweets": 23525021,
+        "share": 0.0007480971005296871,
+        "baseline_share": 9.11672543494319e-05,
+        "share_ratio_vs_baseline": 8.205765390962975,
+        "topic_tweets": 24652
+      },
+      {
+        "topic": "#bbnaija",
+        "day": "2026-08-27",
+        "tweets": 17576,
+        "authors": 3501,
+        "originals": 11332,
+        "likes": 771066.0,
+        "views": 34045230.0,
+        "retweets": 67518.0,
+        "denominator_tweets": 23525021,
+        "share": 0.0007471194180868106,
+        "baseline_share": 0.0007516798648617337,
+        "share_ratio_vs_baseline": 0.9939329933019265,
+        "topic_tweets": 283341
+      },
+      {
+        "topic": "#bbnaija",
+        "day": "2026-08-31",
+        "tweets": 14158,
+        "authors": 3256,
+        "originals": 8202,
+        "likes": 636183.0,
+        "views": 27806763.0,
+        "retweets": 56704.0,
+        "denominator_tweets": 19049099,
+        "share": 0.0007432372523235876,
+        "baseline_share": 0.0007516798648617337,
+        "share_ratio_vs_baseline": 0.9887683401767067,
+        "topic_tweets": 283341
+      },
+      {
+        "topic": "#ファミマのシューで45周年お祝い",
+        "day": "2026-09-10",
+        "tweets": 587,
+        "authors": 531,
+        "originals": 1,
+        "likes": 20934.0,
+        "views": 1396342.0,
+        "retweets": 112331.0,
+        "denominator_tweets": 792456,
+        "share": 0.0007407351322975661,
+        "baseline_share": 0.0005070589537130636,
+        "share_ratio_vs_baseline": 1.4608461735530973,
+        "topic_tweets": 10301
+      },
+      {
+        "topic": "#ファミマのシューで45周年お祝い",
+        "day": "2026-09-11",
+        "tweets": 583,
+        "authors": 530,
+        "originals": 1,
+        "likes": 22026.0,
+        "views": 1491492.0,
+        "retweets": 115863.0,
+        "denominator_tweets": 787434,
+        "share": 0.0007403795111717299,
+        "baseline_share": 0.0005070589537130636,
+        "share_ratio_vs_baseline": 1.4601448327657351,
+        "topic_tweets": 10301
+      },
+      {
+        "topic": "#bbnaija",
+        "day": "2026-08-29",
+        "tweets": 16889,
+        "authors": 3580,
+        "originals": 11247,
+        "likes": 753492.0,
+        "views": 35921412.0,
+        "retweets": 65419.0,
+        "denominator_tweets": 22965648,
+        "share": 0.0007354027197490791,
+        "baseline_share": 0.0007516798648617337,
+        "share_ratio_vs_baseline": 0.9783456417105857,
+        "topic_tweets": 283341
+      },
+      {
+        "topic": "#방탄소년단",
+        "day": "2026-09-02",
+        "tweets": 668,
+        "authors": 610,
+        "originals": 22,
+        "likes": 353191.0,
+        "views": 4234164.0,
+        "retweets": 134376.0,
+        "denominator_tweets": 911916,
+        "share": 0.0007325236096307116,
+        "baseline_share": 0.00026089040975491636,
+        "share_ratio_vs_baseline": 2.807782817002945,
+        "topic_tweets": 98341
+      },
+      {
+        "topic": "#granhermano",
+        "day": "2026-08-28",
+        "tweets": 20117,
+        "authors": 3889,
+        "originals": 8697,
+        "likes": 1840606.0,
+        "views": 37221763.0,
+        "retweets": 270249.0,
+        "denominator_tweets": 27497512,
+        "share": 0.0007315934619830332,
+        "baseline_share": 0.0004643425357664938,
+        "share_ratio_vs_baseline": 1.575546941387539,
+        "topic_tweets": 175031
+      },
+      {
+        "topic": "#vivant",
+        "day": "2026-09-06",
+        "tweets": 1285,
+        "authors": 687,
+        "originals": 843,
+        "likes": 1139388.0,
+        "views": 105945001.0,
+        "retweets": 77402.0,
+        "denominator_tweets": 1759979,
+        "share": 0.0007301223480507438,
+        "baseline_share": 0.0001257031175747369,
+        "share_ratio_vs_baseline": 5.808307400304919,
+        "topic_tweets": 47383
+      },
+      {
+        "topic": "#bbnaija",
+        "day": "2026-09-07",
+        "tweets": 1724,
+        "authors": 561,
+        "originals": 1113,
+        "likes": 186144.0,
+        "views": 10450243.0,
+        "retweets": 14958.0,
+        "denominator_tweets": 2402641,
+        "share": 0.000717543736246905,
+        "baseline_share": 0.0007516798648617337,
+        "share_ratio_vs_baseline": 0.9545868790550778,
+        "topic_tweets": 283341
+      },
+      {
+        "topic": "#enhypen",
+        "day": "2026-08-21",
+        "tweets": 17616,
+        "authors": 6726,
+        "originals": 3386,
+        "likes": 799862.0,
+        "views": 18627052.0,
+        "retweets": 289924.0,
+        "denominator_tweets": 24588010,
+        "share": 0.0007164467559595103,
+        "baseline_share": 0.00031708712882263373,
+        "share_ratio_vs_baseline": 2.2594633803640227,
+        "topic_tweets": 119524
+      },
+      {
+        "topic": "#bts_worldtour_arirang",
+        "day": "2026-09-02",
+        "tweets": 652,
+        "authors": 604,
+        "originals": 35,
+        "likes": 259744.0,
+        "views": 3568544.0,
+        "retweets": 106830.0,
+        "denominator_tweets": 911916,
+        "share": 0.0007149781339509341,
+        "baseline_share": 0.00017912488653412057,
+        "share_ratio_vs_baseline": 3.9915064164729652,
+        "topic_tweets": 67520
+      },
+      {
+        "topic": "#lisa_sawadika",
+        "day": "2026-09-04",
+        "tweets": 848,
+        "authors": 527,
+        "originals": 170,
+        "likes": 215883.0,
+        "views": 7283806.0,
+        "retweets": 112896.0,
+        "denominator_tweets": 1186569,
+        "share": 0.0007146655609576855,
+        "baseline_share": 9.049458294799809e-05,
+        "share_ratio_vs_baseline": 7.897329737055772,
+        "topic_tweets": 17134
+      },
+      {
+        "topic": "#gemmhouse",
+        "day": "2026-08-25",
+        "tweets": 15276,
+        "authors": 6943,
+        "originals": 1007,
+        "likes": 857330.0,
+        "views": 19558207.0,
+        "retweets": 464548.0,
+        "denominator_tweets": 21398956,
+        "share": 0.0007138666017164575,
+        "baseline_share": 0.000207985959410375,
+        "share_ratio_vs_baseline": 3.4322826585997306,
+        "topic_tweets": 78399
+      },
+      {
+        "topic": "#vivant",
+        "day": "2026-09-13",
+        "tweets": 898,
+        "authors": 434,
+        "originals": 617,
+        "likes": 862144.0,
+        "views": 75242861.0,
+        "retweets": 55136.0,
+        "denominator_tweets": 1259578,
+        "share": 0.0007129371900747711,
+        "baseline_share": 0.0001257031175747369,
+        "share_ratio_vs_baseline": 5.671595134869218,
+        "topic_tweets": 47383
+      },
+      {
+        "topic": "#방탄소년단",
+        "day": "2026-09-03",
+        "tweets": 725,
+        "authors": 607,
+        "originals": 22,
+        "likes": 281584.0,
+        "views": 4186016.0,
+        "retweets": 107582.0,
+        "denominator_tweets": 1017155,
+        "share": 0.0007127723896554605,
+        "baseline_share": 0.00026089040975491636,
+        "share_ratio_vs_baseline": 2.7320758563913774,
+        "topic_tweets": 98341
+      },
+      {
+        "topic": "#1",
+        "day": "2026-09-10",
+        "tweets": 563,
+        "authors": 528,
+        "originals": 221,
+        "likes": 219750.0,
+        "views": 9061549.0,
+        "retweets": 31634.0,
+        "denominator_tweets": 792456,
+        "share": 0.0007104495391542243,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.0807038224154937,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#1",
+        "day": "2026-08-17",
+        "tweets": 15513,
+        "authors": 12083,
+        "originals": 3302,
+        "likes": 559970.0,
+        "views": 31596099.0,
+        "retweets": 81909.0,
+        "denominator_tweets": 21847048,
+        "share": 0.0007100730496861636,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.0801311236032503,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#bts",
+        "day": "2026-08-18",
+        "tweets": 16085,
+        "authors": 8875,
+        "originals": 1043,
+        "likes": 426995.0,
+        "views": 14537346.0,
+        "retweets": 158238.0,
+        "denominator_tweets": 22666648,
+        "share": 0.000709632937344772,
+        "baseline_share": 0.0004144677154637469,
+        "share_ratio_vs_baseline": 1.7121549179066105,
+        "topic_tweets": 156231
+      },
+      {
+        "topic": "#1",
+        "day": "2026-09-03",
+        "tweets": 719,
+        "authors": 686,
+        "originals": 305,
+        "likes": 180222.0,
+        "views": 19867050.0,
+        "retweets": 26959.0,
+        "denominator_tweets": 1017155,
+        "share": 0.000706873583672105,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.0752642400872192,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#fanboygalanight",
+        "day": "2026-08-29",
+        "tweets": 16232,
+        "authors": 4918,
+        "originals": 3812,
+        "likes": 1382954.0,
+        "views": 21327131.0,
+        "retweets": 677589.0,
+        "denominator_tweets": 22965648,
+        "share": 0.0007067947745258484,
+        "baseline_share": 0.0002734747229979302,
+        "share_ratio_vs_baseline": 2.584497633922817,
+        "topic_tweets": 21092
+      },
+      {
+        "topic": "#pokemonpersonalityquiz",
+        "day": "2026-08-24",
+        "tweets": 16749,
+        "authors": 16477,
+        "originals": 16285,
+        "likes": 67183.0,
+        "views": 5887921.0,
+        "retweets": 2275.0,
+        "denominator_tweets": 23808769,
+        "share": 0.0007034803017325255,
+        "baseline_share": 0.00010042258812651744,
+        "share_ratio_vs_baseline": 7.005199874417154,
+        "topic_tweets": 16880
+      },
+      {
+        "topic": "#vmas",
+        "day": "2026-08-18",
+        "tweets": 15941,
+        "authors": 9969,
+        "originals": 1670,
+        "likes": 934918.0,
+        "views": 67567465.0,
+        "retweets": 126239.0,
+        "denominator_tweets": 22666648,
+        "share": 0.0007032799909364631,
+        "baseline_share": 0.00011096882225763818,
+        "share_ratio_vs_baseline": 6.3376358929325765,
+        "topic_tweets": 41829
+      },
+      {
+        "topic": "#happybirthdayrm",
+        "day": "2026-09-11",
+        "tweets": 553,
+        "authors": 401,
+        "originals": 189,
+        "likes": 64960.0,
+        "views": 586648.0,
+        "retweets": 28640.0,
+        "denominator_tweets": 787434,
+        "share": 0.000702281080065123,
+        "baseline_share": 7.329401962603912e-06,
+        "share_ratio_vs_baseline": 95.81696892165319,
+        "topic_tweets": 803
+      },
+      {
+        "topic": "#kconla2026",
+        "day": "2026-08-17",
+        "tweets": 15337,
+        "authors": 5588,
+        "originals": 884,
+        "likes": 591151.0,
+        "views": 10673785.0,
+        "retweets": 152930.0,
+        "denominator_tweets": 21847048,
+        "share": 0.0007020170413870102,
+        "baseline_share": 6.050561372354756e-05,
+        "share_ratio_vs_baseline": 11.602510877660917,
+        "topic_tweets": 22476
+      },
+      {
+        "topic": "#สั่งฟ้อง229",
+        "day": "2026-09-16",
+        "tweets": 962,
+        "authors": 621,
+        "originals": 36,
+        "likes": 73424.0,
+        "views": 4580840.0,
+        "retweets": 130136.0,
+        "denominator_tweets": 1375354,
+        "share": 0.0006994562854363312,
+        "baseline_share": 1.5036289941617268e-05,
+        "share_ratio_vs_baseline": 46.51787695982001,
+        "topic_tweets": 3077
+      },
+      {
+        "topic": "#granhermano",
+        "day": "2026-08-20",
+        "tweets": 16368,
+        "authors": 3140,
+        "originals": 6709,
+        "likes": 1722655.0,
+        "views": 38777637.0,
+        "retweets": 213750.0,
+        "denominator_tweets": 23627881,
+        "share": 0.000692740919086227,
+        "baseline_share": 0.0004643425357664938,
+        "share_ratio_vs_baseline": 1.4918747814966256,
+        "topic_tweets": 175031
+      },
+      {
+        "topic": "#初音ミク誕生祭2026",
+        "day": "2026-08-31",
+        "tweets": 13194,
+        "authors": 8746,
+        "originals": 1144,
+        "likes": 380355.0,
+        "views": 5359114.0,
+        "retweets": 58878.0,
+        "denominator_tweets": 19049099,
+        "share": 0.0006926311842885588,
+        "baseline_share": 6.20153738362897e-05,
+        "share_ratio_vs_baseline": 11.168701266189093,
+        "topic_tweets": 21708
+      },
+      {
+        "topic": "#1",
+        "day": "2026-09-08",
+        "tweets": 1464,
+        "authors": 1292,
+        "originals": 451,
+        "likes": 293003.0,
+        "views": 27657340.0,
+        "retweets": 34144.0,
+        "denominator_tweets": 2116466,
+        "share": 0.000691719120458349,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.0522119535852699,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#starmagicxgmmtv",
+        "day": "2026-08-23",
+        "tweets": 17021,
+        "authors": 3332,
+        "originals": 3468,
+        "likes": 1442231.0,
+        "views": 28551919.0,
+        "retweets": 447616.0,
+        "denominator_tweets": 24684948,
+        "share": 0.0006895295059969338,
+        "baseline_share": 0.00011212029292649197,
+        "share_ratio_vs_baseline": 6.149908174508619,
+        "topic_tweets": 27006
+      },
+      {
+        "topic": "#1",
+        "day": "2026-08-21",
+        "tweets": 16869,
+        "authors": 13830,
+        "originals": 4261,
+        "likes": 701723.0,
+        "views": 109871993.0,
+        "retweets": 122072.0,
+        "denominator_tweets": 24588010,
+        "share": 0.0006860660948161319,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.0436128257330233,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#enhypen",
+        "day": "2026-09-09",
+        "tweets": 1107,
+        "authors": 343,
+        "originals": 61,
+        "likes": 368079.0,
+        "views": 4387827.0,
+        "retweets": 147361.0,
+        "denominator_tweets": 1616782,
+        "share": 0.0006846934218713469,
+        "baseline_share": 0.00031708712882263373,
+        "share_ratio_vs_baseline": 2.1593226581402423,
+        "topic_tweets": 119524
+      },
+      {
+        "topic": "#스트레이키즈",
+        "day": "2026-09-14",
+        "tweets": 1227,
+        "authors": 779,
+        "originals": 64,
+        "likes": 245581.0,
+        "views": 3350735.0,
+        "retweets": 79739.0,
+        "denominator_tweets": 1792336,
+        "share": 0.0006845814624043706,
+        "baseline_share": 0.00014533734869498315,
+        "share_ratio_vs_baseline": 4.710292767491509,
+        "topic_tweets": 54784
+      },
+      {
+        "topic": "#ファミマのシューで45周年お祝い",
+        "day": "2026-09-04",
+        "tweets": 811,
+        "authors": 797,
+        "originals": 1,
+        "likes": 24220.0,
+        "views": 1986002.0,
+        "retweets": 128033.0,
+        "denominator_tweets": 1186569,
+        "share": 0.0006834832192649564,
+        "baseline_share": 0.0005070589537130636,
+        "share_ratio_vs_baseline": 1.3479363972571292,
+        "topic_tweets": 10301
+      },
+      {
+        "topic": "#ucl",
+        "day": "2026-09-11",
+        "tweets": 537,
+        "authors": 441,
+        "originals": 74,
+        "likes": 639770.0,
+        "views": 37127438.0,
+        "retweets": 46786.0,
+        "denominator_tweets": 787434,
+        "share": 0.0006819619168082658,
+        "baseline_share": 0.0001354631954414287,
+        "share_ratio_vs_baseline": 5.03429669281005,
+        "topic_tweets": 51062
+      },
+      {
+        "topic": "#bts",
+        "day": "2026-09-06",
+        "tweets": 1197,
+        "authors": 939,
+        "originals": 80,
+        "likes": 332768.0,
+        "views": 3827742.0,
+        "retweets": 111708.0,
+        "denominator_tweets": 1759979,
+        "share": 0.0006801217514527162,
+        "baseline_share": 0.0004144677154637469,
+        "share_ratio_vs_baseline": 1.640952301174362,
+        "topic_tweets": 156231
+      },
+      {
+        "topic": "#1",
+        "day": "2026-09-15",
+        "tweets": 1327,
+        "authors": 1178,
+        "originals": 268,
+        "likes": 94190.0,
+        "views": 5651790.0,
+        "retweets": 17901.0,
+        "denominator_tweets": 1952018,
+        "share": 0.0006798093050371462,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.034095279084672,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#1",
+        "day": "2026-09-16",
+        "tweets": 933,
+        "authors": 799,
+        "originals": 172,
+        "likes": 92509.0,
+        "views": 4269665.0,
+        "retweets": 15861.0,
+        "denominator_tweets": 1375354,
+        "share": 0.0006783708048982299,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.0319070974996394,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#granhermano",
+        "day": "2026-08-27",
+        "tweets": 15843,
+        "authors": 3217,
+        "originals": 7233,
+        "likes": 1882874.0,
+        "views": 38556809.0,
+        "retweets": 262372.0,
+        "denominator_tweets": 23525021,
+        "share": 0.0006734531714126844,
+        "baseline_share": 0.0004643425357664938,
+        "share_ratio_vs_baseline": 1.450337023940764,
+        "topic_tweets": 175031
+      },
+      {
+        "topic": "#1",
+        "day": "2026-08-24",
+        "tweets": 15989,
+        "authors": 13521,
+        "originals": 3967,
+        "likes": 593741.0,
+        "views": 32583233.0,
+        "retweets": 88257.0,
+        "denominator_tweets": 23808769,
+        "share": 0.0006715592897726044,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.0215457276527848,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#1",
+        "day": "2026-09-13",
+        "tweets": 844,
+        "authors": 779,
+        "originals": 325,
+        "likes": 168378.0,
+        "views": 21805860.0,
+        "retweets": 17945.0,
+        "denominator_tweets": 1259578,
+        "share": 0.0006700656886671568,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.0192737289606006,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#wweraw",
+        "day": "2026-09-15",
+        "tweets": 1306,
+        "authors": 584,
+        "originals": 619,
+        "likes": 233638.0,
+        "views": 10479919.0,
+        "retweets": 17725.0,
+        "denominator_tweets": 1952018,
+        "share": 0.0006690512075196028,
+        "baseline_share": 6.611066606087508e-05,
+        "share_ratio_vs_baseline": 10.1201704261085,
+        "topic_tweets": 24920
+      },
+      {
+        "topic": "#characterfestthailand2xgmmtv",
+        "day": "2026-08-17",
+        "tweets": 14550,
+        "authors": 5383,
+        "originals": 1809,
+        "likes": 463681.0,
+        "views": 9805442.0,
+        "retweets": 269803.0,
+        "denominator_tweets": 21847048,
+        "share": 0.0006659938679129555,
+        "baseline_share": 5.379208332633324e-05,
+        "share_ratio_vs_baseline": 12.38089002563183,
+        "topic_tweets": 19890
+      },
+      {
+        "topic": "#1",
+        "day": "2026-09-06",
+        "tweets": 1167,
+        "authors": 1066,
+        "originals": 429,
+        "likes": 167721.0,
+        "views": 13478534.0,
+        "retweets": 21869.0,
+        "denominator_tweets": 1759979,
+        "share": 0.0006630760935215704,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 1.008641471812592,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#wishjasper",
+        "day": "2026-08-17",
+        "tweets": 14439,
+        "authors": 5247,
+        "originals": 816,
+        "likes": 251270.0,
+        "views": 4692835.0,
+        "retweets": 146861.0,
+        "denominator_tweets": 21847048,
+        "share": 0.0006609130899515578,
+        "baseline_share": 7.679519740441124e-05,
+        "share_ratio_vs_baseline": 8.60617736902378,
+        "topic_tweets": 28501
+      },
+      {
+        "topic": "#bbnaija",
+        "day": "2026-08-18",
+        "tweets": 14899,
+        "authors": 3534,
+        "originals": 8224,
+        "likes": 560734.0,
+        "views": 28663830.0,
+        "retweets": 47324.0,
+        "denominator_tweets": 22666648,
+        "share": 0.0006573093648430063,
+        "baseline_share": 0.0007516798648617337,
+        "share_ratio_vs_baseline": 0.8744538673573674,
+        "topic_tweets": 283341
+      },
+      {
+        "topic": "#世界犬の日",
+        "day": "2026-08-26",
+        "tweets": 16526,
+        "authors": 12719,
+        "originals": 3095,
+        "likes": 758319.0,
+        "views": 18915194.0,
+        "retweets": 101685.0,
+        "denominator_tweets": 25180337,
+        "share": 0.0006563057515870419,
+        "baseline_share": 0.00010416862289840287,
+        "share_ratio_vs_baseline": 6.300416894510991,
+        "topic_tweets": 20429
+      },
+      {
+        "topic": "#dutchgp",
+        "day": "2026-08-23",
+        "tweets": 16132,
+        "authors": 7978,
+        "originals": 4909,
+        "likes": 1167823.0,
+        "views": 65098040.0,
+        "retweets": 129039.0,
+        "denominator_tweets": 24684948,
+        "share": 0.0006535156565855436,
+        "baseline_share": 0.0001227217674790172,
+        "share_ratio_vs_baseline": 5.325181261729145,
+        "topic_tweets": 44694
+      },
+      {
+        "topic": "#방탄소년단",
+        "day": "2026-08-29",
+        "tweets": 14955,
+        "authors": 10259,
+        "originals": 258,
+        "likes": 418012.0,
+        "views": 6724917.0,
+        "retweets": 154072.0,
+        "denominator_tweets": 22965648,
+        "share": 0.000651189986017377,
+        "baseline_share": 0.00026089040975491636,
+        "share_ratio_vs_baseline": 2.4960288368940535,
+        "topic_tweets": 98341
+      },
+      {
+        "topic": "#ファミマのシューで45周年お祝い",
+        "day": "2026-09-06",
+        "tweets": 1141,
+        "authors": 1013,
+        "originals": 2,
+        "likes": 24915.0,
+        "views": 1977369.0,
+        "retweets": 129355.0,
+        "denominator_tweets": 1759979,
+        "share": 0.0006483031899812441,
+        "baseline_share": 0.0005070589537130636,
+        "share_ratio_vs_baseline": 1.278555846877143,
+        "topic_tweets": 10301
+      },
+      {
+        "topic": "#1",
+        "day": "2026-09-07",
+        "tweets": 1555,
+        "authors": 1406,
+        "originals": 472,
+        "likes": 176827.0,
+        "views": 13578280.0,
+        "retweets": 34270.0,
+        "denominator_tweets": 2402641,
+        "share": 0.0006472044720788499,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 0.984498276531616,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#cortis",
+        "day": "2026-08-17",
+        "tweets": 14114,
+        "authors": 5177,
+        "originals": 2140,
+        "likes": 473767.0,
+        "views": 7724634.0,
+        "retweets": 170505.0,
+        "denominator_tweets": 21847048,
+        "share": 0.0006460369382627804,
+        "baseline_share": 0.0002349979498530648,
+        "share_ratio_vs_baseline": 2.7491173376904885,
+        "topic_tweets": 88581
+      },
+      {
+        "topic": "#sotus10thyearconcertd1",
+        "day": "2026-08-29",
+        "tweets": 14764,
+        "authors": 4682,
+        "originals": 2754,
+        "likes": 1345967.0,
+        "views": 33306561.0,
+        "retweets": 708066.0,
+        "denominator_tweets": 22965648,
+        "share": 0.0006428732165536979,
+        "baseline_share": 0.00023001965018408217,
+        "share_ratio_vs_baseline": 2.7948621608597946,
+        "topic_tweets": 19905
+      },
+      {
+        "topic": "#bts_worldtour_arirang",
+        "day": "2026-09-03",
+        "tweets": 653,
+        "authors": 553,
+        "originals": 35,
+        "likes": 226722.0,
+        "views": 3541144.0,
+        "retweets": 89985.0,
+        "denominator_tweets": 1017155,
+        "share": 0.0006419867178551941,
+        "baseline_share": 0.00017912488653412057,
+        "share_ratio_vs_baseline": 3.5840174432317387,
+        "topic_tweets": 67520
+      },
+      {
+        "topic": "#1",
+        "day": "2026-09-12",
+        "tweets": 602,
+        "authors": 564,
+        "originals": 219,
+        "likes": 147781.0,
+        "views": 14183346.0,
+        "retweets": 32576.0,
+        "denominator_tweets": 938116,
+        "share": 0.0006417116859748688,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 0.9761428978437083,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#rm",
+        "day": "2026-09-12",
+        "tweets": 601,
+        "authors": 482,
+        "originals": 37,
+        "likes": 10813.0,
+        "views": 384787.0,
+        "retweets": 7544.0,
+        "denominator_tweets": 938116,
+        "share": 0.0006406457197190966,
+        "baseline_share": 6.042281421358309e-05,
+        "share_ratio_vs_baseline": 10.60271237043903,
+        "topic_tweets": 22776
+      },
+      {
+        "topic": "#ファミマのシューで45周年お祝い",
+        "day": "2026-09-12",
+        "tweets": 599,
+        "authors": 546,
+        "originals": 1,
+        "likes": 19414.0,
+        "views": 1232933.0,
+        "retweets": 105926.0,
+        "denominator_tweets": 938116,
+        "share": 0.0006385137872075521,
+        "baseline_share": 0.0005070589537130636,
+        "share_ratio_vs_baseline": 1.2592496050644175,
+        "topic_tweets": 10301
+      },
+      {
+        "topic": "#sotus10thyearconcertd2",
+        "day": "2026-08-30",
+        "tweets": 15122,
+        "authors": 4982,
+        "originals": 2621,
+        "likes": 1337098.0,
+        "views": 25760240.0,
+        "retweets": 649951.0,
+        "denominator_tweets": 23713430,
+        "share": 0.0006376977096944642,
+        "baseline_share": 0.0002416838330250987,
+        "share_ratio_vs_baseline": 2.638561718061794,
+        "topic_tweets": 21258
+      },
+      {
+        "topic": "#bbnaija",
+        "day": "2026-08-26",
+        "tweets": 16056,
+        "authors": 3276,
+        "originals": 9326,
+        "likes": 659394.0,
+        "views": 31213979.0,
+        "retweets": 59911.0,
+        "denominator_tweets": 25180337,
+        "share": 0.0006376403937723311,
+        "baseline_share": 0.0007516798648617337,
+        "share_ratio_vs_baseline": 0.8482871812585011,
+        "topic_tweets": 283341
+      },
+      {
+        "topic": "#bbnaija",
+        "day": "2026-08-19",
+        "tweets": 14710,
+        "authors": 3424,
+        "originals": 8633,
+        "likes": 573353.0,
+        "views": 31497907.0,
+        "retweets": 50871.0,
+        "denominator_tweets": 23307289,
+        "share": 0.0006311330331039358,
+        "baseline_share": 0.0007516798648617337,
+        "share_ratio_vs_baseline": 0.8396300906903079,
+        "topic_tweets": 283341
+      },
+      {
+        "topic": "#midnight_dream_party",
+        "day": "2026-08-24",
+        "tweets": 14996,
+        "authors": 4348,
+        "originals": 53,
+        "likes": 515535.0,
+        "views": 10044725.0,
+        "retweets": 338913.0,
+        "denominator_tweets": 23808769,
+        "share": 0.0006298519675670758,
+        "baseline_share": 9.604632847757533e-05,
+        "share_ratio_vs_baseline": 6.557793281126119,
+        "topic_tweets": 18367
+      },
+      {
+        "topic": "#lisa",
+        "day": "2026-09-16",
+        "tweets": 866,
+        "authors": 337,
+        "originals": 57,
+        "likes": 29287.0,
+        "views": 567496.0,
+        "retweets": 11458.0,
+        "denominator_tweets": 1375354,
+        "share": 0.0006296560739998575,
+        "baseline_share": 0.00011525062863894847,
+        "share_ratio_vs_baseline": 5.463363466523147,
+        "topic_tweets": 43443
+      },
+      {
+        "topic": "#straykids",
+        "day": "2026-09-13",
+        "tweets": 793,
+        "authors": 591,
+        "originals": 69,
+        "likes": 222510.0,
+        "views": 2878406.0,
+        "retweets": 74696.0,
+        "denominator_tweets": 1259578,
+        "share": 0.0006295759373377433,
+        "baseline_share": 0.0002611848834279804,
+        "share_ratio_vs_baseline": 2.410460854681675,
+        "topic_tweets": 98452
+      },
+      {
+        "topic": "#duangconcertday2",
+        "day": "2026-08-17",
+        "tweets": 13684,
+        "authors": 4999,
+        "originals": 930,
+        "likes": 276278.0,
+        "views": 3943529.0,
+        "retweets": 137563.0,
+        "denominator_tweets": 21847048,
+        "share": 0.0006263546452591673,
+        "baseline_share": 6.416737438164798e-05,
+        "share_ratio_vs_baseline": 9.76126343480724,
+        "topic_tweets": 23217
+      },
+      {
+        "topic": "#lacasadelosfamososmx",
+        "day": "2026-08-26",
+        "tweets": 15767,
+        "authors": 3433,
+        "originals": 10662,
+        "likes": 1740388.0,
+        "views": 34080205.0,
+        "retweets": 132902.0,
+        "denominator_tweets": 25180337,
+        "share": 0.0006261631843926473,
+        "baseline_share": 0.00043347851133020886,
+        "share_ratio_vs_baseline": 1.4445080160286377,
+        "topic_tweets": 163397
+      },
+      {
+        "topic": "#1",
+        "day": "2026-08-19",
+        "tweets": 14591,
+        "authors": 12332,
+        "originals": 3190,
+        "likes": 511462.0,
+        "views": 40845998.0,
+        "retweets": 79068.0,
+        "denominator_tweets": 23307289,
+        "share": 0.0006260273341957531,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 0.9522845687356645,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#1",
+        "day": "2026-08-23",
+        "tweets": 15429,
+        "authors": 12617,
+        "originals": 3905,
+        "likes": 632104.0,
+        "views": 35389272.0,
+        "retweets": 87808.0,
+        "denominator_tweets": 24684948,
+        "share": 0.0006250367632939717,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 0.9507777569201439,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#arsche",
+        "day": "2026-09-06",
+        "tweets": 1099,
+        "authors": 714,
+        "originals": 410,
+        "likes": 530698.0,
+        "views": 23272578.0,
+        "retweets": 52107.0,
+        "denominator_tweets": 1759979,
+        "share": 0.0006244392688776401,
+        "baseline_share": 2.1344762386353105e-05,
+        "share_ratio_vs_baseline": 29.25491779083373,
+        "topic_tweets": 1280
+      },
+      {
+        "topic": "#สั่งฟ้องสว",
+        "day": "2026-09-14",
+        "tweets": 1119,
+        "authors": 646,
+        "originals": 58,
+        "likes": 194376.0,
+        "views": 7225673.0,
+        "retweets": 420284.0,
+        "denominator_tweets": 1792336,
+        "share": 0.0006243249033663331,
+        "baseline_share": 1.7710906134727234e-05,
+        "share_ratio_vs_baseline": 35.25087302801339,
+        "topic_tweets": 6658
+      },
+      {
+        "topic": "#bb28",
+        "day": "2026-08-27",
+        "tweets": 14644,
+        "authors": 3025,
+        "originals": 9829,
+        "likes": 823639.0,
+        "views": 36420628.0,
+        "retweets": 42759.0,
+        "denominator_tweets": 23525021,
+        "share": 0.0006224861605862115,
+        "baseline_share": 0.0005395447448687259,
+        "share_ratio_vs_baseline": 1.1537248143111203,
+        "topic_tweets": 203378
+      },
+      {
+        "topic": "#今月描いた絵を晒そうㅤ",
+        "day": "2026-08-31",
+        "tweets": 11799,
+        "authors": 9726,
+        "originals": 1973,
+        "likes": 514754.0,
+        "views": 7793768.0,
+        "retweets": 45666.0,
+        "denominator_tweets": 19049099,
+        "share": 0.0006193993742171218,
+        "baseline_share": 4.9806992201717865e-05,
+        "share_ratio_vs_baseline": 12.43599235441803,
+        "topic_tweets": 18557
+      },
+      {
+        "topic": "#tgs2026",
+        "day": "2026-09-14",
+        "tweets": 1108,
+        "authors": 991,
+        "originals": 54,
+        "likes": 45129.0,
+        "views": 6924610.0,
+        "retweets": 13407.0,
+        "denominator_tweets": 1792336,
+        "share": 0.0006181876612420885,
+        "baseline_share": 3.401834152883632e-05,
+        "share_ratio_vs_baseline": 18.17218692798617,
+        "topic_tweets": 12823
+      },
+      {
+        "topic": "#bb28",
+        "day": "2026-08-24",
+        "tweets": 14708,
+        "authors": 2834,
+        "originals": 8905,
+        "likes": 836796.0,
+        "views": 43068224.0,
+        "retweets": 38508.0,
+        "denominator_tweets": 23808769,
+        "share": 0.0006177555840875267,
+        "baseline_share": 0.0005395447448687259,
+        "share_ratio_vs_baseline": 1.144957095704509,
+        "topic_tweets": 203378
+      },
+      {
+        "topic": "#jasper",
+        "day": "2026-08-17",
+        "tweets": 13489,
+        "authors": 5134,
+        "originals": 752,
+        "likes": 222728.0,
+        "views": 4290093.0,
+        "retweets": 134237.0,
+        "denominator_tweets": 21847048,
+        "share": 0.0006174289542459009,
+        "baseline_share": 0.00010683203683940831,
+        "share_ratio_vs_baseline": 5.779436323712805,
+        "topic_tweets": 40161
+      },
+      {
+        "topic": "#1",
+        "day": "2026-09-01",
+        "tweets": 2926,
+        "authors": 2609,
+        "originals": 882,
+        "likes": 159098.0,
+        "views": 7505997.0,
+        "retweets": 25284.0,
+        "denominator_tweets": 4780189,
+        "share": 0.0006121096885499716,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 0.9311136733806948,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#lacasadelosfamososmx",
+        "day": "2026-08-31",
+        "tweets": 11648,
+        "authors": 2656,
+        "originals": 8192,
+        "likes": 1307093.0,
+        "views": 28639986.0,
+        "retweets": 88609.0,
+        "denominator_tweets": 19049099,
+        "share": 0.0006114724901161992,
+        "baseline_share": 0.00043347851133020886,
+        "share_ratio_vs_baseline": 1.410617767971434,
+        "topic_tweets": 163397
+      },
+      {
+        "topic": "#1",
+        "day": "2026-09-11",
+        "tweets": 480,
+        "authors": 448,
+        "originals": 186,
+        "likes": 178401.0,
+        "views": 10615240.0,
+        "retweets": 40135.0,
+        "denominator_tweets": 787434,
+        "share": 0.0006095748977057125,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 0.9272578637792477,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#pondphuwinconcertd2",
+        "day": "2026-08-23",
+        "tweets": 15045,
+        "authors": 6218,
+        "originals": 1295,
+        "likes": 133257.0,
+        "views": 2079857.0,
+        "retweets": 64767.0,
+        "denominator_tweets": 24684948,
+        "share": 0.0006094807248530562,
+        "baseline_share": 0.00023899642705642804,
+        "share_ratio_vs_baseline": 2.5501666797267863,
+        "topic_tweets": 71682
+      },
+      {
+        "topic": "#yourtuberq2",
+        "day": "2026-08-26",
+        "tweets": 15312,
+        "authors": 2370,
+        "originals": 1846,
+        "likes": 508637.0,
+        "views": 7860715.0,
+        "retweets": 351311.0,
+        "denominator_tweets": 25180337,
+        "share": 0.0006080935294869167,
+        "baseline_share": 0.00011827314984927262,
+        "share_ratio_vs_baseline": 5.141433455199862,
+        "topic_tweets": 17352
+      },
+      {
+        "topic": "#วาดฝันวันวิวาห์ep11",
+        "day": "2026-08-29",
+        "tweets": 13830,
+        "authors": 2357,
+        "originals": 2256,
+        "likes": 471409.0,
+        "views": 5658147.0,
+        "retweets": 279780.0,
+        "denominator_tweets": 22965648,
+        "share": 0.0006022037784433516,
+        "baseline_share": 0.00019677999598805877,
+        "share_ratio_vs_baseline": 3.060289616429788,
+        "topic_tweets": 25931
+      },
+      {
+        "topic": "#bts",
+        "day": "2026-09-08",
+        "tweets": 1273,
+        "authors": 803,
+        "originals": 98,
+        "likes": 94413.0,
+        "views": 1978891.0,
+        "retweets": 28669.0,
+        "denominator_tweets": 2116466,
+        "share": 0.0006014743444969113,
+        "baseline_share": 0.0004144677154637469,
+        "share_ratio_vs_baseline": 1.4511970946251462,
+        "topic_tweets": 156231
+      },
+      {
+        "topic": "#c108_cos",
+        "day": "2026-08-17",
+        "tweets": 13085,
+        "authors": 8393,
+        "originals": 1278,
+        "likes": 486632.0,
+        "views": 20264384.0,
+        "retweets": 40692.0,
+        "denominator_tweets": 21847048,
+        "share": 0.00059893675337739,
+        "baseline_share": 0.00011389192136442606,
+        "share_ratio_vs_baseline": 5.258816834434991,
+        "topic_tweets": 42824
+      },
+      {
+        "topic": "#bb28",
+        "day": "2026-09-13",
+        "tweets": 754,
+        "authors": 282,
+        "originals": 470,
+        "likes": 145963.0,
+        "views": 7593132.0,
+        "retweets": 5775.0,
+        "denominator_tweets": 1259578,
+        "share": 0.0005986131863211329,
+        "baseline_share": 0.0005395447448687259,
+        "share_ratio_vs_baseline": 1.1094783000189885,
+        "topic_tweets": 203378
+      },
+      {
+        "topic": "#bts_worldtour_arirang_na",
+        "day": "2026-09-02",
+        "tweets": 544,
+        "authors": 527,
+        "originals": 7,
+        "likes": 231444.0,
+        "views": 2863802.0,
+        "retweets": 99158.0,
+        "denominator_tweets": 911916,
+        "share": 0.0005965461731124358,
+        "baseline_share": 0.00011750030138451917,
+        "share_ratio_vs_baseline": 5.076975685026044,
+        "topic_tweets": 44291
+      },
+      {
+        "topic": "#الاتحاد_النصر",
+        "day": "2026-09-05",
+        "tweets": 785,
+        "authors": 400,
+        "originals": 255,
+        "likes": 266314.0,
+        "views": 44841077.0,
+        "retweets": 54177.0,
+        "denominator_tweets": 1318308,
+        "share": 0.0005954602414610243,
+        "baseline_share": 6.007985445298768e-06,
+        "share_ratio_vs_baseline": 99.11146537929285,
+        "topic_tweets": 1205
+      },
+      {
+        "topic": "#jungkook",
+        "day": "2026-09-01",
+        "tweets": 2843,
+        "authors": 2190,
+        "originals": 358,
+        "likes": 72880.0,
+        "views": 845412.0,
+        "retweets": 22496.0,
+        "denominator_tweets": 4780189,
+        "share": 0.0005947463583552868,
+        "baseline_share": 0.00014564773986388855,
+        "share_ratio_vs_baseline": 4.083457518194873,
+        "topic_tweets": 54901
+      },
+      {
+        "topic": "#vivant",
+        "day": "2026-08-30",
+        "tweets": 14055,
+        "authors": 6366,
+        "originals": 9443,
+        "likes": 1590709.0,
+        "views": 201632022.0,
+        "retweets": 90776.0,
+        "denominator_tweets": 23713430,
+        "share": 0.0005927021101544568,
+        "baseline_share": 0.0001257031175747369,
+        "share_ratio_vs_baseline": 4.715094753334699,
+        "topic_tweets": 47383
+      },
+      {
+        "topic": "#seibulions",
+        "day": "2026-08-30",
+        "tweets": 14052,
+        "authors": 5641,
+        "originals": 3184,
+        "likes": 704701.0,
+        "views": 30078241.0,
+        "retweets": 101555.0,
+        "denominator_tweets": 23713430,
+        "share": 0.0005925755995653096,
+        "baseline_share": 0.0001140462047869566,
+        "share_ratio_vs_baseline": 5.195925639720036,
+        "topic_tweets": 42989
+      },
+      {
+        "topic": "#sfxperthsantadomiia",
+        "day": "2026-08-27",
+        "tweets": 13822,
+        "authors": 2248,
+        "originals": 3402,
+        "likes": 794097.0,
+        "views": 8945564.0,
+        "retweets": 433949.0,
+        "denominator_tweets": 23525021,
+        "share": 0.0005875446402364529,
+        "baseline_share": 8.182347963609319e-05,
+        "share_ratio_vs_baseline": 7.180636204296558,
+        "topic_tweets": 21308
+      },
+      {
+        "topic": "#오늘의방탄",
+        "day": "2026-09-02",
+        "tweets": 534,
+        "authors": 522,
+        "originals": 1,
+        "likes": 231318.0,
+        "views": 2859853.0,
+        "retweets": 99145.0,
+        "denominator_tweets": 911916,
+        "share": 0.0005855802508125749,
+        "baseline_share": 0.00011394539397996169,
+        "share_ratio_vs_baseline": 5.139130511195164,
+        "topic_tweets": 42951
+      },
+      {
+        "topic": "#spanishgp",
+        "day": "2026-09-12",
+        "tweets": 548,
+        "authors": 344,
+        "originals": 167,
+        "likes": 376745.0,
+        "views": 19179921.0,
+        "retweets": 45808.0,
+        "denominator_tweets": 938116,
+        "share": 0.0005841495081631696,
+        "baseline_share": 8.863392267631766e-06,
+        "share_ratio_vs_baseline": 65.90586205875441,
+        "topic_tweets": 3341
+      },
+      {
+        "topic": "#1",
+        "day": "2026-08-22",
+        "tweets": 13471,
+        "authors": 11308,
+        "originals": 3531,
+        "likes": 604124.0,
+        "views": 30564179.0,
+        "retweets": 83651.0,
+        "denominator_tweets": 23075821,
+        "share": 0.0005837712123005288,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 0.8880064603889565,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#1",
+        "day": "2026-08-27",
+        "tweets": 13662,
+        "authors": 11733,
+        "originals": 3909,
+        "likes": 600907.0,
+        "views": 24142042.0,
+        "retweets": 82821.0,
+        "denominator_tweets": 23525021,
+        "share": 0.0005807433710686167,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 0.8834006447572227,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#thenewxpengl03",
+        "day": "2026-08-18",
+        "tweets": 13117,
+        "authors": 2203,
+        "originals": 2462,
+        "likes": 404106.0,
+        "views": 4380219.0,
+        "retweets": 236005.0,
+        "denominator_tweets": 22666648,
+        "share": 0.0005786916530401849,
+        "baseline_share": 6.778896656604175e-05,
+        "share_ratio_vs_baseline": 8.536664332777645,
+        "topic_tweets": 17720
+      },
+      {
+        "topic": "#pondphuwinconcertd1",
+        "day": "2026-08-22",
+        "tweets": 13334,
+        "authors": 5572,
+        "originals": 1111,
+        "likes": 171489.0,
+        "views": 3116437.0,
+        "retweets": 84695.0,
+        "denominator_tweets": 23075821,
+        "share": 0.0005778342621049106,
+        "baseline_share": 0.0002849790066797898,
+        "share_ratio_vs_baseline": 2.0276379963460993,
+        "topic_tweets": 84814
+      },
+      {
+        "topic": "#1",
+        "day": "2026-08-18",
+        "tweets": 13079,
+        "authors": 11540,
+        "originals": 3114,
+        "likes": 581475.0,
+        "views": 41721513.0,
+        "retweets": 83194.0,
+        "denominator_tweets": 22666648,
+        "share": 0.0005770151810713256,
+        "baseline_share": 0.0006573952311617538,
+        "share_ratio_vs_baseline": 0.8777294901449469,
+        "topic_tweets": 247801
+      },
+      {
+        "topic": "#bbnaija",
+        "day": "2026-08-28",
+        "tweets": 15806,
+        "authors": 3238,
+        "originals": 8817,
+        "likes": 634872.0,
+        "views": 29357056.0,
+        "retweets": 51956.0,
+        "denominator_tweets": 27497512,
+        "share": 0.0005748156415024021,
+        "baseline_share": 0.0007516798648617337,
+        "share_ratio_vs_baseline": 0.7647080470994596,
+        "topic_tweets": 283341
+      },
+      {
+        "topic": "#vmas",
+        "day": "2026-08-19",
+        "tweets": 13365,
+        "authors": 9975,
+        "originals": 389,
+        "likes": 265085.0,
+        "views": 8629465.0,
+        "retweets": 95821.0,
+        "denominator_tweets": 23307289,
+        "share": 0.0005734257639316182,
+        "baseline_share": 0.00011096882225763818,
+        "share_ratio_vs_baseline": 5.167449309322991,
+        "topic_tweets": 41829
+      },
+      {
+        "topic": "#granhermano",
+        "day": "2026-08-25",
+        "tweets": 12223,
+        "authors": 2695,
+        "originals": 4594,
+        "likes": 972803.0,
+        "views": 22399312.0,
+        "retweets": 110808.0,
+        "denominator_tweets": 21398956,
+        "share": 0.0005711960901270137,
+        "baseline_share": 0.0004643425357664938,
+        "share_ratio_vs_baseline": 1.2301179541610072,
+        "topic_tweets": 175031
+      },
+      {
+        "topic": "#bb28",
+        "day": "2026-08-31",
+        "tweets": 10840,
+        "authors": 2559,
+        "originals": 6762,
+        "likes": 696619.0,
+        "views": 41243523.0,
+        "retweets": 29037.0,
+        "denominator_tweets": 19049099,
+        "share": 0.0005690557857880837,
+        "baseline_share": 0.0005395447448687259,
+        "share_ratio_vs_baseline": 1.0546961882216794,
+        "topic_tweets": 203378
+      },
+      {
+        "topic": "#bb28",
+        "day": "2026-08-30",
+        "tweets": 13475,
+        "authors": 2959,
+        "originals": 8802,
+        "likes": 860334.0,
+        "views": 38543711.0,
+        "retweets": 37462.0,
+        "denominator_tweets": 23713430,
+        "share": 0.000568243396252672,
+        "baseline_share": 0.0005395447448687259,
+        "share_ratio_vs_baseline": 1.0531904937577117,
+        "topic_tweets": 203378
+      },
+      {
+        "topic": "#เติ้ลเฟิร์สวัน",
+        "day": "2026-09-01",
+        "tweets": 2712,
+        "authors": 1030,
+        "originals": 558,
+        "likes": 178516.0,
+        "views": 3571526.0,
+        "retweets": 129334.0,
+        "denominator_tweets": 4780189,
+        "share": 0.0005673415841925915,
+        "baseline_share": 5.938287115195135e-05,
+        "share_ratio_vs_baseline": 9.55396014350425,
+        "topic_tweets": 22384
+      },
+      {
+        "topic": "#bts_",
+        "day": "2026-09-02",
+        "tweets": 517,
+        "authors": 517,
+        "originals": 0,
+        "likes": 0.0,
+        "views": 0.0,
+        "retweets": 0.0,
+        "denominator_tweets": 911916,
+        "share": 0.0005669381829028112,
+        "baseline_share": 8.82723700560186e-06,
+        "share_ratio_vs_baseline": 64.22600668170868,
+        "topic_tweets": 3298
+      },
+      {
+        "topic": "#バニーの日",
+        "day": "2026-08-22",
+        "tweets": 13062,
+        "authors": 10439,
+        "originals": 644,
+        "likes": 226936.0,
+        "views": 2835827.0,
+        "retweets": 18722.0,
+        "denominator_tweets": 23075821,
+        "share": 0.0005660470325194497,
+        "baseline_share": 0.00019180317197171778,
+        "share_ratio_vs_baseline": 2.9511870252224806,
+        "topic_tweets": 72299
+      },
+      {
+        "topic": "#lacasadelosfamososmx",
+        "day": "2026-08-25",
+        "tweets": 12103,
+        "authors": 2973,
+        "originals": 8042,
+        "likes": 1916397.0,
+        "views": 41185060.0,
+        "retweets": 131017.0,
+        "denominator_tweets": 21398956,
+        "share": 0.0005655883399171436,
+        "baseline_share": 0.00043347851133020886,
+        "share_ratio_vs_baseline": 1.3047667303773176,
+        "topic_tweets": 163397
+      },
+      {
+        "topic": "#alwaysbyyoursidejk",
+        "day": "2026-08-31",
+        "tweets": 10728,
+        "authors": 6480,
+        "originals": 4765,
+        "likes": 287752.0,
+        "views": 2844839.0,
+        "retweets": 130491.0,
+        "denominator_tweets": 19049099,
+        "share": 0.0005631762426138895,
+        "baseline_share": 0.00021861947296338582,
+        "share_ratio_vs_baseline": 2.5760570866814305,
+        "topic_tweets": 11700
+      },
+      {
+        "topic": "#mintawards2026",
+        "day": "2026-09-12",
+        "tweets": 528,
+        "authors": 341,
+        "originals": 62,
+        "likes": 127444.0,
+        "views": 5566565.0,
+        "retweets": 82090.0,
+        "denominator_tweets": 938116,
+        "share": 0.0005628301830477255,
+        "baseline_share": 8.614402829548233e-06,
+        "share_ratio_vs_baseline": 65.33594889678987,
+        "topic_tweets": 2836
+      },
+      {
+        "topic": "#pr",
+        "day": "2026-09-01",
+        "tweets": 2688,
+        "authors": 1801,
+        "originals": 1343,
+        "likes": 271104.0,
+        "views": 18032631.0,
+        "retweets": 57661.0,
+        "denominator_tweets": 4780189,
+        "share": 0.0005623208622085863,
+        "baseline_share": 0.0003667735920912585,
+        "share_ratio_vs_baseline": 1.5331552607219139,
+        "topic_tweets": 138253
+      },
+      {
+        "topic": "#happyhanday",
+        "day": "2026-09-13",
+        "tweets": 704,
+        "authors": 541,
+        "originals": 84,
+        "likes": 214225.0,
+        "views": 2629470.0,
+        "retweets": 70648.0,
+        "denominator_tweets": 1259578,
+        "share": 0.0005589173516844531,
+        "baseline_share": 4.4557943504015964e-05,
+        "share_ratio_vs_baseline": 12.543607440816437,
+        "topic_tweets": 1635
+      }
+    ],
+    "single_day_topics_complete_days": 2327597
+  },
+  "latest_quality_nulls": {
+    "latest_rows": 377270972,
+    "id_null": 0,
+    "author_id_null": 0,
+    "body_null": 0,
+    "body_empty": 380280,
+    "created_at_null": 412,
+    "version_null": 0,
+    "added_at_null": 0,
+    "lang_null": 177584,
+    "like_count_null": 379953,
+    "views_count_null": 556743,
+    "retweet_count_null": 379953,
+    "rt_rows": 222331899,
+    "tweets_with_hashtags": 54695204,
+    "tweets_with_hashtags_null_date": 7
+  },
+  "runtime_seconds": 62.137575083004776,
+  "runtime_minutes": 1.035626251383413,
+  "latest_build_seconds": null,
+  "aggregate_only_resume": false,
+  "finalize_only": true
+}
