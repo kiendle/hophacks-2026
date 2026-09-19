@@ -1,5 +1,5 @@
 import { hsl } from 'd3'
-import { useEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import '../ambient.css'
 import { SERIES_COLORS } from '../data/config'
 import { formatCount } from '../format'
@@ -141,9 +141,17 @@ export function AmbientBubbles({ opacity = 0.44, labels = true, speed = 1 }: Pro
   const [box, size] = useSize<HTMLDivElement>()
   const groups = useRef<(SVGGElement | null)[]>([])
   const axes = useRef<{ x: SVGGElement | null; y: SVGGElement | null }>({ x: null, y: null })
-  const { width, height } = size
+  // Measured before the first paint, so returning to the landing draws at once
+  // instead of waiting for the resize observer and then a frame.
+  const [first, setFirst] = useState({ width: 0, height: 0 })
+  useLayoutEffect(() => {
+    const rect = box.current?.getBoundingClientRect()
+    if (rect) setFirst({ width: rect.width, height: rect.height })
+  }, [box])
+  const width = size.width || first.width
+  const height = size.height || first.height
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!width || !height) return
 
     const draw = (u: number, writeText: boolean) => {
@@ -219,6 +227,7 @@ export function AmbientBubbles({ opacity = 0.44, labels = true, speed = 1 }: Pro
     let elapsed = 0
     let last = performance.now()
     let lastText = 0
+    draw(0, true)
     const frame = (now: number) => {
       elapsed += ((now - last) / 1000) * rate
       last = now
