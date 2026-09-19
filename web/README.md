@@ -1,24 +1,32 @@
-# web
+# React + TypeScript + Vite
 
-Frontend for the topic sentiment view: one line per subtopic over time, with a
-stacked volume band, a replay/live timeline, and an Ask sidebar.
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
-```bash
-npm install
-npm run dev
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+
+## React Compiler
+
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the Oxlint configuration
+
+If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc"],
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}
 ```
 
-## Data
-
-The UI reads `Series[]` (see `src/data/types.ts`) from a `DataSource`
-(`src/data/source.ts`). `devMockSource` is a development fixture built from
-synthetic posts in `src/data/devMock.ts`; swap it for a live source (WebSocket)
-when the backend is up. No component changes are needed.
-
-Sentiment is 0 to 10 per bucket, traction-weighted (`src/data/sentiment.ts`).
-Jev returns -1 to 1, so convert with `(score + 1) * 5`.
-
-## Ask panel
-
-Questions go out over the protocol in `src/ask/protocol.ts` with the selected
-time range and subtopics. Without `VITE_ASK_URL` it uses a local mock client.
+See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.

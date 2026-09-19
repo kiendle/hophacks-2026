@@ -70,6 +70,13 @@ export const LineChartIcon = (p: IconProps) => (
   </Icon>
 )
 
+export const BubblesIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="8.5" cy="9" r="4.5" />
+    <circle cx="17" cy="7" r="2.5" />
+    <circle cx="15.5" cy="16" r="3.5" />
+  </Icon>
+)
 
 export const PlusIcon = (p: IconProps) => (
   <Icon {...p}>

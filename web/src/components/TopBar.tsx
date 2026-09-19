@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { textOn } from '../color'
 import type { Series } from '../data/types'
-import { ChevronLeftIcon, PauseIcon, PlayIcon } from './icons'
+import { BubblesIcon, ChevronLeftIcon, LineChartIcon, PauseIcon, PlayIcon } from './icons'
 
+export type ViewMode = 'line' | 'bubble'
 
 /** Pills shown before the rest collapse into "+N". */
 const COLLAPSED = 2
@@ -16,6 +17,8 @@ interface Props {
   onIsolateSeries: (id: string) => void
   playing: boolean
   onTogglePlay: () => void
+  mode: ViewMode
+  onModeChange: (mode: ViewMode) => void
 }
 
 export function TopBar({
@@ -26,6 +29,8 @@ export function TopBar({
   onIsolateSeries,
   playing,
   onTogglePlay,
+  mode,
+  onModeChange,
 }: Props) {
   const [expanded, setExpanded] = useState(false)
   const shown = expanded ? series : series.slice(0, COLLAPSED)
@@ -66,6 +71,19 @@ export function TopBar({
       <button className="round-btn" aria-label={playing ? 'Pause' : 'Play'} onClick={onTogglePlay}>
         {playing ? <PauseIcon size={14} /> : <PlayIcon size={14} />}
       </button>
+      <span className="divider" />
+      <div className="segmented">
+        <button className={mode === 'line' ? 'on' : ''} aria-label="Line view" onClick={() => onModeChange('line')}>
+          <LineChartIcon size={17} />
+        </button>
+        <button
+          className={mode === 'bubble' ? 'on' : ''}
+          aria-label="Bubble view"
+          onClick={() => onModeChange('bubble')}
+        >
+          <BubblesIcon size={17} />
+        </button>
+      </div>
     </header>
   )
 }
