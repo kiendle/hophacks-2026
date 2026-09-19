@@ -1,6 +1,7 @@
 import { traction } from '../data/sentiment'
 import type { Post, Selection, Series, TimeRange } from '../data/types'
 import { ASK_PROTOCOL_VERSION, type AskRequest, type EvidencePost, type IsoRange } from './protocol'
+import { computeTrends } from './trend'
 
 /** Evidence posts sent with each question. */
 const EVIDENCE_LIMIT = 30
@@ -78,6 +79,7 @@ export function buildAskRequest(
       name: ctx.topic,
       subtopics: ctx.series.map((s) => ({ id: s.id, name: s.name, visible: !ctx.hidden.has(s.id) })),
     },
+    trends: computeTrends(focus, scopeRange, ctx.now),
     evidence: collectEvidence(focus, scopeRange),
   }
 }

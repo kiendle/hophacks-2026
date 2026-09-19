@@ -43,9 +43,16 @@ function answer(req: AskRequest): string {
 
   const mood = avg < 4.5 ? 'mostly negative' : avg > 6 ? 'mostly positive' : 'mixed'
   const lead = lowest.length > 1 ? ` ${lowest[0].name} drew the most criticism (${lowest[0].avg.toFixed(1)} of 10).` : ''
+  const main = req.trends.find((t) => t.subtopic !== 'all') ?? req.trends[0]
+  const trend = main
+    ? ` Sentiment ${main.sentiment.change < 0 ? 'fell' : 'rose'} ${Math.abs(main.sentiment.change).toFixed(1)} points ` +
+      `(${main.sentiment.slopePerDay.toFixed(1)} per day, r2 ${main.sentiment.r2.toFixed(2)}), from ` +
+      `${main.sentiment.start.toFixed(1)} to ${main.sentiment.end.toFixed(1)}, while traction moved ` +
+      `${main.traction.changeRatio?.toFixed(1) ?? '?'}x.`
+    : ''
   return (
     `(Mock answer) You asked: "${req.question}". Looking at ${focus} from ${span}, ` +
-    `the ${posts.length} highest-traction posts are ${mood}, averaging ${avg.toFixed(1)} of 10.${lead} ` +
+    `the ${posts.length} highest-traction posts are ${mood}, averaging ${avg.toFixed(1)} of 10.${lead}${trend} ` +
     `The posts below carry the most negative weight.`
   )
 }

@@ -32,6 +32,12 @@ export interface AskRequest {
     subtopics: { id: string; name: string; visible: boolean }[]
   }
   /**
+   * How sentiment and traction moved across the scope, per subtopic, plus a
+   * combined "all" row when several are in scope. Saves the backend from
+   * re-deriving the shape of what the user is looking at.
+   */
+  trends: TrendStat[]
+  /**
    * Posts the client already holds for this scope, highest traction first.
    * Optional reading: a backend with its own store should query by `scope`
    * instead, and may treat these as hints.
@@ -54,6 +60,37 @@ export interface IsoRange {
   end: number
   startIso: string
   endIso: string
+}
+
+export interface TrendStat {
+  /** Subtopic id, or "all" for the combined row. */
+  subtopic: string
+  /** Time buckets the fit is based on. */
+  buckets: number
+  /** Posts in the scope. */
+  volume: number
+  sentiment: {
+    /** Fitted value at the first and last bucket, on the 0 to 10 scale. */
+    start: number
+    end: number
+    /** end - start: the rise or fall across the scope. */
+    change: number
+    /** Points per day; negative means falling. */
+    slopePerDay: number
+    mean: number
+    /** 0 to 1: how much of the movement the straight line explains. Low means noisy or not linear. */
+    r2: number
+    min: { value: number; time: string }
+    max: { value: number; time: string }
+  }
+  traction: {
+    total: number
+    /** Traction of the first and last bucket in scope. */
+    first: number
+    last: number
+    /** last / first, or null when the first bucket had none. */
+    changeRatio: number | null
+  }
 }
 
 export interface EvidencePost {
