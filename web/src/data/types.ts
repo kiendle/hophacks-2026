@@ -17,6 +17,10 @@ export interface Bucket {
   start: number
   /** Traction-weighted mean sentiment, 0 to 10. */
   sentiment: number
+  /** Sum of post weights behind `sentiment`, so buckets can be combined. */
+  weight: number
+  /** Sum of weight * sentiment^2, for the weighted spread across a window. */
+  sqSum: number
   /** Posts in the bucket. */
   volume: number
   /** Latest known traction of the bucket's posts. */

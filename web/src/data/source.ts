@@ -2,24 +2,48 @@ import { useEffect, useState } from 'react'
 import { generateDevSeries } from './devMock'
 import type { Series } from './types'
 
-/**
- * Anything that can feed the views. A WebSocket source will accumulate bucket
- * messages and call `onUpdate` with the full series list on each change.
- */
+/** What the views read: the series so far, plus where the stream has reached. */
+export interface StreamSnapshot {
+  series: Series[]
+  /** The moment the stream has reached, or null when all data is already in. */
+  now: number | null
+  /** True while a stream is still delivering. */
+  streaming: boolean
+  /** Events scanned upstream, and events kept after filtering. */
+  read: number
+  kept: number
+}
+
 export interface DataSource {
-  subscribe(onUpdate: (series: Series[]) => void): () => void
+  subscribe(onUpdate: (snapshot: StreamSnapshot) => void): () => void
 }
 
-/** Development only. Swap for a live source (WebSocket) when the backend is up. */
-export const devMockSource: DataSource = {
-  subscribe(onUpdate) {
-    onUpdate(generateDevSeries())
-    return () => {}
-  },
+/** Firehose posts scanned for each one kept, for the fixture's event readout. */
+const EVENTS_PER_KEPT = 38
+
+/** Development only: the whole fixture at once, with no streaming. */
+export function createDevMockSource(subtopics?: string[]): DataSource {
+  return {
+    subscribe(onUpdate) {
+      const series = generateDevSeries(subtopics)
+      let kept = 0
+      for (const s of series) for (const b of s.buckets) kept += b.volume
+      onUpdate({ series, now: null, streaming: false, read: kept * EVENTS_PER_KEPT, kept })
+      return () => {}
+    },
+  }
 }
 
-export function useSeries(source: DataSource): Series[] {
-  const [series, setSeries] = useState<Series[]>([])
-  useEffect(() => source.subscribe(setSeries), [source])
-  return series
+export const devMockSource = createDevMockSource()
+
+export function useStream(source: DataSource): StreamSnapshot {
+  const [snapshot, setSnapshot] = useState<StreamSnapshot>({
+    series: [],
+    now: null,
+    streaming: false,
+    read: 0,
+    kept: 0,
+  })
+  useEffect(() => source.subscribe(setSnapshot), [source])
+  return snapshot
 }

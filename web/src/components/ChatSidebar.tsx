@@ -5,7 +5,7 @@ import { textOn } from '../color'
 import type { Selection, Series } from '../data/types'
 import { formatRange } from '../format'
 import { sentimentColor } from '../sentimentColor'
-import { CloseIcon, SendIcon, StopIcon } from './icons'
+import { BotIcon, CloseIcon, SendIcon, StopIcon } from './icons'
 
 interface Props {
   selection: Selection
@@ -36,28 +36,32 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext }:
 
   return (
     <aside className="chat">
-      <div className="chat-top">
-        {!empty && (
-          <div className="chip">
-            <div className="chip-body">
-              {subtopics.map((s) => (
-                <span key={s.id} className="subtopic-tag" style={{ background: s.color, color: textOn(s.color) }}>
-                  {s.name}
-                </span>
-              ))}
-              {selection.range && <span className="chip-range">{formatRange(selection.range)}</span>}
-            </div>
-            <button className="icon-btn" aria-label="Clear selection" onClick={onClearSelection}>
-              <CloseIcon size={13} />
-            </button>
+      <div className="messages" ref={scroller}>
+        {messages.length === 0 && (
+          <div className="chat-empty">
+            <BotIcon size={28} />
+            Ask Sentibot anything
           </div>
         )}
-      </div>
-      <div className="messages" ref={scroller}>
         {messages.map((m) => (
           <Message key={m.id} message={m} byId={byId} />
         ))}
       </div>
+      {!empty && (
+        <div className="chip">
+          <div className="chip-body">
+            {subtopics.map((s) => (
+              <span key={s.id} className="subtopic-tag" style={{ background: s.color, color: textOn(s.color) }}>
+                {s.name}
+              </span>
+            ))}
+            {selection.range && <span className="chip-range">{formatRange(selection.range)}</span>}
+          </div>
+          <button className="icon-btn" aria-label="Clear selection" onClick={onClearSelection}>
+            <CloseIcon size={13} />
+          </button>
+        </div>
+      )}
       <form
         className="input-row"
         onSubmit={(e) => {

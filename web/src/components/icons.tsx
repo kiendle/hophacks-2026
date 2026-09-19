@@ -114,3 +114,17 @@ export const StopIcon = (p: IconProps) => (
     <rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor" stroke="none" />
   </Icon>
 )
+
+export const BotIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="4" y="7.5" width="16" height="12" rx="4" />
+    <path d="M12 3.5v4M9.5 13v1.5M14.5 13v1.5" />
+  </Icon>
+)
+
+/** Crossed swords: how much the subtopic has people fighting. */
+export const SpreadIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M5.5 19 18.5 6M3 16.5 7.5 21M18.5 19 5.5 6M21 16.5 16.5 21" />
+  </Icon>
+)

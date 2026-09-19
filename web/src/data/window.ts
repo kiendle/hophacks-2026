@@ -1,4 +1,5 @@
 import { BUCKET_MS } from './config'
+import { spread } from './sentiment'
 import type { Bucket, Snapshot } from './types'
 
 /**
@@ -17,7 +18,10 @@ export function tractionAt(bucket: Bucket, t: number): number {
       lo = mid + 1
     } else hi = mid - 1
   }
-  return found ? found.traction : 0
+  if (found) return found.traction
+  // A streamed bucket carries no snapshot until it closes, and its running
+  // total is current rather than final, so it is safe to read directly.
+  return s.length === 0 ? bucket.traction : 0
 }
 
 export interface WindowStat {
@@ -25,8 +29,10 @@ export interface WindowStat {
   volume: number
   /** Engagement of those posts as of the window's end. */
   traction: number
-  /** Volume-weighted mean sentiment, NaN when the window is empty. */
+  /** Traction-weighted mean sentiment, NaN when the window is empty. */
   sentiment: number
+  /** Weighted standard deviation of sentiment across the window, 0 to 5. */
+  spread: number
 }
 
 /** First bucket index whose span ends after `t`. */
@@ -50,6 +56,9 @@ export function windowStat(buckets: Bucket[], start: number, end: number): Windo
   let volume = 0
   let traction = 0
   let weighted = 0
+  // Spreads cannot be averaged, so the moments are summed and combined at the end.
+  let weight = 0
+  let sqSum = 0
   for (let i = firstAfter(buckets, start); i < buckets.length; i++) {
     const b = buckets[i]
     if (b.start >= end) break
@@ -59,8 +68,11 @@ export function windowStat(buckets: Bucket[], start: number, end: number): Windo
     // Snapshots cover the whole bucket; drop only the share that left the window.
     const kept = (b.start + BUCKET_MS - from) / BUCKET_MS
     volume += seen * b.volume
-    weighted += seen * b.volume * b.sentiment
+    weight += seen * b.weight
+    weighted += seen * b.weight * b.sentiment
+    sqSum += seen * b.sqSum
     traction += kept * tractionAt(b, end)
   }
-  return { volume, traction, sentiment: volume > 0 ? weighted / volume : NaN }
+  const mean = weight > 0 ? weighted / weight : NaN
+  return { volume, traction, sentiment: mean, spread: spread(weight, mean, sqSum) }
 }

@@ -25,7 +25,7 @@
 }
 
 .ambient-label {
-  fill: #3c3c3c;
+  fill: #575757;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -36,7 +36,7 @@
 }
 
 .ambient-stats text {
-  fill: #2f2f2f;
+  fill: #575757;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   paint-order: stroke;
@@ -47,8 +47,8 @@
 
 .ambient-stats path {
   fill: none;
-  stroke: #2f2f2f;
-  stroke-width: 3.2;
+  stroke: #6a6a6a;
+  stroke-width: 2.8;
   stroke-linecap: round;
   stroke-linejoin: round;
   /* Stands off the bubble the way the cased text does. */
@@ -65,4 +65,10 @@
 
 .ambient-axis-line {
   stroke: #d8d8d8;
+}
+
+/* A white rim keeps a bubble readable even when another sits right on top. */
+.ambient-head {
+  stroke: #fff;
+  stroke-width: 2;
 }

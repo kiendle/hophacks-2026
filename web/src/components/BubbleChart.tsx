@@ -10,7 +10,7 @@ import { useSize } from '../hooks/useSize'
 import { useSmoothed } from '../hooks/useSmoothed'
 import { MARGIN as M } from '../layout'
 import { SentimentGauge } from './HoverCard'
-import { InfoIcon, PostsIcon, TractionIcon } from './icons'
+import { InfoIcon, PostsIcon, SpreadIcon, TractionIcon } from './icons'
 
 /** Past positions drawn behind each bubble, one per bucket. */
 const TRAIL = 6
@@ -28,23 +28,12 @@ interface Props {
   onClearSubtopics: () => void
 }
 
-const log = (traction: number) => Math.log10(Math.max(1, traction))
+/** Sentiment runs 0 to 10, so its standard deviation cannot exceed 5. */
+const MAX_SPREAD = 5
 
-/** A window's values as [log traction, sentiment, volume], carrying `fallback` when empty. */
+/** A window's values as [spread, sentiment, volume], carrying `fallback` when empty. */
 function encode(stat: WindowStat, fallback: number[]): number[] {
-  return stat.volume > 0 ? [log(stat.traction), stat.sentiment, stat.volume] : [fallback[0], fallback[1], 0]
-}
-
-/** Ticks inside [lo, hi] in log10 units: powers of ten, plus 2 and 5 times them on narrow spans. */
-function logTicks(lo: number, hi: number): number[] {
-  const ticks: number[] = []
-  const mantissas = hi - lo > 2.5 ? [1] : [1, 2, 5]
-  for (let p = Math.floor(lo); p <= Math.ceil(hi); p++)
-    for (const m of mantissas) {
-      const v = Math.log10(m) + p
-      if (v >= lo && v <= hi) ticks.push(v)
-    }
-  return ticks
+  return stat.volume > 0 ? [stat.spread, stat.sentiment, stat.volume] : [fallback[0], fallback[1], 0]
 }
 
 export function BubbleChart({ series, now, windowMs, selected, onToggle, onClearSubtopics }: Props) {
@@ -57,29 +46,22 @@ export function BubbleChart({ series, now, windowMs, selected, onToggle, onClear
   const bounds = useMemo(() => {
     const start = Math.min(...series.map((s) => s.buckets[0]?.start ?? Infinity))
     const end = Math.max(...series.map((s) => (s.buckets.at(-1)?.start ?? -Infinity) + BUCKET_MS))
-    const out: { t: number; x: [number, number]; y: [number, number] }[] = []
-    let x: [number, number] = [Infinity, -Infinity]
+    const out: { t: number; y: [number, number] }[] = []
     let y: [number, number] = [Infinity, -Infinity]
     // Only full windows count; half-empty early ones would drag the minimum down.
     for (let t = start + windowMs; t <= end; t += BUCKET_MS) {
       for (const s of series) {
         const w = windowStat(s.buckets, t - windowMs, t)
         if (!(w.volume > 0)) continue
-        x = [Math.min(x[0], log(w.traction)), Math.max(x[1], log(w.traction))]
         y = [Math.min(y[0], w.sentiment), Math.max(y[1], w.sentiment)]
       }
-      out.push({ t, x, y })
+      out.push({ t, y })
     }
     return out
   }, [series, windowMs])
 
   const known = bounds.findLast((b) => b.t <= now) ?? bounds[0]
-  const xPad = known ? Math.max(0.25, (known.x[1] - known.x[0]) * 0.12) : 0
   const yPad = known ? Math.max(0.3, (known.y[1] - known.y[0]) * 0.12) : 0
-  const [xLo, xHi] = useSmoothed(
-    known && isFinite(known.x[0]) ? known.x[0] - xPad : 0,
-    known && isFinite(known.x[1]) ? known.x[1] + xPad : 4,
-  )
   const [yLo, yHi] = useSmoothed(
     known && isFinite(known.y[0]) ? Math.max(0, known.y[0] - yPad) : 4,
     known && isFinite(known.y[1]) ? Math.min(10, known.y[1] + yPad) : 8,
@@ -92,7 +74,7 @@ export function BubbleChart({ series, now, windowMs, selected, onToggle, onClear
     for (const s of series) {
       const headStat = windowStat(s.buckets, now - windowMs, now)
       stats.set(s.id, headStat)
-      const head = encode(headStat, [0, 5])
+      const head = encode(headStat, [1, 5])
       target.push(...head)
       for (let k = 1; k <= TRAIL; k++) {
         const t = now - k * BUCKET_MS
@@ -104,7 +86,7 @@ export function BubbleChart({ series, now, windowMs, selected, onToggle, onClear
   }, [series, now, windowMs])
   const eased = useEased(target)
 
-  const x = scaleLinear().domain([xLo, xHi]).range([0, iw])
+  const x = scaleLinear().domain([0, MAX_SPREAD]).range([0, iw])
   const y = scaleLinear().domain([yLo, yHi]).range([ih, 0])
   const stride = 3 + TRAIL * 2
 
@@ -128,7 +110,7 @@ export function BubbleChart({ series, now, windowMs, selected, onToggle, onClear
   const hovered = bubbles.find((b) => b.series.id === hover)
   const hoveredStat = hover ? stats.get(hover) : undefined
 
-  const xTicks = logTicks(xLo, xHi)
+  const xTicks = [0, 1, 2, 3, 4, 5]
   const windowHours = Math.round(windowMs / 3_600_000)
 
   return (
@@ -148,7 +130,7 @@ export function BubbleChart({ series, now, windowMs, selected, onToggle, onClear
               <g key={v} transform={`translate(${x(v)},0)`}>
                 <line y2={ih} className="grid" />
                 <text y={ih + 20} textAnchor="middle" className="tick">
-                  {formatCount(Math.round(10 ** v))}
+                  {v}
                 </text>
               </g>
             ))}
@@ -219,11 +201,12 @@ export function BubbleChart({ series, now, windowMs, selected, onToggle, onClear
 
       {width > 0 && (
         <div className="bubble-x-label" style={{ left: M.left + iw / 2, top: M.top + ih + 26 }}>
-          Traction, past {windowHours}h
-          <span className="info" tabIndex={0} aria-label="How traction is measured">
+          Divisiveness, past {windowHours}h
+          <span className="info" tabIndex={0} aria-label="How divisiveness is measured">
             <InfoIcon size={14} />
             <span className="info-tip" role="tooltip">
-              likes + replies + 2 × (reposts + quotes), log scale
+              Spread of sentiment within the subtopic, 0 to 5. Low and right is a fight, low and left is
+              agreement that it is bad, high and left is quiet approval.
             </span>
           </span>
         </div>
@@ -249,6 +232,10 @@ export function BubbleChart({ series, now, windowMs, selected, onToggle, onClear
           </span>
           <SentimentGauge value={hoveredStat.sentiment} />
           <div className="card-stats muted">
+            <span>
+              <SpreadIcon size={13} />
+              {hoveredStat.spread.toFixed(1)}
+            </span>
             <span>
               <TractionIcon size={13} />
               {formatCount(Math.round(hoveredStat.traction))}

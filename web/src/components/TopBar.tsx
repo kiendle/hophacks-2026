@@ -1,5 +1,7 @@
 import { useState } from 'react'
+import { FiltersMenu } from '../app/FiltersMenu'
 import { textOn } from '../color'
+import { formatCount } from '../format'
 import type { Series } from '../data/types'
 import { BubblesIcon, ChevronLeftIcon, LineChartIcon, PauseIcon, PlayIcon } from './icons'
 
@@ -17,6 +19,11 @@ interface Props {
   onIsolateSeries: (id: string) => void
   playing: boolean
   onTogglePlay: () => void
+  /** Search terms a post must match, editable mid-run. */
+  terms: string[]
+  onTermsChange: (terms: string[]) => void
+  /** Firehose events seen and kept so far. */
+  events: { read: number; kept: number }
   mode: ViewMode
   onModeChange: (mode: ViewMode) => void
 }
@@ -29,6 +36,9 @@ export function TopBar({
   onIsolateSeries,
   playing,
   onTogglePlay,
+  terms,
+  onTermsChange,
+  events,
   mode,
   onModeChange,
 }: Props) {
@@ -54,6 +64,7 @@ export function TopBar({
           </button>
         )
       })}
+      </div>
       {rest > 0 && (
         <button className="pill pill-add" onClick={() => setExpanded(true)}>
           +{rest}
@@ -64,9 +75,14 @@ export function TopBar({
           <ChevronLeftIcon size={15} />
         </button>
       )}
-      </div>
 
       <div className="spacer" />
+
+      <span className="events">
+        read {formatCount(events.read)} · maintained {formatCount(events.kept)}
+      </span>
+      <FiltersMenu terms={terms} onChange={onTermsChange} />
+      <span className="divider" />
 
       <button className="round-btn" aria-label={playing ? 'Pause' : 'Play'} onClick={onTogglePlay}>
         {playing ? <PauseIcon size={14} /> : <PlayIcon size={14} />}

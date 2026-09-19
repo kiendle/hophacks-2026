@@ -3,7 +3,7 @@
  * without a backend. Replace with a real DataSource; see data/source.ts.
  */
 import { BUCKET_MS, SERIES_COLORS } from './config'
-import { traction, weightedSentiment } from './sentiment'
+import { sentimentStats, traction } from './sentiment'
 import type { Bucket, Post, Series } from './types'
 
 const DAY = 24 * 60 * 60 * 1000
@@ -182,6 +182,7 @@ function makeSeries(profile: Profile, index: number): Series {
       })
     }
 
+    const stats = sentimentStats(posts)
     let top = posts[0]
     for (const p of posts) if (traction(p) > traction(top)) top = p
     const pool = pickPool(profile, top.sentiment, mid)
@@ -197,7 +198,9 @@ function makeSeries(profile: Profile, index: number): Series {
 
     buckets.push({
       start,
-      sentiment: weightedSentiment(posts),
+      sentiment: stats.mean,
+      weight: stats.weight,
+      sqSum: stats.sqSum,
       volume,
       traction: snapshots[snapshots.length - 1].traction,
       snapshots,
@@ -205,9 +208,35 @@ function makeSeries(profile: Profile, index: number): Series {
     })
   }
 
-  return { id: profile.id, name: profile.name, color: SERIES_COLORS[index], buckets }
+  return { id: profile.id, name: profile.name, color: SERIES_COLORS[index % SERIES_COLORS.length], buckets }
 }
 
-export function generateDevSeries(): Series[] {
-  return PROFILES.map(makeSeries)
+/** Deterministic profile for a subtopic the fixture does not know. */
+function inventProfile(name: string, index: number): Profile {
+  let h = 0
+  for (const ch of name) h = (Math.imul(h, 31) + ch.charCodeAt(0)) | 0
+  const rand = mulberry32(Math.abs(h) + 1)
+  const role: Role = index === 0 ? 'shock' : index === 1 ? 'drift' : 'flat'
+  return {
+    id: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    name,
+    baseSentiment: 4.8 + rand() * 1.9,
+    baseVolume: Math.round(250 + rand() * 1200),
+    role,
+    shift: role === 'shock' ? -(2.4 + rand()) : role === 'drift' ? 0.4 + rand() * 0.7 : 0,
+    spike: role === 'shock' ? 4 + rand() * 2 : role === 'drift' ? 0.5 + rand() : 0.1 + rand() * 0.3,
+    engagement: 0.6 + rand(),
+  }
+}
+
+/**
+ * Series for the given subtopics, in order. Known names keep their scripted
+ * behaviour around the mid-month event; the rest are invented deterministically.
+ */
+export function generateDevSeries(subtopics?: string[]): Series[] {
+  if (!subtopics) return PROFILES.map(makeSeries)
+  return subtopics.map((name, i) => {
+    const known = PROFILES.find((p) => p.name.toLowerCase() === name.toLowerCase())
+    return makeSeries(known ? { ...known, role: i === 0 ? 'shock' : known.role } : inventProfile(name, i), i)
+  })
 }
