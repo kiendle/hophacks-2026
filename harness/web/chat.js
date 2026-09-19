@@ -203,8 +203,8 @@ export function projectLines(spec) {
 const LIVE_DEFAULTS = { minutes: 15, seconds: 20 };
 const span = (value, fallback) => (Number.isFinite(Number(value)) && Number(value) > 0 ? Number(value) : fallback);
 
-// What the "details" link opens: the same facts the step was built from, in plain words. A person
-// who wants to know exactly what was searched reads this; the raw call stays behind ?dev=1.
+// The plain-words part of what the "details" link opens: the same facts the step was built from.
+// A person who wants to know what was searched reads this; the exact request is shown below it.
 export function stepFacts(detail, ms) {
   const info = asObject(detail);
   const input = asObject(info.input);
@@ -247,7 +247,7 @@ function spans(line) {
 }
 
 // ------------------------------------------------------------- DOM plumbing
-// ?dev=1 is the only way the raw call, the per-step duration and the JSON button exist at all.
+// ?dev=1 adds one thing only: the Copy JSON button on the project card.
 const DEV = (() => { try { return /(^|[?&])dev=1(&|$)/.test(String(location.search || '')); } catch { return false; } })();
 const $ = (id) => document.getElementById(id);
 
@@ -393,10 +393,11 @@ function showError(text) {
 }
 
 // ---------------------------------------------------------------- activity
-// Every row is one real tool call: what it is doing, why the assistant said it was doing it, and
-// what came back, written by the server from the tool's real result. "details" opens the same facts
-// in plain words, including how long it took. The raw call exists only in the developer view, so a
-// normal reader never meets a tool name or a piece of JSON.
+// Every row is one real tool call. Closed, a row is its state mark, its title and a "details" link
+// and nothing else, so a normal reader never meets a tool name or a piece of JSON. "details" opens,
+// in this order: why the assistant did it, what came back (written by the server from the tool's
+// real result), the same facts in plain words, and the exact request that was sent. The panel is
+// built when it is opened and emptied when it is closed, so an unopened row holds none of it.
 function detailText(detail) {
   try {
     const name = detail && typeof detail.tool === 'string' ? detail.tool : '(unknown tool)';
@@ -412,39 +413,72 @@ function factNodes(detail, ms) {
     document.createTextNode(plainText(line.value))));
 }
 
+// The two parts of an open panel that change when the step ends: the result and the facts.
+function fillStepPanel(row) {
+  if (!row.outcomeNode || !row.factsNode) return;  // closed
+  row.outcomeNode.textContent = row.outcome === null ? 'Still working...' : row.outcome;
+  row.outcomeNode.dataset.waiting = row.outcome === null ? 'true' : 'false';
+  const facts = factNodes(row.detail, row.ms);
+  row.factsNode.replaceChildren(...facts);
+  row.factsNode.hidden = !facts.length;
+}
+
+function openStepPanel(row) {
+  row.outcomeNode = el('p', { class: 'step-outcome' });
+  row.factsNode = el('div', { class: 'step-facts' });
+  row.panel.replaceChildren(...[
+    row.why ? el('p', { class: 'step-why' }, el('span', { class: 'step-why-label', text: 'Why: ' }), document.createTextNode(row.why)) : null,
+    row.outcomeNode,
+    row.factsNode,
+    el('p', { class: 'step-raw-label', text: 'Exact request' }),
+    el('pre', { class: 'step-raw', text: detailText(row.detail) }),  // textContent: the input is never markup
+  ].filter(Boolean));
+  fillStepPanel(row);
+}
+
+function closeStepPanel(row) {
+  row.outcomeNode = null;
+  row.factsNode = null;
+  row.panel.replaceChildren();
+}
+
+let panelCount = 0;  // every panel needs its own id for aria-controls
+
 function stepRow(event) {
-  const outcome = el('p', { class: 'step-outcome', hidden: true });
-  const raw = DEV ? el('pre', { class: 'step-raw', text: detailText(event.detail) }) : null;
-  const facts = el('div', { class: 'step-facts', hidden: true }, ...factNodes(event.detail, null), raw);
+  panelCount += 1;
+  const panel = el('div', { class: 'step-panel', id: `step-panel-${panelCount}`, hidden: true });
+  const row = {
+    node: null, panel, outcomeNode: null, factsNode: null, detail: event.detail, ok: null, ms: null,
+    outcome: null,  // null until the step ends
+    why: typeof event.why === 'string' ? plainText(event.why.trim()) : '',
+  };
   const details = el('button', {
-    class: 'link-button step-details', type: 'button', text: 'details', 'aria-expanded': 'false',
+    class: 'link-button step-details', type: 'button', text: 'details',
+    'aria-expanded': 'false', 'aria-controls': `step-panel-${panelCount}`,
     onclick: () => {
-      const open = facts.hidden;
-      facts.hidden = !open;
+      const open = panel.hidden;
+      if (open) openStepPanel(row); else closeStepPanel(row);
+      panel.hidden = !open;
       details.setAttribute('aria-expanded', open ? 'true' : 'false');
       scroll();
     },
   });
-  const why = typeof event.why === 'string' && event.why.trim()
-    ? el('p', { class: 'step-why' }, el('span', { class: 'step-why-label', text: 'Why: ' }), document.createTextNode(plainText(event.why.trim())))
-    : null;
-  const node = el('div', { class: 'step' },
+  row.node = el('div', { class: 'step' },
     el('div', { class: 'step-head' },
       el('i', { class: 'step-mark', 'aria-hidden': 'true' }),
       el('span', { class: 'step-title', text: plainText(String(event.title || 'Working on it')) }),
       details),
-    why, outcome, facts);
-  node.dataset.state = 'run';  // the mark is drawn from this, and it changes when the step ends
-  return { node, outcome, facts, raw, detail: event.detail, ok: null };
+    panel);
+  row.node.dataset.state = 'run';  // the mark is drawn from this, and it changes when the step ends
+  return row;
 }
 
 function endStepRow(row, event) {
   row.ok = event.ok !== false;
   row.node.dataset.state = row.ok ? 'ok' : 'warn';
-  row.outcome.textContent = plainText(String(event.outcome || 'Done.'));
-  row.outcome.hidden = false;
-  // the duration is only known now, so the details are rewritten with it, keeping the raw call last
-  row.facts.replaceChildren(...factNodes(row.detail, event.ms), ...(row.raw ? [row.raw] : []));
+  row.outcome = plainText(String(event.outcome || 'Done.'));
+  row.ms = event.ms;  // only known now
+  fillStepPanel(row);     // an open panel is updated in place and stays open, a closed one stays empty
 }
 
 function startActivity() {

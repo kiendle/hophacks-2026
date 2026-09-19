@@ -86,7 +86,8 @@ footer { margin-top: 44px; }
 .chip:hover { background: #e3ece0; }
 
 /* ------------------------------------------------------------ activity */
-/* One row per real tool call: state mark, what it is doing, how long it took, and the proof. */
+/* One row per real tool call: a state mark, what it is doing and a "details" link. Everything else
+   (why, the result, the plain facts, the exact request) lives in the panel that link opens. */
 .activity { display: grid; gap: 7px; padding: 2px 4px; }
 .activity-rows { display: grid; gap: 10px; }
 .step { display: grid; gap: 2px; font-size: 11.5px; line-height: 1.5; color: #45594b; }
@@ -99,14 +100,17 @@ footer { margin-top: 44px; }
 .step[data-state="warn"] .step-mark { color: #b86043; }
 .step[data-state="warn"] .step-mark::before { content: "!"; width: auto; height: auto; background: none; animation: none; font-weight: 700; }
 @media (prefers-reduced-motion: reduce) { .step-mark::before { animation: none; opacity: .7; } }
-.step-why, .step-outcome { margin: 0; padding-left: 19px; overflow-wrap: anywhere; }
+.step-panel { margin: 3px 0 2px 19px; padding-left: 9px; border-left: 2px solid #e6ece3; display: grid; gap: 3px; }
+.step-why, .step-outcome { margin: 0; overflow-wrap: anywhere; }
 .step-why { font-style: italic; color: var(--muted); }
 .step-outcome { color: #45594b; }
-.step-facts { margin: 4px 0 0 19px; display: grid; gap: 2px; }
+.step-outcome[data-waiting="true"] { color: var(--muted); }
+.step-facts { margin: 2px 0 0; display: grid; gap: 2px; }
 .step-fact { margin: 0; font-size: 11px; line-height: 1.5; color: var(--muted); overflow-wrap: anywhere; }
 .step-fact-label { font-weight: 600; }
+.step-raw-label { margin: 5px 0 0; font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
 .step-raw {
-  margin: 5px 0 0; padding: 9px; max-height: 190px; overflow: auto;
+  margin: 0; padding: 9px; max-height: 190px; overflow: auto;
   background: #f5f7f3; border: 1px solid #e6ece3; border-radius: 8px;
   font-family: ui-monospace, monospace; font-size: 10.5px; line-height: 1.55; white-space: pre; color: #45594b;
 }
