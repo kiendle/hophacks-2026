@@ -4,5 +4,17 @@
 
 # Local datasets and Python caches
 *.parquet
+*.parquet.part
 __pycache__/
 *.py[cod]
+
+# Morning Brief collector state and rendered briefs
+morning-brief/data/
+
+# Harness: queryable tables/results and private session state (see harness/DESIGN.md §13)
+harness/data/
+harness/state/
+
+# Harness demo project: keep the small scored-posts table, drop the Jev response cache
+!harness/demo/projects/*/posts.parquet
+harness/demo/projects/*/jev_cache*.jsonl

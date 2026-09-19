@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signal — Morning Brief</title>
+  <link rel="stylesheet" href="/signal.css">
+  <link rel="stylesheet" href="/brief.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Morning Brief home"><span class="brand-mark" aria-hidden="true">s</span>signal<span class="brand-note">/ morning brief</span></a>
+      <span class="connection" id="connection" role="status" data-state="connecting"><span class="dot"></span><span id="connection-text">Connecting</span></span>
+    </header>
+
+    <section class="intro">
+      <p class="eyebrow">BLUESKY · MORNING BRIEF</p>
+      <h1>It listened all night.<br><span>You get the highlights.</span></h1>
+      <p class="lede">Follow a few interests. The collector keeps every public post about them, ranks what people actually reacted to, and turns it into a short podcast you can play when you wake up.</p>
+    </section>
+
+    <section class="filter-panel" aria-labelledby="interest-label">
+      <form id="interest-form">
+        <label id="interest-label" for="query">What do you want to hear about?</label>
+        <div class="input-row">
+          <input id="query" name="query" type="search" placeholder="Try: what's happening in AI, the Orioles, or Climate: heat wave, wildfire, IPCC" maxlength="300" autocomplete="off" spellcheck="false" aria-describedby="interest-help">
+          <button class="primary" type="submit" id="follow">Follow <span aria-hidden="true">+</span></button>
+        </div>
+        <p class="helper" id="interest-help">Describe it in your own words and Claude picks the search terms · or write <b>Name: term, term</b> to choose them yourself · the last hours are replayed for every new interest</p>
+      </form>
+      <div class="filter-manager">
+        <ul id="interests" class="interest-list" aria-label="Followed interests"></ul>
+        <p id="interest-feedback" class="filter-feedback" role="status"></p>
+        <div id="backfill" class="backfill" hidden>
+          <div class="backfill-bar"><i id="backfill-fill"></i></div>
+          <p id="backfill-text" class="helper"></p>
+        </div>
+      </div>
+      <div class="source-bar" id="source-bar">
+        <div>
+          <p class="source-what"><b>Data source</b> <span id="source-network">Bluesky</span> — every public post, live from <span id="source-stream">Jetstream</span> (<code id="source-host"></code>) · likes and reposts from the Bluesky AppView (<code id="source-appview"></code>)</p>
+          <p class="source-live" id="source-live" role="status">Connecting…</p>
+        </div>
+        <button class="secondary" id="collect-toggle" type="button">Stop collecting</button>
+      </div>
+      <div class="pipeline" id="pipeline" aria-label="Pipeline: Jetstream to interests to engagement ranking to Claude script to ElevenLabs audio"><span><i class="mini-dot"></i>Bluesky · all live posts</span><b aria-hidden="true">→</b><span>Your interests</span><b aria-hidden="true">→</b><span>Ranked by engagement</span><b aria-hidden="true">→</b><span>Claude writes</span><b aria-hidden="true">→</b><span>ElevenLabs speaks</span></div>
+    </section>
+
+    <section class="metrics" aria-label="Collector metrics">
+      <div><p>Posts scanned <span>live and replayed, this run</span></p><strong id="scanned">0</strong></div>
+      <div><p>Posts kept <span>matching an interest</span></p><strong id="kept">0</strong></div>
+      <div><p>Coverage <span>how far back every interest is complete</span></p><strong class="storage-value" id="coverage">Catching up</strong></div>
+    </section>
+
+    <section class="brief-controls" aria-label="Make a brief">
+      <div>
+        <h2>Brief me</h2>
+        <p id="brief-hint">Pick how far back to look and how long to listen.</p>
+      </div>
+      <div class="brief-actions">
+        <label class="sr-only" for="hours">Window</label>
+        <select id="hours">
+          <option value="6">Last 6 hours</option>
+          <option value="8">Last 8 hours</option>
+          <option value="10">Last 10 hours</option>
+          <option value="24">Last 24 hours</option>
+        </select>
+        <label class="sr-only" for="seconds">Length</label>
+        <div class="seconds"><input id="seconds" type="range" min="45" max="300" step="15"><output id="seconds-value" for="seconds">3:00</output></div>
+        <label class="sr-only" for="voice">Voice</label>
+        <select id="voice" hidden></select>
+        <button class="secondary" id="hear" type="button" hidden>Hear voice</button>
+        <button class="primary" id="make" type="button">Make my brief</button>
+      </div>
+      <p id="brief-progress" class="brief-progress" role="status" hidden></p>
+    </section>
+
+    <section id="brief" class="brief" aria-live="polite" hidden></section>
+
+    <section id="earlier" hidden>
+      <div class="results-heading"><div><h2>Earlier briefs</h2><p>Saved on this machine.</p></div></div>
+      <ul id="earlier-list" class="earlier-list"></ul>
+    </section>
+
+    <footer><span>Source: public Bluesky posts via Jetstream; engagement from the public AppView. Posts are social media, not verified reporting.</span><span>Script by Claude · voice by ElevenLabs</span></footer>
+  </main>
+</body>
+</html>

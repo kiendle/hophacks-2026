@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signal — Observe</title>
+  <link rel="stylesheet" href="/signal.css">
+  <link rel="stylesheet" href="/chat.css">
+  <script type="module" src="/chat.js"></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Signal home"><span class="brand-mark" aria-hidden="true">s</span>signal<span class="brand-note">/ observe</span></a>
+      <span class="connection" id="connection" role="status" data-state="live"><span class="dot"></span><span id="connection-text">Local demo</span></span>
+    </header>
+
+    <section class="intro">
+      <p class="eyebrow">SOCIAL OBSERVATION · DEMO</p>
+      <h1>Tell it what you want to watch.<br><span>It builds the project.</span></h1>
+      <p class="lede">Describe a topic in your own words. The assistant turns it into an observation project — the keywords, the window, the charts — shows you real posts it already has, and waits for your confirmation before it runs anything.</p>
+      <div class="intro-actions">
+        <button class="primary" type="button" id="open-chat">Describe what to watch <span aria-hidden="true">→</span></button>
+        <button class="secondary" type="button" id="open-chat-data">What data is here?</button>
+      </div>
+    </section>
+
+    <div class="pipeline steps" aria-label="Three steps: describe it, preview real posts, confirm and run">
+      <span><i class="mini-dot"></i>Describe it</span><b aria-hidden="true">→</b><span>Preview real posts</span><b aria-hidden="true">→</b><span>Confirm and run</span>
+    </div>
+
+    <p class="helper laptop-note">The assistant runs on this laptop's Claude Code. Posts are social media, not verified reporting.</p>
+
+    <footer><span>Public social posts, matched by keyword and scored in bulk. No ranking by a language model.</span><span>Hackathon demo · runs locally</span></footer>
+  </main>
+
+  <!-- chat-widget:start -->
+  <button class="launcher" id="launcher" type="button" aria-expanded="false" aria-controls="chat-panel" aria-label="Open the observation assistant">
+    <svg class="launcher-glyph" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false">
+      <path d="M4 5.5h16a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5H9.6L5.2 20.1A.6.6 0 0 1 4.2 19.6V16.5H4A1.5 1.5 0 0 1 2.5 15V7A1.5 1.5 0 0 1 4 5.5Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
+      <circle cx="8.5" cy="11" r="1.15" fill="currentColor"></circle>
+      <circle cx="12.5" cy="11" r="1.15" fill="currentColor"></circle>
+      <circle cx="16.5" cy="11" r="1.15" fill="currentColor"></circle>
+    </svg>
+    <span class="launcher-dot" id="launcher-dot" hidden></span>
+  </button>
+
+  <section class="chat-panel" id="chat-panel" role="dialog" aria-modal="false" aria-label="Observation assistant" hidden>
+    <header class="chat-head">
+      <div class="chat-title">
+        <strong>Observation assistant</strong>
+        <span class="chat-status" id="chat-status" role="status" data-state="ready">Ready</span>
+      </div>
+      <div class="chat-head-actions">
+        <button class="secondary chat-new" type="button" id="chat-new">New chat</button>
+        <button class="chat-close" type="button" id="chat-close" aria-label="Close the chat"><span aria-hidden="true">×</span></button>
+      </div>
+    </header>
+
+    <div class="chat-log" id="chat-log" role="log" aria-live="polite" aria-relevant="additions text" tabindex="0"></div>
+
+    <form class="composer" id="composer">
+      <label class="sr-only" for="chat-input">Message the observation assistant</label>
+      <textarea id="chat-input" rows="1" maxlength="4000" placeholder="Describe what you want to observe…" autocomplete="off" spellcheck="false"></textarea>
+      <button class="primary chat-send" type="submit" id="chat-send">Send</button>
+    </form>
+  </section>
+  <!-- chat-widget:end -->
+</body>
+</html>

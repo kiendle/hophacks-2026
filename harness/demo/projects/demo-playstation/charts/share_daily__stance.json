@@ -1,0 +1,341 @@
+{
+  "chart_id": "share_daily__stance",
+  "type": "line",
+  "title": "Share of relevant posts by stance per day",
+  "x": {
+    "field": "day",
+    "type": "date"
+  },
+  "y": {
+    "field": "share",
+    "unit": "share of relevant posts 0..1"
+  },
+  "series": [
+    {
+      "name": "critical",
+      "points": [
+        {
+          "x": "2026-09-06",
+          "y": 0.191489,
+          "count": 9,
+          "n": 47,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-07",
+          "y": 0.238095,
+          "count": 15,
+          "n": 63,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-08",
+          "y": 0.386364,
+          "count": 17,
+          "n": 44,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-09",
+          "y": 0.277778,
+          "count": 10,
+          "n": 36,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-10",
+          "y": 0.659574,
+          "count": 93,
+          "n": 141,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-11",
+          "y": 0.467742,
+          "count": 29,
+          "n": 62,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-12",
+          "y": 0.487805,
+          "count": 20,
+          "n": 41,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-13",
+          "y": 0.425532,
+          "count": 20,
+          "n": 47,
+          "sampled_fraction": 1.0
+        }
+      ]
+    },
+    {
+      "name": "supportive",
+      "points": [
+        {
+          "x": "2026-09-06",
+          "y": 0.191489,
+          "count": 9,
+          "n": 47,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-07",
+          "y": 0.15873,
+          "count": 10,
+          "n": 63,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-08",
+          "y": 0.181818,
+          "count": 8,
+          "n": 44,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-09",
+          "y": 0.055556,
+          "count": 2,
+          "n": 36,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-10",
+          "y": 0.120567,
+          "count": 17,
+          "n": 141,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-11",
+          "y": 0.080645,
+          "count": 5,
+          "n": 62,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-12",
+          "y": 0.121951,
+          "count": 5,
+          "n": 41,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-13",
+          "y": 0.170213,
+          "count": 8,
+          "n": 47,
+          "sampled_fraction": 1.0
+        }
+      ]
+    },
+    {
+      "name": "neutral_news",
+      "points": [
+        {
+          "x": "2026-09-06",
+          "y": 0.531915,
+          "count": 25,
+          "n": 47,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-07",
+          "y": 0.460317,
+          "count": 29,
+          "n": 63,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-08",
+          "y": 0.409091,
+          "count": 18,
+          "n": 44,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-09",
+          "y": 0.611111,
+          "count": 22,
+          "n": 36,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-10",
+          "y": 0.177305,
+          "count": 25,
+          "n": 141,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-11",
+          "y": 0.387097,
+          "count": 24,
+          "n": 62,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-12",
+          "y": 0.365854,
+          "count": 15,
+          "n": 41,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-13",
+          "y": 0.319149,
+          "count": 15,
+          "n": 47,
+          "sampled_fraction": 1.0
+        }
+      ]
+    },
+    {
+      "name": "unclear",
+      "points": [
+        {
+          "x": "2026-09-06",
+          "y": 0.085106,
+          "count": 4,
+          "n": 47,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-07",
+          "y": 0.142857,
+          "count": 9,
+          "n": 63,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-08",
+          "y": 0.022727,
+          "count": 1,
+          "n": 44,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-09",
+          "y": 0.055556,
+          "count": 2,
+          "n": 36,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-10",
+          "y": 0.042553,
+          "count": 6,
+          "n": 141,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-11",
+          "y": 0.064516,
+          "count": 4,
+          "n": 62,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-12",
+          "y": 0.02439,
+          "count": 1,
+          "n": 41,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-13",
+          "y": 0.085106,
+          "count": 4,
+          "n": 47,
+          "sampled_fraction": 1.0
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "start": {
+      "x": "2026-09-06",
+      "y": 0.191489,
+      "series": "critical"
+    },
+    "end": {
+      "x": "2026-09-13",
+      "y": 0.085106,
+      "series": "unclear"
+    },
+    "min": {
+      "x": "2026-09-08",
+      "y": 0.022727,
+      "series": "unclear"
+    },
+    "max": {
+      "x": "2026-09-10",
+      "y": 0.659574,
+      "series": "critical"
+    }
+  },
+  "annotations": [
+    {
+      "x": "2026-09-10",
+      "kind": "largest_change",
+      "delta": -0.433806,
+      "from": "2026-09-09",
+      "days_apart": 1,
+      "series": "neutral_news"
+    },
+    {
+      "x": "2026-09-06",
+      "kind": "low_n",
+      "n": 47
+    },
+    {
+      "x": "2026-09-07",
+      "kind": "low_n",
+      "n": 63
+    },
+    {
+      "x": "2026-09-08",
+      "kind": "low_n",
+      "n": 44
+    },
+    {
+      "x": "2026-09-09",
+      "kind": "low_n",
+      "n": 36
+    },
+    {
+      "x": "2026-09-11",
+      "kind": "low_n",
+      "n": 62
+    },
+    {
+      "x": "2026-09-12",
+      "kind": "low_n",
+      "n": 41
+    },
+    {
+      "x": "2026-09-13",
+      "kind": "low_n",
+      "n": 47
+    }
+  ],
+  "method": {
+    "relevance_gate": 0.5,
+    "n_levels": 5,
+    "denominator": "relevant scored posts per day",
+    "counts": "distinct tweet IDs"
+  },
+  "drilldown": {
+    "tool": "get_posts",
+    "args_template": {
+      "from": "{x}",
+      "to": "{x}+1d",
+      "question": "stance",
+      "label": "{series}"
+    }
+  }
+}

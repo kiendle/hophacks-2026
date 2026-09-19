@@ -1,0 +1,273 @@
+{
+  "chart_id": "top_posts",
+  "type": "table",
+  "title": "Most liked relevant posts",
+  "x": {
+    "field": "id",
+    "type": "string"
+  },
+  "y": {
+    "field": "like_count",
+    "unit": "likes"
+  },
+  "series": [
+    {
+      "name": "top posts",
+      "points": [
+        {
+          "x": "2097877506401681753",
+          "y": 404798,
+          "id": "2097877506401681753",
+          "day": "2026-09-10",
+          "like_count": 404798,
+          "sentiment": 0.39,
+          "sentiment_confidence": 0.81,
+          "body": "As confirmed earlier through our official channels, in mid-June of this year, we unexpectedly received notice from PlayStation Studios that they would cancel the PHYSINT project. PHYSINT is an important project both to me personally and to KOJIMA PRODUCTIONS. Determined to keep t",
+          "stance": "neutral_news"
+        },
+        {
+          "x": "2097875843309797880",
+          "y": 147828,
+          "id": "2097875843309797880",
+          "day": "2026-09-10",
+          "like_count": 147828,
+          "sentiment": 0.52,
+          "sentiment_confidence": 0.96,
+          "body": "We started with OD. Now, our partnership with KOJIMA PRODUCTIONS is expanding to PHYSINT.\n\nWe’re just getting started. https://t.co/IFpLGDSf8O https://t.co/3ZtXwVzxSl",
+          "stance": "supportive"
+        },
+        {
+          "x": "2097885196028637339",
+          "y": 125755,
+          "id": "2097885196028637339",
+          "day": "2026-09-10",
+          "like_count": 125755,
+          "sentiment": -0.85,
+          "sentiment_confidence": 0.75,
+          "body": "PlayStation in 2026:\n\n- End Destiny\n- End physical gaming forever\n- End porting exclusives to PC\n- Completely lose Hideo Kojima\n- Attempt to cancel Kojima's next Metal Gear franchise\n- Kojima cuts ties entirely and goes to XBOX\n- Force your single-player studios to make live http",
+          "stance": "critical"
+        },
+        {
+          "x": "2097875212427735146",
+          "y": 48525,
+          "id": "2097875212427735146",
+          "day": "2026-09-10",
+          "like_count": 48525,
+          "sentiment": 0.155,
+          "sentiment_confidence": 0.66,
+          "body": "An update from PlayStation Studios: After careful consideration, we have made the difficult decision to step away from collaborating with KOJIMA PRODUCTIONS on its project PHYSINT. We continue to have great admiration for Hideo Kojima's vision for the game.\n\nOur relationship rema",
+          "stance": "supportive"
+        },
+        {
+          "x": "2097954840416821366",
+          "y": 42792,
+          "id": "2097954840416821366",
+          "day": "2026-09-10",
+          "like_count": 42792,
+          "sentiment": -0.52,
+          "sentiment_confidence": 0.97,
+          "body": "• Lost Exclusivity to Final Fantasy \n• Lost Exclusivity to Persona \n• Lost Exclusivity to Kojima\n\nIm starting to believe Playstation Hermen Hulst really doesn't like Japan. https://t.co/oOjvvi7yqD",
+          "stance": "critical"
+        },
+        {
+          "x": "2098417050779553926",
+          "y": 38037,
+          "id": "2098417050779553926",
+          "day": "2026-09-11",
+          "like_count": 38037,
+          "sentiment": -0.195,
+          "sentiment_confidence": 0.67,
+          "body": "PlayStation reportedly pulled out of Hideo Kojima's ‘PHYSINT’ due to 3 reasons:\n\n• PlayStation didn't want to invest more money in a game that wouldn’t be permanently exclusive to PS consoles\n\n• The ‘Death Stranding’ games didn’t meet PlayStation's revenue expectations\n\n• The htt",
+          "stance": "critical"
+        },
+        {
+          "x": "2097875515118129401",
+          "y": 37461,
+          "id": "2097875515118129401",
+          "day": "2026-09-10",
+          "like_count": 37461,
+          "sentiment": -0.015,
+          "sentiment_confidence": 0.98,
+          "body": "Breaking News: PlayStation has announced it is stepping away from its collaboration with Hideo Kojima on PHYSINT. https://t.co/nTcIRHzLgZ",
+          "stance": "neutral_news"
+        },
+        {
+          "x": "2097880093616201912",
+          "y": 37257,
+          "id": "2097880093616201912",
+          "day": "2026-09-10",
+          "like_count": 37257,
+          "sentiment": 0.31,
+          "sentiment_confidence": 0.2,
+          "body": "OH LMFAO, XBOX DID A GOTCHA LITERALLY 2 MINUTES AFTER PLAYSTATIONS TWEET💀💀💀 https://t.co/50iXeNwz9N",
+          "stance": "critical"
+        },
+        {
+          "x": "2097945781919527255",
+          "y": 37219,
+          "id": "2097945781919527255",
+          "day": "2026-09-10",
+          "like_count": 37219,
+          "sentiment": -0.57,
+          "sentiment_confidence": 0.86,
+          "body": "PlayStation really needs to be humbled again like in the PS3 era",
+          "stance": "critical"
+        },
+        {
+          "x": "2098132238852333914",
+          "y": 36455,
+          "id": "2098132238852333914",
+          "day": "2026-09-10",
+          "like_count": 36455,
+          "sentiment": 0.245,
+          "sentiment_confidence": 0.57,
+          "body": "Being a PlayStation fan in 2026 https://t.co/jxAzrZEyI3",
+          "stance": "unclear"
+        },
+        {
+          "x": "2098095030095274295",
+          "y": 35785,
+          "id": "2098095030095274295",
+          "day": "2026-09-10",
+          "like_count": 35785,
+          "sentiment": -0.665,
+          "sentiment_confidence": 0.73,
+          "body": "shame on you @PlayStation. disappointed in the decision to name change after almost 12 years. https://t.co/krkVaQKOsF",
+          "stance": "critical"
+        },
+        {
+          "x": "2099067129584648285",
+          "y": 35157,
+          "id": "2099067129584648285",
+          "day": "2026-09-13",
+          "like_count": 35157,
+          "sentiment": -0.48,
+          "sentiment_confidence": 0.94,
+          "body": "PlayStation fans don't even talk about their console anymore they just look at you like this: https://t.co/eSeR2wtfUe",
+          "stance": "critical"
+        },
+        {
+          "x": "2097880713794117927",
+          "y": 26965,
+          "id": "2097880713794117927",
+          "day": "2026-09-10",
+          "like_count": 26965,
+          "sentiment": -0.95,
+          "sentiment_confidence": 0.91,
+          "body": "In other words :\n\nHey yall, we have burnt billions of dollars on 10+ live service game initiatives that failed so we need to recoup costs by shutting down teams, killing physical, oh and SEVERING TIES WITH ONE OF THE MOST PRESTIGED DEVS IN THE INDUSTRY.\n\nKEEP IT UP PLAYSTATION",
+          "stance": "critical"
+        },
+        {
+          "x": "2097882645115863477",
+          "y": 25102,
+          "id": "2097882645115863477",
+          "day": "2026-09-10",
+          "like_count": 25102,
+          "sentiment": -0.51,
+          "sentiment_confidence": 0.98,
+          "body": "Seeing PlayStation falloff in real time under this leadership https://t.co/ZgDhS3TFdh",
+          "stance": "critical"
+        },
+        {
+          "x": "2097902322257195516",
+          "y": 21601,
+          "id": "2097902322257195516",
+          "day": "2026-09-10",
+          "like_count": 21601,
+          "sentiment": 0.15,
+          "sentiment_confidence": 0.66,
+          "body": "gaming today in a nutshell\n\nplaystation: we broke up with kojima\nxbox: surprise we are dating kojima\nnintendo: hehe kirby is round and fat",
+          "stance": "critical"
+        },
+        {
+          "x": "2097902102123065757",
+          "y": 21547,
+          "id": "2097902102123065757",
+          "day": "2026-09-10",
+          "like_count": 21547,
+          "sentiment": -0.5,
+          "sentiment_confidence": 0.73,
+          "body": "Don't worry PlayStation fans, you still have whatever the hell this shit is..... https://t.co/oy2Pp58Kja",
+          "stance": "critical"
+        },
+        {
+          "x": "2097876345145712733",
+          "y": 21286,
+          "id": "2097876345145712733",
+          "day": "2026-09-10",
+          "like_count": 21286,
+          "sentiment": -0.01,
+          "sentiment_confidence": 0.98,
+          "body": "Hideo Kojima’a upcoming PHYSINT will no longer be made in collaboration with PlayStation. https://t.co/Jr4S7tKO0a",
+          "stance": "neutral_news"
+        },
+        {
+          "x": "2098991273264947227",
+          "y": 20320,
+          "id": "2098991273264947227",
+          "day": "2026-09-13",
+          "like_count": 20320,
+          "sentiment": 0.055,
+          "sentiment_confidence": 0.85,
+          "body": "The Legend of Zelda: Ocarina of Time remake if it were a PlayStation exclusive. https://t.co/s0LGsavuHI",
+          "stance": "unclear"
+        },
+        {
+          "x": "2098003577499193695",
+          "y": 18910,
+          "id": "2098003577499193695",
+          "day": "2026-09-10",
+          "like_count": 18910,
+          "sentiment": 0.15,
+          "sentiment_confidence": 0.71,
+          "body": "Hideo Kojima says PlayStation \"unexpectedly\" canceled his new action-espionage game PHYSINT in June\n\nXbox has now stepped in to publish the Metal Gear-style game, which Kojima says will be \"genre-defining\" https://t.co/D7oqeGTZbA",
+          "stance": "critical"
+        },
+        {
+          "x": "2098646366004408563",
+          "y": 18531,
+          "id": "2098646366004408563",
+          "day": "2026-09-12",
+          "like_count": 18531,
+          "sentiment": -0.515,
+          "sentiment_confidence": 0.97,
+          "body": "Sony’s new PlayStation monitor is false marketing.\n\nThe actual bezel is noticeably thicker than what Sony showed in its promotional images and on the box.\n\nWhat Sony showed    //     What we got https://t.co/ENg70rnTwA",
+          "stance": "critical"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "start": {
+      "x": "2097877506401681753",
+      "y": 404798
+    },
+    "end": {
+      "x": "2098646366004408563",
+      "y": 18531
+    },
+    "min": {
+      "x": "2098646366004408563",
+      "y": 18531
+    },
+    "max": {
+      "x": "2097877506401681753",
+      "y": 404798
+    }
+  },
+  "annotations": [],
+  "method": {
+    "relevance_gate": 0.5,
+    "n_levels": 5,
+    "denominator": "relevant scored posts in the window",
+    "counts": "distinct tweet IDs"
+  },
+  "drilldown": {
+    "tool": "get_posts",
+    "args_template": {
+      "from": "2026-09-06",
+      "to": "2026-09-14",
+      "sort": "engagement"
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "chart_id": "totals__stance",
+  "type": "bar",
+  "title": "Relevant posts by stance, whole window",
+  "x": {
+    "field": "option",
+    "type": "string"
+  },
+  "y": {
+    "field": "posts",
+    "unit": "posts"
+  },
+  "series": [
+    {
+      "name": "stance",
+      "points": [
+        {
+          "x": "critical",
+          "y": 213,
+          "n": 213,
+          "share": 0.442827,
+          "of": 481
+        },
+        {
+          "x": "supportive",
+          "y": 64,
+          "n": 64,
+          "share": 0.133056,
+          "of": 481
+        },
+        {
+          "x": "neutral_news",
+          "y": 173,
+          "n": 173,
+          "share": 0.359667,
+          "of": 481
+        },
+        {
+          "x": "unclear",
+          "y": 31,
+          "n": 31,
+          "share": 0.064449,
+          "of": 481
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "start": {
+      "x": "critical",
+      "y": 213
+    },
+    "end": {
+      "x": "unclear",
+      "y": 31
+    },
+    "min": {
+      "x": "unclear",
+      "y": 31
+    },
+    "max": {
+      "x": "critical",
+      "y": 213
+    }
+  },
+  "annotations": [
+    {
+      "x": "supportive",
+      "kind": "low_n",
+      "n": 64
+    },
+    {
+      "x": "unclear",
+      "kind": "low_n",
+      "n": 31
+    }
+  ],
+  "method": {
+    "relevance_gate": 0.5,
+    "n_levels": 5,
+    "denominator": "relevant scored posts in the window",
+    "counts": "distinct tweet IDs"
+  },
+  "drilldown": {
+    "tool": "get_posts",
+    "args_template": {
+      "from": "2026-09-06",
+      "to": "2026-09-14",
+      "question": "stance",
+      "label": "{x}"
+    }
+  }
+}
