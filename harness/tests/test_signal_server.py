@@ -14,6 +14,7 @@ import json
 import os
 import re
 import shutil
+import socket
 import subprocess
 import sys
 import tempfile
@@ -68,6 +69,33 @@ async def page(client):
     wanted = set(re.findall(r"\$\('([a-z0-9-]+)'\)", (ROOT / "web/chat.js").read_text(encoding="utf-8")))
     missing = sorted(wanted - set(re.findall(r'id="([a-z0-9-]+)"', html)))
     check("1 the page has every element chat.js looks up", bool(wanted) and not missing, f"{len(wanted)} ids in chat.js, missing {missing}")
+
+
+async def degrades(client):
+    """harness/web/ is edited live: a landing page that is missing or marker-less costs the widget, never the page."""
+    async def get(path):
+        async with client.get(BASE + path) as response:
+            return response.status, await response.text()
+
+    real_web, real_widget = signal_server.WEB, signal_server.WIDGET
+    spare = Path(tempfile.mkdtemp(prefix="signal-test-web-"))
+    try:
+        (spare / "index.html").write_text("<p>a landing page without the markers</p>", encoding="utf-8")
+        signal_server.WEB = spare
+        signal_server.WIDGET = {path: (spare / Path(path).name, kind) for path, (_, kind) in real_widget.items()}
+        unmarked, without_widget = await get("/")
+        shutil.rmtree(spare)
+        absent, plain = await get("/")
+        missing, said = await get("/chat.js")
+    finally:
+        signal_server.WEB, signal_server.WIDGET = real_web, real_widget
+        shutil.rmtree(spare, ignore_errors=True)
+    back, whole = await get("/")
+    check("1 an unreadable harness/web costs the widget, not the home page", unmarked == 200 and absent == 200
+          and all('id="interest-form"' in html and "launcher" not in html and "chat.js" not in html for html in (without_widget, plain))
+          and back == 200 and 'id="launcher"' in whole and 'src="/chat.js"' in whole,
+          f"no markers -> {unmarked}, landing page absent -> {absent}, restored -> {back} with the widget")
+    check("1 a missing widget asset is a 404, not a 500", missing == 404 and "error" in said, f"/chat.js while harness/web is gone -> {missing} {said[:40]}")
 
 
 async def assets(client):
@@ -200,15 +228,38 @@ def dead_server():
           f"{elapsed:.2f}s, {answer.get('error', {}).get('message', '')[:70]}")
 
 
+async def second_instance(**environment):
+    child = await asyncio.create_subprocess_exec(
+        sys.executable, str(ROOT / "signal_server.py"), cwd=str(ROOT.parent), env={**os.environ, **environment},
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    try:
+        out, err = await asyncio.wait_for(child.communicate(), 90)
+    except asyncio.TimeoutError:  # a guard that regressed leaves a second collector running: kill it, and fail this check instead of the run
+        child.kill()
+        out, err = await child.communicate()
+        return 0, "it was still running after 90 s", (out + err).decode("utf-8", "replace")
+    out, err = out.decode("utf-8", "replace"), err.decode("utf-8", "replace")
+    return child.returncode, (err or out).strip(), out + err
+
+
 async def port_guard():
     """A second instance on a port in use must die before its collector can open the data folder."""
-    child = await asyncio.create_subprocess_exec(
-        sys.executable, str(ROOT / "signal_server.py"), cwd=str(ROOT.parent), env={**os.environ, "SIGNAL_DATA": str(SECOND)},
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, err = await asyncio.wait_for(child.communicate(), 120)
-    said = (err or out).decode("utf-8", "replace").strip()
-    check("8 a second instance on the same port refuses to start", child.returncode != 0 and str(PORT) in said and not any(SECOND.iterdir()),
-          f"exit {child.returncode}, nothing written to its data folder, said: {said.splitlines()[-1][:110] if said else ''}")
+    code, said, _ = await second_instance(SIGNAL_DATA=str(SECOND))
+    check("8 a second instance on the same port refuses to start", code != 0 and str(PORT) in said and not any(SECOND.iterdir())
+          and "another port" not in said.lower(),  # moving ports is the one thing that must not be suggested: the folder is what is at stake
+          f"exit {code}, nothing written to its data folder, said: {said.splitlines()[-1][:110] if said else ''}")
+
+
+async def folder_guard():
+    """The port guard only guards one port; a second instance on a free port must still refuse this data folder."""
+    with socket.socket() as probe:
+        probe.bind(("127.0.0.1", 0))
+        free = probe.getsockname()[1]
+    code, said, everything = await second_instance(PORT=str(free), SIGNAL_DATA=str(TEMP))
+    # "Running on" is run_app's own banner: the folder's lock is taken before server.lifecycle, so the child died before any Store opened posts.jsonl.
+    check("8 a second instance on a free port still refuses this data folder", code != 0 and str(TEMP) in said
+          and "stop that one first" in said and "Running on" not in everything,
+          f"exit {code} on port {free}, never started serving, said: {said.splitlines()[-1][:110] if said else ''}")
 
 
 async def one_turn(client, session_id):
@@ -235,6 +286,7 @@ async def main():
             session_id = None
             if "1" in STEPS:
                 await page(client)
+                await degrades(client)
             if "2" in STEPS:
                 await assets(client)
             if "3" in STEPS:
@@ -249,6 +301,7 @@ async def main():
                 await asyncio.to_thread(dead_server)
             if "8" in STEPS:
                 await port_guard()
+                await folder_guard()
             if "9" in STEPS:
                 await one_turn(client, session_id or await origins(client))
         finally:

@@ -54,26 +54,35 @@ if os.environ.get("SIGNAL_DATA"):  # a test or a second instance collects somewh
 
 def widget():
     """The launcher and panel markup, read out of the landing page between its two markers."""
-    text = (WEB / "index.html").read_text(encoding="utf-8")
-    start, end = text.find(MARKERS[0]), text.find(MARKERS[1])
-    if start < 0 or end < start:
-        print(f"signal_server: {MARKERS[0]} is missing from harness/web/index.html; serving the page without the chat widget", flush=True)
+    try:  # harness/web/ is edited live: a landing page that is missing, moved or half-written costs the widget, never the home page
+        text = (WEB / "index.html").read_text(encoding="utf-8")
+        start, end = text.find(MARKERS[0]), text.find(MARKERS[1])
+        if start < 0 or end < start:
+            raise ValueError(f"{MARKERS[0]} is missing")
+        return text[start:end + len(MARKERS[1])] + "\n"
+    except (OSError, ValueError) as error:
+        print(f"signal_server: harness/web/index.html: {error}; serving the page without the chat widget", flush=True)
         return ""
-    return text[start:end + len(MARKERS[1])] + "\n"
 
 
 async def home(request):
     """The Morning Brief page as it is on disk, with the chat widget injected. Read per request."""
     path, _ = server.ASSETS["/"]
     page = path.read_text(encoding="utf-8")
-    page = page.replace("</head>", '  <link rel="stylesheet" href="/chat.css">\n</head>', 1)
-    page = page.replace("</body>", f'{widget()}{SHIM}  <script type="module" src="/chat.js"></script>\n</body>', 1)
+    markup = widget()
+    if markup:  # with no panel to wire, chat.js would only throw, so the page goes out as plain Morning Brief
+        page = page.replace("</head>", '  <link rel="stylesheet" href="/chat.css">\n</head>', 1)
+        page = page.replace("</body>", f'{markup}{SHIM}  <script type="module" src="/chat.js"></script>\n</body>', 1)
     return web.Response(text=page, content_type="text/html", charset="utf-8", headers=server.HEADERS)
 
 
 async def widget_asset(request):
     path, content_type = WIDGET[request.path]
-    return web.Response(body=path.read_bytes(), content_type=content_type, charset="utf-8", headers=server.HEADERS)
+    try:
+        body = path.read_bytes()
+    except OSError:  # the clean 404 bridge.asset() gives while harness/web/ is being edited, rather than a 500
+        return server.fail(404, "No such file.")
+    return web.Response(body=body, content_type=content_type, charset="utf-8", headers=server.HEADERS)
 
 
 def iso(ms):
@@ -110,11 +119,39 @@ async def search(request):
     }, headers=server.HEADERS)
 
 
+def hold(directory):
+    """Own the data folder, or refuse to start: two collectors appending to one posts.jsonl corrupt it.
+
+    A port probe only guards one port, and the folder is what is at stake. The lock is the open handle,
+    not the file, so the OS drops it when the process dies and a crash never wedges the folder.
+    """
+    directory.mkdir(parents=True, exist_ok=True)
+    handle = os.open(directory / "collector.lock", os.O_RDWR | os.O_CREAT)
+    try:
+        if os.name == "nt":
+            import msvcrt
+            msvcrt.locking(handle, msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        os.close(handle)
+        raise SystemExit(f"Another Morning Brief or Signal process is already collecting into {directory}; stop that one first, whatever port it listens on.")
+    return handle
+
+
+async def one_collector(app):
+    """Taken before server.lifecycle, so the folder is owned before the collector opens posts.jsonl."""
+    handle = hold(server.DATA)
+    yield
+    os.close(handle)
+
+
 def compose():
     """Morning Brief's handlers, middleware and cleanup, plus the chat API, the widget and one home page."""
     app = web.Application(middlewares=[server.local_only, bridge.local_only], client_max_size=64 * 1024)  # the chat composer's limit
     app["state"] = server.app["state"]
-    app.cleanup_ctx.append(server.lifecycle)
+    app.cleanup_ctx.extend([one_collector, server.lifecycle])
     for route in server.app.router.routes():  # the same handlers, minus "/": home() serves that with the widget in it
         if route.resource.canonical != "/":
             app.router.add_route(route.method, route.resource.canonical, route.handler)
@@ -124,12 +161,12 @@ def compose():
 
 
 def claim(port):
-    """Refuse to start on a taken port: a second collector on the same data folder corrupts posts.jsonl."""
+    """Refuse to start on a taken port. Moving ports is never the answer here: one process owns the data folder."""
     with socket.socket() as probe:
         try:
             probe.bind(("127.0.0.1", port))
         except OSError:
-            raise SystemExit(f"127.0.0.1:{port} is already in use, so Signal is probably already running; stop it first, or set PORT to another port.")
+            raise SystemExit(f"127.0.0.1:{port} is already in use, so Signal is probably already running; stop that one first.")
 
 
 app = compose()

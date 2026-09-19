@@ -20,14 +20,18 @@ import aiohttp
 ENDPOINT = "wss://jetstream.us-west.bsky.network/xrpc/network.bsky.jetstream.subscribeEvents"
 APPVIEW = "https://public.api.bsky.app/xrpc/app.bsky.feed.getPosts"  # no login needed; searchPosts is 403 without one
 POSTS = "app.bsky.feed.post"
-SEQ_PER_SECOND = 450  # a first guess only; seek() measures the real rate
+SEQ_PER_SECOND, MAX_SEQ_PER_SECOND = 450, 5_000.0  # a first guess only; seek() measures the real rate
 CHUNKS_PER_CONNECTION = 2  # a few more chunks than connections keeps none idle; many more get the IP rate-limited
 RETRYABLE = (aiohttp.ClientError, asyncio.TimeoutError, OSError, RuntimeError)
+# A socket that is accepted and then says nothing is a stalled server, not a quiet network: at 35+
+# posts a second a 15 s gap never happens, so drop it and reconnect. (The keyword moved in aiohttp 3.13.)
+WS_TIMEOUT = {"timeout": aiohttp.ClientWSTimeout(ws_receive=15)} if hasattr(aiohttp, "ClientWSTimeout") else {"receive_timeout": 15}
 BUCKET_MS = 300_000  # scan_recent: five-minute buckets
 LIVE_BUCKET_MS = 5_000  # listen_live: five-second buckets
 POOL = 160  # matched posts kept for examples, newest first
 SLOTS, MIN_SLOT_MS = 100, 5_000  # coverage is measured in slots; public Bluesky puts 150+ posts in 5 s, so a replayed slot is never empty
 LAG_MS = 2_000  # the live stream runs about a second behind real time, so "now" is a moment ago
+MARGIN_MS = 20_000  # a replay starts a little before the window, so its first slot is never half empty
 HYDRATE_LIMIT, HYDRATE_BATCH, HYDRATE_BUDGET_S = 50, 25, 8.0
 MAX_EXAMPLES, TEXT_LIMIT, HAYSTACK_LIMIT = 6, 240, 20_000
 SAFE_ID = re.compile(r"[A-Za-z0-9:._~-]{1,256}")
@@ -171,9 +175,7 @@ class Jetstream:
 
     async def events(self, cursor=None):
         params = [("collections", POSTS)] + ([("cursor", str(cursor))] if cursor is not None else [])
-        # receive_timeout: a socket that is accepted and then says nothing is a stalled server, not a
-        # quiet network - at 35+ posts a second a 15 s gap never happens, so drop it and reconnect.
-        socket = await self.session.ws_connect(ENDPOINT, params=params, heartbeat=30, max_msg_size=0, receive_timeout=15)
+        socket = await self.session.ws_connect(ENDPOINT, params=params, heartbeat=30, max_msg_size=0, **WS_TIMEOUT)
         try:
             async for message in socket:
                 if message.type != aiohttp.WSMsgType.TEXT:
@@ -224,10 +226,34 @@ class Jetstream:
                 under = (seq, at)
             if best is None or abs(at - target_ms) < abs(best[1] - target_ms):
                 best = (seq, at)
-            rate = max(1.0, (end_seq - seq) / max(0.001, (end_ms - at) / 1000))
+            # A probe that lands a second from the head would divide by nothing and send the next
+            # guess to the dawn of time, so the baseline and the rate itself are both bounded.
+            rate = min(MAX_SEQ_PER_SECOND, max(50.0, (end_seq - seq) / max(20.0, (end_ms - at) / 1000)))
             if (under and target_ms - under[1] <= tolerance_ms) or time.monotonic() > deadline:
                 break
         return (under or best or (None, None)) + (rate,)
+
+
+async def place_start(jetstream, from_ms, head_seq, head_ms, found, deadline):
+    """Step back until the replay really does begin at or before the window.
+
+    Bluesky has bursts - a bulk import can put ten thousand posts into two seconds - so sequence
+    numbers and wall clock drift apart badly, and a start placed by an average rate can land inside
+    the window and silently lose its oldest minutes. Every step here is a measured probe instead,
+    and starting too early only costs replay, which is cheap.
+    """
+    seq, at, rate = found
+    step = 1.0
+    while at > from_ms and step <= 8 and time.monotonic() < deadline:
+        guess = max(0, head_seq - int(rate * step * (head_ms - from_ms + MARGIN_MS) / 1000))
+        if guess <= 0:
+            break
+        try:
+            seq, at = await asyncio.wait_for(jetstream.probe(guess, attempts=1), 6)
+        except (asyncio.TimeoutError, *RETRYABLE):
+            break
+        step *= 2
+    return seq, at
 
 
 async def pump(stream, scan, high, deadline, state):
@@ -331,8 +357,8 @@ def summary(scan, *, mode, covered, seconds, views, notes, label):
     covered_minutes = minutes * covered
     notes = list(notes) + [ENGAGEMENT_NOTE]
     if scan.scanned == 0:
-        notes.insert(0, "Bluesky's stream sent nothing at all in the time available, so this is not evidence of a quiet topic: "
-                        "it is a stalled or refused connection. Say so, and try again in a moment.")
+        notes.insert(0, "Nothing at all was scanned in the time available - the stream was stalled or refused, or the budget was "
+                        "too short. This says nothing about the topic. Say so plainly and try again in a moment.")
     elif covered < 0.99 and mode == "listen":
         notes.insert(0, f"The live stream was only open for about {covered * 100:.0f}% of the listening window, so the counts are a floor.")
     elif covered < 0.99:
@@ -378,11 +404,7 @@ async def scan_recent(keywords, *, minutes=15, language=None, budget_s=40, conne
         if not found or found[0] is None:
             notes.append(refused)
             return summary(scan, mode="recent", covered=0.0, seconds=time.monotonic() - started, views={}, notes=notes, label="%H:%M")
-        start_seq, start_ms, rate = found
-        if start_ms > from_ms:
-            # The probes ran out before reaching the start of the window; the measured sequence rate
-            # places it well enough, and the slot coverage below reports whatever really arrives.
-            start_seq = max(0, head_seq - int(rate * (head_ms - from_ms + 20_000) / 1000))
+        start_seq, start_ms = await place_start(jetstream, from_ms, head_seq, head_ms, found, started + budget_s * 0.7)
         span = max(1, head_seq - start_seq)
         edges = [start_seq + span * index // (connections * CHUNKS_PER_CONNECTION) for index in range(connections * CHUNKS_PER_CONNECTION + 1)]
         chunks = [(edges[index], edges[index + 1]) for index in range(len(edges) - 1) if edges[index] < edges[index + 1]]

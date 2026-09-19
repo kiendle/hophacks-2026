@@ -262,9 +262,20 @@ if __name__ == "__main__":
     import socket
 
     port = int(os.environ.get("PORT", 5194))
-    with socket.socket() as probe:  # two collectors on one data/ folder interleave their writes and corrupt posts.jsonl
+    with socket.socket() as probe:
         try:
             probe.bind(("127.0.0.1", port))
         except OSError:
-            raise SystemExit(f"127.0.0.1:{port} is already in use, so Morning Brief is probably already collecting; stop it first, or set PORT to another port.")
+            raise SystemExit(f"127.0.0.1:{port} is already in use, so Morning Brief is probably already collecting; stop that one first.")
+    DATA.mkdir(parents=True, exist_ok=True)  # the port guards one port; this guards the folder, whatever port the other process listens on
+    lock = os.open(DATA / "collector.lock", os.O_RDWR | os.O_CREAT)  # the OS drops the lock when the process dies, so a crash never wedges the folder
+    try:
+        if os.name == "nt":
+            import msvcrt
+            msvcrt.locking(lock, msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:  # two collectors appending to one posts.jsonl interleave their writes and corrupt it
+        raise SystemExit(f"Another Morning Brief or Signal process is already collecting into {DATA}; stop that one first, whatever port it listens on.")
     web.run_app(app, host="127.0.0.1", port=port)
