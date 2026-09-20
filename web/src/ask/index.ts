@@ -1,3 +1,4 @@
+import { harnessAskClient } from './harnessClient'
 import { createHttpAskClient } from './httpClient'
 import { mockAskClient } from './mockClient'
 import type { AskClient } from './protocol'
@@ -11,4 +12,4 @@ export { useAsk, type ChatMessage } from './useAsk'
  * chatbot; without it, answers come from the mock.
  */
 const url = import.meta.env.VITE_ASK_URL as string | undefined
-export const askClient: AskClient = url ? createHttpAskClient(url) : mockAskClient
+export const askClient: AskClient = url ? createHttpAskClient(url) : import.meta.env.VITE_DEMO_MODE === 'true' ? mockAskClient : harnessAskClient

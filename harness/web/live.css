@@ -1,0 +1,63 @@
+/* Talk live - the button in the voice bar and the panel in the chat, on top of /chat.css */
+
+.live-talk {
+  flex-shrink: 0; padding: 6px 11px; font-size: 11px; font-weight: 600;
+  color: #263d31; background: #fff; border: 1px solid #cdd7cd; border-radius: 30px;
+}
+.live-talk:hover { background: #edf2ea; }
+.live-talk[aria-pressed="true"] { color: #fff; background: #b86043; border-color: #b86043; }
+
+/* The bar voice.js builds, while a live session owns it: the one question button steps aside. */
+.voice-bar[data-live="true"] .voice-mic,
+.voice-bar[data-live="true"] .voice-aloud { opacity: 0.45; }
+.voice-mic[disabled] { cursor: default; }
+
+/* Only used when voice.js is not on this page at all, so it carries the whole bar itself. */
+.live-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-top: 1px solid var(--border); background: #f7f9f6;
+}
+
+.live-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+.live-panel { border-left: 3px solid var(--green); }
+.live-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.live-state {
+  min-width: 78px; font-size: 12px; font-weight: 600; color: var(--muted);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.live-panel[data-state="listening"] .live-state { color: #b86043; }
+.live-panel[data-state="speaking"] .live-state,
+.live-panel[data-state="heard"] .live-state { color: var(--green); }
+.live-panel[data-state="off"] .live-state,
+.live-panel[data-state="muted"] .live-state { color: var(--muted); }
+
+.live-level {
+  flex: 1; min-width: 40px; height: 6px; overflow: hidden;
+  background: #e6ece4; border-radius: 30px;
+}
+.live-level-fill {
+  display: block; width: var(--level, 0%); height: 100%;
+  background: var(--green); border-radius: 30px; transition: width 80ms linear;
+}
+.live-panel[data-state="speaking"] .live-level-fill { background: #cdd7cd; }
+
+.live-action {
+  flex-shrink: 0; padding: 5px 10px; font-size: 11px; font-weight: 600;
+  color: #536158; background: #fff; border: 1px solid var(--border); border-radius: 30px;
+}
+.live-action:hover { background: #edf2ea; }
+.live-action[aria-pressed="true"] { color: #fff; background: #263d31; border-color: #263d31; }
+.live-action[disabled] { opacity: 0.45; }
+.live-end { color: #b86043; border-color: #e0c8bf; }
+
+.live-note:empty { display: none; }
+.live-note { margin-top: 6px; font-size: 12px; line-height: 1.5; color: #b86043; }
+.live-help { margin-top: 4px; font-size: 11px; line-height: 1.5; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .live-level-fill { transition: none; }
+}

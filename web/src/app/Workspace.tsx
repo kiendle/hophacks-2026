@@ -9,6 +9,7 @@ import { TimeSlider } from '../components/TimeSlider'
 import { TopBar, type ViewMode } from '../components/TopBar'
 import { BUCKET_MS } from '../data/config'
 import { createDevMockSource, useStream } from '../data/source'
+import { createHarnessSource } from '../data/harnessSource'
 import { createStreamSource } from '../data/streamSource'
 import { devEventConnect } from '../data/devEvents'
 import type { Selection, TimeRange } from '../data/types'
@@ -40,10 +41,10 @@ const STREAM_SPEED = Number(new URLSearchParams(location.search).get('stream')) 
 export function Workspace({ session, onSessionChange, preview }: Props) {
   const source = useMemo(() => {
     if (preview) return EMPTY_SOURCE
-    if (!STREAM_SPEED) return createDevMockSource(session.subtopics)
+    if (!STREAM_SPEED) return import.meta.env.VITE_DEMO_MODE === 'true' ? createDevMockSource(session.subtopics) : createHarnessSource(session)
     const names = new Map(session.subtopics.map((n) => [n.toLowerCase().replace(/[^a-z0-9]+/g, '-'), n]))
     return createStreamSource(devEventConnect(session.subtopics, STREAM_SPEED), { names })
-  }, [preview, session.subtopics])
+  }, [preview, session])
   const stream = useStream(source)
   const series = stream.series
   const [mode, setMode] = useState<ViewMode>('line')
@@ -107,7 +108,7 @@ export function Workspace({ session, onSessionChange, preview }: Props) {
             view: mode === 'bubble' ? { start: now - BUBBLE_WINDOW_MS, end: now } : { start: view.start, end: now },
             now,
           }
-        : null
+        : { topic: session.query, series, hidden, selection, mode, view: { start: Date.now() - 900_000, end: Date.now() }, now: Date.now() }
   })
   const getAskContext = useCallback(() => askContext.current, [])
 
@@ -179,6 +180,7 @@ export function Workspace({ session, onSessionChange, preview }: Props) {
           mode={mode}
           onModeChange={setMode}
         />
+        {!preview && stream.note && <p className="setup-label" role="status" style={{ margin: '8px 24px' }}>{stream.note}</p>}
         {extent && liveExtent && view && mode === 'line' && (
           <>
             <LineChart

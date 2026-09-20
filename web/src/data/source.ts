@@ -12,6 +12,7 @@ export interface StreamSnapshot {
   /** Events scanned upstream, and events kept after filtering. */
   read: number
   kept: number
+  note?: string
 }
 
 export interface DataSource {

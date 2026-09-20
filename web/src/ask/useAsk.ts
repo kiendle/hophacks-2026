@@ -63,8 +63,8 @@ export function useAsk(client: AskClient, getContext: () => AskContext | null) {
           controller.signal,
         )
         update(answerId, (m) => ({ ...m, status: 'done' }))
-      } catch {
-        update(answerId, (m) => ({ ...m, status: controller.signal.aborted ? 'stopped' : 'error' }))
+      } catch (error) {
+        update(answerId, (m) => ({ ...m, text: m.text || (error instanceof Error ? error.message : 'Unable to reach the assistant.'), status: controller.signal.aborted ? 'stopped' : 'error' }))
       } finally {
         inFlight.current = null
       }

@@ -1,7 +1,7 @@
 const HOUR = 60 * 60 * 1000
 
 /** Time bucket size. Matches the engagement snapshot interval. */
-export const BUCKET_MS = 4 * HOUR
+export const BUCKET_MS = import.meta.env.VITE_DEMO_MODE === 'true' ? 4 * HOUR : 5 * 60 * 1000
 
 /** Paul Tol's muted scheme: nine colorblind-safe categorical colors. */
 export const SERIES_COLORS = [
