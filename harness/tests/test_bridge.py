@@ -227,6 +227,43 @@ def preview_numbers():
           and tools.preview_keywords("to try one short word", ["a"], "2026-09-09", "2026-09-10").get("error", {}).get("code") == "bad_keywords",
           "5 days refused, 1-character keyword refused")
 
+    # A person can read an example in full and open it where it lives: the short body the card shows
+    # first, the full text (at most 2,000 characters) and an address built from the post's own id.
+    import re
+    posts = out.get("examples") or []
+    sizes = duckdb.connect()  # DuckDB cut the texts, so DuckDB measures them: left() counts what a person sees as one character
+    lengths = [sizes.execute("SELECT length_grapheme(?), length_grapheme(?)", [post.get("body") or "", post.get("full_text") or ""]).fetchone() for post in posts]
+    cuts = sizes.execute(f"SELECT length(left(repeat('x', 5000), {tools.BODY_LIMIT})), length(left(repeat('x', 5000), {tools.FULL_TEXT_LIMIT}))").fetchone()
+    sizes.close()
+    check("5a every example carries its short text, its full text and its address",
+          len(posts) == 6 and cuts == (240, 2000)
+          and all(isinstance(post.get("body"), str) and isinstance(post.get("full_text"), str) and post["body"] and post["full_text"].startswith(post["body"]) for post in posts)
+          and all(short <= 240 and short <= whole <= 2000 for short, whole in lengths)
+          and all(re.fullmatch(r"https://x\.com/i/web/status/[0-9]{1,25}", post.get("url") or "") and post["url"].rsplit("/", 1)[1] == str(post["id"]) for post in posts),
+          f"short and full lengths {lengths}, {sum(whole > short for short, whole in lengths)} of 6 have more to show, first address {posts[0].get('url') if posts else None}")
+    numbers = ("1965432100000000001", 1965432100000000001, "7", "0" * 25)
+    refused = ("", "12a", "a12", "12/../x", "12/", "1?x=1", "1#x", " 12", "12 ", "12\n", "-1", "+1", "1.5", "1e5", "１２３", "١٢٣", "1" * 26,
+               "javascript:alert(1)", "https://evil.example/1", None, True, False, 1.0, ["1"], {"id": 1}, b"12")
+    check("5b only an id that is plain digits becomes an address",
+          [tools.post_url(value) for value in numbers] == [f"https://x.com/i/web/status/{value}" for value in numbers]
+          and not [value for value in refused if tools.post_url(value) is not None]
+          and tools.example_post("12/../x", "2026-09-09", 3, "en", "short", "short and the rest")
+          == {"id": "12/../x", "day": "2026-09-09", "like_count": 3, "lang": "en", "body": "short", "full_text": "short and the rest", "url": None},
+          f"{len(numbers)} numbers accepted, {len(refused)} other shapes refused, among them full-width and Arabic digits, a path, a query and a trailing newline")
+    live = {"mode": "recent", "window": {"minutes": 15}, "matched": 1, "scanned": 10, "covered_fraction": 1.0, "per_bucket": [], "examples": [
+        {"uri": "at://did:plc:abc/app.bsky.feed.post/3k", "url": "https://bsky.app/profile/did:plc:abc/post/3k", "time_label": "19:05",
+         "like_count": 2, "langs": ["en"], "text": "cut off he", "full_text": "cut off here no more — and; kept -> as written"}, "not a post"]}
+    archive_frame = list(claude_runner.tool_events("mcp__harness__preview_keywords", out))[0]
+    live_frame = list(claude_runner.tool_events("mcp__harness__bluesky_recent", live))[0]
+    old_frame = list(claude_runner.tool_events("mcp__harness__preview_keywords", {"total": 1, "per_day": [], "examples": [{"id": "9", "day": "2026-09-09", "like_count": 1, "lang": "en", "body": "from an older tool", "url": 7}]}))[0]
+    check("5c the preview event passes the full text and the address on to the page, untouched",
+          [(post["body"], post["full_text"], post["url"]) for post in archive_frame["examples"]] == [(post["body"], post["full_text"], post["url"]) for post in posts]
+          and archive_frame["total"] == out["total"] and archive_frame["title"] == "What we found on X/Twitter"
+          and live_frame["examples"] == [{"id": "at://did:plc:abc/app.bsky.feed.post/3k", "day": "19:05", "like_count": 2, "lang": "en", "body": "cut off he",
+                                         "full_text": "cut off here no more — and; kept -> as written", "url": "https://bsky.app/profile/did:plc:abc/post/3k"}]
+          and old_frame["examples"] == [{"id": "9", "day": "2026-09-09", "like_count": 1, "lang": "en", "body": "from an older tool", "full_text": None, "url": None}],
+          "archive and live examples alike, a post is never reworded, and a tool that sent no full text says so with None")
+
     # A real test found "PS6" matching 87 posts about nothing, because "ps6" sits inside t.co links
     # such as https://t.co/MCqPS6NfCl. Links are taken out before matching, and a short or capitalised
     # word has to be a whole word.

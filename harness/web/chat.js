@@ -274,12 +274,103 @@ function spans(line) {
   return out.length ? out : [{ text: '', bold: false }];
 }
 
+// ------------------------------------------------------------ example posts
+// A post on the "What we found" card is someone else's words. It is never reworded (no plainText),
+// never markup (text nodes only), and the only things in it that become links are addresses that
+// pass the checks below.
+
+// A web address inside a post. It stops at whitespace and at the characters that never belong to one.
+const URL_IN_TEXT = /https?:\/\/[^\s<>"'`]+/gi;
+
+// "See https://t.co/abc." ends a sentence, not an address: closing punctuation goes back to the text.
+// A closing bracket stays only when the address opened one itself, as in .../Kojima_(band).
+function trimAddress(raw) {
+  let address = raw;
+  for (;;) {
+    const last = address.at(-1);
+    if (!last) break;
+    const opens = { ')': '(', ']': '[', '}': '{' }[last];
+    if (opens ? address.split(opens).length >= address.split(last).length : !/[.,!?:;'"…»”’]/.test(last)) break;
+    address = address.slice(0, -1);
+  }
+  return address;
+}
+
+// An address a person may click inside a post: http or https, a real host, nothing hidden before an
+// "@". The label is built from the PARSED address (host and the first part of the path), so what is
+// shown is where the link really goes, and a look-alike host reads as what it is.
+export function webLink(raw) {
+  if (typeof raw !== 'string' || raw.length > 2000) return null;
+  let url;
+  try { url = new URL(raw); } catch { return null; }
+  if (url.protocol !== 'https:' && url.protocol !== 'http:') return null;
+  if (url.username || url.password || !url.hostname.includes('.')) return null;
+  const host = url.hostname.replace(/^www\./, '');
+  const path = url.pathname.split('/').filter(Boolean);
+  const first = (path[0] || '').slice(0, 24);
+  const more = path.length > 1 || (path[0] || '').length > 24 || url.search !== '' || url.hash !== '';
+  return { href: url.href, label: `${host}${first ? `/${first}` : ''}${more ? '...' : ''}` };
+}
+
+// The link to the post itself. Only a url our own tools built is ever passed here, and even so only
+// https to the three hosts a post can live on is let through: a look-alike host (x.com.evil.example),
+// a port, a name before an "@", plain http, or any other scheme (javascript:, data:) gives no link.
+const POST_HOSTS = { 'x.com': 'Open on X', 'twitter.com': 'Open on X', 'bsky.app': 'Open on Bluesky' };
+export function postLink(value) {
+  if (typeof value !== 'string' || value.length > 500) return null;
+  let url;
+  try { url = new URL(value); } catch { return null; }
+  if (url.protocol !== 'https:' || url.username || url.password || url.port) return null;
+  return Object.hasOwn(POST_HOSTS, url.hostname) ? { href: url.href, label: POST_HOSTS[url.hostname] } : null;
+}
+
+// A post split into what the page draws: plain text, and the addresses inside it. `cutTail` says the
+// text was cut short by someone else, so an address that runs to its very end may be half an address
+// and is left as text.
+export function textParts(text, cutTail = false) {
+  const value = typeof text === 'string' ? text : '';
+  const parts = [];
+  let at = 0;
+  for (const match of value.matchAll(URL_IN_TEXT)) {
+    const address = trimAddress(match[0]);
+    const link = cutTail && match.index + match[0].length === value.length ? null : webLink(address);
+    if (!link) continue;
+    if (match.index > at) parts.push({ text: value.slice(at, match.index) });
+    parts.push(link);
+    at = match.index + address.length;
+  }
+  if (at < value.length) parts.push({ text: value.slice(at) });
+  return parts;
+}
+
+// The short form of a post: never cut inside an address, inside a word when a space is near, or
+// inside one emoji, and it ends in "..." whenever anything was left out. Nothing is ever hidden
+// without saying so, which is why the card has no CSS line clamp.
+export const SHORT_POST = 240;
+export function excerpt(text, limit = SHORT_POST) {
+  const value = typeof text === 'string' ? text : '';
+  if (value.length <= limit) return value;
+  let cut = limit;
+  for (const match of value.matchAll(URL_IN_TEXT)) {
+    if (match.index >= cut) break;
+    const end = match.index + match[0].length;
+    if (end > cut) { cut = match.index > 0 ? match.index : end; break; }
+  }
+  if (cut === limit && /\S/.test(value[cut] ?? ' ') && /\S/.test(value[cut - 1])) {
+    const space = value.slice(0, cut).search(/\s\S*$/);
+    if (space >= limit * 0.6) cut = space;
+  }
+  if (/[\uD800-\uDBFF]/.test(value[cut - 1] ?? '')) cut -= 1;
+  const head = value.slice(0, cut).trimEnd();
+  return head.length < value.trimEnd().length ? `${head}...` : value;
+}
+
 // ------------------------------------------------------------- DOM plumbing
 // ?dev=1 adds one thing only: the Copy JSON button on the project card.
 const DEV = (() => { try { return /(^|[?&])dev=1(&|$)/.test(String(location.search || '')); } catch { return false; } })();
 const $ = (id) => document.getElementById(id);
 
-function el(tag, props = {}, ...children) {
+export function el(tag, props = {}, ...children) {
   const node = document.createElement(tag);
   for (const [key, value] of Object.entries(props)) {
     if (key === 'class') node.className = value;
@@ -435,8 +526,13 @@ function detailText(detail) {
   }
 }
 
-function factNodes(detail, ms) {
-  return stepFacts(detail, ms).map((line) => el('p', { class: 'step-fact' },
+// `given` are the plain lines a tool module wrote on the server (steps.register_tool), for a tool this
+// file knows nothing about. They come first; the facts computed here, and the duration, follow.
+function factNodes(detail, ms, given) {
+  const sent = (Array.isArray(given) ? given : [])
+    .map((line) => ({ label: oneLine(asObject(line).label, 60), value: oneLine(asObject(line).value, 240) }))
+    .filter((line) => line.value);
+  return [...sent, ...stepFacts(detail, ms)].map((line) => el('p', { class: 'step-fact' },
     line.label ? el('span', { class: 'step-fact-label', text: `${line.label}: ` }) : null,
     document.createTextNode(plainText(line.value))));
 }
@@ -446,7 +542,7 @@ function fillStepPanel(row) {
   if (!row.outcomeNode || !row.factsNode) return;  // closed
   row.outcomeNode.textContent = row.outcome === null ? 'Still working...' : row.outcome;
   row.outcomeNode.dataset.waiting = row.outcome === null ? 'true' : 'false';
-  const facts = factNodes(row.detail, row.ms);
+  const facts = factNodes(row.detail, row.ms, row.facts);
   row.factsNode.replaceChildren(...facts);
   row.factsNode.hidden = !facts.length;
 }
@@ -487,6 +583,7 @@ function stepRow(event) {
   const failure = el('p', { class: 'step-failed', hidden: true });
   const row = {
     node: null, panel, failure, outcomeNode: null, factsNode: null, detail: event.detail, ok: null, ms: null,
+    facts: Array.isArray(event.facts) ? event.facts : null,  // written by a tool module on the server
     outcome: null,  // null until the step ends
     why: typeof event.why === 'string' ? plainText(event.why.trim()) : '',
   };
@@ -579,6 +676,49 @@ function copyButton(text) {
   return { button, note };
 }
 
+// Every link the card makes opens in a new tab and tells the other site nothing about this one.
+function outsideLink(className, link, title) {
+  return el('a', { class: className, href: link.href, target: '_blank', rel: 'noopener noreferrer', title, text: link.label });
+}
+
+// A post as nodes: its own words as text nodes (line breaks kept), its addresses as links.
+function postNodes(text, cutTail) {
+  return textParts(text, cutTail).flatMap((part) => (part.href ? [outsideLink('example-inline', part, part.href)] : withBreaks(part.text)));
+}
+
+let postCount = 0;  // every expandable text needs its own id for aria-controls
+
+// One example post: the short text, then a row with likes and day, "Show full post" when there is
+// more to show, and "Open on X" or "Open on Bluesky" when the post has an address we trust.
+function examplePost(post) {
+  const item = post && typeof post === 'object' ? post : {};
+  const body = typeof item.body === 'string' ? item.body : '';
+  const sent = typeof item.full_text === 'string' && item.full_text !== '';
+  const whole = (sent ? item.full_text : body).slice(0, 2000);
+  // no full text came with it, and the short one is as long as a cut one would be: its end may be half an address
+  const cutTail = !sent && body.length >= SHORT_POST;
+  const short = excerpt(whole);
+  postCount += 1;
+  const text = el('p', { class: 'example-text', id: `example-text-${postCount}` }, ...postNodes(short, cutTail));
+  const row = [el('span', { class: 'example-meta', text: [`${number(item.like_count)} likes`, dayLabel(item.day)].filter(Boolean).join(', ') })];
+  if (short !== whole) {
+    const more = el('button', {
+      class: 'link-button example-more', type: 'button', text: 'Show full post', 'aria-expanded': 'false', 'aria-controls': text.id,
+      onclick: () => {
+        const open = more.getAttribute('aria-expanded') !== 'true';
+        text.replaceChildren(...postNodes(open ? whole : short, false));  // in place: the same paragraph
+        more.textContent = open ? 'Show less' : 'Show full post';
+        more.setAttribute('aria-expanded', open ? 'true' : 'false');
+        // no scroll() here: the reader is looking at this post, so the page must not move under them
+      },
+    });
+    row.push(more);
+  }
+  const link = postLink(item.url);
+  if (link) row.push(outsideLink('example-open', link));
+  return el('li', { class: 'example' }, text, el('div', { class: 'example-row' }, ...row));
+}
+
 function previewCard(event) {
   const days = Array.isArray(event.per_day) ? event.per_day : [];
   const peak = days.reduce((max, day) => Math.max(max, Number(day.count) || 0), 0) || 1;
@@ -594,19 +734,7 @@ function previewCard(event) {
     ))));
   }
 
-  if (examples.length) {
-    parts.push(el('ul', { class: 'examples' }, ...examples.map((post) => {
-      const body = [
-        el('p', { class: 'example-text' }, ...withBreaks(post.body ?? '')),
-        el('p', { class: 'example-meta' }, document.createTextNode([`${number(post.like_count)} likes`, dayLabel(post.day)].filter(Boolean).join(', '))),
-      ];
-      // A post's own text is never a link; only a url our own tools built, and only over https.
-      const href = typeof post.url === 'string' && /^https:\/\//.test(post.url) ? post.url : null;
-      return el('li', { class: 'example' }, href
-        ? el('a', { class: 'example-link', href, target: '_blank', rel: 'noopener noreferrer' }, ...body)
-        : el('div', {}, ...body));
-    })));
-  }
+  if (examples.length) parts.push(el('ul', { class: 'examples' }, ...examples.map(examplePost)));
 
   if (typeof event.note === 'string' && event.note) parts.push(el('p', { class: 'card-note', text: plainText(event.note) }));
 
@@ -664,7 +792,7 @@ function confirmCard(event) {
     confirmButton.disabled = true;
     cancelButton.disabled = true;
     countdown.textContent = approved ? 'You confirmed it.' : 'You cancelled it.';
-    runTurn(`/api/sessions/${encodeURIComponent(readSession())}/confirm`, { confirmation_id: event.confirmation_id, approved });
+    runTurn(`/api/sessions/${encodeURIComponent(readSession())}/confirm`, { confirmation_id: event.confirmation_id, approved }, 'confirm');
   };
 
   const confirmButton = el('button', { class: 'primary', type: 'button', text: 'Confirm', onclick: () => answer(true) });
@@ -696,6 +824,45 @@ function countdownWords(seconds) {
   if (seconds < 60) return plural(seconds, 'second');
   const rest = seconds % 60;
   return plural(Math.floor(seconds / 60), 'minute') + (rest ? ` ${plural(rest, 'second')}` : '');
+}
+
+// --------------------------------------------------------------- plug-in points
+// An optional module (/voice.js, /analysis.js, /brief.js) is imported after start-up and builds on
+// these four exports and nothing else: it watches the events of every turn, adds its own card to the
+// current answer, and can send a message as if the person had typed it. A listener that throws is
+// ignored, because a plug-in must never cost the chat a turn.
+const listeners = [];
+
+export function onEvent(fn) {
+  if (typeof fn !== 'function') return () => {};
+  listeners.push(fn);
+  return () => {
+    const at = listeners.indexOf(fn);
+    if (at >= 0) listeners.splice(at, 1);
+  };
+}
+
+function emit(event) {
+  for (const fn of listeners.slice()) {
+    try { fn(event); } catch { /* a broken plug-in is its own problem */ }
+  }
+}
+
+// One card in the answer being written, in the order the cards arrived, exactly where the preview and
+// project cards go. Later text starts a new bubble underneath it, as it does for every other card.
+export function appendCard(node) {
+  if (!node) return null;
+  add(node);
+  state.bubble = null;
+  return node;
+}
+
+const PLUGINS = ['/voice.js', '/analysis.js', '/brief.js'];  // each one optional: a missing file is not an error
+
+function loadPlugins() {
+  for (const path of PLUGINS) {
+    try { import(path).catch(() => {}); } catch { /* an environment without dynamic import */ }
+  }
 }
 
 // ------------------------------------------------------------------ events
@@ -774,6 +941,8 @@ function handleEvent(event) {
       state.turnText = event.text;
       break;
     }
+    case 'card':
+      break;  // a plug-in draws its own kind of card with appendCard; this file draws none
     case 'error':
       setProgress(null);
       collapseActivity(event.duration_ms);
@@ -815,7 +984,8 @@ async function errorText(response, fallback) {
   return `${fallback} (HTTP ${response.status})`;
 }
 
-async function runTurn(url, body) {
+async function runTurn(url, body, source = 'message') {
+  emit({ type: 'turn_start', source });
   setRunning(true);
   state.bubble = null;
   state.sawDelta = false;
@@ -837,19 +1007,26 @@ async function runTurn(url, body) {
     for (;;) {
       const { value, done } = await reader.read();
       if (done) break;
-      for (const event of parse(decoder.decode(value, { stream: true }))) handleEvent(event);
+      for (const event of parse(decoder.decode(value, { stream: true }))) receive(event);
     }
-    for (const event of parse(decoder.decode())) handleEvent(event);
+    for (const event of parse(decoder.decode())) receive(event);
   } catch {
     setProgress(null);
     setStatus('Offline', 'offline');
     showError(OFFLINE);
   }
   if (state.running) setRunning(false);
+  emit({ type: 'turn_end' });
 }
 
-async function send(text) {
-  const message = text.trim();
+// The page acts on the event first, so a plug-in's card lands after what the event itself drew.
+function receive(event) {
+  handleEvent(event);
+  emit(event);
+}
+
+export async function send(text) {
+  const message = String(text ?? '').trim();
   if (!message || state.running) return;
   dropChips();
   userBubble(message);
@@ -942,6 +1119,8 @@ function start() {
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && state.open) closePanel();
   });
+
+  loadPlugins();  // last: the page works whether or not any of them are there
 }
 
 if (typeof document !== 'undefined' && document.getElementById('chat-panel')) start();

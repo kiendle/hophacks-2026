@@ -34,6 +34,7 @@ LAG_MS = 2_000  # the live stream runs about a second behind real time, so "now"
 MARGIN_MS = 20_000  # a replay starts a little before the window, so its first slot is never half empty
 HYDRATE_LIMIT, HYDRATE_BATCH, HYDRATE_BUDGET_S = 50, 25, 8.0
 MAX_EXAMPLES, TEXT_LIMIT, HAYSTACK_LIMIT = 6, 240, 20_000
+FULL_TEXT_LIMIT = 2_000  # `text` is the short form the card shows first, `full_text` is what "Show full post" opens
 SAFE_ID = re.compile(r"[A-Za-z0-9:._~-]{1,256}")
 ENGAGEMENT_NOTE = "Bluesky like and repost counts are current totals from the AppView, not what the post had inside the window."
 
@@ -344,6 +345,7 @@ def examples(scan, views, label):
             "created_iso": iso(row["t"]), "time_label": local(row["t"], label),
             "like_count": whole(view.get("likes")), "repost_count": whole(view.get("reposts")),
             "reply_count": whole(view.get("replies")), "langs": row["langs"], "text": row["text"][:TEXT_LIMIT],
+            "full_text": row["text"][:FULL_TEXT_LIMIT],  # a Bluesky post can run to 300 characters, past the short form
         }))
     rows.sort(key=lambda row: (row[0], row[1]), reverse=True)
     return [row[2] for row in rows[:MAX_EXAMPLES]]

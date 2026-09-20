@@ -145,13 +145,17 @@ footer { margin-top: 44px; }
 .bar-fill { display: block; height: 100%; background: #3a7a57; border-radius: 5px; }
 .bar-count { font-variant-numeric: tabular-nums; color: #45594b; }
 
-.examples { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 7px; border-top: 1px solid var(--border); padding-top: 12px; }
-.example-text { font-size: 12px; line-height: 1.5; margin: 0; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.example-meta { font-size: 10px; color: var(--muted); margin: 3px 0 0; font-variant-numeric: tabular-nums; }
-.example-link { display: block; color: inherit; text-decoration: none; border-radius: 6px; margin: -4px -6px; padding: 4px 6px; }
-.example-link:hover { background: #f2f6f0; }
-.example-link:hover .example-text { text-decoration: underline; text-decoration-color: #b9cbbd; }
-.example-link:focus-visible { outline: 2px solid #3a7a57; outline-offset: 1px; }
+/* One example post: its text, then a row with likes and day, "Show full post" and "Open on X".
+   There is no line clamp: the short form is cut by chat.js, which says "..." when it cut anything,
+   so nothing is ever hidden without a button that shows it. */
+.examples { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 11px; border-top: 1px solid var(--border); padding-top: 12px; }
+.example-text { font-size: 12px; line-height: 1.5; margin: 0; overflow-wrap: anywhere; }
+.example-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin: 3px 0 0; }
+.example-meta { font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.example-inline, .example-open { color: #3a7a57; text-decoration: underline; text-underline-offset: 2px; border-radius: 3px; }
+.example-open { font-size: 10.5px; }
+.example-inline:hover, .example-open:hover { color: #2b5e42; }
+.example-inline:focus-visible, .example-open:focus-visible, .example-more:focus-visible { outline: 2px solid #3a7a57; outline-offset: 1px; }
 .card-note { font-size: 10px; color: var(--muted); margin: 10px 0 0; font-variant-numeric: tabular-nums; }
 
 /* The project, in the reader's own words: one labelled line each, groups named in bold. */

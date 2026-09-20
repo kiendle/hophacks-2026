@@ -11,13 +11,19 @@ writes the confirmation record, and `submit_project` checks it — see harness/D
 
 mcp and duckdb are declared above although this file does not import them: the MCP server runs on
 this interpreter (claude_runner.mcp_config), so uv must install them into it.
+
+Optional route modules (harness/voice.py, harness/analysis_api.py) are picked up by `attach`, so a
+stream of work can add /api routes without editing this file and the combined server gets them too.
 """
 import asyncio
 import contextlib
+import importlib
+import importlib.util
 import json
 import os
 import re
 import time
+import traceback
 import uuid
 from pathlib import Path
 
@@ -29,13 +35,22 @@ ROOT = Path(__file__).resolve().parent
 WEB = ROOT / "web"
 SESSIONS = ROOT / "state/sessions"
 ASSETS = {"/signal.css": (ROOT.parent / "jetstream-demo/styles.css", "text/css")}  # one visual system for every demo
-TYPES = {".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".json": "application/json", ".woff2": "font/woff2"}
+TYPES = {".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml",
+         ".json": "application/json", ".map": "application/json", ".woff2": "font/woff2", ".png": "image/png",
+         ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".gif": "image/gif", ".webp": "image/webp",
+         ".ico": "image/x-icon", ".mp3": "audio/mpeg", ".wav": "audio/wav", ".webm": "audio/webm", ".txt": "text/plain"}
+TEXTUAL = {"text/html", "text/javascript", "text/css", "image/svg+xml", "application/json", "text/plain"}
 HEADERS = {
     "Cache-Control": "no-store",
-    "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'",
+    # media-src carries the voice recording the page makes of itself (a blob: url); everything else
+    # a page may load still comes from this server alone.
+    "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'",
+    "Permissions-Policy": "microphone=(self)",
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "no-referrer",
 }
+PLUGINS = ("voice", "analysis_api")  # optional modules, each with setup(app)
+VOICE_MAX = 10 * 1024 * 1024  # a recorded clip, on the voice routes only
 PLACEHOLDER = b"<!doctype html><title>Signal harness</title><p>The chat page has not been written yet. The API is live.\n"
 CONFIRMATION = re.compile(r"[A-Za-z0-9_-]{16}")
 GONE = (ConnectionResetError, RuntimeError, OSError)  # the page may be gone before the last frame is written
@@ -51,20 +66,38 @@ async def local_only(request, handler):
     if request.path.startswith("/api/") and request.method != "GET":
         if request.url.host not in ("127.0.0.1", "localhost") or request.headers.get("Origin", str(request.url.origin())) != str(request.url.origin()):
             return fail(403, "Only same-origin local requests are accepted.")
+        if request.path.startswith("/api/voice/"):
+            # aiohttp has no per-route body limit: the limit is read when the body is read, so raising
+            # it here raises it for this one request and leaves the chat composer's 64 KB everywhere else.
+            with contextlib.suppress(AttributeError):
+                request._client_max_size = VOICE_MAX  # noqa: SLF001
     return await handler(request)
+
+
+def web_file(name):
+    """A file of any name under harness/web/, and never one outside it."""
+    parts = str(name or "").split("/")
+    if not parts or any(part in ("", ".", "..") or part.startswith(".") or "\\" in part or ":" in part for part in parts):
+        return None
+    try:
+        path = (WEB / "/".join(parts)).resolve()
+        path.relative_to(WEB.resolve())  # a symlink out of the folder resolves out of it and is refused here
+    except (OSError, ValueError):
+        return None
+    return path if path.is_file() else None
 
 
 async def asset(request):
     """Read per request, so the front end can be edited without restarting the server."""
-    name = request.match_info.get("name") or "index.html"
-    path, content_type = ASSETS.get(request.path) or (WEB / name, TYPES.get(Path(name).suffix, "application/octet-stream"))
-    if "/" in name or "\\" in name or name.startswith("."):
-        return fail(404, "No such file.")
-    if not path.exists():
+    mapped = ASSETS.get(request.path)
+    path = mapped[0] if mapped else web_file(request.match_info.get("name") or "index.html")
+    if path is None or not path.exists():
         if request.path == "/":
             return web.Response(body=PLACEHOLDER, content_type="text/html", charset="utf-8", headers=HEADERS)
         return fail(404, "No such file.")
-    return web.Response(body=path.read_bytes(), content_type=content_type, charset="utf-8", headers=HEADERS)
+    content_type = mapped[1] if mapped else TYPES.get(path.suffix.lower(), "application/octet-stream")
+    return web.Response(body=path.read_bytes(), content_type=content_type,
+                        charset="utf-8" if content_type in TEXTUAL else None, headers=HEADERS)
 
 
 def session_of(request):
@@ -166,6 +199,35 @@ async def lifecycle(app):
     yield
 
 
+def load_plugins(app, names=PLUGINS):
+    """Optional modules, each registering its own /api routes in setup(app).
+
+    A module that is simply not there is the normal case and says nothing. A module that IS there and
+    fails prints its traceback and is skipped: one broken stream of work must never cost the server.
+    """
+    loaded = []
+    for name in names:
+        try:
+            if importlib.util.find_spec(name) is None:
+                continue
+        except Exception:  # noqa: BLE001  (a package that cannot even be looked at)
+            traceback.print_exc()
+            continue
+        try:
+            setup = getattr(importlib.import_module(name), "setup", None)
+            if setup is None:
+                print(f"bridge: {name}.py has no setup(app), so it was skipped", flush=True)
+                continue
+            setup(app)
+        except Exception:  # noqa: BLE001
+            print(f"bridge: {name}.py could not be loaded, the server runs without it", flush=True)
+            traceback.print_exc()
+            continue
+        loaded.append(name)
+        print(f"bridge: loaded {name}.py", flush=True)
+    return loaded
+
+
 def attach(app):
     """The chat API on any aiohttp application, so signal_server.py can serve it beside Morning Brief."""
     app["state"] = {"sessions": {}, "gate": None, **(app.get("state") or {})}  # mutated in place; aiohttp freezes the app mapping once it starts
@@ -175,12 +237,13 @@ def attach(app):
         web.post("/api/sessions/{id}/messages", post_message),
         web.post("/api/sessions/{id}/confirm", post_confirm),
     ])
+    app["plugins"] = load_plugins(app)
     return app
 
 
 app = attach(web.Application(middlewares=[local_only], client_max_size=64 * 1024))
 app.add_routes([
-    web.get("/", asset), *[web.get(path, asset) for path in ASSETS], web.get("/{name}", asset),  # the catch-all is last, or it shadows ASSETS
+    web.get("/", asset), *[web.get(path, asset) for path in ASSETS], web.get("/{name:.*}", asset),  # the catch-all is last, or it shadows ASSETS
 ])
 
 if __name__ == "__main__":

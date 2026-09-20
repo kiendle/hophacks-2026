@@ -5,11 +5,14 @@ this process is reachable from a web page and a tweet inside a tool result is at
 text. The assertion on the init event (§0, "New security rule") is the one line never to cut.
 """
 import asyncio
+import importlib
+import importlib.util
 import json
 import os
 import shutil
 import sys
 import time
+import traceback
 from pathlib import Path
 
 import steps
@@ -19,6 +22,7 @@ REPO = ROOT.parent
 EMPTY = ROOT / "state/empty"  # the child's working directory: nothing of ours is reachable by a relative path
 SERVER = ROOT / "demo_mcp_server.py"
 SYSTEM_PROMPT = ROOT / "system_prompt.md"
+PROMPTS = ROOT / "prompts"  # one short .md per tool module, appended to the prompt in name order
 MODEL = os.environ.get("HARNESS_MODEL", "opus")
 EFFORT = os.environ.get("HARNESS_EFFORT", "low")
 TURN_TIMEOUT_S = float(os.environ.get("HARNESS_TURN_TIMEOUT", 300))
@@ -31,6 +35,52 @@ PROGRESS = {
     "mcp__harness__request_confirmation": "Getting your project ready",
     "mcp__harness__submit_project": "Sending your project",
 }
+
+
+TOOL_MODULES = ("brief_tools", "analysis_tools", "jev_tools")  # the same optional modules the tool server loads
+
+
+def load_wording(names=TOOL_MODULES):
+    """Import each optional tool module here too, for one side effect: its steps.register_tool calls.
+
+    The tools themselves run in the MCP server, in another process; the words the page reads are
+    written in this one. A module that is not there is the normal case; a broken one is skipped with
+    its traceback, because a turn must still be described even when one stream of work is mid-edit.
+    """
+    loaded = []
+    for name in names:
+        try:
+            if importlib.util.find_spec(name) is None:
+                continue
+            importlib.import_module(name)
+        except Exception:  # noqa: BLE001
+            print(f"claude_runner: {name}.py could not be read for its step wording", flush=True)
+            traceback.print_exc()
+            continue
+        loaded.append(name)
+    return loaded
+
+
+WORDING = load_wording()
+
+
+def system_prompt():
+    """The base prompt plus every harness/prompts/*.md, so each tool module teaches the agent itself.
+
+    Read per turn, so a fragment can be written while the server runs. README.md is the folder's own
+    note to us and is left out; a half-written or unreadable fragment costs itself, not the turn.
+    """
+    text = SYSTEM_PROMPT.read_text(encoding="utf-8")
+    for path in sorted(PROMPTS.glob("*.md")) if PROMPTS.is_dir() else []:
+        if path.name.lower() == "readme.md":
+            continue
+        try:
+            fragment = path.read_text(encoding="utf-8").strip()
+        except OSError:
+            continue
+        if fragment:
+            text += "\n\n" + fragment
+    return text
 
 
 def tool_list_problem(event):
@@ -75,9 +125,11 @@ def why_of(tool_input):
 
 
 def step_start(identifier, name, tool_input, index, at_ms):
-    return {"type": "step", "phase": "start", "id": identifier, "n": index, "tool": short_name(name),
-            "title": steps.title(name, tool_input), "why": why_of(tool_input),
-            "detail": {"tool": name, "input": tool_input}, "t_ms": at_ms}
+    event = {"type": "step", "phase": "start", "id": identifier, "n": index, "tool": short_name(name),
+             "title": steps.title(name, tool_input), "why": why_of(tool_input),
+             "detail": {"tool": name, "input": tool_input}, "t_ms": at_ms}
+    given = steps.facts(name, tool_input)  # a tool module's own plain lines for the details panel
+    return event | {"facts": given} if given else event
 
 
 def step_end(identifier, record, ok, outcome, at_ms):
@@ -90,6 +142,30 @@ def close_open(open_steps, at_ms):
     for identifier, record in list(open_steps.items()):
         yield step_end(identifier, record, False, "This did not finish.", at_ms)
     open_steps.clear()
+
+
+FULL_TEXT_LIMIT = 2000
+
+
+def card_example(identifier, day, like_count, lang, body, full_text, url):
+    """One example post, as the preview card draws it, whichever tool found it.
+
+    `body` is the short form the card shows first, `full_text` is what "Show full post" opens and
+    `url` is where the post lives. All three are passed on as they came: a post is someone else's
+    words, so it never goes through steps.plain, and the page checks `url` again (https, and only
+    x.com, twitter.com or bsky.app) before it lets anyone click it. `full_text` stays None when the
+    tool sent none, so the page can tell "this is the whole post" from "this may have been cut".
+    """
+    return {"id": identifier, "day": day, "like_count": like_count, "lang": lang,
+            "body": body[:FULL_TEXT_LIMIT] if isinstance(body, str) else "",
+            "full_text": full_text[:FULL_TEXT_LIMIT] if isinstance(full_text, str) else None,
+            "url": url if isinstance(url, str) else None}
+
+
+def archive_examples(payload):
+    posts = payload.get("examples") if isinstance(payload.get("examples"), list) else []
+    return [card_example(post.get("id"), post.get("day"), post.get("like_count"), post.get("lang"),
+                         post.get("body"), post.get("full_text"), post.get("url")) for post in posts if isinstance(post, dict)]
 
 
 def live_preview(payload):
@@ -110,19 +186,24 @@ def live_preview(payload):
         "title": steps.plain(title), "total": payload.get("matched"), "exact": covered >= 0.99,
         "seconds": payload.get("seconds"), "note": steps.plain(note),
         "per_day": [{"day": bucket.get("label"), "count": bucket.get("count")} for bucket in buckets if isinstance(bucket, dict)],
-        "examples": [{"id": post.get("uri"), "day": post.get("time_label"), "like_count": post.get("like_count"),
-                      "lang": (post.get("langs") or [None])[0], "body": post.get("text"), "url": post.get("url")}
+        "examples": [card_example(post.get("uri"), post.get("time_label"), post.get("like_count"), (post.get("langs") or [None])[0],
+                                  post.get("text"), post.get("full_text"), post.get("url"))
                      for post in examples if isinstance(post, dict)],
     }
 
 
 def tool_events(name, payload):
-    if not payload or payload.get("error"):
+    if not payload:
+        return
+    card = payload.get("_card")  # a tool module's own card; the model still sees the whole result
+    if isinstance(card, dict):
+        yield {"type": "card", "card": card}
+    if payload.get("error"):
         return
     if name == "mcp__harness__save_draft" and "spec_hash" in payload:
         yield {"type": "spec", "spec": payload.get("spec"), "spec_hash": payload["spec_hash"], "draft_path": payload.get("draft_path")}
     elif name == "mcp__harness__preview_keywords" and "total" in payload:
-        yield {"type": "preview", "title": "What we found on X/Twitter", **payload}
+        yield {"type": "preview", "title": "What we found on X/Twitter", **payload, "examples": archive_examples(payload)}
     elif name in ("mcp__harness__bluesky_recent", "mcp__harness__bluesky_listen") and "matched" in payload:
         yield {"type": "preview", **live_preview(payload)}
     elif name == "mcp__harness__request_confirmation" and "confirmation_id" in payload:
@@ -156,7 +237,7 @@ class Runner:
             executable, "-p", "--output-format", "stream-json", "--verbose", "--include-partial-messages",
             "--tools", "default" if self.all_tools else "", "--strict-mcp-config", "--mcp-config", str(self.mcp_config()),
             "--allowedTools", "mcp__harness__*", "--model", MODEL, "--effort", EFFORT, "--max-budget-usd", "1",
-            "--system-prompt", SYSTEM_PROMPT.read_text(encoding="utf-8"),
+            "--system-prompt", system_prompt(),
         ]
         return arguments + (["--resume", self.session_id] if self.started else ["--session-id", self.session_id])
 

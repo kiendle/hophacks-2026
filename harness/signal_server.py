@@ -41,7 +41,12 @@ import collector  # noqa: E402  (compile_terms, so search matches exactly as col
 import server  # noqa: E402  (loads morning-brief/.env, then builds the Morning Brief app and routes)
 
 WEB = ROOT / "web"
-WIDGET = {"/chat.js": (WEB / "chat.js", "text/javascript"), "/chat.css": (WEB / "chat.css", "text/css")}
+# The chat widget's own files, read out of harness/web/ per request. The three plug-in modules are
+# optional: chat.js imports each one after start-up and ignores the ones that are not there, so a
+# file nobody has written yet is a 404 the page expects.
+WIDGET = {f"/{name}": (WEB / name, bridge.TYPES.get(Path(name).suffix, "application/octet-stream"))
+          for name in ("chat.js", "chat.css", "voice.js", "analysis.js", "brief.js")}
+HEADERS = server.HEADERS | bridge.HEADERS  # one page, so the stricter of the two everywhere: bridge's adds media-src blob: and the microphone
 MARKERS = ("<!-- chat-widget:start -->", "<!-- chat-widget:end -->")
 # chat.js wires the landing page's two intro buttons unconditionally; this page has neither.
 SHIM = '  <button id="open-chat" type="button" hidden></button><button id="open-chat-data" type="button" hidden></button>\n'
@@ -73,7 +78,7 @@ async def home(request):
     if markup:  # with no panel to wire, chat.js would only throw, so the page goes out as plain Morning Brief
         page = page.replace("</head>", '  <link rel="stylesheet" href="/chat.css">\n</head>', 1)
         page = page.replace("</body>", f'{markup}{SHIM}  <script type="module" src="/chat.js"></script>\n</body>', 1)
-    return web.Response(text=page, content_type="text/html", charset="utf-8", headers=server.HEADERS)
+    return web.Response(text=page, content_type="text/html", charset="utf-8", headers=HEADERS)
 
 
 async def widget_asset(request):
@@ -82,7 +87,8 @@ async def widget_asset(request):
         body = path.read_bytes()
     except OSError:  # the clean 404 bridge.asset() gives while harness/web/ is being edited, rather than a 500
         return server.fail(404, "No such file.")
-    return web.Response(body=body, content_type=content_type, charset="utf-8", headers=server.HEADERS)
+    return web.Response(body=body, content_type=content_type,
+                        charset="utf-8" if content_type in bridge.TEXTUAL else None, headers=HEADERS)
 
 
 def iso(ms):

@@ -6,6 +6,9 @@ Everything here is written for a person who is not a technician: short plain sen
 words, and no symbol punctuation at all. `plain()` is the one place that rule is enforced, and the
 runner puts the model's own words through it too. Pure functions, no I/O: inputs and results are
 untrusted, so nothing here may raise.
+
+A tool that lives in another module calls `register_tool` at import time to teach this file how to
+describe its own steps, so a new stream of work never has to edit the wording of an old one.
 """
 import re
 import time
@@ -248,6 +251,54 @@ def live_words(lookback_hours, run_hours):
     return ", ".join(said)
 
 
+# ------------------------------------------------- wording owned by another tool module
+# A tool module calls register_tool() at import. Its functions are given the real call and the real
+# result, exactly like the built-in wording below, and they are called inside _call(): a tool module
+# is not allowed to break the activity list, so anything it raises costs it its own sentence only.
+_REGISTRY = {}
+
+
+def register_tool(name, title_fn, outcome_fn, facts_fn=None):
+    """Teach the activity list to describe one tool: title_fn(tool_input), outcome_fn(result, is_error).
+
+    facts_fn(tool_input) is optional and returns the plain lines the details panel shows, each
+    {"label": "Words searched", "value": "\"AI\""}. A tool that registers nothing reads as
+    "Working on it" and "Done.".
+    """
+    _REGISTRY[_name(name)] = (title_fn, outcome_fn, facts_fn)
+
+
+def _registered(index, name):
+    entry = _REGISTRY.get(name)
+    handler = entry[index] if entry else None
+    return handler if callable(handler) else None
+
+
+def _call(handler, *arguments):
+    try:
+        return handler(*arguments)
+    except Exception:  # noqa: BLE001  (a tool module's own wording may never break a turn)
+        return None
+
+
+def facts(tool, tool_input):
+    """The plain lines a registered tool wants inside the details panel. Empty for everything else."""
+    handler = _registered(2, _name(tool))
+    rows = _call(handler, tool_input if isinstance(tool_input, dict) else {}) if handler else None
+    out = []
+    for row in rows if isinstance(rows, list) else []:
+        if isinstance(row, dict):
+            label, value = row.get("label"), row.get("value")
+        elif isinstance(row, (list, tuple)) and len(row) == 2:
+            label, value = row
+        else:
+            continue
+        value = plain(_text(value, 240))
+        if value:
+            out.append({"label": plain(_text(label, 60)), "value": value})
+    return out[:8]
+
+
 # ------------------------------------------------------------------ the two lines
 def title(tool, tool_input):
     """What is being done, in plain words, built only from the arguments of the real call."""
@@ -264,12 +315,18 @@ def title(tool, tool_input):
             head = f"Listening to Bluesky live for {_plural(_span(fields.get('seconds'), LIVE_DEFAULTS['seconds']), 'second')}"
         head += f" for {words}" if words else ""
         return plain(", ".join(part for part in (head, f"in {language}" if language else "") if part))
-    return TITLES.get(name, "Working on it")
+    written = _registered(0, name)
+    return TITLES.get(name) or (plain(_text(_call(written, fields), 120)) if written else "") or "Working on it"
 
 
 def outcome(tool, result, is_error=False):
     """What came back, from the real parsed result. Never the model's words, never a guess."""
     name = _name(tool)
+    written = _registered(1, name)
+    if written:
+        said = _sentence(_text(_call(written, result, bool(is_error)), 240))
+        if said:
+            return said
     problem = _problem(result, is_error)
     if problem or is_error:
         return _sentence(f"That did not work: {problem}") if problem else "That did not work."

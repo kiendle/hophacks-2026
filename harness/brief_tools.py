@@ -6,13 +6,20 @@ http://127.0.0.1:5194) and nothing here touches its files or its collector: the 
 owner of that state, which is also why every answer the tools give is the server's own.
 
 Errors are returned, never raised: a tool that raises tells the model nothing it can say out loud.
+
+Every tool the model sees takes `reason` first, like every other tool in the harness, and the plain
+words its step shows are registered with steps.py at the bottom of this file.
 """
+import functools
+import inspect
 import json
 import os
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
+
+import steps
 
 BASE = (os.environ.get("SIGNAL_BASE_URL") or "http://127.0.0.1:5194").rstrip("/")
 TIMEOUT_S = 10
@@ -221,6 +228,33 @@ def get_brief(brief_id: str) -> dict:
 
 
 TOOLS = (brief_overview, follow_interest, unfollow_interest, search_collected, collector_control, make_brief, get_brief)
+REASON_LIMIT = 240
+REASON_DOC = """
+    reason: one short sentence that starts with a verb, written for the user in the user's language,
+    saying why you are doing this right now. Everyday words only. No tool names, no field names, no
+    dashes, no semicolons. The user reads it exactly as you wrote it.
+    """
+
+
+def with_reason(function):
+    """The tool the model sees takes `reason` first, so every step can tell the user why it happened.
+
+    The function itself keeps its own signature, so the product's own code still calls it directly;
+    the schema the model sees is built from __signature__, which has reason first and required. The
+    sentence the user reads is the runner's copy of this argument, cut to the same 240 characters.
+    """
+    @functools.wraps(function)
+    def wrapper(reason=None, *arguments, **keywords):
+        if not (" ".join(reason.split())[:REASON_LIMIT] if isinstance(reason, str) else ""):
+            return fail("no_reason", "Every step needs a reason, one short plain sentence for the user.",
+                        'Call it again with reason="…", saying in the user\'s language why you are doing this right now.')
+        return function(*arguments, **keywords)
+
+    first = inspect.Parameter("reason", inspect.Parameter.POSITIONAL_OR_KEYWORD, annotation=str)
+    wrapper.__signature__ = inspect.Signature([first, *inspect.signature(function).parameters.values()])
+    wrapper.__annotations__ = {"reason": str, **getattr(function, "__annotations__", {})}
+    wrapper.__doc__ = (function.__doc__ or "").rstrip() + "\n" + REASON_DOC
+    return wrapper
 
 
 def register(mcp, base_url=None):
@@ -229,5 +263,106 @@ def register(mcp, base_url=None):
     if base_url:
         BASE = base_url.rstrip("/")
     for tool in TOOLS:
-        mcp.tool()(tool)
+        mcp.tool()(with_reason(tool))
     return TOOLS
+
+
+# ----------------------------------------------------- the words the activity list shows
+# One title from the call's own arguments and one outcome from the server's own answer, both in plain
+# words. Returning "" hands the sentence back to steps.py, which writes the failure line itself.
+def _one(value, limit=60):
+    return " ".join(str(value).split())[:limit] if isinstance(value, (str, int, float)) and not isinstance(value, bool) else ""
+
+
+def _things(count, word):
+    """"1 post", "3 posts": a count a person reads. Anything that is not a number says nothing."""
+    try:
+        number = float(count)
+    except (TypeError, ValueError):
+        return ""
+    return f"{number:g} {word}" if number == 1 else f"{number:g} {word}s"
+
+
+def _hours_words(fields):
+    hours = _things(fields.get("hours") or 8, "hour")
+    return f"the last {hours}" if hours else ""
+
+
+def _answered(result):
+    return isinstance(result, dict) and "error" not in result
+
+
+def _overview_words(result, is_error):
+    if not _answered(result):
+        return ""
+    names = [_one(interest.get("name"), 40) for interest in result.get("interests") or [] if isinstance(interest, dict)]
+    kept = result.get("posts_kept") or 0
+    if not names:
+        return "Nothing is being followed yet."
+    return f"We follow {', '.join(name for name in names if name)} and we have {_things(kept, 'post')} saved."
+
+
+def _followed_words(result, is_error):
+    if not _answered(result):
+        return ""
+    interest = result.get("interest") if isinstance(result.get("interest"), dict) else {}
+    name = _one(interest.get("name"), 40)
+    words = steps.word_list(interest.get("terms") or [], 4)
+    return f'Now following "{name}".' + (f" We look for {words}." if words else "") if name else ""
+
+
+def _search_words(result, is_error):
+    if not _answered(result):
+        return ""
+    total = result.get("total")
+    if not isinstance(total, int):
+        return ""
+    return f"Found {_things(total, 'post')}." if total else "No posts matched those words."
+
+
+def _unfollowed_words(result, is_error):
+    if not _answered(result) or not result.get("unfollowed"):
+        return ""
+    name = _one(result.get("name"), 40)
+    return f'Stopped following "{name}". The posts kept for it are gone.' if name else "Stopped following it."
+
+
+def _collector_words(result, is_error):
+    if not _answered(result):
+        return ""
+    return "Collecting is paused. What we already have can still be searched." if result.get("paused") else "Collecting again."
+
+
+def _brief_words(result, is_error):
+    if not _answered(result):
+        return ""
+    if result.get("brief_id"):
+        return "Your brief is being made. It takes about a minute."
+    status, step = _one(result.get("status"), 20), _one(result.get("step"), 120)
+    if status == "ready":
+        return f'Your brief is ready: "{_one(result.get("title"), 80)}".' if result.get("title") else "Your brief is ready."
+    if status == "failed":
+        return f"That did not work: {step}" if step else "That did not work."
+    return f"Still being made. {step}" if step else "Still being made."
+
+
+WORDING = {
+    "brief_overview": (lambda fields: "Checking what we follow and what we have saved", _overview_words, None),
+    "follow_interest": (lambda fields: f'Starting to follow "{_one(fields.get("query"))}"' if _one(fields.get("query"))
+                        else "Starting to follow something new", _followed_words, None),
+    "unfollow_interest": (lambda fields: "Stopping one of the things we follow", _unfollowed_words, None),
+    "search_collected": (lambda fields: "Looking through the posts we already have"
+                         + (f" for {steps.word_list(fields.get('keywords') or [], 3)}" if fields.get("keywords") else ""),
+                         _search_words,
+                         lambda fields: [{"label": "Words searched", "value": steps.word_list(fields.get("keywords") or [], 8)},
+                                         {"label": "Time covered", "value": _hours_words(fields)}]),
+    "collector_control": (lambda fields: "Stopping the collecting" if fields.get("action") == "stop" else "Starting the collecting again",
+                          _collector_words, None),
+    "make_brief": (lambda fields: "Making your audio brief", _brief_words,
+                   lambda fields: [{"label": "How long it will be", "value": _things(fields.get("seconds") or 60, "second")},
+                                   {"label": "Time covered", "value": _hours_words(fields)}]),
+    "get_brief": (lambda fields: "Checking how your brief is doing", _brief_words, None),
+}
+
+for _tool, (_title, _outcome, _facts) in WORDING.items():
+    steps.register_tool(_tool, _title, _outcome, _facts)

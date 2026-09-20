@@ -93,6 +93,11 @@ def matcher():
           repr(B.extract(hostile[7])["haystack"])[:60])
     check("1g text is truncated for the card, not for matching",
           len(B.examples(scan, {}, "%H:%M")[0]["text"]) == 240 and scan.matched == 3, "240 characters")
+    rows = B.examples(scan, {}, "%H:%M")
+    check("1h every example also carries the full post, for the card's Show full post",
+          all(isinstance(row.get("full_text"), str) and row["full_text"].startswith(row["text"]) and len(row["full_text"]) <= 2000 for row in rows)
+          and len(rows[0]["full_text"]) == 2000 and any(row["full_text"] == row["text"] for row in rows),
+          f"full text lengths {[len(row['full_text']) for row in rows]}: the huge one is capped at 2,000, a short one is the same as its short form")
 
 
 def _raises(call):

@@ -7,10 +7,16 @@
 Started by claude_runner.py through a per-session mcp.json, so the session is
 identified by the environment, never by an argument the model can influence:
 HARNESS_SESSION, HARNESS_SESSION_DIR (private state), HARNESS_REPO (parquet).
+
+Optional tool modules (brief_tools, analysis_tools, jev_tools) are added by load_plugins() when the
+server starts, so a stream of work adds tools without editing this file. A test that only imports
+this module sees the tools defined here; call load_plugins(mcp) to get the optional ones too.
 """
 import asyncio
 import functools
 import hashlib
+import importlib
+import importlib.util
 import json
 import os
 import re
@@ -18,6 +24,7 @@ import secrets
 import sys
 import threading
 import time
+import traceback
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -255,6 +262,29 @@ def search_pattern(keyword: str) -> str:
 # taken out; the examples still show the post exactly as it was written.
 LINKLESS = "regexp_replace(body, 'https?://\\S+', ' ', 'g')"
 
+# An example post goes to the page twice: `body`, the short form the card shows first, and
+# `full_text`, what "Show full post" opens. Both are the post exactly as it was written.
+BODY_LIMIT, FULL_TEXT_LIMIT = 240, 2000
+STATUS_ID = re.compile(r"[0-9]{1,25}")  # ASCII digits only: \d would also take digits of other scripts
+
+
+def post_url(identifier) -> str | None:
+    """Where the post lives on X, for an id that is digits and nothing else.
+
+    The id comes out of the archive, not from us, and it becomes part of an address a person will
+    click, so anything that is not a plain number ("12/../x", "1?x=", "１２３", True) gets no link.
+    """
+    if isinstance(identifier, bool) or not isinstance(identifier, (str, int)):
+        return None
+    text = str(identifier)
+    return f"https://x.com/i/web/status/{text}" if STATUS_ID.fullmatch(text) else None
+
+
+def example_post(identifier, day, like_count, lang, body, full_text) -> dict:
+    """One example row. DuckDB cuts both texts, since its left() never splits one emoji in two."""
+    return {"id": identifier, "day": day, "like_count": like_count, "lang": lang, "body": body or "",
+            "full_text": full_text or "", "url": post_url(identifier)}
+
 
 def scan(keywords: list[str], low: str, high: str, language: str | None) -> dict:
     started = time.time()
@@ -292,8 +322,8 @@ def scan(keywords: list[str], low: str, high: str, language: str | None) -> dict
         total = connection.execute("SELECT count(DISTINCT id) FROM matched").fetchone()[0]
         per_day = connection.execute(
             "SELECT strftime(created_at::DATE, '%Y-%m-%d') AS day, count(DISTINCT id) AS count FROM matched GROUP BY 1 ORDER BY 1").fetchall()
-        examples = connection.execute("""
-            SELECT id, strftime(created_at::DATE, '%Y-%m-%d'), like_count, lang, left(body, 240)
+        examples = connection.execute(f"""
+            SELECT id, strftime(created_at::DATE, '%Y-%m-%d'), like_count, lang, left(body, {BODY_LIMIT}), left(body, {FULL_TEXT_LIMIT})
             FROM matched QUALIFY row_number() OVER (PARTITION BY id ORDER BY version DESC) = 1
             ORDER BY like_count DESC NULLS LAST LIMIT 6""").fetchall()
     except duckdb.InterruptException:
@@ -307,7 +337,7 @@ def scan(keywords: list[str], low: str, high: str, language: str | None) -> dict
         "keywords": keywords, "date_from": low[:10], "date_to": high[:10], "language": language, "exact": True,
         "files_scanned": len(files), "seconds": round(time.time() - started, 1), "total": total,
         "per_day": [{"day": day, "count": count} for day, count in per_day],
-        "examples": [{"id": row[0], "day": row[1], "like_count": row[2], "lang": row[3], "body": row[4]} for row in examples],
+        "examples": [example_post(*row) for row in examples],
         "counts": "distinct posts people wrote themselves, no reposts, quotes or replies",
         "matching": "words are matched against the post with its links taken out, and a short or capitalised word matches only as a whole word",
     }
@@ -512,5 +542,42 @@ def submit_project(reason: str) -> dict:
                 "Call save_draft, then request_confirmation, then wait for the user to press Confirm.")
 
 
+TOOL_MODULES = ("brief_tools", "analysis_tools", "jev_tools")  # optional, each with register(mcp)
+
+
+def load_plugins(server=None, names=TOOL_MODULES):
+    """Add the optional tool modules to the MCP server.
+
+    A module that is not there is the normal case and says nothing. A module that IS there and fails
+    prints its traceback and is skipped, because a broken stream of work must not cost the whole tool
+    surface. brief_tools talks to the product's own server, so it is told where that server is.
+    """
+    server, loaded = server if server is not None else mcp, []
+    for name in names:
+        try:
+            if importlib.util.find_spec(name) is None:
+                continue
+        except Exception:  # noqa: BLE001
+            traceback.print_exc()
+            continue
+        try:
+            register = getattr(importlib.import_module(name), "register", None)
+            if register is None:
+                print(f"tools: {name}.py has no register(mcp), so it was skipped", file=sys.stderr, flush=True)
+                continue
+            if name == "brief_tools":
+                register(server, base_url=os.environ.get("SIGNAL_BASE_URL") or "http://127.0.0.1:5194")
+            else:
+                register(server)
+        except Exception:  # noqa: BLE001
+            print(f"tools: {name}.py could not be loaded, the server runs without it", file=sys.stderr, flush=True)
+            traceback.print_exc()
+            continue
+        loaded.append(name)
+        print(f"tools: loaded {name}.py", file=sys.stderr, flush=True)
+    return loaded
+
+
 if __name__ == "__main__":
+    load_plugins()
     mcp.run()
