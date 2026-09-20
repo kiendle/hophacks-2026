@@ -45,5 +45,13 @@ export function useRecents() {
     })
   }, [])
 
-  return { recents, remember }
+  const forget = useCallback((id: string) => {
+    setRecents((prev) => {
+      const next = prev.filter((s) => s.id !== id)
+      saveRecents(next)
+      return next
+    })
+  }, [])
+
+  return { recents, remember, forget }
 }

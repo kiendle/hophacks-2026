@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { BUCKET_MS } from '../data/config'
 import type { TimeRange } from '../data/types'
-
-/** A view whose right edge is within this of "now" counts as live. */
-const LIVE_SNAP = BUCKET_MS
-/** How much history a live view shows before it starts scrolling. */
-const DEFAULT_WINDOW = 2 * 24 * 60 * 60 * 1000
+import { LiveFollowController } from '../liveFollow'
 
 /**
  * Keeps the view pinned to a stream's `now` while the user leaves it there.
@@ -20,7 +15,7 @@ export function useLiveFollow(
   enabled: boolean,
 ) {
   const [following, setFollowing] = useState(true)
-  const state = useRef({ width: 0, on: true })
+  const state = useRef(new LiveFollowController())
   const latest = useRef({ extent, view, setView, now })
   useLayoutEffect(() => {
     latest.current = { extent, view, setView, now }
@@ -28,27 +23,42 @@ export function useLiveFollow(
 
   const setUserView = useCallback((v: TimeRange) => {
     const { now, setView } = latest.current
-    state.current.width = v.end - v.start
-    if (now !== null) {
-      state.current.on = v.end >= now - LIVE_SNAP
-      setFollowing(state.current.on)
-    }
+    state.current.setUserView(v, now)
+    setFollowing(state.current.following)
     setView(v)
   }, [])
 
   const toggle = useCallback(() => {
-    state.current.on = !state.current.on
-    setFollowing(state.current.on)
+    state.current.following = !state.current.following
+    setFollowing(state.current.following)
   }, [])
 
   useEffect(() => {
-    if (!enabled || now === null || !state.current.on) return
+    if (!enabled) return
     const { extent, view, setView } = latest.current
     if (!extent || !view) return
-    // Until the user sizes the window, grow with the data up to a default span.
-    const width = state.current.width || Math.min(Math.max(now - extent.start, BUCKET_MS), DEFAULT_WINDOW)
-    setView({ start: Math.max(extent.start, now - width), end: now })
+    const next = state.current.viewAt(extent, now)
+    if (next) setView(next)
   }, [enabled, now])
 
-  return { following, toggle, setUserView }
+  const resume = useCallback((resetWidth = false) => {
+    state.current.resume(resetWidth)
+    setFollowing(true)
+    const { extent, now, setView } = latest.current
+    const next = state.current.viewAt(extent, now)
+    if (next) setView(next)
+  }, [])
+  const beginInteraction = useCallback(() => {
+    const { view, now } = latest.current
+    // A render may receive a new tick before its follow effect moves the view.
+    // Anchor a live gesture to the edge actually shown, not that newer tick.
+    state.current.beginInteraction(state.current.following ? view?.end ?? now : now)
+  }, [])
+  const endInteraction = useCallback(() => {
+    state.current.endInteraction()
+    const { extent, now, setView } = latest.current
+    const next = state.current.viewAt(extent, now)
+    if (next) setView(next)
+  }, [])
+  return { following, toggle, setUserView, resume, beginInteraction, endInteraction }
 }

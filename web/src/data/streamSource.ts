@@ -1,88 +1,63 @@
 import { Aggregator } from './aggregator'
-import { BUCKET_MS } from './config'
-import type { EventBatch, StreamEvent } from './events'
-import type { DataSource } from './source'
+import { DEFAULT_COMPANIES, DEFAULT_SPEED, type ReplayMessage } from './replayTypes'
+import type { DataSource, StreamSnapshot } from './source'
 
-/** How often the accumulated stream is handed to React, in ms. */
-const FLUSH_MS = 80
-
-interface Options {
-  bucketMs?: number
-  /** Subtopic id to display name, so series keep the user's names and order. */
-  names?: Map<string, string>
-}
-
-/**
- * Buckets a batched event stream and publishes snapshots at a fixed rate, so a
- * replay running at hundreds of times real speed cannot flood React.
- */
-export function createStreamSource(
-  connect: (onBatch: (batch: EventBatch) => void) => () => void,
-  { bucketMs = BUCKET_MS, names }: Options = {},
-): DataSource {
+/** Reuses the chart subscription boundary, fed by the local event stream. */
+export function createStreamSource(): DataSource {
+  let socket: WebSocket | null = null
+  let agg: Aggregator | null = null
   return {
+    command(command) { if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify(command)) },
+    snapshotAt(time) { return agg?.snapshot(time) ?? [] },
     subscribe(onUpdate) {
-      const agg = new Aggregator(bucketMs, names)
-      let now = 0
-      let read = 0
-      let kept = 0
-      let dirty = false
-
-      const flush = () => {
-        if (!dirty) return
-        dirty = false
-        onUpdate({ series: agg.snapshot(now), now, streaming: true, read, kept })
+      let closed = false
+      let sequence = -1
+      let snapshot: StreamSnapshot = { series: [], now: null, streaming: true, read: 0, kept: 0, status: 'loading', speed: DEFAULT_SPEED }
+      const publish = () => onUpdate(snapshot)
+      publish()
+      const ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/api/replay`)
+      socket = ws
+      ws.onmessage = ({ data }) => {
+        if (closed) return
+        try {
+          const message = JSON.parse(data) as ReplayMessage
+          if (message.type === 'error') {
+            snapshot = { ...snapshot, status: 'error', error: message.message }
+          } else if (message.type === 'init') {
+            const priority = (id: string) => { const i = DEFAULT_COMPANIES.indexOf(id); return i < 0 ? 100 : i }
+            agg = new Aggregator([...message.companies].map((c) => ({ ...c, name: c.id === 'google' ? 'Google' : c.id === 'nvidia' ? 'Nvidia' : c.name }))
+              .sort((a, b) => priority(a.id) - priority(b.id)))
+            sequence = -1
+            snapshot = { series: [], now: message.start, start: message.start, end: message.end, run: message.run,
+              streaming: true, read: 0, kept: 0, status: 'playing', speed: message.speed }
+          } else {
+            if (message.run !== snapshot.run || message.sequence <= sequence || !agg) return
+            if (message.sequence !== sequence + 1) throw new Error('Stream interrupted. Reload to restart.')
+            sequence = message.sequence
+            agg.addBatch(message.events)
+            snapshot = { ...snapshot, series: agg.snapshot(message.now), now: message.now,
+              read: agg.posts, kept: agg.likes, status: message.status, speed: message.speed }
+          }
+          publish()
+        } catch (error) {
+          snapshot = { ...snapshot, status: 'error', error: error instanceof Error ? error.message : 'Invalid stream data.' }
+          publish()
+          ws.close()
+        }
       }
-
-      const timer = setInterval(flush, FLUSH_MS)
-      const close = connect((batch) => {
-        agg.addBatch(batch.events)
-        now = Math.max(now, batch.now)
-        kept += batch.events.length
-        read += batch.read ?? batch.events.length
-        dirty = true
-      })
-
+      ws.onclose = () => {
+        if (!closed && snapshot.status !== 'complete' && snapshot.status !== 'error') {
+          snapshot = { ...snapshot, status: 'error', error: 'Stream disconnected. Reload to restart.' }
+          publish()
+        }
+      }
       return () => {
-        clearInterval(timer)
-        close()
+        closed = true
+        // StrictMode unsubscribes its first mount before the handshake finishes.
+        if (ws.readyState === WebSocket.CONNECTING) ws.onopen = () => ws.close()
+        else ws.close()
+        if (socket === ws) socket = null
       }
     },
-  }
-}
-
-/** Connects to the backend's event stream. */
-export function websocketConnect(url: string) {
-  return (onBatch: (batch: EventBatch) => void) => {
-    const ws = new WebSocket(url)
-    ws.onmessage = (e) => {
-      try {
-        onBatch(JSON.parse(e.data) as EventBatch)
-      } catch {
-        // A malformed batch is dropped; the next one still lands.
-      }
-    }
-    return () => ws.close()
-  }
-}
-
-/** Replays events in time order, compressing wall clock by `speed`. */
-export function replayConnect(events: StreamEvent[], speed: number, readPerKept = 38) {
-  return (onBatch: (batch: EventBatch) => void) => {
-    if (!events.length) return () => {}
-    const start = events[0].t
-    const startedAt = performance.now()
-    let i = 0
-    let raf = 0
-    const step = () => {
-      const now = start + (performance.now() - startedAt) * speed
-      const batch: StreamEvent[] = []
-      while (i < events.length && events[i].t <= now) batch.push(events[i++])
-      if (batch.length) onBatch({ events: batch, now, read: batch.length * readPerKept })
-      else onBatch({ events: [], now, read: 0 })
-      if (i < events.length) raf = requestAnimationFrame(step)
-    }
-    raf = requestAnimationFrame(step)
-    return () => cancelAnimationFrame(raf)
   }
 }

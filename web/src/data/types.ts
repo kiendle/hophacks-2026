@@ -1,3 +1,5 @@
+import type { Activity } from './activity'
+
 export interface Post {
   id: string
   handle: string
@@ -10,6 +12,11 @@ export interface Post {
   quotes: number
   /** 0 to 10. */
   sentiment: number
+  likesKnown?: boolean
+  otherMetricsKnown?: boolean
+  /** Likes attributed to this period, including initial popularity received there. */
+  periodLikes?: number
+  timeKnown?: boolean
 }
 
 export interface Bucket {
@@ -23,7 +30,7 @@ export interface Bucket {
   sqSum: number
   /** Posts in the bucket. */
   volume: number
-  /** Latest known traction of the bucket's posts. */
+  /** Signed non-opening like changes received in this interval. */
   traction: number
   /**
    * Cumulative traction of the bucket's posts at each engagement snapshot,
@@ -31,6 +38,20 @@ export interface Bucket {
    */
   snapshots: Snapshot[]
   topPost: Post
+  /** Timestamped arrivals, including activity on posts published in older periods. */
+  activity?: readonly Activity[]
+  /** Latest timestamp this snapshot may use, including when inspected later. */
+  asOf?: number
+  /** Number of scored posts, independent of engagement weight. */
+  scored?: number
+  /** Distinct posts with positive influence, including resurfacing older posts. */
+  activePosts?: number
+}
+
+export interface LikeBalance {
+  t: number
+  value: number
+  known: boolean
 }
 
 export interface Snapshot {

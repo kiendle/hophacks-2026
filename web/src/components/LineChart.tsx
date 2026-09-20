@@ -1,20 +1,24 @@
 import { area, interpolateRgb, line, max, scaleLinear, scaleSqrt, scaleUtc, stack } from 'd3'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from 'react'
-import { BUCKET_MS } from '../data/config'
+import { BUCKET_MS, LINE_INTERVALS } from '../data/config'
+import { chartData, type TrendPoint } from '../data/chartData'
 import type { Bucket, Series, TimeRange } from '../data/types'
 import { formatCount, formatTick } from '../format'
 import { useSize } from '../hooks/useSize'
 import { useSmoothed } from '../hooks/useSmoothed'
+import { useSentimentDomain } from '../hooks/useSentimentDomain'
+import { sentimentDomain } from '../sentimentDomain'
 import { MARGIN as M } from '../layout'
 import { clampView } from '../view'
 import { HoverCard } from './HoverCard'
+import type { LineDisplay } from './LineDisplayToggle'
 
 /** Height of the volume band under the main plot, and the gap above it. */
 const VOL_H = 104
 const VOL_GAP = 16
 
 interface Point {
-  /** Bucket midpoint, epoch ms. */
+  /** Interval end, or the current playhead, epoch ms. */
   t: number
   s: number
   v: number
@@ -26,11 +30,14 @@ interface Point {
 interface Layer {
   series: Series
   points: Point[]
+  trend: TrendPoint[]
   /** Interpolated end of the line at the playhead. */
   tail: { t: number; s: number; v: number } | null
 }
 
 interface Props {
+  display: LineDisplay
+  intervalMs: number
   series: Series[]
   view: TimeRange
   /** The data known so far; pans and selections stay inside it. */
@@ -47,51 +54,23 @@ interface Props {
 
 const HALF = BUCKET_MS / 2
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
-const lerp = (a: number, b: number, k: number) => a + (b - a) * k
 
-function buildLayer(series: Series, view: TimeRange, cutoff: number, animating: boolean): Layer {
-  const points: Point[] = []
-  let tail: Layer['tail'] = null
-  const bs = series.buckets
-  for (let i = 0; i < bs.length; i++) {
-    const t = bs[i].start + HALF
-    if (t > cutoff) {
-      const prev = bs[i - 1]
-      if (prev && prev.start + HALF <= cutoff) {
-        const k = (cutoff - (prev.start + HALF)) / BUCKET_MS
-        tail = {
-          t: cutoff,
-          s: lerp(prev.sentiment, bs[i].sentiment, k),
-          v: lerp(prev.volume, bs[i].volume, k),
-        }
-      }
-      break
-    }
-    // One bucket of slack on each side keeps the line running off the edges.
-    if (t < view.start - BUCKET_MS || t > view.end + BUCKET_MS) continue
-    const grow = animating ? clamp((cutoff - t) / (BUCKET_MS * 0.8), 0, 1) : 1
-    points.push({ t, s: bs[i].sentiment, v: bs[i].volume, bucket: bs[i], grow })
-  }
-  return { series, points, tail }
+function buildLayer(series: Series, view: TimeRange, cutoff: number, intervalMs: number): Layer {
+  const { points, trend } = chartData(series, view, cutoff, intervalMs)
+  return { series, points: points.map(point => ({ ...point, grow: 1 })), trend, tail: null }
 }
 
-function sentimentTarget(layers: Layer[], view: TimeRange): [number, number] {
+function sentimentTarget(layers: Layer[], view: TimeRange, display: LineDisplay): [number, number] {
   let lo = Infinity
   let hi = -Infinity
-  for (const { points, tail } of layers) {
-    for (const p of points) {
-      if (p.t < view.start || p.t > view.end) continue
+  for (const { points, trend } of layers) {
+    for (const p of [...(display !== 'trend' ? points : []), ...(display !== 'points' ? trend : [])]) {
+      if (p.t < view.start || p.t > view.end || !Number.isFinite(p.s)) continue
       lo = Math.min(lo, p.s)
       hi = Math.max(hi, p.s)
     }
-    if (tail) {
-      lo = Math.min(lo, tail.s)
-      hi = Math.max(hi, tail.s)
-    }
   }
-  if (!isFinite(lo)) return [4, 8]
-  const pad = Math.max(0.3, (hi - lo) * 0.15)
-  return [Math.max(0, lo - pad), Math.min(10, hi + pad)]
+  return sentimentDomain(lo, hi)
 }
 
 type VolumeRow = { t: number; total: number } & Record<string, number>
@@ -115,16 +94,18 @@ function volumeRows(layers: Layer[]): VolumeRow[] {
 /** A subtopic's color washed toward white, for the stacked volume bands. */
 const muted = (color: string) => interpolateRgb(color, '#fff')(0.55)
 
-function snapRange(a: number, b: number, extent: TimeRange): TimeRange {
-  const start = Math.floor(Math.min(a, b) / BUCKET_MS) * BUCKET_MS
-  const end = Math.ceil(Math.max(a, b) / BUCKET_MS) * BUCKET_MS
+function snapRange(a: number, b: number, extent: TimeRange, intervalMs: number): TimeRange {
+  const start = Math.floor(Math.min(a, b) / intervalMs) * intervalMs
+  const end = Math.ceil(Math.max(a, b) / intervalMs) * intervalMs
   return {
     start: Math.max(extent.start, start),
-    end: Math.min(extent.end, Math.max(end, start + BUCKET_MS)),
+    end: Math.min(extent.end, Math.max(end, start + intervalMs)),
   }
 }
 
 export function LineChart({
+  display,
+  intervalMs,
   series,
   view,
   extent,
@@ -135,16 +116,18 @@ export function LineChart({
   selectedSubtopics = [],
   onToggleSubtopic,
 }: Props) {
+  const showPoints = display !== 'trend'
+  const showTrend = display !== 'points'
   const [ref, { width, height }] = useSize<HTMLDivElement>()
   const iw = Math.max(0, width - M.left - M.right)
   const ih = Math.max(0, height - M.top - M.bottom - VOL_H - VOL_GAP)
   const volTop = ih + VOL_GAP
   const fullH = volTop + VOL_H
-  const cutoff = playhead ?? Infinity
+  const cutoff = playhead ?? extent.end
 
   const layers = useMemo(
-    () => series.map((s) => buildLayer(s, view, cutoff, playhead !== null)),
-    [series, view, cutoff, playhead],
+    () => series.map((s) => buildLayer(s, view, cutoff, intervalMs)),
+    [series, view, cutoff, intervalMs],
   )
   const volume = useMemo(() => volumeRows(layers), [layers])
   const bands = useMemo(
@@ -155,8 +138,8 @@ export function LineChart({
     [layers, volume],
   )
 
-  const [lo, hi] = sentimentTarget(layers, view)
-  const yDomain = useSmoothed(lo, hi)
+  const [lo, hi] = sentimentTarget(layers, view, display)
+  const yDomain = useSentimentDomain(lo, hi)
   const volTarget = (max(volume, (d) => (d.t >= view.start && d.t <= view.end ? d.total : 0)) ?? 0) * 1.1 || 1
   const [, volMax] = useSmoothed(0, volTarget)
 
@@ -165,12 +148,13 @@ export function LineChart({
   const vy = scaleLinear().domain([0, volMax]).range([VOL_H, 0])
 
   const maxVolume = useMemo(
-    () => max(series, (s) => max(s.buckets, (b) => b.volume)) ?? 1,
-    [series],
+    () => max(layers, (layer) => max(layer.points, (point) => point.v)) ?? 1,
+    [layers],
   )
   const r = scaleSqrt().domain([0, maxVolume]).range([1.4, 4.6])
 
   const path = line<{ t: number; s: number }>()
+    .defined((p) => Number.isFinite(p.s))
     .x((p) => x(p.t))
     .y((p) => y(p.s))
   const volumeArea = area<{ 0: number; 1: number; data: VolumeRow }>()
@@ -189,8 +173,8 @@ export function LineChart({
     let best = null
     let bestD = Infinity
     for (let li = 0; li < layers.length; li++) {
-      for (const p of layers[li].points) {
-        if (p.grow < 1 || p.t < view.start || p.t > view.end) continue
+      for (const p of showPoints ? layers[li].points : layers[li].trend) {
+        if (!Number.isFinite(p.s) || p.t < view.start || p.t > view.end) continue
         const d = Math.hypot(x(p.t) - px, (y(p.s) - py) * 0.5)
         if (d < bestD) {
           bestD = d
@@ -219,10 +203,10 @@ export function LineChart({
       if (!d.moved && Math.abs(px - d.px) < 4) return
       d.moved = true
       setHover(null)
-      onSelect(snapRange(d.anchor, x.invert(clamp(px, 0, iw)).getTime(), extent))
+      onSelect(snapRange(d.anchor, x.invert(clamp(px, 0, iw)).getTime(), extent, intervalMs))
       return
     }
-    setHover(nearest(px, localY(e)))
+    setHover(showPoints ? nearest(px, localY(e)) : null)
   }
 
   const onPointerUp = () => {
@@ -260,13 +244,13 @@ export function LineChart({
     return () => el.removeEventListener('wheel', handler)
   }, [ref])
 
-  const hovered = hover && layers[hover.layer]?.points.find((p) => p.t === hover.t && p.grow === 1)
+  const hovered = showPoints && hover && layers[hover.layer]?.points.find((p) => p.t === hover.t && p.grow === 1)
   const faded = (id: string) => selectedSubtopics.length > 0 && !selectedSubtopics.includes(id)
 
   // Direct labels at each line's visible end, nudged apart vertically.
   const labels = layers
     .map((l) => {
-      const inView = l.points.filter((p) => p.t <= view.end)
+      const inView = (showTrend ? l.trend : l.points).filter((p) => p.t >= view.start && p.t <= view.end && Number.isFinite(p.s))
       const end = l.tail ?? inView[inView.length - 1]
       return end && { id: l.series.id, name: l.series.name, color: l.series.color, x: Math.min(x(end.t), iw), y: y(end.s) }
     })
@@ -326,7 +310,7 @@ export function LineChart({
               </g>
               <line x2={iw} y1={VOL_H} y2={VOL_H} className="baseline" />
               <text className="axis-label" transform={`translate(${-M.left + 12},${VOL_H / 2}) rotate(-90)`}>
-                Posts / {BUCKET_MS / 3_600_000}h
+                Posts / {LINE_INTERVALS.find(interval => interval.value === intervalMs)?.label}
               </text>
             </g>
 
@@ -344,25 +328,32 @@ export function LineChart({
             {hovered && <line className="hover-line" x1={x(hovered.t)} x2={x(hovered.t)} y2={fullH} />}
 
             <g clipPath="url(#plot-clip)">
-              {layers.map((l) => (
+              {showPoints && layers.map((l) => (
                 <path
                   key={l.series.id}
                   d={path(l.tail ? [...l.points, l.tail] : l.points) ?? undefined}
-                  className={selectedSubtopics.includes(l.series.id) ? 'series-line series-picked' : 'series-line'}
+                  className="series-line series-raw"
                   stroke={l.series.color}
-                  opacity={faded(l.series.id) ? 0.2 : 1}
+                  aria-label={`${l.series.name} interval points`}
+                  opacity={faded(l.series.id) ? 0.1 : showTrend ? 0.3 : 1}
                 />
               ))}
-              {layers.map((l) =>
-                l.points.map((p) => (
+              {showTrend && layers.map((l) => (
+                <path key={`trend-${l.series.id}`} d={path(l.trend) ?? undefined}
+                  className={selectedSubtopics.includes(l.series.id) ? 'series-line series-trend series-picked' : 'series-line series-trend'}
+                  aria-label={`${l.series.name} 24-hour trend`}
+                  stroke={l.series.color} opacity={faded(l.series.id) ? 0.2 : 1} />
+              ))}
+              {showPoints && layers.map((l) =>
+                l.points.filter((p) => Number.isFinite(p.s)).map((p) => (
                   <circle
-                    key={`${l.series.id}-${p.t}`}
+                    key={`${l.series.id}-${p.bucket.start}`}
                     cx={x(p.t)}
                     cy={y(p.s)}
                     r={r(p.v) * p.grow}
                     fill={l.series.color}
                     className="series-dot"
-                    opacity={faded(l.series.id) ? 0.2 : 1}
+                    opacity={faded(l.series.id) ? 0.15 : showTrend ? 0.55 : 1}
                   />
                 )),
               )}
