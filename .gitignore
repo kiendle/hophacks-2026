@@ -18,3 +18,6 @@ harness/state/
 # Harness demo project: keep the small scored-posts table, drop the Jev response cache
 !harness/demo/projects/*/posts.parquet
 harness/demo/projects/*/jev_cache*.jsonl
+
+# Local UI server output
+harness/ui-server.*.log

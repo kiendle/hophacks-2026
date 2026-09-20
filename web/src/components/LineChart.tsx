@@ -326,7 +326,7 @@ export function LineChart({
               </g>
               <line x2={iw} y1={VOL_H} y2={VOL_H} className="baseline" />
               <text className="axis-label" transform={`translate(${-M.left + 12},${VOL_H / 2}) rotate(-90)`}>
-                Posts / {BUCKET_MS / 3_600_000}h
+                Posts / {BUCKET_MS < 3_600_000 ? `${BUCKET_MS / 60_000}m` : `${BUCKET_MS / 3_600_000}h`}
               </text>
             </g>
 

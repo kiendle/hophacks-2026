@@ -65,9 +65,11 @@ def clip_seconds(heard):
 
 # ------------------------------------------------------------------- routes
 async def status(request):
+    """Whether this laptop has a voice at all. Same rule as the other two: this page, or nobody."""
+    if not local(request):
+        return not_ours()
     ready = bool(voice.api_key())
-    return web.json_response({"available": ready, "reason": "" if ready else voice.NO_KEY,
-                              "voice_id": voice.voice_of(None)}, headers=voice.HEADERS)
+    return web.json_response({"available": ready, "reason": "" if ready else voice.NO_KEY}, headers=voice.HEADERS)
 
 
 async def listen(request):

@@ -3,6 +3,9 @@
 .messages {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow-wrap: anywhere;
   gap: 14px;
   padding: 12px 2px;
 }
@@ -10,6 +13,9 @@
 .msg {
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
+  min-width: 0;
+  max-width: 100%;
   gap: 6px;
   font-size: 14px;
   line-height: 1.45;
@@ -30,6 +36,8 @@
 
 .msg-scope {
   display: inline-flex;
+  flex-wrap: wrap;
+  max-width: 100%;
   align-items: center;
   gap: 4px;
   color: var(--muted);
@@ -89,6 +97,8 @@
 
 .cite-head {
   display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
   justify-content: space-between;
   align-items: baseline;
 }

@@ -114,7 +114,7 @@ export function Workspace({ session, onSessionChange, preview }: Props) {
 
   // Events read from the firehose and kept after filtering, up to the current moment.
   const events = useMemo(() => {
-    if (live) return { read: stream.read, kept: stream.kept }
+    if (live || import.meta.env.VITE_DEMO_MODE !== 'true') return { read: stream.read, kept: stream.kept }
     let kept = 0
     for (const s of series) for (const b of s.buckets) if (b.start + BUCKET_MS <= now) kept += b.volume
     return { kept, read: kept * EVENTS_PER_KEPT }
@@ -122,7 +122,7 @@ export function Workspace({ session, onSessionChange, preview }: Props) {
 
   const started = useRef(false)
   useEffect(() => {
-    if (preview || live || started.current || !series.length) return
+    if (preview || live || import.meta.env.VITE_DEMO_MODE !== 'true' || started.current || !series.length) return
     started.current = true
     toggle()
   }, [preview, live, series, toggle])
@@ -180,7 +180,7 @@ export function Workspace({ session, onSessionChange, preview }: Props) {
           mode={mode}
           onModeChange={setMode}
         />
-        {!preview && stream.note && <p className="setup-label" role="status" style={{ margin: '8px 24px' }}>{stream.note}</p>}
+        {!preview && stream.note && <p className="dataset-note" role="status" style={{ margin: '8px 24px', width: 'auto', flexShrink: 0 }}>{stream.note}</p>}
         {extent && liveExtent && view && mode === 'line' && (
           <>
             <LineChart

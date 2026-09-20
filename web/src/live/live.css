@@ -1,0 +1,168 @@
+/* Talk live: one round button in the Ask input row, and a strip above it while a talk is on.
+   Every size, colour and radius here is taken from web/src/index.css and web/src/ask/ask.css, so
+   nothing in the panel had to change: the button is the send button in soft grey, and the strip is
+   the selection chip. */
+
+.talk-live-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 50%;
+  background: var(--soft);
+  color: var(--ink);
+}
+
+.talk-live-btn:hover {
+  background: #e8e5e1;
+}
+
+.talk-live-btn.talk-live-on {
+  background: var(--ink);
+  color: #fff;
+}
+
+.talk-live-btn:disabled {
+  color: var(--muted);
+  cursor: default;
+}
+
+.talk-live-btn:disabled:hover {
+  background: var(--soft);
+}
+
+.talk-live-bar {
+  align-self: flex-start;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.talk-live-strip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 6px 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 13px;
+}
+
+.talk-live-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.talk-live-strip[data-state='Listening'] .talk-live-dot {
+  background: #23965a;
+  animation: talk-live-pulse 1.6s ease-in-out infinite;
+}
+
+.talk-live-strip[data-state='Speaking'] .talk-live-dot,
+.talk-live-strip[data-state='Thinking'] .talk-live-dot,
+.talk-live-strip[data-state='Heard you'] .talk-live-dot {
+  background: var(--ink);
+}
+
+@keyframes talk-live-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.talk-live-state {
+  min-width: 62px;
+  white-space: nowrap;
+}
+
+.talk-live-meter {
+  position: relative;
+  width: 44px;
+  height: 4px;
+  flex: none;
+  border-radius: 2px;
+  background: var(--bar);
+  overflow: hidden;
+}
+
+.talk-live-meter i {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--bar-in);
+  transition: width 80ms linear;
+}
+
+.talk-live-action {
+  flex: none;
+  height: 26px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.talk-live-action:hover {
+  background: #e5e2dd;
+  color: var(--text);
+}
+
+.talk-live-end:hover {
+  color: #c0392b;
+}
+
+.talk-live-note {
+  margin: 0;
+  padding: 0 4px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+/* The live conversation is a quiet, focused room, separate from the chat composer. */
+.live-dialog { width: min(460px, calc(100vw - 32px)); height: min(780px, calc(100dvh - 48px)); max-width: none; max-height: none; padding: 0; border: 1px solid #24242a; border-radius: 28px; background: #070709; color: #f5f5f7; overflow: hidden; box-shadow: 0 30px 120px #0007; }
+.live-dialog::backdrop { background: #0808109c; backdrop-filter: blur(9px); }
+.live-room { display: flex; flex-direction: column; height: 100%; padding: 24px; }
+.live-room-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: center; flex: none; }
+.live-brand { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #8e8e98; }
+.live-room-header h2 { font-size: 14px; font-weight: 500; margin: 5px 0 0; }
+.live-circle { border: 1px solid #2a2a30; background: #19191d; color: #eaeaf0; width: 42px; height: 42px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex: none; padding: 0; }
+.live-circle:hover { background: #292930; }
+.live-circle:focus-visible, .live-room-error button:focus-visible { outline: 2px solid #a4adff; outline-offset: 4px; }
+.live-circle[aria-pressed='true'] { background: #30303d; border-color: #6f7292; }
+.live-circle:disabled { opacity: .4; cursor: default; }
+.live-room-center { flex: 1; min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 25px; padding: 25px 0; }
+.cloud-orb { position: relative; width: min(240px, 57vw, 35dvh); aspect-ratio: 1; border-radius: 50%; transition: transform 160ms ease-out; }
+.cloud-orb::before { content: ''; position: absolute; inset: 2%; border-radius: inherit; background: radial-gradient(ellipse at 75% 85%, #fff 0, #d8e2ff 26%, transparent 56%), linear-gradient(165deg, #6250ff, #9caeff 65%, #ecf2ff); }
+.cloud-orb canvas { display: block; position: relative; width: 100%; height: 100%; border-radius: 50%; }
+.cloud-orb:has(canvas[data-ready='true'])::before { display: none; }
+.cloud-orb[data-state='Connecting'] { opacity: .65; }
+.live-room-state { margin: 0; font-size: 14px; font-weight: 400; color: #b4b4c0; letter-spacing: .015em; }
+.live-room-error { max-width: 320px; text-align: center; color: #d3cdd9; font-size: 13px; line-height: 1.5; }
+.live-room-error button { background: #292936; color: #f5f5f7; border: 1px solid #414153; border-radius: 20px; padding: 9px 18px; }
+.live-room-footer { flex: none; text-align: center; padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+.live-room-footer > p { color: #74747e; font-size: 11px; line-height: 1.5; margin: 0 0 23px; }
+.live-room-actions { display: flex; justify-content: center; align-items: center; gap: 22px; }
+.live-room-actions .live-circle { width: 54px; height: 54px; }
+.live-hangup { background: #f5f5f7; color: #151518; border-color: #f5f5f7; }
+.live-hangup:hover { background: #d9d9e4; }
+.live-transcript { flex: 0 1 180px; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #343440 transparent; margin: 0 0 22px; padding: 0 10px; mask-image: linear-gradient(transparent, #000 10px); }
+.live-transcript p { font-size: 13px; line-height: 1.6; color: #dfdfe9; margin: 12px 0 18px; }
+.live-transcript p[data-role='user'] { color: #acb5ef; }
+.live-transcript span { display: block; text-transform: uppercase; letter-spacing: .1em; font-size: 9px; color: #747484; margin-bottom: 4px; }
+.live-transcript .live-transcript-empty { text-align: center; color: #747484; }
+.live-return { display: flex; align-items: center; gap: 8px; background: #18181f; color: #dcdff7; border: 0; border-radius: 18px; padding: 10px 14px; font-size: 12px; margin: 8px 0; }
+@media (max-width: 540px) { .live-dialog { width: 100vw; height: 100dvh; margin: 0; border: 0; border-radius: 0; } .live-room { padding: max(22px, env(safe-area-inset-top)) 22px 24px; } }
+@media (prefers-reduced-motion: reduce) { .cloud-orb { transition: none; transform: none !important; } }

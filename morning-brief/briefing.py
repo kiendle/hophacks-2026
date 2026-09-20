@@ -15,6 +15,7 @@ import json
 import os
 import re
 import shutil
+import subprocess
 import tempfile
 import time
 from datetime import datetime
@@ -44,7 +45,7 @@ TTS_CHUNK = 4500
 FALLBACK_MODELS = ("claude-opus-5", "claude-fable-5-1")
 USD_PER_MILLION = {"claude-opus-5": (5.0, 25.0)}
 MIN_SECONDS = 45  # the listener picks the spoken length anywhere in this range
-MAX_SECONDS = 300
+MAX_SECONDS = 90
 WORDS_PER_SECOND = 2.5
 MOODS = ["alarmed", "angry", "skeptical", "divided", "neutral", "curious", "amused", "excited", "celebratory"]
 
@@ -388,8 +389,41 @@ async def speak(session, text, before, after, voice_id):
 async def voice(session, brief, directory):
     """One continuous recording: every segment script, spoken in order."""
     text = "\n\n".join(segment["script"] for segment in brief["segments"])
-    (directory / "brief.mp3").write_bytes(await speak(session, text, "", "", brief["voice"]["id"]))
+    recorded = await speak(session, text, "", "", brief["voice"]["id"])
+    await asyncio.to_thread(limit_recording, recorded, directory / "brief.mp3", min(brief["seconds"], MAX_SECONDS))
     return {"full": "brief.mp3", "voice": brief["voice"]["name"], "characters": len(text)}
+
+
+def limit_recording(audio, output, seconds):
+    """Enforce the duration on the actual recording, including MP3 frame padding."""
+    import imageio_ffmpeg
+    with tempfile.TemporaryDirectory(prefix='brief-audio-') as temporary:
+        source = os.path.join(temporary, 'source.mp3')
+        with open(source, 'wb') as handle:
+            handle.write(audio)
+        duration = max(1, seconds - 0.1)
+        result = subprocess.run([
+            imageio_ffmpeg.get_ffmpeg_exe(), '-hide_banner', '-loglevel', 'error', '-y',
+            '-i', source, '-t', str(duration), '-af', f'afade=t=out:st={duration - 0.5}:d=0.5',
+            '-codec:a', 'libmp3lame', '-b:a', '128k', str(output),
+        ], capture_output=True, timeout=60,
+            creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+        if result.returncode:
+            raise BriefError('The recording could not be shortened to the requested length.')
+
+
+def shorten_scripts(segments, max_words):
+    """Keep complete spoken sentences within budget; leave the on-screen rundown intact."""
+    remaining = max_words
+    for segment in segments:
+        kept = []
+        for sentence in re.split(r'(?<=[.!?])\s+', segment['script'].strip()):
+            count = len(sentence.split())
+            if count > remaining:
+                break
+            kept.append(sentence)
+            remaining -= count
+        segment['script'] = ' '.join(kept)
 
 
 async def build(store, session, views, brief, directory):
@@ -411,7 +445,7 @@ async def build(store, session, views, brief, directory):
     local = datetime.now().astimezone()
     payload = {
         "source": "Bluesky", "listener_local_date": f"{local:%A, %B} {local.day}", "listener_local_time": f"{local:%H:%M}", "window_hours": brief["hours"],
-        "spoken_words_target": round(brief["seconds"] * WORDS_PER_SECOND), "spoken_words_maximum": round(min(brief["seconds"] * 1.15, MAX_SECONDS) * WORDS_PER_SECOND),
+        "spoken_words_target": round(min(brief["seconds"], MAX_SECONDS) * 2.1), "spoken_words_maximum": round(min(brief["seconds"], MAX_SECONDS) * 2.2),
         "topics": [topic_payload(interest, by_topic[interest["id"]], views, ids, brief["hours"], now) for interest in interests],
     }
     if not any(topic["posts"] for topic in payload["topics"]):
@@ -449,6 +483,7 @@ async def build(store, session, views, brief, directory):
                     })
         brief["segments"].append({**segment, "interest_id": names[segment["topic"]]["id"], "posts_collected": stats[segment["topic"]]["posts_collected"], "distinct_authors": stats[segment["topic"]]["distinct_authors"]})
 
+    shorten_scripts(brief['segments'], payload['spoken_words_maximum'])
     words = sum(len(segment["script"].split()) for segment in brief["segments"])
     spoken = round(words / WORDS_PER_SECOND)
     brief.update(spoken_words=words, estimated_seconds=spoken)

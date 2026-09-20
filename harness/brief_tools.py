@@ -24,7 +24,7 @@ import steps
 BASE = (os.environ.get("SIGNAL_BASE_URL") or "http://127.0.0.1:5194").rstrip("/")
 TIMEOUT_S = 10
 TERMS_TIMEOUT_S = 90  # following an interest waits for Claude to pick its search terms
-CHAT_MAX_SECONDS = 180  # a longer brief costs real money to voice, so it has to be asked for
+CHAT_MAX_SECONDS = 90
 CODES = {400: "bad_request", 403: "forbidden", 404: "not_found", 405: "bad_request", 409: "busy", 410: "gone", 415: "bad_request"}
 HINTS = {
     "bad_request": "The message says what the server wants; fix the arguments and call again.",
@@ -182,14 +182,14 @@ def card(brief_id, title, status):
     return {"_card": {"kind": "brief", "brief_id": brief_id, "title": str(title or "Your audio brief")[:120], "status": str(status or "working")}}
 
 
-def make_brief(hours: float = 8, seconds: int = 60, interest_ids: list[str] | None = None, long_length_requested: bool = False) -> dict:
+def make_brief(hours: float = 8, seconds: int = 90, interest_ids: list[str] | None = None, long_length_requested: bool = False) -> dict:
     """Order a brief: Claude picks the stories from the collected posts and writes a script, then it is voiced as one recording. Returns the brief's id at once.
 
     Call this when the user asks for a brief, a rundown or a podcast. It takes 30 to 90 seconds, so
     give the user the id and then poll get_brief; the player appears on the page and in the chat when
-    it is ready. `hours` is the window to cover, `seconds` the spoken length (60 by default).
-    interest_ids defaults to everything the user follows. Set long_length_requested only when the
-    user has explicitly asked for something longer than three minutes: the voice is a paid service.
+    it is ready. `hours` is the window to cover, `seconds` the spoken length (90 by default and maximum).
+    interest_ids defaults to everything the user follows. long_length_requested is retained for
+    compatibility but does not override the 90-second limit.
     Never promise audio before get_brief reports status "ready".
     """
     status = call("GET", "/api/status")
@@ -198,10 +198,7 @@ def make_brief(hours: float = 8, seconds: int = 60, interest_ids: list[str] | No
     if status.get("working"):
         return fail("busy", f"Brief {status['working']} is still being made.", "Follow that one with get_brief, or wait until it is ready.")
     low, high = status.get("min_seconds", 45), status.get("max_seconds", 300)
-    if seconds > CHAT_MAX_SECONDS and not long_length_requested:
-        return fail("length_not_requested", f"{int(seconds)} seconds is longer than the {CHAT_MAX_SECONDS} seconds a brief gets from chat, and the voice is paid for per character.",
-                    "Ask the user whether they really want a longer brief, and only then call again with long_length_requested=true.")
-    wanted = max(low, min(int(seconds), high if long_length_requested else min(high, CHAT_MAX_SECONDS)))
+    wanted = min(CHAT_MAX_SECONDS, max(low, min(int(seconds), high)))
     answer = call("POST", "/api/briefs", {"hours": hours, "seconds": wanted, "interests": interest_ids}, timeout=30)
     if "error" in answer:
         return answer
@@ -241,7 +238,20 @@ def get_brief(brief_id: str) -> dict:
     }
 
 
-TOOLS = (brief_overview, follow_interest, unfollow_interest, search_collected, collector_control, make_brief, get_brief)
+def send_brief_to_telegram(brief_id: str) -> dict:
+    """Send an existing ready audio brief to the configured Telegram chat, for listening later.
+
+    Only call when the user explicitly asks to send this brief to Telegram. Use its existing id;
+    do not generate another brief. This sends now, not on a schedule. Report success only when
+    the result says sent. If Telegram is unconfigured or the destination is ambiguous, explain
+    the returned error instead of claiming delivery.
+    """
+    import asyncio
+    from brief_delivery import deliver
+    return asyncio.run(deliver(brief_id, brief_base=BASE))
+
+
+TOOLS = (brief_overview, follow_interest, unfollow_interest, search_collected, collector_control, make_brief, get_brief, send_brief_to_telegram)
 REASON_LIMIT = 240
 REASON_DOC = """
     reason: one short sentence that starts with a verb, written for the user in the user's language,
@@ -373,9 +383,11 @@ WORDING = {
     "collector_control": (lambda fields: "Stopping the collecting" if fields.get("action") == "stop" else "Starting the collecting again",
                           _collector_words, None),
     "make_brief": (lambda fields: "Making your audio brief", _brief_words,
-                   lambda fields: [{"label": "How long it will be", "value": _things(fields.get("seconds") or 60, "second")},
+                   lambda fields: [{"label": "How long it will be", "value": _things(fields.get("seconds") or 90, "second")},
                                    {"label": "Time covered", "value": _hours_words(fields)}]),
     "get_brief": (lambda fields: "Checking how your brief is doing", _brief_words, None),
+    "send_brief_to_telegram": (lambda fields: "Sending your brief to Telegram",
+                               lambda result, is_error: "Sent to Telegram." if result.get('sent') else "The brief could not be sent to Telegram.", None),
 }
 
 for _tool, (_title, _outcome, _facts) in WORDING.items():

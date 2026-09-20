@@ -105,15 +105,91 @@ export interface EvidencePost {
   replies: number
   retweets: number
   quotes: number
+  /**
+   * False for a post the app did not score itself, such as one the backend found mid-answer: its
+   * `sentiment` is only a placeholder and no number is shown for it.
+   */
+  scored?: boolean
 }
 
-/** One line of the response stream. */
+/**
+ * One line of the response stream.
+ *
+ * The first four members are the original protocol. The rest were added for the harness backend and
+ * are optional to produce: a client that sends none of them behaves exactly as before, and `useAsk`
+ * still ignores an event type it does not know.
+ */
 export type AskEvent =
   | { type: 'text'; delta: string }
   /** A post the answer relies on; the UI shows it under the answer. */
   | { type: 'citation'; postId: string }
   | { type: 'done' }
   | { type: 'error'; message: string }
+  /** One real thing the assistant did, opened by `start` and closed by `end` with the same id. */
+  | AskStepEvent
+  /** Posts the backend found while answering, so citations to them resolve. */
+  | { type: 'posts'; posts: EvidencePost[] }
+  /** Something to draw under the answer. */
+  | { type: 'card'; card: AskCard }
+  /** A decision only the user may make. Answered with `confirmDecision`, never by the model. */
+  | { type: 'confirm'; confirmationId: string; summary: string; expiresMs: number }
+
+export interface AskStepEvent {
+  type: 'step'
+  phase: 'start' | 'end'
+  /** Matched across the two phases: parallel calls come back out of order. */
+  id: string
+  /** Which step of the turn this is, counting from one. */
+  n?: number
+  /** What is being done, in plain words. */
+  title?: string
+  /** The reason the assistant gave for doing it, in its own words. */
+  why?: string
+  /** What came back, written from the real result. Only on `end`. */
+  outcome?: string
+  ok?: boolean
+  /** How long the step took, in milliseconds. Only on `end`. */
+  ms?: number
+  /** Plain lines for the details panel. */
+  facts?: StepFact[]
+  /** The exact request that was sent, shown only inside an open details panel. */
+  request?: { tool: string; input: unknown }
+}
+
+export interface StepFact {
+  label: string
+  value: string
+}
+
+/**
+ * A card under the answer. `kind` says how to draw it and the rest of the object belongs to that
+ * kind, so an unknown kind is simply not drawn. Everything in one is treated as untrusted text.
+ */
+export interface AskCard {
+  kind: string
+  [key: string]: unknown
+}
+
+/** One labelled line of the draft card. Never JSON. */
+export interface DraftLine {
+  label: string
+  value: string
+  groups?: { name: string; description: string }[]
+}
+
+/** One example post on a preview card, exactly as the backend found it. */
+export interface ExamplePost {
+  id: string
+  /** A day like 2026-09-10, or a live clock label like 19:05. */
+  day: string
+  likes: number | null
+  /** The short form the card shows first. */
+  body: string
+  /** What "Show full post" opens, or null when the backend sent none. */
+  fullText: string | null
+  /** Where the post lives. Checked again before anyone can click it. */
+  url: string | null
+}
 
 export interface AskClient {
   /**
@@ -121,4 +197,15 @@ export interface AskClient {
    * stream ends. Rejects on transport failure or when `signal` aborts.
    */
   ask(request: AskRequest, onEvent: (event: AskEvent) => void, signal: AbortSignal): Promise<void>
+  /**
+   * Answers a `confirm` event with the user's own decision and streams the turn that follows.
+   * Only a client that sends `confirm` events needs this.
+   */
+  confirm?(
+    conversationId: string,
+    confirmationId: string,
+    approved: boolean,
+    onEvent: (event: AskEvent) => void,
+    signal: AbortSignal,
+  ): Promise<void>
 }

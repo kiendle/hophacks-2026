@@ -14,6 +14,9 @@ this interpreter (claude_runner.mcp_config), so uv must install them into it.
 
 Optional route modules (harness/voice.py, harness/analysis_api.py) are picked up by `attach`, so a
 stream of work can add /api routes without editing this file and the combined server gets them too.
+
+The React app in web/dist is served from here too (spa_page, spa_asset and spa_headers), so the
+combined server and this one hand out the same files under the same policy.
 """
 import asyncio
 import contextlib
@@ -33,6 +36,7 @@ from claude_runner import Runner
 
 ROOT = Path(__file__).resolve().parent
 WEB = ROOT / "web"
+DIST = ROOT.parent / "web" / "dist"  # the React interface, written by npm run build in web/
 SESSIONS = ROOT / "state/sessions"
 ASSETS = {"/signal.css": (ROOT.parent / "jetstream-demo/styles.css", "text/css")}  # one visual system for every demo
 TYPES = {".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml",
@@ -49,9 +53,22 @@ HEADERS = {
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "no-referrer",
 }
-PLUGINS = ("voice", "analysis_api", "realtime_api")  # optional modules, each with setup(app)
+# Optional modules, each with setup(app). One that is not there is ignored, one that is broken is
+# skipped with its traceback, so a stream of work that is still being written never costs the server.
+PLUGINS = ("voice", "analysis_api", "realtime_api", "live_voice", "agent_voice", "stream_api", "setup_api", "ui_server", "brief_delivery")
 VOICE_MAX = 10 * 1024 * 1024  # a recorded clip, on the voice routes only
 PLACEHOLDER = b"<!doctype html><title>Signal harness</title><p>The chat page has not been written yet. The API is live.\n"
+ASSET_CACHE = "public, max-age=31536000, immutable"  # every name under dist/assets carries its own build hash
+HOSTNAME = re.compile(r"[A-Za-z0-9.:\[\]-]{1,120}")  # what may be repeated back into a header
+BUILD_FIRST = """<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Sentimeter</title>
+<h1>The interface is not built yet</h1>
+<p>Build the interface first: run npm run build in the web folder.</p>
+<p>Then reload this page.</p>
+</html>
+"""
 CONFIRMATION = re.compile(r"[A-Za-z0-9_-]{16}")
 GONE = (ConnectionResetError, RuntimeError, OSError)  # the page may be gone before the last frame is written
 MAX_TURNS = 2  # at most two Claude Code processes at once: one laptop, one subscription (DESIGN.md §0)
@@ -63,7 +80,13 @@ def fail(status, message):
 
 @web.middleware
 async def local_only(request, handler):
-    if request.path.startswith("/api/") and request.method != "GET":
+    """Same origin for anything that changes something, and for the live chart's socket.
+
+    A WebSocket handshake is a GET and gets no preflight, so its Origin header is the only check there
+    is; past that check the upgrade is handed straight to its handler, which is what it needs to work.
+    """
+    upgrading = request.headers.get("Upgrade", "").lower() == "websocket"
+    if upgrading or (request.path.startswith("/api/") and request.method != "GET"):
         if request.url.host not in ("127.0.0.1", "localhost") or request.headers.get("Origin", str(request.url.origin())) != str(request.url.origin()):
             return fail(403, "Only same-origin local requests are accepted.")
         if request.path.startswith("/api/voice/"):
@@ -102,6 +125,43 @@ async def asset(request):
     content_type = mapped[1] if mapped else TYPES.get(path.suffix.lower(), "application/octet-stream")
     return web.Response(body=path.read_bytes(), content_type=content_type,
                         charset="utf-8" if content_type in TEXTUAL else None, headers=HEADERS)
+
+
+def spa_headers(request, cache="no-store"):
+    """The React interface's own policy, which is the strict one plus exactly what that app needs.
+
+    React and d3 set style ATTRIBUTES on elements, so those are allowed and inline style and script
+    elements still are not (web/dist/index.html has neither). The live chart opens a socket back to
+    this very server, so the socket address is this request's own host and port and nothing else.
+    """
+    host = request.host if HOSTNAME.fullmatch(request.host or "") else "127.0.0.1"
+    return {**HEADERS, "Cache-Control": cache, "Content-Security-Policy": (
+        "default-src 'self'; script-src 'self' blob:; worker-src 'self' blob:; style-src 'self'; style-src-attr 'unsafe-inline'; "
+        f"img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' ws://{host} wss://{host} "
+        "https://api.elevenlabs.io wss://api.elevenlabs.io https://livekit.rtc.elevenlabs.io wss://livekit.rtc.elevenlabs.io; "
+        "base-uri 'none'; frame-ancestors 'none'")}
+
+
+async def spa_page(request):
+    """web/dist/index.html exactly as the build wrote it, for the home page and every address it owns."""
+    try:
+        body = (DIST / "index.html").read_bytes()
+    except OSError:  # nobody has built the interface yet: say so in words, not in a stack trace
+        return web.Response(status=503, text=BUILD_FIRST, content_type="text/html", charset="utf-8", headers=HEADERS)
+    return web.Response(body=body, content_type="text/html", charset="utf-8", headers=spa_headers(request))
+
+
+async def spa_asset(request, root=None, cache=ASSET_CACHE):
+    """One file out of web/dist/assets, and never one outside it. Their names carry a build hash, so they keep.
+
+    root and cache let the catch-all hand in the top of web/dist instead, where names are not hashed.
+    """
+    path = web_file(request.match_info.get("name"), root or DIST / "assets")
+    if path is None:
+        return fail(404, "No such file.")
+    content_type = TYPES.get(path.suffix.lower(), "application/octet-stream")
+    return web.Response(body=path.read_bytes(), content_type=content_type,
+                        charset="utf-8" if content_type in TEXTUAL else None, headers=spa_headers(request, cache))
 
 
 def session_of(request):

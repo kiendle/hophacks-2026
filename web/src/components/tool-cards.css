@@ -1,0 +1,25 @@
+﻿.tool-activity, .tool-card { font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+.tool-heading { color: var(--muted); font-size: 11px; margin: 0 0 8px; }
+.tool-step { padding: 8px 0 8px 12px; border-left: 1px solid var(--border); }
+.tool-step p, .tool-card p { margin: 4px 0; white-space: pre-wrap; }
+.tool-step-title { display: flex; align-items: center; gap: 6px; font-weight: 500; }
+.tool-step-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); flex: none; }
+.tool-step[data-state="running"] .tool-step-dot { animation: ask-blink 1s ease-in-out infinite; background: var(--ink); }
+.tool-step[data-state="done"] .tool-step-dot { background: #477f57; }
+.tool-step[data-state="error"] .tool-step-dot { background: #c0392b; }
+.tool-time { margin-left: auto; flex: none; font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tool-muted, .tool-example small { color: var(--muted); }
+.tool-step details, .tool-card details { margin-top: 5px; }
+.tool-step summary, .tool-card summary { cursor: pointer; color: var(--muted); font-size: 11px; }
+.tool-step pre { max-height: 200px; overflow: auto; white-space: pre-wrap; font-size: 10px; padding: 8px; background: #fff; border: 1px solid var(--border); border-radius: 6px; }
+.tool-card { border: 1px solid var(--border); border-radius: 10px; padding: 12px; background: #fff; }
+.tool-card h4 { margin: 0 0 6px; font-size: 12px; font-weight: 600; }
+.tool-card audio, .tool-chart { display: block; width: 100%; margin: 10px 0; }
+.tool-counts { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 10px; margin: 8px 0; }
+.tool-example { border-top: 1px solid var(--border); margin-top: 10px; padding-top: 8px; }
+.tool-example a { display: block; color: var(--text); font-size: 11px; margin-top: 4px; }
+.tool-block { display: block; padding-left: 8px; }
+.tool-actions { display: flex; gap: 8px; margin-top: 10px; }
+.tool-button { border: 1px solid var(--border); background: #fff; border-radius: 8px; padding: 7px 12px; font: inherit; cursor: pointer; }
+.tool-bar { display: grid; grid-template-columns: 1fr 1fr auto; align-items: center; gap: 8px; margin: 7px 0; font-size: 11px; }
+.tool-bar progress { width: 100%; height: 5px; accent-color: var(--ink); }

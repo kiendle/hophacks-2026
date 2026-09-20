@@ -727,19 +727,19 @@ async def schedule_commands():
         await until(lambda: said(box, "Every day at 07:30"))
         saved, answer = json.loads(path.read_text(encoding="utf-8")), (said(box, "Every day at 07:30") or [""])[0]
         check("/schedule 7:30 2 is kept per chat in chats.json and answered in plain words",
-              saved["chats"][str(CHAT)]["schedule"] == {"at": "07:30", "minutes": 2, "last": None}
-              and "about 2 minutes" in answer and "last 24 hours" in answer and "comes today" in answer,
+              saved["chats"][str(CHAT)]["schedule"] == {"at": "07:30", "minutes": 1.5, "last": None}
+              and "about 1 minute 30 seconds" in answer and "last 24 hours" in answer and "comes today" in answer,
               json.dumps(saved["chats"][str(CHAT)]))
 
         box.fake.queue.append(message(3, CHAT, "/schedule 6am 5"))
         await until(lambda: said(box, "Every day at 06:00"))
         saved, answer = json.loads(path.read_text(encoding="utf-8")), (said(box, "Every day at 06:00") or [""])[0]
-        check("a time already past starts tomorrow, and a length over three minutes is capped and said so",
-              saved["chats"][str(CHAT)]["schedule"] == {"at": "06:00", "minutes": 3, "last": "2026-09-19"}
-              and "comes tomorrow" in answer and "longest a brief can be is 3 minutes" in answer,
+        check("a time already past starts tomorrow, and a length over ninety seconds is capped and said so",
+              saved["chats"][str(CHAT)]["schedule"] == {"at": "06:00", "minutes": 1.5, "last": "2026-09-19"}
+              and "comes tomorrow" in answer and "longest a brief can be is 1 minute 30 seconds" in answer,
               json.dumps(saved["chats"][str(CHAT)]["schedule"]))
         again = tg.Bot(TOKEN, {CHAT}, None, sessions=box.root / "sessions", chats_path=path)
-        check("a restart keeps the schedule", again.plans == {CHAT: {"at": "06:00", "minutes": 3, "last": "2026-09-19"}},
+        check("a restart keeps the schedule", again.plans == {CHAT: {"at": "06:00", "minutes": 1.5, "last": "2026-09-19"}},
               str(again.plans))
 
         box.fake.queue.extend([message(4, CHAT, "/schedule"), message(5, CHAT, "/schedule banana")])
@@ -762,7 +762,7 @@ async def scheduled_delivery():
         await asyncio.sleep(0.7)  # two more ticks: a morning already sent must not be ordered again
         orders, audios = box.briefs.orders, box.fake.got("sendAudio")
         check("at seven the timer orders one 3-minute brief about the last 24 hours, as the page's own origin",
-              len(orders) == 2 and all(order == {"origin": box.base, "hours": 24, "seconds": 180} for order in orders),
+              len(orders) == 2 and all(order == {"origin": box.base, "hours": 24, "seconds": 90} for order in orders),
               f"{len(orders)} orders (the first met a busy server): {orders[-1]}")
         check("a server busy with another brief is waited for, 15 s at a time", 15.0 in box.clock.slept and 5.0 in box.clock.slept,
               f"slept 15 s {box.clock.slept.count(15.0)}x, polled every 5 s {box.clock.slept.count(5.0)}x")
@@ -798,9 +798,9 @@ async def brief_on_demand():
         box.fake.queue.extend([message(1, CHAT, "/brief 2"), message(2, CHAT, "/brief")])
         await until(lambda: box.fake.got("sendAudio"))
         await polled(box)
-        check("/brief makes one now at the length asked for, and a second /brief meanwhile orders nothing",
-              len(box.briefs.orders) == 1 and box.briefs.orders[0]["seconds"] == 120 and len(box.fake.got("sendAudio")) == 1
-              and len(said(box, "Making a brief of about 2 minutes")) == 1 and len(said(box, "already being made")) == 1
+        check("/brief caps a new recording at ninety seconds, and a second /brief meanwhile orders nothing",
+              len(box.briefs.orders) == 1 and box.briefs.orders[0]["seconds"] == 90 and len(box.fake.got("sendAudio")) == 1
+              and len(said(box, "Making a brief of about 1 minute 30 seconds")) == 1 and len(said(box, "already being made")) == 1
               and box.runners.turns() == 0 and not box.bot.making,
               f"{len(box.briefs.orders)} order of {box.briefs.orders[0]['seconds']} s, {len(box.fake.got('sendAudio'))} upload")
 
@@ -1211,7 +1211,7 @@ def hand_edited_files():
         state = bot.chat(CHAT)
         inside = str(state["dir"].resolve()).startswith(str((root / "sessions").resolve()))
         check("a chats.json somebody edited starts the bot, and its session id never becomes a path",
-              loaded == {} and bot.plans == {CHAT: {"at": "07:00", "minutes": 2, "last": None}}
+              loaded == {} and bot.plans == {CHAT: {"at": "07:00", "minutes": 1.5, "last": None}}
               and inside and bool(tg.SESSION.fullmatch(state["session"])),
               f"the schedule survived, the traversal did not, and the new session is ...{state['session'][-8:]}")
     except Exception as error:
@@ -1320,9 +1320,9 @@ def pure_functions():
           and tg.pack(["a" * 400], limit=250) == ["a" * 400],
           f"{len(tg.pack(['a' * 200, 'b' * 200], limit=250))} messages for two blocks of 200")
     times = ("7", "7:30 2", "7am", "12am", "9pm 9", "19:05 1min", "24:00", "7:60", "13pm", "soon", "")
-    check("a schedule reads clock times, caps the length at three minutes and refuses what is not a time",
-          [tg.parse_plan(text) for text in times] == [("07:00", 3, False), ("07:30", 2, False), ("07:00", 3, False), ("00:00", 3, False),
-                                                      ("21:00", 3, True), ("19:05", 1, False), None, None, None, None, None],
+    check("a schedule reads clock times, caps the length at ninety seconds and refuses what is not a time",
+          [tg.parse_plan(text) for text in times] == [("07:00", 1.5, False), ("07:30", 1.5, True), ("07:00", 1.5, False), ("00:00", 1.5, False),
+                                                      ("21:00", 1.5, True), ("19:05", 1, False), None, None, None, None, None],
           str([tg.parse_plan(text) for text in times[:6]]))
     long_brief = {"title": "t" * 400, "segments": [{"stories": [{"title": "s" * 400}] * 40}, "junk", {"stories": None}]}
     check("a caption fits Telegram's 1024 and a malformed brief still renders",

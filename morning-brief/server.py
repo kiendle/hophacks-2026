@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.11"
-# dependencies = ["aiohttp>=3.11,<4", "anthropic>=0.75"]
+# dependencies = ["aiohttp>=3.11,<4", "anthropic>=0.75", "imageio-ffmpeg>=0.6"]
 # ///
 """Run: uv run morning-brief/server.py   then open http://127.0.0.1:5194
 
@@ -44,7 +44,7 @@ HEADERS = {
     "Referrer-Policy": "no-referrer",
 }
 DEFAULT_HOURS = float(os.environ.get("BRIEF_HOURS", 8))
-DEFAULT_SECONDS = int(os.environ.get("BRIEF_SECONDS", 180))  # spoken length, anywhere from MIN_SECONDS to MAX_SECONDS
+DEFAULT_SECONDS = 90
 LANGS = [lang for lang in os.environ.get("BRIEF_LANGS", "en").split(",") if lang]
 SEED = {"id": "ai", "name": "AI", "langs": LANGS, "created": 0, "covered_from": None, "terms": [
     "AI", "A.I.", "AGI", "LLM", "LLMs", "GenAI", "OpenAI", "Anthropic", "ChatGPT", "DeepMind", "Nvidia", "Sam Altman",
@@ -162,6 +162,7 @@ async def audio(request):
 
 
 def start_brief(app, hours, interest_ids, seconds=DEFAULT_SECONDS, voice=None):
+    seconds = min(seconds, MAX_SECONDS)
     created = datetime.now()
     brief = {"id": f"{created:%Y%m%d-%H%M%S}", "created": now_ms(), "hours": hours, "seconds": int(seconds), "voice": voice or {"id": os.environ.get("ELEVENLABS_VOICE_ID", DEFAULT_VOICE), "name": None}, "interest_ids": interest_ids, "status": "working", "step": "Starting", "notes": [], "audio": None, "usage": {}}
     app["state"]["working"] = brief

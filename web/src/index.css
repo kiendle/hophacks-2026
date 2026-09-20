@@ -388,6 +388,7 @@ button {
 /* Chat */
 
 .chat {
+  position: relative;
   flex: none;
   background: #f6f6f4;
   width: var(--sidebar-width);
@@ -395,6 +396,39 @@ button {
   flex-direction: column;
   padding: 16px;
   border-left: 1px solid var(--border);
+}
+
+.chat-resize-handle {
+  position: absolute;
+  z-index: 5;
+  inset: 0 auto 0 -7px;
+  width: 13px;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+.chat-resize-handle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  width: 4px;
+  height: 40px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background: var(--muted);
+  transition: background 120ms;
+}
+
+.chat-resize-handle:hover::after,
+.chat-resize-handle:focus-visible::after,
+.chat-resize-handle[data-resizing]::after {
+  background: var(--ink);
+}
+
+.chat-resize-handle:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
 }
 
 .messages {
@@ -441,7 +475,8 @@ button {
 .input-row {
   background: #fff;
   display: flex;
-  align-items: center;
+  flex-shrink: 0;
+  align-items: flex-end;
   gap: 8px;
   padding: 6px 6px 6px 16px;
   border: 1px solid var(--border);
@@ -452,19 +487,29 @@ button {
   border-color: #cfcfcf;
 }
 
-.input-row input {
+.input-row textarea {
   flex: 1;
   min-width: 0;
-  height: 36px;
+  min-height: 38px;
+  max-height: min(180px, 30dvh);
+  padding: 8px 0;
+  resize: none;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
   border: none;
   outline: none;
   background: none;
+  font: inherit;
+  color: inherit;
   font-size: 15px;
+  line-height: 22px;
 }
 
-.input-row input::placeholder {
+.input-row textarea::placeholder {
   color: var(--muted);
 }
+
+.input-row .voice-mic { margin-bottom: 9px; }
 
 .send {
   display: inline-flex;

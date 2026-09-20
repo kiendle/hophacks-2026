@@ -87,7 +87,7 @@ CARD_BRIEF_WAIT_S = 180.0  # a brief card is followed for three minutes, then th
 CARD_FETCH_S = 15.0  # a chart picture is worth a few seconds of waiting, never the answer behind it
 MAX_PICTURE = 10 * 1024 * 1024  # Telegram refuses a photo over 10 MB anyway
 BRIEF_AT, BRIEF_HOURS = "07:00", 24  # the daily brief: seven in the morning, about the last day
-BRIEF_MINUTES = 3  # the default and the most: the voice is paid per character (brief_tools.CHAT_MAX_SECONDS)
+BRIEF_MINUTES = 1.5  # ninety seconds, including automatically scheduled briefs
 BRIEF_GRACE_S = 2 * 3600  # a laptop asleep at seven still delivers if it wakes within two hours
 BRIEF_WAIT_S = 600.0  # writing and recording take 30 to 90 seconds; past ten minutes something is stuck
 BRIEF_POLL_S = 5.0
@@ -95,7 +95,7 @@ BRIEF_BUSY_S, BRIEF_BUSY_TRIES = 15.0, 12  # the server makes one brief at a tim
 SCHEDULE_TICK = 30.0
 BRIEF_ID = re.compile(r"\d{8}-\d{6}")  # the server's own patterns, checked before a path is built from them
 BRIEF_FILE = re.compile(r"[a-z0-9-]+\.mp3")
-PLAN = re.compile(r"(\d{1,2})(?::(\d{2}))?\s*(am|pm)?(?:\s+(\d{1,2})\s*(?:m|min|mins|minute|minutes)?)?", re.I)
+PLAN = re.compile(r"(\d{1,2})(?::(\d{2}))?\s*(am|pm)?(?:\s+(\d{1,2}(?:\.\d+)?)\s*(?:m|min|mins|minute|minutes)?)?", re.I)
 
 SETUP = f"""No TELEGRAM_BOT_TOKEN yet, so there is no bot to run. Making one takes about two minutes:
 
@@ -388,12 +388,13 @@ def parse_plan(text):
         hour = hour % 12 + (12 if half == "pm" else 0)
     if hour > 23 or minute > 59:
         return None
-    asked = int(match[4] or BRIEF_MINUTES)
+    asked = float(match[4] or BRIEF_MINUTES)
     return f"{hour:02d}:{minute:02d}", max(1, min(asked, BRIEF_MINUTES)), asked > BRIEF_MINUTES
 
 
 def length_of(minutes):
-    return f"{minutes} minute{'' if minutes == 1 else 's'}"
+    whole, seconds = divmod(round(minutes * 60), 60)
+    return f"{whole} minute{'' if whole == 1 else 's'}" + (f" {seconds} seconds" if seconds else '')
 
 
 def brief_caption(brief):
@@ -895,7 +896,7 @@ class Bot:
         """Order one brief and wait for it: the finished brief with its recording, or a sentence about what went wrong."""
         try:
             for _ in range(BRIEF_BUSY_TRIES):
-                status, answer = await self.ask("/api/briefs", {"hours": BRIEF_HOURS, "seconds": minutes * 60})
+                status, answer = await self.ask("/api/briefs", {"hours": BRIEF_HOURS, "seconds": min(minutes * 60, 90)})
                 if status != 409:  # 409: the page or another chat is having one made, and the server makes one at a time
                     break
                 await self.sleep(BRIEF_BUSY_S)

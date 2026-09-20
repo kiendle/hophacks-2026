@@ -1,0 +1,22 @@
+﻿/* Voice controls reuse the chat's typography, palette, and compact buttons. */
+.voice-controls { flex: none; margin: 8px 2px; }
+.reply-actions { position: relative; align-self: flex-start; margin-top: 4px; }
+.reply-more { color: var(--muted); cursor: pointer; }
+.reply-more:hover, .reply-more[aria-expanded="true"] { background: var(--soft); color: var(--ink); }
+.reply-menu { position: absolute; bottom: calc(100% + 6px); left: 0; z-index: 10; min-width: 160px; padding: 5px; background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 4px 18px #00000018; }
+.reply-menu-item { display: flex; align-items: center; gap: 9px; width: 100%; padding: 10px 12px; border: 0; border-radius: 8px; background: none; color: var(--ink); font: inherit; font-size: 12px; text-align: left; white-space: nowrap; cursor: pointer; }
+.reply-menu-item:hover { background: var(--soft); }
+.reply-menu-item:disabled { opacity: .45; cursor: default; }
+.reply-more:focus-visible, .reply-menu-item:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.voice-control-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.voice-toggle, .voice-action, .voice-reply { display: inline-flex; align-items: center; gap: 6px; padding: 3px 0; border: 0; background: none; color: var(--muted); font: inherit; font-size: 11px; cursor: pointer; }
+.voice-toggle[aria-pressed="true"] { color: var(--ink); font-weight: 600; }
+.voice-toggle[aria-pressed="true"] svg { fill: #0000000d; }
+.voice-toggle:hover, .voice-action:hover, .voice-reply:hover { color: var(--ink); }
+.voice-toggle:disabled, .voice-reply:disabled, .voice-mic:disabled { opacity: .45; cursor: default; }
+.voice-status { margin: 5px 0 0; color: var(--muted); font-size: 11px; line-height: 1.4; }
+.voice-error { color: #c0392b; }
+.voice-mic { flex: none; color: var(--muted); }
+.voice-mic[aria-pressed="true"] { color: #c0392b; background: #c0392b0d; }
+.voice-reply { align-self: flex-start; font-size: 11px; }
+.voice-toggle:focus-visible, .voice-action:focus-visible, .voice-reply:focus-visible, .voice-mic:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 4px; }
