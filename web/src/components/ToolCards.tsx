@@ -42,10 +42,10 @@ export function ConfirmationCard({ value, busy, decide }: { value: Confirmation;
     const timer = setTimeout(() => setExpired(true), Math.max(0, value.expiresMs - Date.now()))
     return () => clearTimeout(timer)
   }, [value.expiresMs])
-  return <section className="tool-card"><h4>{value.kind === 'automation_proposal' ? 'Confirm automation proposal' : 'Confirm project'}</h4><p>{value.summary}</p>
+  return <section className="tool-card"><h4>{value.kind === 'automation_proposal' ? 'Confirm automation proposal' : value.kind === 'brief_telegram' ? 'Confirm Telegram delivery' : 'Confirm project'}</h4><p>{value.summary}</p>
     {value.decision ? <p>{value.decision === 'approved' ? 'Confirmed.' : 'Cancelled.'}</p>
       : expired ? <p>This confirmation expired. Ask for a new one.</p>
-      : <div className="tool-actions"><button className="primary-btn" disabled={busy} onClick={() => decide(true)}>{value.kind === 'automation_proposal' ? 'Confirm configuration' : 'Confirm'}</button><button className="tool-button" disabled={busy} onClick={() => decide(false)}>Cancel</button></div>}
+      : <div className="tool-actions"><button className="primary-btn" disabled={busy} onClick={() => decide(true)}>{value.kind === 'automation_proposal' ? 'Confirm configuration' : value.kind === 'brief_telegram' ? 'Send to Telegram' : 'Confirm'}</button><button className="tool-button" disabled={busy} onClick={() => decide(false)}>Cancel</button></div>}
   </section>
 }
 
@@ -86,7 +86,7 @@ function BriefCard({ card }: { card: AskCard }) {
         const next = await response.json() as Brief
         if (controller.signal.aborted) return
         setBrief(next)
-        setStatus(next.status === 'ready' ? 'Ready to listen.' : next.step || 'Preparing your audio brief…')
+        setStatus(next.status === 'ready' ? next.audio?.full ? 'Ready to listen.' : 'Your script is ready. Audio could not be recorded.' : next.step || 'Preparing your audio brief…')
         if (next.status !== 'working') return
         if (++attempts >= 100) { setStatus('This is taking longer than expected. Ask for the brief status.'); return }
         timer = setTimeout(poll, 3000)
@@ -107,6 +107,8 @@ function BriefCard({ card }: { card: AskCard }) {
     </div>}
     {deliveryError && <p role="alert" className="msg-error">{deliveryError}</p>}
     {brief?.segments?.map((segment, i) => <div key={i}><strong>{segment.headline}</strong>{segment.stories?.map((story, j) => <p key={j}>{story.title}</p>)}</div>)}
+    {brief?.segments?.some(segment => segment.script) && <details><summary>Read the script</summary>{brief.segments.map((segment, i) => <p key={i}>{segment.script}</p>)}</details>}
+    {brief?.coverage_note && <p className="tool-muted">{brief.coverage_note}</p>}
     {brief?.notes?.map((note, i) => <p className="tool-muted" key={i}>{note}</p>)}
   </section>
 }

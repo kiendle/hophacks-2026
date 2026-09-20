@@ -273,6 +273,16 @@ async def post_confirm(request):
         return fail(409, "That confirmation was already decided.")
     if session["busy"]:
         return fail(409, "This chat is still answering the previous message.")
+    if record.get("kind") == "brief_telegram":
+        from brief_confirmation import decide_confirmation, delivery_message
+        session["busy"] = True
+        try:
+            result = await decide_confirmation(session["dir"], confirmation_id, approved)
+        finally:
+            session["busy"] = False
+        events = [{"type": "message", "text": delivery_message(result)}, {"type": "done"}]
+        return web.Response(text="".join(f"data: {json.dumps(event)}\n\n" for event in events),
+                            content_type="text/event-stream", headers={"Cache-Control": "no-store"})
     if record.get("kind") == "automation_proposal":
         from automation_tools import decide_proposal, ProposalError
         try:

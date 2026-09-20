@@ -10,6 +10,7 @@ voices.  Keys go in morning-brief/.env (see .env.example); both are optional.
 """
 import asyncio
 import json
+import math
 import os
 import re
 import traceback
@@ -43,7 +44,7 @@ HEADERS = {
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "no-referrer",
 }
-DEFAULT_HOURS = float(os.environ.get("BRIEF_HOURS", 8))
+DEFAULT_HOURS = float(os.environ.get("BRIEF_HOURS", 24))
 DEFAULT_SECONDS = 90
 LANGS = [lang for lang in os.environ.get("BRIEF_LANGS", "en").split(",") if lang]
 SEED = {"id": "ai", "name": "AI", "langs": LANGS, "created": 0, "covered_from": None, "terms": [
@@ -139,7 +140,7 @@ def saved_briefs():
 
 async def list_briefs(request):
     working = request.app["state"]["working"]
-    rows = ([summary(working)] if working and working["status"] != "ready" else []) + [summary(brief) for brief in saved_briefs()]
+    rows = ([summary(working)] if working else []) + [summary(brief) for brief in saved_briefs() if not working or brief["id"] != working["id"]]
     return web.json_response({"briefs": rows[:30]}, headers=HEADERS)
 
 
@@ -161,10 +162,14 @@ async def audio(request):
     return web.FileResponse(path, headers={"Content-Type": "audio/mpeg", "X-Content-Type-Options": "nosniff"})
 
 
-def start_brief(app, hours, interest_ids, seconds=DEFAULT_SECONDS, voice=None):
+def start_brief(app, hours, interest_ids, seconds=DEFAULT_SECONDS, voice=None, **preferences):
     seconds = min(seconds, MAX_SECONDS)
     created = datetime.now()
-    brief = {"id": f"{created:%Y%m%d-%H%M%S}", "created": now_ms(), "hours": hours, "seconds": int(seconds), "voice": voice or {"id": os.environ.get("ELEVENLABS_VOICE_ID", DEFAULT_VOICE), "name": None}, "interest_ids": interest_ids, "status": "working", "step": "Starting", "notes": [], "audio": None, "usage": {}}
+    # Revisions created in the same second must never replace an earlier recording.
+    working = app["state"].get("working")
+    while (BRIEFS / f"{created:%Y%m%d-%H%M%S}").exists() or (working and working["id"] == f"{created:%Y%m%d-%H%M%S}"):
+        created += timedelta(seconds=1)
+    brief = {**preferences, "id": f"{created:%Y%m%d-%H%M%S}", "created": now_ms(), "hours": hours, "seconds": int(seconds), "voice": voice or {"id": os.environ.get("ELEVENLABS_VOICE_ID", DEFAULT_VOICE), "name": None}, "interest_ids": interest_ids, "status": "working", "step": "Starting", "notes": [], "audio": None, "usage": {}}
     app["state"]["working"] = brief
 
     async def run():
@@ -177,8 +182,8 @@ def start_brief(app, hours, interest_ids, seconds=DEFAULT_SECONDS, voice=None):
         except Exception as error:
             traceback.print_exc()
             brief.update(status="failed", step=f"Unexpected error: {error!r}")
-        if brief["status"] == "failed" and not any(directory.iterdir()):
-            directory.rmdir()
+        if brief["status"] == "failed":
+            (directory / "brief.json").write_text(json.dumps(brief, ensure_ascii=False), encoding="utf-8")
 
     app["state"]["task"] = asyncio.create_task(run())
     return brief
@@ -190,23 +195,94 @@ async def create_brief(request):
         body = await request.json()
     except ValueError:
         return fail(400, "Invalid JSON.")
-    hours = body.get("hours", DEFAULT_HOURS)
-    seconds = body.get("seconds", DEFAULT_SECONDS)
+    if not isinstance(body, dict):
+        return fail(400, "Send a brief configuration object.")
+    previous = {}
+    previous_id = body.get("previous_brief_id")
+    if previous_id is not None:
+        if not isinstance(previous_id, str) or not re.fullmatch(r"\d{8}-\d{6}", previous_id):
+            return fail(400, "Choose a valid previous brief.")
+        working = app["state"].get("working")
+        previous_path = BRIEFS / previous_id / "brief.json"
+        if working and working["id"] == previous_id:
+            previous = working
+        elif previous_path.exists():
+            previous = json.loads(previous_path.read_text(encoding="utf-8"))
+        else:
+            return fail(404, "The previous brief was not found.")
+    hours = body.get("hours", previous.get("hours", DEFAULT_HOURS))
+    seconds = body.get("seconds", previous.get("seconds", DEFAULT_SECONDS))
     known = [interest["id"] for interest in app["collector"].store.interests]
-    chosen = [interest_id for interest_id in body.get("interests") or known if interest_id in known]
-    if not isinstance(hours, (int, float)) or not 1 <= hours <= 48:
+    chosen = body.get("interests", previous.get("interest_ids", known))
+    if not isinstance(chosen, list) or any(not isinstance(item, str) for item in chosen):
+        return fail(400, "Interests must be a list of followed interest IDs.")
+    chosen = list(dict.fromkeys(chosen))
+    if isinstance(hours, bool) or not isinstance(hours, (int, float)) or not math.isfinite(hours) or not 1 <= hours <= 48:
         return fail(400, "Choose a window between 1 and 48 hours.")
-    if not isinstance(seconds, (int, float)) or not MIN_SECONDS <= seconds <= MAX_SECONDS:
+    if isinstance(seconds, bool) or not isinstance(seconds, (int, float)) or not math.isfinite(seconds) or not MIN_SECONDS <= seconds <= MAX_SECONDS:
         return fail(400, f"Choose a spoken length between {MIN_SECONDS} and {MAX_SECONDS} seconds.")
-    found = {voice["id"]: voice for voice in await list_voices(app["http"], app["state"])}
-    if body.get("voice") is not None and body["voice"] not in found:
-        return fail(400, "Choose one of the listed voices.")
-    voice = found.get(body.get("voice"))
-    if not chosen:
+    focus = body.get("focus", previous.get("focus", ""))
+    excluded = body.get("exclude_terms", previous.get("exclude_terms", []))
+    script = body.get("script")
+    source = body.get("source", "custom" if script is not None else "bluesky")
+    title = body.get("title")
+    context = body.get("source_context", previous.get("source_context", {}) if script is not None else {})
+    if not isinstance(focus, str) or len(focus) > 1000:
+        return fail(400, "Describe the brief's focus in up to 1,000 characters.")
+    if not isinstance(excluded, list) or len(excluded) > 30 or any(not isinstance(term, str) or not term.strip() or len(term) > 100 for term in excluded):
+        return fail(400, "Use up to 30 nonempty exclusion terms, each up to 100 characters.")
+    excluded = list({term.strip().casefold(): term.strip() for term in excluded}.values())
+    if source not in ("bluesky", "custom"):
+        return fail(400, "Choose the Bluesky source or a custom script.")
+    if script is not None and (not isinstance(script, str) or not script.strip() or len(script) > 12000):
+        return fail(400, "Provide a nonempty script of up to 12,000 characters.")
+    if (script is not None) != (source == "custom"):
+        return fail(400, "A custom recording needs a script; saved Bluesky briefs choose current posts.")
+    if previous.get("source") == "custom" and script is None:
+        return fail(400, "Provide the revised script to recreate this custom recording.")
+    if script is not None and len(script.split()) > int(seconds * 2.2):
+        return fail(400, f"Shorten the script to at most {int(seconds * 2.2)} words for a {int(seconds)} second recording.")
+    if title is not None and (not isinstance(title, str) or not title.strip() or len(title) > 200):
+        return fail(400, "Use a title of 1 to 200 characters.")
+    if not isinstance(context, dict) or len(json.dumps(context, ensure_ascii=False)) > 12000:
+        return fail(400, "Source context must be an object of up to 12,000 characters.")
+    if source == "bluesky" and any(item not in known for item in chosen):
+        return fail(400, "One of these interests is no longer followed. Choose current interests.")
+    if source == "bluesky" and not chosen:
         return fail(400, "Follow at least one interest first.")
-    if app["state"]["working"] and app["state"]["working"]["status"] == "working":
-        return fail(409, "A brief is already being made.")
-    return web.json_response({"id": start_brief(app, hours, chosen, seconds, voice and {"id": voice["id"], "name": voice["name"]})["id"]}, headers=HEADERS)
+    voice = previous.get("voice")
+    if body.get("voice") is not None:
+        if not isinstance(body["voice"], str):
+            return fail(400, "Choose one of the listed voices.")
+        found = {entry["id"]: entry for entry in await list_voices(app["http"], app["state"])}
+        selected_voice = found.get(body["voice"])
+        if not selected_voice:
+            return fail(400, "Choose one of the listed voices.")
+        voice = {"id": selected_voice["id"], "name": selected_voice["name"]}
+    avoided = list(previous.get("avoid_post_uris", [])) + list(previous.get("selected_post_uris", []))
+    avoided_titles = list(previous.get("avoid_story_titles", []))
+    for segment in previous.get("segments", []):
+        for story in segment.get("stories", []):
+            if story.get("title"):
+                avoided_titles.append(story["title"])
+            for post in story.get("posts", []):
+                uri = post.get("uri")
+                if not uri:
+                    match = re.fullmatch(r"https://bsky\.app/profile/([^/]+)/post/([^/?#]+)", post.get("url", ""))
+                    uri = f"at://{match[1]}/app.bsky.feed.post/{match[2]}" if match else None
+                if uri:
+                    avoided.append(uri)
+    preferences = dict(focus=focus.strip(), exclude_terms=excluded, script=script, source=source,
+                       source_context=context, previous_brief_id=previous_id,
+                       avoid_post_uris=list(dict.fromkeys(avoided)) if source == "bluesky" else [],
+                       avoid_story_titles=list(dict.fromkeys(avoided_titles)) if source == "bluesky" else [])
+    if title is not None:
+        preferences["title"] = title.strip()
+    async with app["state"]["lock"]:
+        if app["state"]["working"] and app["state"]["working"]["status"] == "working":
+            return fail(409, "A brief is already being made.")
+        brief = start_brief(app, hours, chosen, seconds, voice, **preferences)
+    return web.json_response({"id": brief["id"]}, headers=HEADERS)
 
 
 async def every_morning(app):

@@ -192,7 +192,7 @@ function show(brief) {
 
   $('brief').replaceChildren(
     el('div', { class: 'brief-head' },
-      el('p', { class: 'eyebrow', text: `${day(brief.created).toUpperCase()} · ${clock(brief.created)} · LAST ${brief.hours} HOUR${brief.hours === 1 ? '' : 'S'}` }),
+      el('p', { class: 'eyebrow', text: `${day(brief.created).toUpperCase()} · ${clock(brief.created)} · ${brief.source === 'custom' ? 'YOUR SCRIPT' : `LAST ${brief.hours} HOUR${brief.hours === 1 ? '' : 'S'}`}` }),
       el('h2', { text: brief.title }),
       el('p', { class: 'meta', text: [`${brief.segments.length} topic${brief.segments.length === 1 ? '' : 's'}`, cost].filter(Boolean).join(' · ') })),
     player,
@@ -200,7 +200,7 @@ function show(brief) {
     ...brief.segments.map((segment) => el('article', { class: 'segment' },
       el('p', { class: 'eyebrow', text: segment.topic.toUpperCase() }),
       el('h3', { text: segment.headline }),
-      el('p', { class: 'meta', text: `${number(segment.posts_collected)} posts from ${number(segment.distinct_authors)} people in the window` }),
+      Number.isFinite(segment.posts_collected) && el('p', { class: 'meta', text: `${number(segment.posts_collected)} posts from ${number(segment.distinct_authors)} people in the window` }),
       ...segment.stories.map((story) => el('section', { class: 'story' },
         el('div', { class: 'story-top' }, el('h4', { text: story.title }), el('span', { class: 'mood', dataset: { tone: HOT.has(story.mood) ? 'hot' : WARM.has(story.mood) ? 'warm' : 'plain' }, text: story.mood })),
         el('p', { text: story.summary }),
@@ -271,7 +271,7 @@ async function loadVoices() {
 
 window.addEventListener('beforeunload', stopSpeaking);
 await poll();
-$('hours').value = [6, 8, 10, 24].includes(status?.default_hours) ? String(status.default_hours) : '8';
+$('hours').value = [6, 8, 10, 24].includes(status?.default_hours) ? String(status.default_hours) : '24';
 setupLength();
 loadVoices().catch(() => {});
 const ready = await loadEarlier().catch(() => []);

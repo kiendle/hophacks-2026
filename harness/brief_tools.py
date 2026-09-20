@@ -13,6 +13,7 @@ words its step shows are registered with steps.py at the bottom of this file.
 import functools
 import inspect
 import json
+import math
 import os
 import time
 import urllib.error
@@ -25,6 +26,7 @@ BASE = (os.environ.get("SIGNAL_BASE_URL") or "http://127.0.0.1:5194").rstrip("/"
 TIMEOUT_S = 10
 TERMS_TIMEOUT_S = 90  # following an interest waits for Claude to pick its search terms
 CHAT_MAX_SECONDS = 90
+DEFAULT_HOURS = 24
 CODES = {400: "bad_request", 403: "forbidden", 404: "not_found", 405: "bad_request", 409: "busy", 410: "gone", 415: "bad_request"}
 HINTS = {
     "bad_request": "The message says what the server wants; fix the arguments and call again.",
@@ -93,7 +95,8 @@ def brief_overview() -> dict:
         "interests": [{
             "id": interest["id"], "name": interest["name"], "posts": interest.get("posts", 0), "terms": interest.get("terms") or [],
             "covered_hours": round((now - interest["covered_from"]) / 3600_000, 1) if interest.get("covered_from") else None,
-            "coverage": "complete" if interest.get("covered_from") else "the recent past is still being replayed",
+            "coverage": "collection started at the reported time; complete window coverage is not guaranteed"
+                        if interest.get("covered_from") else "the recent past is still being replayed",
         } for interest in status.get("interests") or []],
         "collector": collector_state(status), "posts_kept": status.get("posts", 0),
         "brief_being_made": status.get("working"), "voices": bool(status.get("elevenlabs")),
@@ -140,7 +143,7 @@ def unfollow_interest(interest_id: str) -> dict:
     return {"unfollowed": interest_id, "name": known[interest_id], "note": "Its posts were dropped; a brief can no longer cover it."}
 
 
-def search_collected(keywords: list[str], hours: int = 8, limit: int = 20) -> dict:
+def search_collected(keywords: list[str], hours: int = 24, limit: int = 20) -> dict:
     """Search the posts the collector has already kept, by keyword, newest first.
 
     Instant, but it only covers posts that matched a followed interest: for anything else, use the
@@ -182,38 +185,97 @@ def card(brief_id, title, status):
     return {"_card": {"kind": "brief", "brief_id": brief_id, "title": str(title or "Your audio brief")[:120], "status": str(status or "working")}}
 
 
-def make_brief(hours: float = 8, seconds: int = 90, interest_ids: list[str] | None = None, long_length_requested: bool = False) -> dict:
-    """Order a brief: Claude picks the stories from the collected posts and writes a script, then it is voiced as one recording. Returns the brief's id at once.
+def make_brief(hours: float | None = None, seconds: int | None = None, interest_ids: list[str] | None = None,
+               long_length_requested: bool = False, focus: str | None = None,
+               exclude_terms: list[str] | None = None, script: str | None = None,
+               title: str | None = None, source: str | None = None,
+               source_context: dict | None = None, previous_brief_id: str | None = None) -> dict:
+    """Build an audio brief from collected posts, or record a supplied, sourced script. Returns an id while it is being made.
 
     Call this when the user asks for a brief, a rundown or a podcast. It takes 30 to 90 seconds, so
     give the user the id and then poll get_brief; the player appears on the page and in the chat when
-    it is ready. `hours` is the window to cover, `seconds` the spoken length (90 by default and maximum).
+    it is ready. `hours` defaults to the last 24 hours. `seconds` is the spoken length, 90 by default
+    and maximum. `focus` contains the user's editorial preferences and `exclude_terms` the subjects
+    they want omitted, including related stories, not just the literal words. Preserve these choices
+    on every revision. Set `previous_brief_id` when replacing a brief so the server keeps its
+    preferences and chooses alternative stories. Omitted window and length inherit the previous
+    brief's settings on a revision; on a new brief they default to 24 hours and 90 seconds.
     interest_ids defaults to everything the user follows. long_length_requested is retained for
     compatibility but does not override the 90-second limit.
-    Never promise audio before get_brief reports status "ready".
+
+    To record an approved draft or a brief grounded in the selected X/Twitter chart, pass the exact
+    `script`, source="custom", its `title`, and `source_context` from the evidence tools. That path
+    records the supplied text without choosing Bluesky stories. Source context should name the
+    actual dataset, dates and retrieved posts. Never invent coverage or counts. A supplied script
+    defaults to source="custom". Without a script, the collected source is Bluesky.
+    Never promise a recording before get_brief reports status "ready" AND an audio_url. Building
+    a brief never authorizes sending it to Telegram.
     """
+    try:
+        window = float(hours) if hours is not None else (None if previous_brief_id else DEFAULT_HOURS)
+        duration = int(seconds) if seconds is not None else (None if previous_brief_id else CHAT_MAX_SECONDS)
+    except (TypeError, ValueError, OverflowError):
+        return fail("bad_request", "Give the window in hours and the length in seconds.", "Use 24 hours and 90 seconds unless the user chose otherwise.")
+    if (window is not None and (not math.isfinite(window) or window <= 0)) or (duration is not None and duration <= 0):
+        return fail("bad_request", "The window and length must be positive numbers.", "Use the user's requested window and no more than 90 seconds.")
+    if focus is not None and not isinstance(focus, str):
+        return fail("bad_request", "The brief's focus must be text.", "Describe the user's requested topics and preferences.")
+    if exclude_terms is not None and (not isinstance(exclude_terms, list) or any(not isinstance(term, str) or not term.strip() for term in exclude_terms)):
+        return fail("bad_request", "Subjects to leave out must be a list of nonempty strings.", "Pass all the user's exclusions, or an empty list to clear them.")
+    if script is not None and (not isinstance(script, str) or not script.strip()):
+        return fail("bad_request", "The supplied script must contain the text to record.", "Pass the exact sourced draft that the user wants recorded.")
+    if source not in (None, "bluesky", "custom") or (source == "custom" and script is None) or (script is not None and source == "bluesky"):
+        return fail("bad_request", "A supplied script uses the custom source. Collected stories use Bluesky.", "Use source='custom' with a script, or omit both to select collected stories.")
+    if source_context is not None and not isinstance(source_context, dict):
+        return fail("bad_request", "Source context must describe the evidence in an object.", "Pass the actual source, dates and retrieved posts without invented counts.")
     status = call("GET", "/api/status")
     if "error" in status:
         return status
     if status.get("working"):
         return fail("busy", f"Brief {status['working']} is still being made.", "Follow that one with get_brief, or wait until it is ready.")
     low, high = status.get("min_seconds", 45), status.get("max_seconds", 300)
-    wanted = min(CHAT_MAX_SECONDS, max(low, min(int(seconds), high)))
-    answer = call("POST", "/api/briefs", {"hours": hours, "seconds": wanted, "interests": interest_ids}, timeout=30)
+    wanted = min(CHAT_MAX_SECONDS, max(low, min(duration, high))) if duration is not None else None
+    payload = {key: value for key, value in {"hours": window, "seconds": wanted}.items() if value is not None}
+    if interest_ids is not None:
+        payload["interests"] = interest_ids
+    optional = {"focus": focus, "exclude_terms": exclude_terms, "script": script, "title": title,
+                "source": source or ("custom" if script is not None else None),
+                "source_context": source_context, "previous_brief_id": previous_brief_id}
+    payload.update({key: value for key, value in optional.items() if value is not None})
+    answer = call("POST", "/api/briefs", payload, timeout=30)
     if "error" in answer:
         return answer
-    return {"brief_id": answer.get("id"), "status": "working", "hours": hours, "seconds": wanted,
+    return {"brief_id": answer.get("id"), "status": "working", "hours": window, "seconds": wanted,
+            **{key: value for key, value in optional.items() if key != "script" and value is not None},
             "note": "It takes 30 to 90 seconds. The player appears on the page and in the chat; call get_brief with this id to follow it.",
             **card(answer.get("id"), None, "working")}
 
 
+def record_brief(script: str, title: str | None = None, source_context: dict | None = None,
+                 hours: float | None = None, seconds: int | None = None, focus: str | None = None,
+                 exclude_terms: list[str] | None = None, previous_brief_id: str | None = None) -> dict:
+    """Record the supplied draft, including one based on selected X/Twitter chart evidence, without choosing new stories.
+
+    Pass the exact sourced script the user wants recorded, with its real evidence in source_context.
+    Preserve the user's focus and exclusions on revisions and pass previous_brief_id if replacing
+    an earlier brief. Omitted hours and seconds inherit it, or default to 24 hours and 90 seconds
+    for a new brief. The server checks length and exclusions before recording. Poll get_brief to
+    inspect the final script and audio. This does not send anything to Telegram.
+    """
+    return make_brief(hours=hours, seconds=seconds, focus=focus, exclude_terms=exclude_terms,
+                      script=script, title=title, source="custom", source_context=source_context,
+                      previous_brief_id=previous_brief_id)
+
+
 def get_brief(brief_id: str) -> dict:
-    """How one brief is doing, and once it is ready its title, its stories with the posts behind them, its spoken length and the path to the recording.
+    """Read the brief's progress, exact script, sources, preferences, coverage and path to its recording.
 
     Call this after make_brief, every ten to twenty seconds and no faster, and whenever the user asks
     about a brief. While status is "working", tell the user the `step`. Only when status is "ready"
-    may you say it is done; `audio_url` is then the recording the page already plays. If status is
-    "failed", read out `step`, which says what went wrong.
+    may you say the script is done. A recording is ready only when status is "ready" AND audio_url
+    is present. If audio_url is absent, describe the missing recording using notes. Read back the
+    exact script when asked, and check preferences, source_context and coverage before describing
+    what it covers. If status is "failed", read out `step`, which says what went wrong.
     """
     brief = call("GET", f"/api/briefs/{urllib.parse.quote(str(brief_id))}")
     if "error" in brief:
@@ -222,14 +284,25 @@ def get_brief(brief_id: str) -> dict:
     return {
         "brief_id": brief.get("id"), "status": brief.get("status"), "step": brief.get("step"), "title": brief.get("title"),
         "hours": brief.get("hours"), "requested_seconds": brief.get("seconds"), "spoken_seconds": brief.get("estimated_seconds"),
+        "script": brief["script"] if isinstance(brief.get("script"), str)
+                  else "\n\n".join(segment.get("script", "") for segment in brief.get("segments") or []),
+        "source": brief.get("source"), "source_context": brief.get("source_context"),
+        "preferences": brief.get("preferences", {key: brief.get(key) for key in ("hours", "seconds", "interest_ids", "focus", "exclude_terms")}),
+        "coverage": brief.get("coverage"), "coverage_note": brief.get("coverage_note"),
+        "window_start": brief.get("window_start"), "window_end": brief.get("window_end"),
+        "focus": brief.get("focus"), "exclude_terms": brief.get("exclude_terms"),
+        "previous_brief_id": brief.get("previous_brief_id"),
+        "interest_ids": brief.get("interest_ids"), "avoid_post_uris": brief.get("avoid_post_uris"),
+        "selected_post_uris": brief.get("selected_post_uris"),
         "audio_url": f"/api/briefs/{brief['id']}/audio/{audio['full']}" if audio.get("full") else None,
         "voice": audio.get("voice"), "notes": brief.get("notes") or [],
         "segments": [{
-            "topic": segment.get("topic"), "headline": segment.get("headline"),
+            "topic": segment.get("topic"), "headline": segment.get("headline"), "script": segment.get("script"),
+            "source": segment.get("source"), "coverage": segment.get("coverage"),
             "posts_collected": segment.get("posts_collected"), "distinct_authors": segment.get("distinct_authors"),
             "stories": [{
                 "title": story.get("title"), "summary": story.get("summary"), "why_it_matters": story.get("why_it_matters"), "mood": story.get("mood"),
-                "sources": [{"author": post.get("author"), "handle": post.get("handle"), "url": post.get("url"),
+                "sources": [{"uri": post.get("uri"), "author": post.get("author"), "handle": post.get("handle"), "url": post.get("url"),
                              "text": str(post.get("text") or "")[:200], "likes": post.get("likes"), "reposts": post.get("reposts")}
                             for post in story.get("posts") or []],
             } for story in segment.get("stories") or []],
@@ -238,20 +311,32 @@ def get_brief(brief_id: str) -> dict:
     }
 
 
-def send_brief_to_telegram(brief_id: str) -> dict:
-    """Send an existing ready audio brief to the configured Telegram chat, for listening later.
+def request_brief_delivery_confirmation(brief_id: str) -> dict:
+    """Show a human Confirm button for sending this ready recording to the configured Telegram chat.
 
-    Only call when the user explicitly asks to send this brief to Telegram. Use its existing id;
-    do not generate another brief. This sends now, not on a schedule. Report success only when
-    the result says sent. If Telegram is unconfigured or the destination is ambiguous, explain
-    the returned error instead of claiming delivery.
+    Only call when the user asks to send or review this brief for Telegram delivery. First inspect
+    get_brief and check that its exact script honors their preferences, status is ready and an
+    audio_url exists. This only requests approval. After showing the button, stop and end the turn.
+    Only the human Confirm action or an explicit Send button can send. Do not claim delivery from
+    this result. Confirmation binds the existing recording and destination; do not make another one.
     """
     import asyncio
-    from brief_delivery import deliver
-    return asyncio.run(deliver(brief_id, brief_base=BASE))
+    from brief_confirmation import request_confirmation
+    return asyncio.run(request_confirmation(brief_id, brief_base=BASE))
 
 
-TOOLS = (brief_overview, follow_interest, unfollow_interest, search_collected, collector_control, make_brief, get_brief, send_brief_to_telegram)
+def send_brief_to_telegram(brief_id: str) -> dict:
+    """Compatibility tool. Sending from the assistant is blocked until the human uses the Confirm or Send button.
+
+    Call request_brief_delivery_confirmation for this existing brief, then end the turn. The human
+    confirmation handler sends it. No assistant tool can treat a chat message as that button press.
+    """
+    return fail("confirmation_required", "Confirm this recording before sending it to Telegram.",
+                "Call request_brief_delivery_confirmation with this brief_id, then stop and wait for the human Confirm button.")
+
+
+TOOLS = (brief_overview, follow_interest, unfollow_interest, search_collected, collector_control,
+         make_brief, record_brief, get_brief, request_brief_delivery_confirmation, send_brief_to_telegram)
 REASON_LIMIT = 240
 REASON_DOC = """
     reason: one short sentence that starts with a verb, written for the user in the user's language,
@@ -307,9 +392,19 @@ def _things(count, word):
     return f"{number:g} {word}" if number == 1 else f"{number:g} {word}s"
 
 
-def _hours_words(fields):
-    hours = _things(fields.get("hours") or 8, "hour")
+def _hours_words(fields, default=DEFAULT_HOURS):
+    hours = _things(fields.get("hours") or default, "hour")
     return f"the last {hours}" if hours else ""
+
+
+def _brief_facts(fields, include_window=True):
+    inherited = bool(fields.get("previous_brief_id"))
+    duration = "Same as the previous brief" if inherited and fields.get("seconds") is None else _things(fields.get("seconds") or CHAT_MAX_SECONDS, "second")
+    facts = [{"label": "How long it will be", "value": duration}]
+    if include_window:
+        window = "Same as the previous brief" if inherited and fields.get("hours") is None else _hours_words(fields)
+        facts.append({"label": "Time covered", "value": window})
+    return facts
 
 
 def _answered(result):
@@ -360,13 +455,15 @@ def _collector_words(result, is_error):
 def _brief_words(result, is_error):
     if not _answered(result):
         return ""
-    if result.get("brief_id"):
-        return "Your brief is being made. It takes about a minute."
     status, step = _one(result.get("status"), 20), _one(result.get("step"), 120)
     if status == "ready":
+        if not result.get("audio_url"):
+            return "The script is ready, but a recording is not available."
         return f'Your brief is ready: "{_one(result.get("title"), 80)}".' if result.get("title") else "Your brief is ready."
     if status == "failed":
         return f"That did not work: {step}" if step else "That did not work."
+    if result.get("brief_id") and not step:
+        return "Your brief is being made. It takes about a minute."
     return f"Still being made. {step}" if step else "Still being made."
 
 
@@ -382,12 +479,14 @@ WORDING = {
                                          {"label": "Time covered", "value": _hours_words(fields)}]),
     "collector_control": (lambda fields: "Stopping the collecting" if fields.get("action") == "stop" else "Starting the collecting again",
                           _collector_words, None),
-    "make_brief": (lambda fields: "Making your audio brief", _brief_words,
-                   lambda fields: [{"label": "How long it will be", "value": _things(fields.get("seconds") or 90, "second")},
-                                   {"label": "Time covered", "value": _hours_words(fields)}]),
+    "make_brief": (lambda fields: "Making your audio brief", _brief_words, _brief_facts),
+    "record_brief": (lambda fields: "Recording your draft", _brief_words,
+                     lambda fields: _brief_facts(fields, include_window=False)),
     "get_brief": (lambda fields: "Checking how your brief is doing", _brief_words, None),
-    "send_brief_to_telegram": (lambda fields: "Sending your brief to Telegram",
-                               lambda result, is_error: "Sent to Telegram." if result.get('sent') else "The brief could not be sent to Telegram.", None),
+    "request_brief_delivery_confirmation": (lambda fields: "Getting your recording ready for you to confirm",
+        lambda result, is_error: "Ready for you to confirm. Nothing has been sent." if _answered(result) and result.get("confirmation_id") else "", None),
+    "send_brief_to_telegram": (lambda fields: "Checking approval to send your brief",
+                               lambda result, is_error: "", None),
 }
 
 for _tool, (_title, _outcome, _facts) in WORDING.items():

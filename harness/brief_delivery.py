@@ -1,5 +1,6 @@
 """Explicit, deduplicated delivery of an existing brief to the paired Telegram chat."""
 import asyncio
+import hashlib
 import os
 import re
 import sqlite3
@@ -13,6 +14,7 @@ import telegram_bot as telegram
 
 RECEIPTS = Path(__file__).resolve().parent / 'state/telegram/brief-deliveries.sqlite3'
 MAX_AUDIO = 20 * 1024 * 1024
+BRIEF_ID = re.compile(r'\d{8}-\d{6}')
 
 
 def destination():
@@ -46,11 +48,40 @@ def receipt(brief_id, chat_id, action, message_id=None):
     return None
 
 
-async def deliver(brief_id, brief_base=None):
-    if not isinstance(brief_id, str) or not re.fullmatch(r'\d{8}-\d{6}', brief_id):
+async def ready_audio(http, base, brief_id):
+    """Load the existing recording once; callers send these exact validated bytes."""
+    async with http.get(f'{base}/api/briefs/{brief_id}') as response:
+        if response.status != 200:
+            raise ValueError('The brief could not be loaded. Make sure Morning Brief is running.')
+        brief = await response.json()
+    if not isinstance(brief, dict) or brief.get('id', brief_id) != brief_id:
+        raise ValueError('The brief service returned a different brief. Nothing was sent.')
+    audio_info = brief.get('audio')
+    filename = audio_info.get('full') if isinstance(audio_info, dict) else None
+    if brief.get('status') != 'ready' or not isinstance(filename, str) or not re.fullmatch(r'[a-z0-9-]+\.mp3', filename):
+        raise ValueError('This brief does not have a ready audio recording yet.')
+    async with http.get(f'{base}/api/briefs/{brief_id}/audio/{filename}') as response:
+        if response.status != 200:
+            raise ValueError('The brief recording could not be downloaded.')
+        audio = bytearray()
+        async for chunk in response.content.iter_chunked(65536):
+            audio.extend(chunk)
+            if len(audio) > MAX_AUDIO:
+                raise ValueError('This recording is too large to send.')
+        if not audio:
+            raise ValueError('The brief recording is empty.')
+    return brief, bytes(audio), {'brief_id': brief_id, 'audio_file': filename,
+                                'audio_sha256': hashlib.sha256(audio).hexdigest(), 'audio_bytes': len(audio)}
+
+
+async def deliver(brief_id, brief_base=None, *, expected=None):
+    """Explicit UI sends, or callback sends pinned to a saved human confirmation."""
+    if not isinstance(brief_id, str) or not BRIEF_ID.fullmatch(brief_id):
         return {'error': 'Choose a valid brief to send.'}
     try:
         token, chat_id = destination()
+        if expected is not None and (expected.get('brief_id') != brief_id or expected.get('chat_id') != chat_id):
+            raise ValueError('The brief or Telegram destination changed. Review and confirm the delivery again.')
     except ValueError as error:
         return {'error': str(error)}
     base = (brief_base or os.environ.get('SIGNAL_BASE_URL') or 'http://127.0.0.1:5194').rstrip('/')
@@ -64,23 +95,9 @@ async def deliver(brief_id, brief_base=None):
             return {'error': 'Delivery is in progress or could not be confirmed. Check your Telegram chat before sending again.'}
         claimed = True
         async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=60)) as http:
-            async with http.get(f'{base}/api/briefs/{brief_id}') as response:
-                if response.status != 200:
-                    raise ValueError('The brief could not be loaded. Make sure Morning Brief is running.')
-                brief = await response.json()
-            filename = (brief.get('audio') or {}).get('full')
-            if brief.get('status') != 'ready' or not isinstance(filename, str) or not re.fullmatch(r'[a-z0-9-]+\.mp3', filename):
-                raise ValueError('This brief does not have a ready audio recording yet.')
-            async with http.get(f'{base}/api/briefs/{brief_id}/audio/{filename}') as response:
-                if response.status != 200:
-                    raise ValueError('The brief recording could not be downloaded.')
-                audio = bytearray()
-                async for chunk in response.content.iter_chunked(65536):
-                    audio.extend(chunk)
-                    if len(audio) > MAX_AUDIO:
-                        raise ValueError('This recording is too large to send.')
-                if not audio:
-                    raise ValueError('The brief recording is empty.')
+            brief, audio, identity = await ready_audio(http, base, brief_id)
+            if expected is not None and any(expected.get(key) != value for key, value in identity.items()):
+                raise ValueError('The recording changed after confirmation was requested. Review and confirm the delivery again.')
             uploading = True
             result = await telegram.Api(token, telegram.API_BASE, http).call(
                 'sendAudio', attempts=1, chat_id=chat_id,

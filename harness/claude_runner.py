@@ -206,7 +206,8 @@ def tool_events(name, payload):
         yield {"type": "preview", "title": "What we found on X/Twitter", **payload, "examples": archive_examples(payload)}
     elif name in ("mcp__harness__bluesky_recent", "mcp__harness__bluesky_listen") and "matched" in payload:
         yield {"type": "preview", **live_preview(payload)}
-    elif name in ("mcp__harness__request_confirmation", "mcp__harness__request_automation_confirmation") and "confirmation_id" in payload:
+    elif name in ("mcp__harness__request_confirmation", "mcp__harness__request_automation_confirmation",
+                  "mcp__harness__request_brief_delivery_confirmation") and "confirmation_id" in payload:
         yield {"type": "confirm_request", "confirmation_id": payload["confirmation_id"],
                "summary": steps.plain(payload.get("summary", "")), "expires_ms": payload.get("expires_ms"), "kind": payload.get("kind"),
                "spec": payload.get("spec"), "spec_hash": payload.get("spec_hash"), "draft_path": payload.get("draft_path")}

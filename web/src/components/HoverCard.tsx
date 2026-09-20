@@ -21,6 +21,9 @@ export function HoverCard({ post, anchor, bounds, onEnter, onLeave, onInteract, 
   const [height, setHeight] = useState(0)
   const layout = hoverCardLayout(anchor, bounds, height)
   const handle = displayHandle(post.handle)
+  const tweetId = /^(?:twitter:)?([0-9]+)$/.exec(post.id)?.[1]
+  const source = tweetId && <a className="post-source-link" href={`https://x.com/i/status/${tweetId}`} target="_blank" rel="noopener noreferrer" onClick={onInteract}>See on Twitter ↗</a>
+  const metadata = <>{handle && <span className="handle">{handle}</span>}<span>{post.timeKnown === false ? '—' : formatTime(post.time)}</span></>
   useLayoutEffect(() => {
     const card = ref.current
     if (!card) return
@@ -40,7 +43,16 @@ export function HoverCard({ post, anchor, bounds, onEnter, onLeave, onInteract, 
         {handle && <span className="handle">{handle}</span>}
         <span className="muted">{post.timeKnown === false ? '—' : formatTime(post.time)}</span>
       </div>
-      <TranslatablePost text={post.text} className="card-text" excerptLength={400} onInteract={onInteract} />
+      <TranslatablePost text={post.text} className="card-text" excerptLength={400} onInteract={onInteract}
+        readerMetadata={metadata} readerFooter={<>{source}<PostMetrics post={post} labelSentiment /></>} />
+      {source}
+      <PostMetrics post={post} />
+    </div>
+  )
+}
+
+function PostMetrics({ post, labelSentiment = false }: { post: Post; labelSentiment?: boolean }) {
+  return (
       <div className="card-foot">
         <div className="card-stats muted">
           <span aria-label={post.periodLikes === undefined ? 'Likes' : 'Likes received in this period'}>
@@ -56,9 +68,8 @@ export function HoverCard({ post, anchor, bounds, onEnter, onLeave, onInteract, 
             {formatCount(post.retweets)}
           </span>}
         </div>
-        <SentimentGauge value={post.sentiment} />
+        <div className="post-sentiment">{labelSentiment && <span>Sentiment</span>}<SentimentGauge value={post.sentiment} /></div>
       </div>
-    </div>
   )
 }
 

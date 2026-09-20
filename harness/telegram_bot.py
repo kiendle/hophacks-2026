@@ -30,7 +30,7 @@ import re
 import sys
 import time
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import aiohttp
@@ -75,6 +75,14 @@ DATE = re.compile(r"(\d{4})-(\d{2})-(\d{2})")
 INVISIBLE = dict.fromkeys((*range(0x00, 0x09), 0x0b, 0x0c, *range(0x0e, 0x20), 0x7f,
                            *range(0x202a, 0x202f), *range(0x2066, 0x206a)))
 NETWORK = (aiohttp.ClientError, asyncio.TimeoutError, OSError)
+OUTBOX_MAX_PENDING, OUTBOX_MAX_REVIEW = 64, 32
+OUTBOX_RETRY_MIN, OUTBOX_RETRY_MAX = 5.0, 60.0
+
+
+def connection_not_sent(error):
+    """A failed connection made no request; certificate failures need configuration, not retries."""
+    return isinstance(error, aiohttp.ClientConnectorError) and not isinstance(
+        error, (aiohttp.ClientConnectorCertificateError, aiohttp.ClientConnectorSSLError))
 
 BRIEF_BASE = (os.environ.get("SIGNAL_BASE_URL") or "http://127.0.0.1:5194").rstrip("/")  # the server brief_tools.py talks to
 # A chart's picture and the briefs now come from the same place: the combined server on 5194. Set
@@ -428,6 +436,8 @@ def decide(directory, confirmation_id, approved, busy=False):
         return "That confirmation was already decided."
     if busy:
         return "Still working on your previous message."
+    if record.get("kind") == "brief_telegram":
+        return "Use the brief delivery confirmation handler."
     record.update(decision="approved" if approved else "declined", decided_ms=int(time.time() * 1000))
     temp = path.with_name(f"{path.name}.tmp")
     temp.write_text(json.dumps(record, indent=2), encoding="utf-8")
@@ -479,11 +489,17 @@ class Api:
         body, error = {key: value for key, value in payload.items() if value is not None}, None
         for attempt in range(attempts):
             sending = {"data": self.form(body, upload)} if upload else {"json": body}
-            async with self.http.post(f"{self.base}/bot{self.token}/{method}", **sending) as response:
-                try:
-                    answer = await response.json(content_type=None)
-                except ValueError:
-                    answer = None
+            try:
+                async with self.http.post(f"{self.base}/bot{self.token}/{method}", **sending) as response:
+                    try:
+                        answer = await response.json(content_type=None)
+                    except ValueError:
+                        answer = None
+            except aiohttp.ClientConnectorError as problem:
+                if not connection_not_sent(problem) or attempt + 1 >= attempts:
+                    raise
+                await self.sleep(min(2 ** attempt, 8))
+                continue
             answer = answer if isinstance(answer, dict) else {}
             if answer.get("ok"):
                 return answer.get("result")
@@ -581,7 +597,7 @@ class Turn:
 class Bot:
     def __init__(self, token, allowed, http, base=None, runner_factory=None, sleep=asyncio.sleep,
                  now=time.monotonic, sessions=SESSIONS, chats_path=CHATS, clock=datetime.now, brief_base=None,
-                 card_base=None):
+                 card_base=None, outbox_path=None, outbox_now=time.time):
         self.api = Api(token, base or API_BASE, http, sleep)
         self.allowed, self.sleep, self.now = {int(chat_id) for chat_id in allowed}, sleep, now
         self.sessions, self.chats_path = Path(sessions), Path(chats_path)
@@ -592,11 +608,16 @@ class Bot:
         self.card_base = (card_base or brief_base or CARD_BASE).rstrip("/")  # one server once the combined one is on
         self.plans, self.making, self.recording = {}, set(), asyncio.Lock()
         self.following = set()  # the brief cards already being followed, so one brief is waited for once
+        self.outbox_path = Path(outbox_path) if outbox_path is not None else self.chats_path.with_name("outbox.json")
+        self.outbox_now, self.pending_replies, self.delivery_review = outbox_now, [], []
+        self.outbox_gate = asyncio.Lock()
         self.load()
+        self.load_outbox()
 
     def log(self, message):
         """Masked, and forced to ASCII: the Windows console is cp1252 and a log line may not kill the poll loop."""
-        print(self.api.mask(message).encode("ascii", "replace").decode("ascii"), flush=True)
+        stamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        print(f"{stamp} {self.api.mask(message)}".encode("ascii", "replace").decode("ascii"), flush=True)
 
     # ---- sessions -------------------------------------------------------------------------------
 
@@ -643,28 +664,149 @@ class Bot:
 
     # ---- transport ------------------------------------------------------------------------------
 
-    async def deliver(self, method, body, **payload):
+    def load_outbox(self):
+        try:
+            saved = json.loads(self.outbox_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return
+        if not isinstance(saved, dict):
+            return
+        for name, target, limit in (("pending", self.pending_replies, OUTBOX_MAX_PENDING),
+                                    ("review", self.delivery_review, OUTBOX_MAX_REVIEW)):
+            rows = saved.get(name)
+            for row in rows[-limit:] if isinstance(rows, list) else []:
+                if (not isinstance(row, dict) or not isinstance(row.get("id"), str)
+                        or not isinstance(row.get("chat_id"), int) or isinstance(row["chat_id"], bool)
+                        or not isinstance(row.get("body"), str) or len(row["body"]) > MAX_MESSAGE
+                        or row.get("state") not in ("pending", "sending", "sent", "uncertain", "failed", "unsent")
+                        or number_of(row.get("created_at", 0)) is None
+                        or number_of(row.get("next_attempt_at", 0)) is None
+                        or number_of(row.get("retry_count", 0)) is None):
+                    continue
+                if row.get("state") == "sending":
+                    row.update(state="uncertain", problem="The process stopped before delivery was confirmed.")
+                if name == "pending" and row.get("state") != "pending":
+                    continue
+                target.append(row)
+
+    def save_outbox(self):
+        temporary = self.outbox_path.with_name(f"{self.outbox_path.name}.{uuid.uuid4().hex}.tmp")
+        try:
+            self.outbox_path.parent.mkdir(parents=True, exist_ok=True)
+            temporary.write_text(json.dumps({"pending": self.pending_replies, "review": self.delivery_review}, indent=2), encoding="utf-8")
+            temporary.replace(self.outbox_path)
+        except OSError as error:
+            self.log(f"reply recovery could not be saved: {type(error).__name__}")
+        finally:
+            with contextlib.suppress(OSError):
+                temporary.unlink(missing_ok=True)
+
+    def remember_delivery(self, record, state, problem=None):
+        self.pending_replies[:] = [row for row in self.pending_replies if row["id"] != record["id"]]
+        self.delivery_review[:] = [row for row in self.delivery_review if row["id"] != record["id"]]
+        record.update(state=state, updated_at=self.outbox_now())
+        if problem:
+            record["problem"] = problem
+        else:
+            record.pop("problem", None)
+        if state == "pending" and len(self.pending_replies) < OUTBOX_MAX_PENDING:
+            record["retry_count"] = min(int(record.get("retry_count", 0)) + 1, 30)
+            delay = min(OUTBOX_RETRY_MIN * 2 ** (record["retry_count"] - 1), OUTBOX_RETRY_MAX)
+            record["next_attempt_at"] = self.outbox_now() + delay
+            self.pending_replies.append(record)
+            self.pending_replies.sort(key=lambda row: row.get("created_at", 0))
+        else:
+            if state == "pending":
+                record.update(state="unsent", problem="The retry queue is full. The reply is saved for review.")
+                self.log("reply retry queue is full; the completed reply was saved for review")
+            self.delivery_review.append(record)
+            self.delivery_review[:] = self.delivery_review[-OUTBOX_MAX_REVIEW:]
+        self.save_outbox()
+
+    def delivery_failed(self, record, error):
+        if record is None:
+            return
+        if connection_not_sent(error):
+            self.remember_delivery(record, "pending", type(error).__name__)
+            if record["state"] == "pending":
+                self.log(f"reply {record['id']} queued after connection failure")
+        else:
+            # A response timeout or read reset can follow an accepted send. Never replay it automatically.
+            state = "failed" if isinstance(error, (ApiError, aiohttp.ClientConnectorCertificateError,
+                                                     aiohttp.ClientConnectorSSLError)) else "uncertain"
+            self.remember_delivery(record, state, type(error).__name__)
+            self.log(f"reply {record['id']} delivery {state}; saved locally for review")
+
+    async def retry_pending_replies(self):
+        """Retry only saved text known not to have reached Telegram. No model or audio calls."""
+        async with self.outbox_gate:
+            visited = set()
+            for record in list(self.pending_replies):
+                chat_id = record["chat_id"]
+                if chat_id not in self.allowed:
+                    self.remember_delivery(record, "failed", "The chat is no longer allowed.")
+                    continue
+                if chat_id in visited:
+                    continue
+                visited.add(chat_id)  # keep replies in order within each chat
+                if record.get("next_attempt_at", 0) > self.outbox_now():
+                    continue
+                self.remember_delivery(record, "sending")
+                result = await self.deliver("sendMessage", record["body"], delivery_record=record, attempts=1,
+                                            chat_id=chat_id, reply_markup=record.get("markup"),
+                                            link_preview_options={"is_disabled": True})
+                if result is not None:
+                    self.log(f"reply {record['id']} recovered without another model turn")
+
+    async def recover_replies(self):
+        while True:
+            try:
+                await self.retry_pending_replies()
+            except Exception as error:
+                self.log(f"reply recovery failed: {type(error).__name__}")
+            await self.sleep(OUTBOX_RETRY_MIN)
+
+    async def deliver(self, method, body, *, delivery_record=None, attempts=3, **payload):
         """Everything goes out as escaped HTML, trimmed to the cap; if Telegram still refuses to parse it,
         resend it flat, and if it is still too long, short - a preview the user has to judge the project by
         may be trimmed but never silently dropped."""
         body = clip(body)
         for text, mode in ((body, "HTML"), (untagged(body), None), (clip(untagged(body), 900), None)):
             try:
-                return await self.api.call(method, text=text, parse_mode=mode, **payload)
+                result = await self.api.call(method, attempts=attempts, text=text, parse_mode=mode, **payload)
+                if delivery_record is not None:
+                    if not isinstance(result, dict) or not result.get("message_id"):
+                        self.remember_delivery(delivery_record, "uncertain", "Telegram returned no message ID.")
+                        self.log(f"reply {delivery_record['id']} delivery uncertain; Telegram returned no message ID")
+                        return None
+                    self.remember_delivery(delivery_record, "sent")
+                return result
             except ApiError as error:
                 description = error.description.lower()
                 if error.status != 400 or not ("parse" in description or "too long" in description):
                     if "not modified" not in description:
                         self.log(f"{method} refused: {error.status} {error.description[:160]}")
+                    self.delivery_failed(delivery_record, error)
                     return None
             except NETWORK as error:
                 self.log(f"{method} failed: {type(error).__name__}")
+                self.delivery_failed(delivery_record, error)
                 return None
+            except Exception as error:
+                self.delivery_failed(delivery_record, error)
+                raise
         self.log(f"{method} refused every version of that message")
+        if delivery_record is not None:
+            self.remember_delivery(delivery_record, "failed", "Telegram refused every version of the message.")
         return None
 
-    async def send(self, chat_id, body, markup=None):
-        return await self.deliver("sendMessage", body, chat_id=chat_id, reply_markup=markup,
+    async def send(self, chat_id, body, markup=None, *, durable=False):
+        record = None
+        if durable:
+            record = {"id": uuid.uuid4().hex, "chat_id": chat_id, "body": clip(body), "markup": markup,
+                      "created_at": self.outbox_now(), "retry_count": 0}
+            self.remember_delivery(record, "sending")
+        return await self.deliver("sendMessage", body, delivery_record=record, chat_id=chat_id, reply_markup=markup,
                                   link_preview_options={"is_disabled": True})
 
     async def edit(self, state, message_id, body):
@@ -687,6 +829,8 @@ class Bot:
     async def run_turn(self, state, text):
         turn, started = Turn(), self.now()
         shown, typing, ticker, message_id = None, None, None, None
+        delivery_problem = False
+        self.log(f"turn started session={state.get('session', 'unknown')}")
 
         async def live():
             nonlocal shown
@@ -712,19 +856,19 @@ class Bot:
                     if kind == "preview":
                         await self.send(state["id"], preview_body(event))
                     elif kind == "confirm_request":
-                        await self.ask_confirm(state, event)
+                        delivery_problem = await self.ask_confirm(state, event) is None or delivery_problem
                     elif kind == "card":
                         await self.on_card(state["id"], event.get("card"))
                     elif kind == "message":
                         for piece in split_text(text_of(event.get("text"), 40000, flat=False)):
-                            await self.send(state["id"], rich(piece))
+                            delivery_problem = await self.send(state["id"], rich(piece), durable=True) is None or delivery_problem
                     elif kind == "error":
-                        await self.send(state["id"], say(f"Sorry, that did not work. {text_of(event.get('text'), 600)}"))
+                        delivery_problem = await self.send(state["id"], say(f"Sorry, that did not work. {text_of(event.get('text'), 600)}"), durable=True) is None or delivery_problem
         except asyncio.TimeoutError:
-            await self.send(state["id"], say("That took longer than five minutes, so I stopped it. Try a smaller question."))
+            delivery_problem = await self.send(state["id"], say("That took longer than five minutes, so I stopped it. Try a smaller question."), durable=True) is None or delivery_problem
         except Exception as error:
             self.log(f"turn failed: {error!r}")
-            await self.send(state["id"], say("Something broke on my side. Try again, or send /new to start over."))
+            delivery_problem = await self.send(state["id"], say("Something broke on my side. Try again, or send /new to start over."), durable=True) is None or delivery_problem
         finally:
             state["busy"] = False  # first, so nothing below can leave this chat answering "Still working" for ever
             state["last"] = turn  # what /details shows, until the next turn replaces it
@@ -732,14 +876,17 @@ class Bot:
             await stop(ticker)
             with contextlib.suppress(Exception):
                 if message_id:
-                    await self.edit(state, message_id, say(turn.summary(self.now() - started)))
+                    summary = "Reply saved on this laptop. Telegram delivery could not be confirmed." if delivery_problem else turn.summary(self.now() - started)
+                    await self.edit(state, message_id, say(summary))
+            self.log(f"turn completed session={state.get('session', 'unknown')} duration_ms={int((self.now() - started) * 1000)} delivery={'unconfirmed' if delivery_problem else 'complete'}")
 
     async def ask_confirm(self, state, event):
         confirmation_id = text_of(event.get("confirmation_id"), 64)
         if not CONFIRMATION.fullmatch(confirmation_id):
             return
-        body = "<b>Ready to start</b>\n\n" + say(text_of(event.get("summary"), 1200, flat=False) or "Start this project?")
-        await self.send(state["id"], body, markup={"inline_keyboard": [[
+        heading = "Send to Telegram" if event.get("kind") == "brief_telegram" else "Ready to start"
+        body = f"<b>{heading}</b>\n\n" + say(text_of(event.get("summary"), 1200, flat=False) or "Confirm this action?")
+        return await self.send(state["id"], body, durable=True, markup={"inline_keyboard": [[
             {"text": "Confirm", "callback_data": f"c:{confirmation_id}:1"},
             {"text": "Cancel", "callback_data": f"c:{confirmation_id}:0"}]]})
 
@@ -804,7 +951,7 @@ class Bot:
         return None
 
     async def follow_brief(self, chat_id, card):
-        """Wait for a brief the model ordered, then upload the recording. Three minutes at the most."""
+        """Announce when model-requested audio is ready. Upload needs a separate human confirmation."""
         brief_id, title = text_of(card.get("brief_id"), 40), text_of(card.get("title"), 120)
         if not BRIEF_ID.fullmatch(brief_id) or (chat_id, brief_id) in self.following:
             return
@@ -818,21 +965,20 @@ class Bot:
                 await self.sleep(BRIEF_POLL_S)
             if brief.get("status") == "ready":
                 name = (brief.get("audio") or {}).get("full")
-                if isinstance(name, str) and BRIEF_FILE.fullmatch(name):
-                    status, data = await self.ask(f"/api/briefs/{brief_id}/audio/{name}", binary=True)
-                    if status == 200 and data and await self.send_audio(chat_id, brief, data,
-                                                                       caption=plain(title) or brief_caption(brief)):
-                        return
-                return await self.send(chat_id, say("Your brief is ready, but I could not send the recording here. "
-                                                    "It is on the Morning Brief page."))
+                if not isinstance(name, str) or not BRIEF_FILE.fullmatch(name):
+                    return await self.send(chat_id, say("Your brief does not have an audio recording yet. "
+                                                       "Check the Morning Brief page for its status."), durable=True)
+                return await self.send(chat_id, say(f"Your brief is ready: {title or brief.get('title') or brief_id}. "
+                                                    "You can listen on the Morning Brief page. "
+                                                    "Sending the recording to Telegram needs your confirmation."), durable=True)
             if brief.get("status") == "working":
                 return await self.send(chat_id, say("Your brief is taking longer than usual. "
-                                                    "It will be on the Morning Brief page when it is done."))
+                                                    "It will be on the Morning Brief page when it is done."), durable=True)
             await self.send(chat_id, say("I could not make your brief. "  # a server that says nothing still gets a sentence
-                                         + (text_of(brief.get("step"), 300) or "Morning Brief could not finish it.")))
+                                         + (text_of(brief.get("step"), 300) or "Morning Brief could not finish it.")), durable=True)
         except NETWORK as error:
             self.log(f"Morning Brief did not answer on {self.brief_base}: {type(error).__name__}")
-            await self.send(chat_id, say(BRIEF_OFFLINE))
+            await self.send(chat_id, say(BRIEF_OFFLINE), durable=True)
         finally:
             self.following.discard((chat_id, brief_id))
 
@@ -1018,7 +1164,11 @@ class Bot:
         if command == "/schedule":  # none of these is a model call, so none of them waits for a running turn
             return await self.on_schedule(chat_id, text.split()[1:])
         if command == "/brief":
-            return await self.on_brief(chat_id, text.split()[1:])
+            words = text.split()[1:]
+            # Only the bare command or a length explicitly requests immediate delivery.
+            # Additional instructions (such as "do not send yet") belong to the conversation.
+            if not words or (len(words) == 1 and parse_plan(f"{BRIEF_AT} {words[0]}")):
+                return await self.on_brief(chat_id, words)
         state = self.chat(chat_id)
         if command == "/details":  # the last turn, whether or not this one is still running
             return await self.on_details(state)
@@ -1043,6 +1193,20 @@ class Bot:
         if head != "c" or flag not in ("0", "1") or not CONFIRMATION.fullmatch(confirmation_id):
             return
         state, approved = self.chat(chat_id), flag == "1"
+        from brief_confirmation import _read, decide_confirmation, delivery_message
+        record = _read(state["dir"] / "confirmations" / f"{confirmation_id}.json")
+        if record and record.get("kind") == "brief_telegram":
+            if state["busy"]:
+                return await self.send(chat_id, say("Still working on your previous message."))
+            state["busy"] = True
+            try:
+                result = await decide_confirmation(state["dir"], confirmation_id, approved,
+                                                   brief_base=self.brief_base, expected_chat_id=chat_id)
+                body = say(text_of(message.get("text"), 1200, flat=False)) + f"\n\n<b>{say(delivery_message(result))}</b>"
+                await self.edit(state, message.get("message_id"), body)
+            finally:
+                state["busy"] = False
+            return
         problem = decide(state["dir"], confirmation_id, approved, busy=state["busy"])
         if not problem:
             state["busy"] = True  # claimed before the edit awaits, so a message cannot slip in behind the button
@@ -1138,6 +1302,7 @@ class Bot:
         try:
             if self.allowed:
                 self.spawn(self.mornings())
+                self.spawn(self.recover_replies())
             return await self.poll()
         finally:
             for task in list(self.tasks):

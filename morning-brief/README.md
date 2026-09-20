@@ -1,6 +1,6 @@
 # Morning Brief
 
-Follow a few interests; get a five-minute podcast about what happened in them while you were away.
+Follow a few interests; get a 90-second podcast from the last 24 hours of saved posts.
 The live, personal end of the project: `topic-analysis/` finds what spiked last month, Signal
 (`jetstream-demo/`) shows one stream live, and this turns the stream into something you listen to.
 
@@ -12,9 +12,26 @@ Copy `.env.example` to `.env` and add `ANTHROPIC_API_KEY` and `ELEVENLABS_API_KE
 optional: without Claude the brief just reads out the top posts, and without ElevenLabs the page
 uses the browser's voice. Set `BRIEF_AT=07:30` to have a brief recorded every morning.
 
-A brief has a length, chosen on the page anywhere from **45 seconds to 5 minutes**. The length is a
+A brief has a length, chosen on the page anywhere from **45 to 90 seconds**. The length is a
 spoken-word budget given to Claude; the on-screen rundown stays complete at every length. The script
 opens cold on the biggest story: no greeting, no sign-off.
+
+The chat can pass `focus` and `exclude_terms` to `make_brief`, or narrate an exact sourced draft
+with `record_brief`. `previous_brief_id` preserves omitted preferences and excludes earlier source
+posts and story titles when choosing a new rundown. Each generated brief calculates a fresh window
+ending at generation time; old or future posts never fill an empty window. A custom draft may use
+selected X/Twitter evidence, with its actual dates and sources recorded in `source_context`.
+
+Creating a recording does not send it anywhere. Chat delivery uses a human confirmation button
+bound to that recording and Telegram destination, or the explicit **Send to Telegram** button.
+An approved custom script is not rewritten or clipped to fit: scripts must fit the word budget,
+and recordings run slightly faster if necessary to preserve the ending within the duration limit.
+
+Telegram retries temporary connection failures. Completed replies and confirmation cards are
+saved in `harness/state/telegram/outbox.json`; messages known not to have reached Telegram are
+retried after reconnection without rerunning the agent or regenerating audio. An uncertain send
+(such as a response timeout) is retained for review and is not replayed automatically. This
+recovery queue never uploads recordings or bypasses delivery confirmation.
 
 ## How it works
 
@@ -31,7 +48,8 @@ State lives in `morning-brief/data/` (gitignored): `interests.json`, `posts.json
 
 ## Limits worth knowing
 
-- Bluesky only. The Twitter firehose in this repo is a static dump, so it cannot feed a live brief.
+- Automatic current-story selection uses collected Bluesky posts. Archived X/Twitter evidence can
+  support a custom script, but must keep its historical dates and cannot be labelled current news.
 - Engagement is each post's current total, not its growth inside the window.
 - Jetstream's replay buffer is short: measured 2026-09-19, the oldest replayable event was 36.7 hours
   old, and older cursors are refused with `CursorTooOld ... below lookback floor`. Longer windows need

@@ -105,7 +105,7 @@ async def search(request):
     if not terms or len(terms) > MAX_TERMS or any(len(term) > MAX_TERM for term in terms):
         return server.fail(400, f"Send q as 1 to {MAX_TERMS} comma-separated keywords of at most {MAX_TERM} characters.")
     try:
-        hours, limit = float(request.query.get("hours", 8)), int(request.query.get("limit", 20))
+        hours, limit = float(request.query.get("hours", 24)), int(request.query.get("limit", 20))
     except ValueError:
         return server.fail(400, "hours and limit must be numbers.")
     if not 1 <= hours <= 36 or not 1 <= limit <= 50:

@@ -995,17 +995,16 @@ async def brief_cards():
         box.fake.queue.append(message(1, CHAT, "brief me on AI in one minute"))
         await until(lambda: any("It is being made now." in (row["text"] or "") for row in box.sent("sendMessage")))
         turn_done = box.clock.now()
-        await until(lambda: box.fake.got("sendAudio"), timeout=20)
+        await until(lambda: said(box, "Your brief is ready"), timeout=20)
         audios = box.fake.got("sendAudio")
         check("a brief card is followed in the background, so the answer is not held up",
-              audios and audios[0]["at"] > turn_done and box.briefs.polls >= 4 and box.clock.slept.count(5.0) >= 3,
-              f"the answer came {audios[0]['at'] - turn_done:.0f} virtual s before the recording, "
-              f"{box.briefs.polls} polls 5 s apart" if audios else "no recording arrived")
-        check("the recording is uploaded with the card's own title as its caption",
-              len(audios) == 1 and audios[0]["caption"] == "AI labs trade blows" and audios[0]["title"] == "AI labs trade blows"
-              and audios[0]["audio"] == {"filename": "morning-brief.mp3", "content_type": "audio/mpeg", "bytes": len(MP3)}
-              and box.briefs.fetched == 1 and box.runners.turns() == 1,
-              repr(audios[0]["caption"]) if audios else "no upload")
+              box.clock.now() > turn_done and box.briefs.polls >= 4 and box.clock.slept.count(5.0) >= 3,
+              f"{box.briefs.polls} polls 5 s apart, then a ready notice")
+        check("a model brief card waits for human confirmation before uploading audio",
+              not audios and box.briefs.fetched == 0 and box.runners.turns() == 1
+              and "AI labs trade blows" in said(box, "Your brief is ready")[0]
+              and "needs your confirmation" in said(box, "Your brief is ready")[0],
+              "Ready notice only; no recording fetched or uploaded")
 
     slow = Briefs(working=10_000)  # never finishes: the wait has to end by itself
     async with running({CHAT}, [{"type": "card", "card": card}, {"type": "done", "duration_ms": 1}], delay=0.02,
@@ -1020,7 +1019,7 @@ async def brief_cards():
     for name, card_now, briefs, expected in (
             ("a brief that fails is reported with the server's own reason", card, failed, "No posts were collected"),
             ("a brief with no recording says so instead of promising audio", card,
-             Briefs(working=0, final={**READY, "audio": None}), "could not send the recording here"),
+             Briefs(working=0, final={**READY, "audio": None}), "does not have an audio recording"),
             ("a brief server that answers nonsense still gets a whole sentence", card,
              Briefs(working=0, final={"id": BRIEF}), "Morning Brief could not finish it.")):
         async with running({CHAT}, [{"type": "card", "card": card_now}, {"type": "done", "duration_ms": 1}], delay=0.02,
@@ -1035,11 +1034,12 @@ async def brief_cards():
            {"type": "done", "duration_ms": 1}]
     async with running({CHAT}, bad, delay=0.02, briefs=Briefs(working=4)) as box:
         box.fake.queue.append(message(1, CHAT, "brief me"))
-        await until(lambda: box.fake.got("sendAudio"), timeout=20)
+        await until(lambda: said(box, "Your brief is ready"), timeout=20)
         await polled(box, 3)
         check("a brief id that is not one is never turned into a path, and one brief is waited for once",
-              len(box.fake.got("sendAudio")) == 1 and box.briefs.fetched == 1 and not box.bot.following,
-              f"{len(box.fake.got('sendAudio'))} upload for three cards, {box.briefs.fetched} download")
+              len(said(box, "Your brief is ready")) == 1 and not box.fake.got("sendAudio")
+              and box.briefs.fetched == 0 and not box.bot.following,
+              f"{len(said(box, 'Your brief is ready'))} ready notice for three cards, no audio download or upload")
 
 
 # ---- the network this laptop is on ------------------------------------------------------------------

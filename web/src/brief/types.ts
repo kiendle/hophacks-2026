@@ -50,6 +50,7 @@ export interface Brief {
   step: string
   title?: string
   notes: string[]
+  coverage_note?: string
   audio: { full: string; voice: string | null } | null
   segments?: Segment[]
 }
