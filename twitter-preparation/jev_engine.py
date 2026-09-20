@@ -11,7 +11,7 @@ import asyncio
 import contextlib
 import datetime as _datetime
 import email.utils
-import fcntl
+from file_lock import lock_file, unlock_file
 import hashlib
 import json
 import math
@@ -127,7 +127,7 @@ class Engine:
         lock_path = Path(str(self.db_path) + ".lock")
         self._lock_file = lock_path.open("a+", encoding="utf-8")
         try:
-            fcntl.flock(self._lock_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            lock_file(self._lock_file.fileno())
         except (BlockingIOError, OSError):
             self._lock_file.close()
             self._lock_file = None
@@ -164,7 +164,7 @@ class Engine:
         lock_file, self._lock_file = self._lock_file, None
         if lock_file is not None:
             with contextlib.suppress(Exception):
-                fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+                unlock_file(lock_file.fileno())
             with contextlib.suppress(Exception):
                 lock_file.close()
         self._entered = False

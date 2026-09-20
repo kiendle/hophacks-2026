@@ -55,7 +55,7 @@ HEADERS = {
 }
 # Optional modules, each with setup(app). One that is not there is ignored, one that is broken is
 # skipped with its traceback, so a stream of work that is still being written never costs the server.
-PLUGINS = ("voice", "analysis_api", "realtime_api", "live_voice", "agent_voice", "stream_api", "setup_api", "ui_server", "brief_delivery")
+PLUGINS = ("voice", "analysis_api", "realtime_api", "live_voice", "agent_voice", "stream_api", "setup_api", "ui_server", "brief_delivery", "automation_api", "translation_api")
 VOICE_MAX = 10 * 1024 * 1024  # a recorded clip, on the voice routes only
 PLACEHOLDER = b"<!doctype html><title>Signal harness</title><p>The chat page has not been written yet. The API is live.\n"
 ASSET_CACHE = "public, max-age=31536000, immutable"  # every name under dist/assets carries its own build hash
@@ -281,7 +281,7 @@ async def post_confirm(request):
             return fail(409, str(error))
         events = [
             {"type": "card", "card": result["_card"]},
-            {"type": "message", "text": "Your final automation configuration is ready to download. No automation has been started." if approved else "The proposal remains editable. Tell me what you would like to change."},
+            {"type": "message", "text": "Your configuration is finalized. Set the total Jev budget in the card and press Start live tracking to open the dashboard." if approved else "The proposal remains editable. Tell me what you would like to change."},
             {"type": "done"},
         ]
         return web.Response(text="".join(f"data: {json.dumps(event)}\n\n" for event in events),

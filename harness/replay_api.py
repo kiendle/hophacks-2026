@@ -123,5 +123,13 @@ async def replay(request):
     return ws
 
 
+async def warm(app):
+    """Decode the saved export while the server starts. It takes most of half a minute, and
+    without this the first person to open the page waits for it in front of an empty chart."""
+    if classified_data.available():
+        task = app['replay_warm'] = asyncio.create_task(asyncio.to_thread(classified_data.scan, ['AI'], []))
+        task.add_done_callback(lambda done: done.cancelled() or done.exception())  # the page reports a bad export itself
+
+
 def setup(app):
     app.router.add_get('/api/replay', replay)

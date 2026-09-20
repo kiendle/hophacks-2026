@@ -558,7 +558,7 @@ def submit_project(reason: str) -> dict:
                 "Call save_draft, then request_confirmation, then wait for the user to press Confirm.")
 
 
-TOOL_MODULES = ("brief_tools", "analysis_tools", "jev_tools", "classified_tools", "automation_tools")  # optional, each with register(mcp)
+TOOL_MODULES = ("brief_tools", "analysis_tools", "jev_tools", "classified_tools", "automation_tools", "live_tracking_tools")  # optional, each with register(mcp)
 
 
 def load_plugins(server=None, names=TOOL_MODULES):

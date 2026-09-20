@@ -22,6 +22,8 @@ export interface ReplayEvent {
   grades: Grade[]
   delta?: number
   opening?: boolean
+  /** A live text edit is an observation, not a new publication. */
+  publication?: boolean
 }
 
 export interface ReplayDataset {

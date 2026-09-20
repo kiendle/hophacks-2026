@@ -55,13 +55,14 @@ export function createStreamSource(terms: string[] = ['AI']): DataSource {
             if (message.run !== snapshot.run || message.sequence <= sequence || !agg) return
             if (message.sequence !== sequence + 1) throw new Error('Stream interrupted. Reload to restart.')
             sequence = message.sequence
+            const firstEvents = agg.posts === 0 && agg.likes === 0 && message.events.length > 0
             agg.addBatch(message.events)
             const controlChanged = snapshot.status !== message.status || snapshot.speed !== message.speed
             snapshot = { ...snapshot, now: message.now, status: message.status, speed: message.speed }
             dirty = true
-            // Controls and the final frame must be visible immediately. Ordinary
+            // First data, controls and the final frame must be visible immediately. Ordinary
             // delivery bursts share a snapshot; no events or timestamps are lost.
-            if (controlChanged || message.status === 'complete') publish()
+            if (firstEvents || controlChanged || message.status === 'complete') publish()
             else schedule()
           }
         } catch (error) {

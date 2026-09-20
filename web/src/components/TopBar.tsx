@@ -3,7 +3,7 @@ import { FiltersMenu } from '../app/FiltersMenu'
 import { textOn } from '../color'
 import { formatCount } from '../format'
 import type { Series } from '../data/types'
-import { LINE_INTERVALS, PLAYBACK_SPEEDS } from '../data/config'
+import { LINE_INTERVALS, LIVE_INTERVALS, PLAYBACK_SPEEDS } from '../data/config'
 import { BubblesIcon, ChevronLeftIcon, LineChartIcon, PauseIcon, PlayIcon } from './icons'
 
 export type ViewMode = 'line' | 'bubble'
@@ -12,6 +12,7 @@ export type ViewMode = 'line' | 'bubble'
 const COLLAPSED = 2
 
 interface Props {
+  liveAutomation?: boolean
   topic: string
   series: Series[]
   hidden: Set<string>
@@ -25,6 +26,7 @@ interface Props {
   intervalMs: number
   onIntervalChange: (interval: number) => void
   disabled?: boolean
+  loading?: boolean
   terms: string[]
   onTermsChange: (terms: string[]) => void
   /** Firehose events seen and kept so far. */
@@ -34,6 +36,7 @@ interface Props {
 }
 
 export function TopBar({
+  liveAutomation = false,
   topic,
   series,
   hidden,
@@ -46,6 +49,7 @@ export function TopBar({
   intervalMs,
   onIntervalChange,
   disabled,
+  loading,
   terms,
   onTermsChange,
   events,
@@ -88,24 +92,24 @@ export function TopBar({
       <div className="spacer" />
 
       <span className="events">
-        {formatCount(events.read)} posts · {formatCount(events.kept)} updates
+        {loading ? 'Loading posts…' : `${formatCount(events.read)} ${liveAutomation ? 'matching texts' : 'posts'} · ${formatCount(events.kept)} updates`}
       </span>
       <div className="chart-controls">
-      <FiltersMenu terms={terms} onChange={onTermsChange} />
+      {!liveAutomation && <FiltersMenu terms={terms} onChange={onTermsChange} />}
       {mode === 'line' && <label className="interval-control">
         Interval
         <select className="stream-speed" aria-label="Point interval" value={intervalMs}
           onChange={(e) => onIntervalChange(Number(e.target.value))}>
-          {LINE_INTERVALS.map(interval => <option key={interval.value} value={interval.value}>{interval.label}</option>)}
+          {(liveAutomation ? LIVE_INTERVALS : LINE_INTERVALS).map(interval => <option key={interval.value} value={interval.value}>{interval.label}</option>)}
         </select>
       </label>}
-      <select className="stream-speed" aria-label="Playback speed" value={speed}
+      {!liveAutomation && <><select className="stream-speed" aria-label="Playback speed" value={speed}
         onChange={(e) => onSpeedChange(Number(e.target.value))} disabled={disabled}>
         {PLAYBACK_SPEEDS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
       </select>
       <button className="round-btn" aria-label={playing ? 'Pause' : 'Play'} onClick={onTogglePlay} disabled={disabled}>
         {playing ? <PauseIcon size={14} /> : <PlayIcon size={14} />}
-      </button>
+      </button></>}
       <span className="divider" />
       <div className="segmented">
         <button className={mode === 'line' ? 'on' : ''} aria-label="Line view" onClick={() => onModeChange('line')}>

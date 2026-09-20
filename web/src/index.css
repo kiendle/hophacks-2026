@@ -1,3 +1,19 @@
+@font-face {
+  font-family: 'Junicode';
+  src: url('/fonts/Junicode-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Junicode';
+  src: url('/fonts/Junicode-Bold.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
 :root {
   --text: #151515;
   --muted: #9a9a9a;
@@ -276,6 +292,14 @@ button {
 }
 
 /* Hover card */
+.post-translation { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 10px; font-size: 11px; }
+.translate-button { padding: 3px 0; border: 0; background: none; color: #267252; cursor: pointer; font: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.translate-button:disabled { cursor: wait; color: #777; }
+.translate-button:focus-visible { outline: 2px solid #267252; outline-offset: 3px; }
+.translation-error { color: #a32d2d; flex-basis: 100%; }
+.card.post-hover-card { pointer-events: auto; transform: none; overflow: auto; overflow-wrap: anywhere; z-index: 5; }
+.post-hover-card .card-head { padding-right: 20px; }
+.post-preview-close { position: absolute; top: 4px; right: 6px; background: none; border: 0; color: #777; cursor: pointer; font-size: 18px; }
 
 .card {
   position: absolute;
@@ -648,9 +672,50 @@ button {
   background: none;
   text-align: left;
   padding: 0 10px 14px;
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.01em;
+}
+
+.retained-workspace {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+.retained-workspace[hidden] {
+  display: none;
+}
+
+.sentimeter-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  color: var(--text);
+  line-height: 1;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.sentimeter-logo-mark {
+  display: block;
+  width: 1.6em;
+  height: 1.6em;
+  flex: none;
+}
+
+.sentimeter-logo-name {
+  font-family: 'Junicode', Georgia, serif;
+  font-size: 1.2em;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.brand:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 
 .new-btn {
@@ -768,11 +833,25 @@ button {
 .home-modes button { border: 1px solid var(--border); background: transparent; padding: 9px 14px; border-radius: 20px; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; }
 .home-modes button[aria-pressed="true"] { background: var(--ink); color: white; border-color: var(--ink); }
 .automation-setup { flex: 1; min-width: 0; display: flex; flex-direction: column; background: #f6f6f4; }
-.automation-setup header { padding: 24px 28px 12px; max-width: 850px; width: 100%; margin: 0 auto; }
+.automation-setup header { padding: 24px 28px 12px; width: 100%; margin: 0 auto; box-sizing: border-box; }
 .automation-setup h1 { margin: 0 0 8px; font-size: 24px; }
 .automation-setup header p { margin: 0; color: var(--muted); font-size: 14px; }
-.automation-setup .chat { flex: 1; min-height: 0; width: 100% !important; max-width: 850px; margin: 0 auto; border: 0; padding: 16px 28px 24px; }
+.automation-setup .chat { flex: 1; min-height: 0; width: 100% !important; max-width: none; margin: 0 auto; border: 0; padding: 16px 28px 24px; }
 .automation-setup .chat-resize-handle { display: none; }
+.tracking-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding: 8px 28px; font-size: 13px; }
+.tracking-controls details { max-width: 100%; }
+.tracking-controls pre { max-height: 220px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+.tracking-controls input, .tracker-launch input { max-width: 110px; padding: 6px; border: 1px solid #ddd; border-radius: 8px; }
+.tracking-mode { color: #267252; }
+.ingestion-activity { flex-basis: 100%; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px; background: #fafaf9; font-variant-numeric: tabular-nums; }
+.ingestion-health { display: inline-flex; align-items: center; gap: 7px; }
+.ingestion-health::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.ingestion-active { color: #267252; }
+.ingestion-warning { color: #946014; }
+.ingestion-waiting, .ingestion-stopped, .ingestion-context { color: #666; }
+.ingestion-progress { flex-basis: 100%; }
+.tracker-launch { margin: 14px 0; padding: 12px; background: #f7f7f5; border-radius: 12px; }
+.navigation-error { position: fixed; z-index: 100; bottom: 20px; left: 20px; max-width: 600px; background: white; color: #b43c2e; padding: 16px; border: 1px solid #ddd; border-radius: 12px; }
 
 .home {
   position: relative;
@@ -796,9 +875,28 @@ button {
 
 .wordmark {
   margin: 0;
-  font-size: 40px;
+  font-size: clamp(40px, 6vw, 80px);
   font-weight: 600;
   letter-spacing: -0.02em;
+}
+
+.wordmark .sentimeter-logo {
+  gap: 0.3em;
+}
+
+.wordmark .sentimeter-logo-mark {
+  width: 1.4em;
+  height: 1.4em;
+}
+
+.sentimeter-logo-ascii {
+  display: block;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: clamp(7px, 1.08vw, 16px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: pre;
 }
 
 .tagline {

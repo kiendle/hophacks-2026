@@ -13,6 +13,10 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / 'web/data/demo.json.gz'
 PACKAGE = ROOT / 'harness/data/classified/processed-streams-20260920T063350Z'
 _LOAD_LOCK = threading.Lock()
+_SELECT_LOCK = threading.Lock()
+_SELECTION_SOURCE = None  # dataset and event count shared by the selection caches
+_ALL_SELECTED = None
+_SELECTED = {}  # words -> selection, oldest first
 
 
 @functools.lru_cache(maxsize=1)
@@ -117,8 +121,20 @@ def matcher(words):
     keys = {normalize(w.lstrip('#')) for w in words}
     companies = {c['id'] for c in manifest()['taxonomy']['categories']
                  if keys.intersection(normalize(v) for v in [c['id'], c['label'], *c.get('products', [])])}
-    patterns = [re.compile(r'(?<!\w)' + re.escape(w) + r'(?!\w)', re.I) for w in words]
-    return lambda event: any(g['company'] in companies for g in event['grades']) or any(p.search(event['text']) for p in patterns)
+    # One pattern for every word. Its lookbehind stops the regex engine from skipping ahead, so a
+    # million posts cost seconds per word; most contain none of them, and a substring test says so.
+    pattern = re.compile(r'(?<!\w)(?:' + '|'.join(re.escape(w) for w in words) + r')(?!\w)', re.I)
+    needles = [w.lower() for w in words] if all(w.isascii() for w in words) else None
+
+    def in_text(text):
+        if needles is not None:
+            lowered = text.lower()
+            # re.I also reads dotless i, dotted capital I and long s as ASCII letters; lower() does not.
+            if not any(n in lowered for n in needles) and (lowered.isascii() or not any(c in lowered for c in '\u0131\u017f\u0307')):
+                return False
+        return pattern.search(text) is not None
+
+    return lambda event: any(g['company'] in companies for g in event['grades']) or in_text(event['text'])
 
 
 def timestamp(value):
@@ -200,14 +216,47 @@ def groups(rows, start, company_ids):
     return result
 
 
+def select(data, words):
+    """The events a replay of these words shows. Every open of the page and every chat query asks
+    for the same few word lists, so the last ones are kept; a replaced export drops them."""
+    global _SELECTION_SOURCE, _ALL_SELECTED
+    key = tuple(words)
+    with _SELECT_LOCK:
+        if (_SELECTION_SOURCE is None or _SELECTION_SOURCE[0] is not data
+                or _SELECTION_SOURCE[1] != len(data['events'])):
+            _SELECTED.clear()
+            _ALL_SELECTED = None
+            _SELECTION_SOURCE = data, len(data['events'])
+        if any(w.lower().strip() in ('ai', 'artificial intelligence') for w in words):
+            if _ALL_SELECTED is None:
+                # All-topic replays keep the original list. Count and discover
+                # present companies together, once, without matching or copying.
+                present, posts = set(), 0
+                for event in data['events']:
+                    posts += event['kind'] == 'post'
+                    present.update(grade['company'] for grade in event['grades'])
+                _ALL_SELECTED = (data['events'],
+                                 [c for c in data['companies'] if c['id'] in present], posts)
+            return _ALL_SELECTED
+        saved = _SELECTED.get(key)
+        if saved is not None:
+            return saved
+        matches = matcher(words)
+        hits = [matches(e) for e in data['events']]
+        post_ids = {e['postId'] for e, hit in zip(data['events'], hits) if hit and e['kind'] == 'post'}
+        events = [e for e, hit in zip(data['events'], hits) if hit or e['postId'] in post_ids]
+        present = {g['company'] for e in events for g in e['grades']}
+        selected = events, [c for c in data['companies'] if c['id'] in present], sum(e['kind'] == 'post' for e in events)
+        _SELECTED.pop(key, None)
+        while len(_SELECTED) >= 4:
+            _SELECTED.pop(next(iter(_SELECTED)))
+        _SELECTED[key] = selected
+        return selected
+
+
 def scan(words, names):
     data = load()
-    matches = matcher(words)
-    post_ids = {e['postId'] for e in data['events'] if e['kind'] == 'post' and matches(e)}
-    events = [e for e in data['events'] if e['postId'] in post_ids or matches(e)]
-    present = {g['company'] for e in events for g in e['grades']}
-    companies = [c for c in data['companies'] if c['id'] in present]
-    posts = sum(e['kind'] == 'post' for e in events)
+    events, companies, posts = select(data, words)
     likes = len(events) - posts
     return {'format': 'jev-classified-events', 'dataset': {**data, 'events': events, 'companies': companies, 'counts': {'posts': posts, 'likes': likes}},
             'source': 'twitter_archive', 'now': None, 'streaming': False, 'read': data['counts']['posts'], 'kept': posts,

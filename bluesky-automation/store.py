@@ -192,6 +192,7 @@ class Store:
                 received_at TEXT NOT NULL
             );
             CREATE INDEX IF NOT EXISTS source_events_type_idx ON source_events(event_type);
+            CREATE INDEX IF NOT EXISTS source_events_received_idx ON source_events(received_at);
 
             CREATE TABLE IF NOT EXISTS notices (
                 notice_id INTEGER PRIMARY KEY AUTOINCREMENT,

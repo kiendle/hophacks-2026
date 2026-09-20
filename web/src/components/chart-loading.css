@@ -1,0 +1,119 @@
+/* The empty chart while saved posts load. Same grid, bar and ink tokens as the real one. */
+.chart-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  box-sizing: border-box;
+}
+
+.chart-loading-plot {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.chart-loading-grid {
+  border-top: 1px dashed var(--grid);
+}
+
+.chart-loading-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  width: min(100%, 360px);
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #fff;
+  text-align: center;
+}
+
+.chart-loading-message h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.chart-loading-message p {
+  margin: 0;
+  color: var(--axis);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.chart-loading-retry {
+  margin-top: 16px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--soft);
+}
+
+.chart-loading-plot svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.chart-loading-plot path {
+  fill: none;
+  stroke: var(--bar);
+  stroke-width: 3;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  /* Revealed with a clip, not a dash: dash lengths break apart under non-scaling-stroke. */
+  clip-path: inset(-20% 100% -20% 0);
+  animation: chart-loading-draw 2.4s ease-in-out infinite;
+}
+
+.chart-loading-plot path + path {
+  animation-delay: 0.3s;
+}
+
+.chart-loading-bars {
+  flex: none;
+  height: 56px;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.chart-loading-bars span {
+  flex: 1;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--bar);
+  transform-origin: bottom;
+  transform: scaleY(0.45);
+  animation: chart-loading-rise 1.6s ease-in-out infinite;
+}
+
+.chart-loading[data-busy="false"] .chart-loading-bars span {
+  animation: none;
+  transform: scaleY(0.45);
+  opacity: 0.35;
+}
+
+/* Drawn from the left, held, then let go from the left, so it reads as time moving forward. */
+@keyframes chart-loading-draw {
+  0% { clip-path: inset(-20% 100% -20% 0); }
+  45%, 60% { clip-path: inset(-20% 0 -20% 0); }
+  100% { clip-path: inset(-20% 0 -20% 100%); }
+}
+
+@keyframes chart-loading-rise {
+  0%, 100% { transform: scaleY(0.45); opacity: 0.55; }
+  40% { transform: scaleY(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chart-loading-plot path { animation: none; clip-path: none; }
+  .chart-loading-bars span { animation: none; transform: scaleY(0.7); }
+}

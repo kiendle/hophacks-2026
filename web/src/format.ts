@@ -3,11 +3,12 @@ import type { TimeRange } from './data/types'
 
 const fmtDay = utcFormat('%b %-d')
 const fmtHour = utcFormat('%H:%M')
+const fmtSecond = utcFormat('%H:%M:%S')
 const fmtDayHour = utcFormat('%b %-d, %H:%M')
 
 const isMidnight = (d: Date) => d.getUTCHours() === 0 && d.getUTCMinutes() === 0
 
-export const formatTick = (d: Date) => (isMidnight(d) ? fmtDay(d) : fmtHour(d))
+export const formatTick = (d: Date) => (isMidnight(d) ? fmtDay(d) : d.getUTCSeconds() ? fmtSecond(d) : fmtHour(d))
 
 export const formatTime = (t: number) => fmtDayHour(new Date(t))
 

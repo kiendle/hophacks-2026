@@ -1,5 +1,5 @@
 import { ActivityAccumulator } from './activity'
-import { BUCKET_MS, LINE_INTERVALS, TREND_WINDOW_MS } from './config'
+import { BUCKET_MS, LINE_INTERVALS, LIVE_INTERVALS, TREND_WINDOW_MS } from './config'
 import type { Bucket, Series, TimeRange } from './types'
 import { windowStat } from './window'
 
@@ -95,7 +95,7 @@ function trendSentiment(buckets: Bucket[], end: number): number {
 
 /** Display-only projection. It never changes the stream's four-hour storage buckets. */
 export function chartData(series: Series, view: TimeRange, cutoff: number, intervalMs: number) {
-  if (!LINE_INTERVALS.some(interval => interval.value === intervalMs)) throw new Error('Unsupported chart interval')
+  if (![...LINE_INTERVALS, ...LIVE_INTERVALS].some(interval => interval.value === intervalMs)) throw new Error('Unsupported chart interval')
   const points: ChartPoint[] = []
   const trend: TrendPoint[] = []
   if (!series.buckets.length || !Number.isFinite(cutoff)) return { points, trend }

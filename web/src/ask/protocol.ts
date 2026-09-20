@@ -16,7 +16,7 @@ export interface AskRequest {
   /** The user's text, verbatim. */
   question: string
   /** Exact replay filter and display settings, retained when asking the local data tools. */
-  dataset?: { source: 'twitter_archive' | 'bluesky_live'; keywords: string[] }
+  dataset?: { source: 'twitter_archive' | 'bluesky_live'; keywords: string[]; automationId?: string }
   chart?: { intervalHours: number; display: 'both' | 'points' | 'trend'; summaries: import('./chartContext').ChartSummary[] }
   /** Earlier turns in this conversation, oldest first. */
   history: { role: 'user' | 'assistant'; content: string }[]

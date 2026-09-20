@@ -3,6 +3,7 @@ import { VoiceConversation } from '@elevenlabs/client'
 import { createAgentSession, type AgentView, type Transcript } from './agentSession'
 
 export interface TalkLiveOptions {
+  enabled?: boolean
   send(question: string): Promise<string | undefined>
   stop?(): void
   onTranscript?(message: Transcript): void
@@ -32,6 +33,9 @@ export function useTalkLive(options: TalkLiveOptions): TalkLive {
     workspaceContext: () => latest.current.workspaceContext?.() || '',
   }))
   const [view, setView] = useState(session.view)
+  useEffect(() => {
+    if (options.enabled === false && (session.view().active || session.view().opening)) session.stop()
+  }, [session, options.enabled])
   useEffect(() => { session.syncWorkspaceContext() })
   const [available, setAvailable] = useState(false)
   useEffect(() => session.watch(setView), [session])

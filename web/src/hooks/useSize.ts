@@ -9,6 +9,8 @@ export function useSize<T extends HTMLElement>() {
     if (!el) return
     const ro = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect
+      // A retained, hidden workspace has no layout. Keep its last chart geometry.
+      if (!width || !height) return
       setSize({ width, height })
     })
     ro.observe(el)

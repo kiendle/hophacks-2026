@@ -24,7 +24,7 @@ export class ActivityAccumulator {
     const { event } = activity
     const previous = this.posts.get(event.postId)
     this.posts.set(event.postId, {
-      published: previous?.published || event.kind === 'post',
+      published: previous?.published || (event.kind === 'post' && event.publication !== false),
       likes: (previous?.likes ?? 0) + activity.likes,
       latest: activity,
     })
