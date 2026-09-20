@@ -60,7 +60,8 @@ def local(ms, pattern):
 
 
 def zone():
-    return datetime.now().astimezone().strftime("%Z (UTC%z)")
+    """What the clock times in a result mean, in the words the model may repeat to the user."""
+    return "local time on this computer"
 
 
 def compile_terms(terms):
@@ -237,7 +238,7 @@ class Jetstream:
 async def place_start(jetstream, from_ms, head_seq, head_ms, found, deadline):
     """Step back until the replay really does begin at or before the window.
 
-    Bluesky has bursts - a bulk import can put ten thousand posts into two seconds - so sequence
+    Bluesky has bursts, a bulk import can put ten thousand posts into two seconds, so sequence
     numbers and wall clock drift apart badly, and a start placed by an average rate can land inside
     the window and silently lose its oldest minutes. Every step here is a measured probe instead,
     and starting too early only costs replay, which is cheap.
@@ -357,8 +358,8 @@ def summary(scan, *, mode, covered, seconds, views, notes, label):
     covered_minutes = minutes * covered
     notes = list(notes) + [ENGAGEMENT_NOTE]
     if scan.scanned == 0:
-        notes.insert(0, "Nothing at all was scanned in the time available - the stream was stalled or refused, or the budget was "
-                        "too short. This says nothing about the topic. Say so plainly and try again in a moment.")
+        notes.insert(0, "Nothing at all was scanned in the time available. The stream was stalled or refused, or the budget "
+                        "was too short. This says nothing about the topic. Say so plainly and try again in a moment.")
     elif covered < 0.99 and mode == "listen":
         notes.insert(0, f"The live stream was only open for about {covered * 100:.0f}% of the listening window, so the counts are a floor.")
     elif covered < 0.99:

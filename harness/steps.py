@@ -29,7 +29,12 @@ TITLES = {"describe_sources": "Checking what data we have", "save_draft": "Savin
 _ARROWS = re.compile(r"[^\S\n]*(?:[←→↔⇒⇨➡]+|-{1,2}>|=>)[^\S\n]*")
 _DASHES = re.compile(r"[^\S\n]*[‒–—―]+[^\S\n]*")
 _DOTS = re.compile(r"[^\S\n]*[·•‣▪・]+[^\S\n]*")
-_SEMICOLON = re.compile(r"[^\S\n]*;[^\S\n]*(\S?)")
+# a plain hyphen standing in for a dash: spaces on both sides and a word before it on the same line,
+# which is what a model reaches for once it has been told not to type an em dash
+_HYPHEN = re.compile(r"(?<=\S)[^\S\n]+(?:-{1,2}[^\S\n]+)+(?=\S)")  # "a - b", and "a - - b" in one pass
+# a semicolon OR a run of them (";;", "; ;") in one match: taken one at a time, "a;;b" came out as
+# "a. ;b" and only a second pass finished it, so plain() was not idempotent
+_SEMICOLON = re.compile(r"[^\S\n]*(?:;[^\S\n]*)+(\S?)")
 _RUNS = re.compile(r"[^\S\n]{2,}")
 _BEFORE = re.compile(r"[^\S\n]+([,.])")
 _REPEATS = re.compile(r"(?:,[^\S\n]*){2,}")
@@ -38,23 +43,36 @@ _EDGES = re.compile(r"(?m)^[^\S\n]*,[^\S\n]*|[^\S\n]*,[^\S\n]*$")
 
 
 def _uncomma(match):
+    """One full stop for the whole run, and a capital on the word after it. chat.js's unsemicolon is
+    the same function: a sentence that had already ended ("e.g.; x") or a line that opens with a
+    semicolon does not get a second stop."""
     tail = match.group(1)
-    return ". " + tail.upper() if tail else "."
+    before = match.string[:match.start()]
+    opens_line = not before or before.endswith("\n")
+    stop = "" if opens_line or before.endswith((".", "!", "?")) else "."
+    if not tail:
+        return stop
+    if tail in ".,!?":  # the mark that follows does the semicolon's job
+        return tail if stop else ""
+    return ("" if opens_line else stop + " ") + tail.upper()
 
 
 def plain(value, trim=True):
     """Plain punctuation, for anything a person reads. Idempotent, and never raises.
 
-    A dash of any kind becomes ", ", a middle dot or bullet used as a separator becomes ", ",
-    an arrow becomes " to ", a semicolon becomes a full stop and the next word gets a capital.
-    Hyphens inside words (well-known) and dates (2026-09-10) and numbers (1,522) are untouched.
+    A dash of any kind becomes ", ", including a spaced hyphen ("posts - most on Sep 10"), a middle
+    dot or bullet used as a separator becomes ", ", an arrow becomes " to ", a semicolon becomes a
+    full stop and the next word gets a capital. Hyphens inside words (well-known), dates
+    (2026-09-10), negative numbers (-5), a line that starts with "- " and thousands (1,522) survive.
     `trim` is off for a streamed fragment, whose leading comma may be the join to the last chunk.
     """
     if not isinstance(value, str):
         return ""
-    text = _ARROWS.sub(" to ", value)
+    text = _RUNS.sub(" ", value)  # first: the patterns below scan the spaces around a dash, and a
+    text = _ARROWS.sub(" to ", text)  # long run of them would make each of those scans quadratic
     text = _DASHES.sub(", ", text)
     text = _DOTS.sub(", ", text)
+    text = _HYPHEN.sub(", ", text)
     text = _SEMICOLON.sub(_uncomma, text)
     text = _RUNS.sub(" ", text)
     text = _BEFORE.sub(r"\1", text)
@@ -119,13 +137,18 @@ def _ymd(value, shift=0):
     return year, month, day
 
 
+def _month_day(value, shift=0):
+    """"2026-09-09" to Sep 9, with no year at all, for a caller that writes the year itself."""
+    parts = _ymd(value, shift)
+    return f"{MONTHS[parts[1] - 1]} {parts[2]}" if parts else ""
+
+
 def _day(value, shift=0):
     """"2026-09-09" to Sep 9. The year appears only when it is not the year the data is from."""
     parts = _ymd(value, shift)
     if not parts:
         return ""
-    year, month, day = parts
-    return f"{MONTHS[month - 1]} {day}" + ("" if year == BASE_YEAR else f" {year}")
+    return _month_day(value, shift) + ("" if parts[0] == BASE_YEAR else f" {parts[0]}")
 
 
 def _when(fields):
@@ -202,9 +225,13 @@ def word_list(values, most=20):
 
 
 def window_words(date_from, date_to):
-    """The dates a person reads: Sep 9 to Sep 11, 2026. The end date is the first day not observed."""
+    """The dates a person reads: Sep 9 to Sep 11, 2026. The end date is the first day not observed.
+
+    The year is written once, at the end, so the two days are asked for without one: _day() adds the
+    year itself for any year but the data's, which used to give "Jan 5 2024 to Jan 7 2024, 2024".
+    """
     parts = _ymd(date_to, shift=-1) or _ymd(date_from)
-    low, high = _day(date_from), _day(date_to, shift=-1)
+    low, high = _month_day(date_from), _month_day(date_to, shift=-1)
     span = f"{low} to {high}" if low and high and low != high else (low or high)
     if not span:
         return ""

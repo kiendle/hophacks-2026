@@ -172,6 +172,7 @@ class Runner:
         stderr = asyncio.create_task(process.stderr.read())  # drained in parallel so a full pipe cannot wedge the turn
         pending, said, finished, calls, begun = {}, [], False, 0, time.monotonic()
         held = ""  # trailing spaces of the last delta: a dash can sit on a chunk boundary
+        lead = ""  # one letter standing in for the word already sent, so a rule needing it still fires
 
         def elapsed():
             return int((time.monotonic() - begun) * 1000)
@@ -197,12 +198,16 @@ class Runner:
                     elif kind == "stream_event":
                         delta = (event.get("event") or {}).get("delta") or {}
                         if delta.get("type") == "text_delta" and delta.get("text"):
-                            # clean the chunk with whatever was held back, then hold this chunk's own
-                            # trailing spaces: a dash arriving next must still see the space before it
-                            chunk = steps.plain(held + delta["text"], trim=False)
-                            keep = len(chunk) - len(chunk.rstrip(" \t"))
-                            chunk, held = (chunk[:len(chunk) - keep], chunk[len(chunk) - keep:]) if keep else (chunk, "")
+                            # Clean this chunk together with the spaces held back from the last one and
+                            # with `lead`, a plain letter standing in for the word already sent: a rule
+                            # that needs a word before the dash (a spaced hyphen) then still fires when
+                            # the dash lands on the far side of the join. `lead` is never itself changed
+                            # by plain(), so cutting its one character back off is exact.
+                            cleaned = steps.plain(lead + held + delta["text"], trim=False)[len(lead):]
+                            kept = cleaned[len(cleaned.rstrip(" \t")):]
+                            chunk, held = cleaned[:len(cleaned) - len(kept)], kept[-1:]  # one space at most
                             if chunk:
+                                lead = "" if chunk[-1].isspace() else "x"
                                 yield {"type": "delta", "text": chunk}
                     elif kind == "assistant":
                         for block in (event.get("message") or {}).get("content") or []:

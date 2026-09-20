@@ -59,16 +59,34 @@ export function formatBlocks(text) {
   return blocks;
 }
 
+// A semicolon, or a run of them (";;", "; ;"), is ONE full stop, and the word after it gets a capital.
+// The whole run goes in one match, which is what makes the rule idempotent: matched one at a time,
+// "a;;b" became "a. ;b" and only a second pass finished the job. A sentence that had already ended
+// ("e.g.; x") or a line that opens with one does not get a second stop.
+function unsemicolon(whole, tail, at, all) {
+  const before = all.slice(0, at);
+  const opensLine = before === '' || before.endsWith('\n');
+  const stop = opensLine || /[.!?]$/.test(before) ? '' : '.';
+  if (!tail) return stop;
+  if ('.,!?'.includes(tail)) return stop ? tail : '';  // the mark that follows does the semicolon's job
+  return (opensLine ? '' : `${stop} `) + tail.toUpperCase();
+}
+
 // Plain punctuation, the same rule steps.py enforces on the server: a person reads commas, full
-// stops, "and" and "to", never a dash, a middle dot, an arrow or a semicolon. Hyphens inside words,
-// dates and thousands separators are left alone. Idempotent, and never throws.
+// stops, "and" and "to", never a dash, a middle dot, an arrow or a semicolon. A plain hyphen with a
+// space on each side counts as a dash too ("posts - most on Sep 10"), which is what a model reaches
+// for once it has been told not to type an em dash, while a hyphen inside a word (well-known), a date
+// (2026-09-10), a negative number (-5), a web address and a line that opens with "- " are left exactly
+// as written. Idempotent, and never throws. steps.py's plain() is the same rule, pattern for pattern.
 export function plainText(value) {
   if (typeof value !== 'string') return '';
   return value
-    .replace(/[^\S\n]*(?:[←→↔⇒⇨➡]+|-{1,2}>|=>)[^\S\n]*/g, ' to ')
+    .replace(/[^\S\n]{2,}/g, ' ')  // first: each pattern below reads the spaces around its own mark,
+    .replace(/[^\S\n]*(?:[←→↔⇒⇨➡]+|-{1,2}>|=>)[^\S\n]*/g, ' to ')  // so a long run would be rescanned by every one
     .replace(/[^\S\n]*[‒–—―]+[^\S\n]*/g, ', ')
     .replace(/[^\S\n]*[·•‣▪・]+[^\S\n]*/g, ', ')
-    .replace(/[^\S\n]*;[^\S\n]*(\S?)/g, (whole, tail) => (tail ? `. ${tail.toUpperCase()}` : '.'))
+    .replace(/(?<=\S)[^\S\n]+(?:-{1,2}[^\S\n]+)+(?=\S)/g, ', ')  // "a - b", and "a - - b" in one pass
+    .replace(/[^\S\n]*(?:;[^\S\n]*)+(\S?)/g, unsemicolon)
     .replace(/[^\S\n]{2,}/g, ' ')
     .replace(/[^\S\n]+([,.])/g, '$1')
     .replace(/(?:,[^\S\n]*){2,}/g, ', ')
@@ -138,6 +156,10 @@ const dayWords = (value, shift = 0) => {
   return parts ? `${MONTHS[parts.month - 1]} ${parts.day}` : '';
 };
 
+// A bucket's label on the preview card: a date reads as Sep 10, the same as everywhere else on the
+// page, while a live bucket, which is a clock time like 19:05 and not a date at all, is left alone.
+const dayLabel = (value) => dayWords(value) || oneLine(value, 24);
+
 // The project's end date is the first day NOT observed, so the last day shown is the day before it.
 export function windowWords(from, to) {
   const low = dayWords(from);
@@ -197,7 +219,11 @@ export function projectLines(spec) {
       value: groups.map((group) => (group.description ? `${group.name}: ${group.description}` : group.name)).join('. ') });
   }
   lines.push({ label: 'Feeling question', value: oneLine(root.sentiment_question ?? asObject(root.sentiment).instructions, 240) });
-  return lines.filter((line) => line.value);
+  const said = lines.filter((line) => line.value);
+  // "Language: Any language" on its own says nothing, so an empty draft returns no lines at all and the
+  // card shows its own "nothing has been written down yet" instead of one meaningless row. The confirm
+  // summary in demo_mcp_server.py makes exactly the same judgement.
+  return said.some((line) => line.label !== 'Language') ? said : [];
 }
 
 const LIVE_DEFAULTS = { minutes: 15, seconds: 20 };
@@ -205,6 +231,8 @@ const span = (value, fallback) => (Number.isFinite(Number(value)) && Number(valu
 
 // The plain-words part of what the "details" link opens: the same facts the step was built from.
 // A person who wants to know what was searched reads this; the exact request is shown below it.
+// How long the step took is the last of them, once the step has ended. It is only ever read by
+// someone who opened details: the row itself never shows a duration.
 export function stepFacts(detail, ms) {
   const info = asObject(detail);
   const input = asObject(info.input);
@@ -444,11 +472,21 @@ function closeStepPanel(row) {
 
 let panelCount = 0;  // every panel needs its own id for aria-controls
 
+// A step that worked says so with its mark and keeps the row to one line. A step that did NOT work
+// has something a person needs to read, so its short result comes out onto the row, under the title,
+// rather than waiting inside a panel nobody opened. While that panel is open it already carries the
+// same sentence, so the row's copy steps aside and the reader never sees it twice.
+function showFailure(row) {
+  row.failure.textContent = row.ok === false ? row.outcome : '';
+  row.failure.hidden = !(row.ok === false && row.panel.hidden);
+}
+
 function stepRow(event) {
   panelCount += 1;
   const panel = el('div', { class: 'step-panel', id: `step-panel-${panelCount}`, hidden: true });
+  const failure = el('p', { class: 'step-failed', hidden: true });
   const row = {
-    node: null, panel, outcomeNode: null, factsNode: null, detail: event.detail, ok: null, ms: null,
+    node: null, panel, failure, outcomeNode: null, factsNode: null, detail: event.detail, ok: null, ms: null,
     outcome: null,  // null until the step ends
     why: typeof event.why === 'string' ? plainText(event.why.trim()) : '',
   };
@@ -460,6 +498,7 @@ function stepRow(event) {
       if (open) openStepPanel(row); else closeStepPanel(row);
       panel.hidden = !open;
       details.setAttribute('aria-expanded', open ? 'true' : 'false');
+      showFailure(row);
       scroll();
     },
   });
@@ -468,6 +507,7 @@ function stepRow(event) {
       el('i', { class: 'step-mark', 'aria-hidden': 'true' }),
       el('span', { class: 'step-title', text: plainText(String(event.title || 'Working on it')) }),
       details),
+    failure,
     panel);
   row.node.dataset.state = 'run';  // the mark is drawn from this, and it changes when the step ends
   return row;
@@ -478,7 +518,8 @@ function endStepRow(row, event) {
   row.node.dataset.state = row.ok ? 'ok' : 'warn';
   row.outcome = plainText(String(event.outcome || 'Done.'));
   row.ms = event.ms;  // only known now
-  fillStepPanel(row);     // an open panel is updated in place and stays open, a closed one stays empty
+  showFailure(row);   // a closed row still tells the reader when its step did not work
+  fillStepPanel(row); // an open panel is updated in place and stays open, a closed one stays empty
 }
 
 function startActivity() {
@@ -547,7 +588,7 @@ function previewCard(event) {
 
   if (days.length) {
     parts.push(el('div', { class: 'bars' }, ...days.map((day) => el('div', { class: 'bar-row' },
-      el('span', { class: 'bar-day', text: String(day.day ?? '') }),
+      el('span', { class: 'bar-day', text: dayLabel(day.day) }),
       el('span', { class: 'bar-track' }, el('i', { class: 'bar-fill', style: { width: `${Math.max(2, ((Number(day.count) || 0) / peak) * 100)}%` } })),
       el('span', { class: 'bar-count', text: number(day.count) }),
     ))));
@@ -557,7 +598,7 @@ function previewCard(event) {
     parts.push(el('ul', { class: 'examples' }, ...examples.map((post) => {
       const body = [
         el('p', { class: 'example-text' }, ...withBreaks(post.body ?? '')),
-        el('p', { class: 'example-meta' }, document.createTextNode([`${number(post.like_count)} likes`, post.day].filter(Boolean).join(', '))),
+        el('p', { class: 'example-meta' }, document.createTextNode([`${number(post.like_count)} likes`, dayLabel(post.day)].filter(Boolean).join(', '))),
       ];
       // A post's own text is never a link; only a url our own tools built, and only over https.
       const href = typeof post.url === 'string' && /^https:\/\//.test(post.url) ? post.url : null;

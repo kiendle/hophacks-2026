@@ -21,7 +21,7 @@ import steps  # noqa: E402
 OUTCOMES = []
 # what a person must never see: a dash used as punctuation, a middle dot, an arrow, a semicolon
 BANNED_CHARS = "‒–—―·•‣▪・←→↔⇒⇨➡;"
-BANNED_TEXT = re.compile(r"->|=>|\+\d+ more")
+BANNED_TEXT = re.compile(r"->|=>|\+\d+ more|(?<=\S)[^\S\n]-{1,2}[^\S\n](?=\S)")  # the last one is a hyphen used as a dash
 BANNED_WORDS = re.compile(r"(?i)\b(original|originals|firehose|utc|exclusive|version|keyword|keywords)\b")
 
 
@@ -75,10 +75,27 @@ same("a typed arrow", steps.plain("Sep 9 -> Sep 11"), "Sep 9 to Sep 11")
 same("a fat arrow", steps.plain("a => b"), "a to b")
 same("a semicolon starts a new sentence", steps.plain("it worked; the count is 41"), "it worked. The count is 41")
 same("a semicolon at the end", steps.plain("it worked;"), "it worked.")
+# a run of semicolons is ONE full stop in ONE pass: taken one at a time "a;;b" came out as "a. ;b"
+for run in ("a;;b", "a; ;b", "a ;; b", "a;;;;;;b"):
+    same(f"a run of semicolons is one full stop: {run!r}", [steps.plain(run), steps.plain(steps.plain(run))], ["a. B", "a. B"])
+same("several semicolons in one sentence", steps.plain("A ; ; ; B ; c"), "A. B. C")
+same("a sentence that had already ended gets no second stop", steps.plain("e.g.; x"), "e.g. X")
+same("a line that opens with a semicolon loses it", steps.plain("; b"), "B")
+same("a stop or a comma right after a semicolon does its job", [steps.plain("a;."), steps.plain("a.;."), steps.plain("a;, b")], ["a.", "a.", "a, b"])
+same("a semicolon never reaches across a line break", steps.plain("a;\nb"), "a.\nb")
+same("two spaced hyphens in a row, in one pass", [steps.plain("a - - b"), steps.plain(steps.plain("a - - b"))], ["a, b", "a, b"])
+same("a hyphen used as a dash", steps.plain("Found 1,522 posts - most on Sep 10"), "Found 1,522 posts, most on Sep 10")
+same("two hyphens used as a dash", steps.plain("Found 1,522 posts -- most on Sep 10"), "Found 1,522 posts, most on Sep 10")
+same("a hyphen date range", steps.plain("Sep 9 - Sep 11"), "Sep 9, Sep 11")
 same("a hyphen inside a word survives", steps.plain("a well-known co-founder"), "a well-known co-founder")
 same("an ISO date survives", steps.plain("saved on 2026-09-10"), "saved on 2026-09-10")
 same("thousands separators survive", steps.plain("1,522 posts and 801,270 likes"), "1,522 posts and 801,270 likes")
-same("a lone spaced hyphen is left alone", steps.plain("PS5 - PS6"), "PS5 - PS6")
+same("a negative number survives", steps.plain("the mood moved -5 points"), "the mood moved -5 points")
+same("a line that starts with a dash survives", steps.plain("what we found\n- one\n- two"), "what we found\n- one\n- two")
+same("a hyphen dash still reads after a number", steps.plain("PS5 - PS6"), "PS5, PS6")
+same("a hyphen with a space on one side only is left alone", steps.plain("the PS5 -PS6 jump"), "the PS5 -PS6 jump")
+same("a link keeps its own hyphens", steps.plain("see https://example.com/ps6-cancelled now"),
+     "see https://example.com/ps6-cancelled now")
 same("no space before a comma", steps.plain("posts , then more"), "posts, then more")
 same("no doubled comma", steps.plain("a — , b"), "a, b")
 same("no doubled space", steps.plain("a    b"), "a b")
@@ -88,13 +105,22 @@ same("no trailing comma", steps.plain("we checked it —"), "we checked it")
 same("newlines are kept, each line tidied", steps.plain("Name: x —\n— Where: live Bluesky"), "Name: x\nWhere: live Bluesky")
 same("a fragment can keep its joining comma", steps.plain(" — and then", trim=False), ", and then")
 HOSTILE = ("Found 1,522 posts — most on 2026-09-10 · well-known words; see A -> B ⇒ C ; and – more ,, "
-           "then 801,270 likes ➡ done ・ over‒there")
+           "then 801,270 likes ➡ done ・ over‒there - and one plain hyphen -- twice")
 same("nothing banned survives a hostile line", dirt(steps.plain(HOSTILE)), [])
 same("plain() is idempotent", steps.plain(steps.plain(HOSTILE)), steps.plain(HOSTILE))
 check("the hostile line still reads as words", steps.plain(HOSTILE).startswith("Found 1,522 posts, most on 2026-09-10, well-known words. See A to B to C. And, more, then"),
       steps.plain(HOSTILE))
 for junk in (None, 5, 3.5, [], {}, True, b"bytes", object()):
     same(f"{type(junk).__name__} is not text", steps.plain(junk), "")
+# plain() runs on the bridge's own event loop, once per streamed fragment. Every dash, dot and arrow
+# pattern reads the spaces around it, so a long run of spaces used to be rescanned by each of them:
+# 20,000 spaces took 11 seconds and froze every other session with it. The run is collapsed first now.
+RUN = "Found 1,522 posts" + " " * 20_000 + "most on Sep 10"
+started = time.monotonic()
+tidied = steps.plain(RUN)
+spent = time.monotonic() - started
+check("a long run of spaces is collapsed before the dash patterns ever see it",
+      tidied == "Found 1,522 posts most on Sep 10" and spent < 1.0, f"{len(RUN):,} characters in {spent * 1000:.0f} ms")
 
 print("titles: what is being done, from the real inputs")
 same("preview_keywords", steps.title("mcp__harness__preview_keywords", PREVIEW_IN),
@@ -166,6 +192,11 @@ print("card words shared with the confirm summary")
 same("a window's last day is the day before the end date", steps.window_words("2026-09-09", "2026-09-12"), "Sep 9 to Sep 11, 2026")
 same("a one-day window", steps.window_words("2026-09-09", "2026-09-10"), "Sep 9, 2026")
 same("a whole month", steps.window_words("2026-08-17", "2026-09-18"), "Aug 17 to Sep 17, 2026")
+# any year but the data's used to be written three times: "Jan 5 2024 to Jan 7 2024, 2024"
+same("another year is written once, at the end", steps.window_words("2024-01-05", "2024-01-08"), "Jan 5 to Jan 7, 2024")
+same("a one-day window in another year", steps.window_words("2024-01-05", "2024-01-06"), "Jan 5, 2024")
+same("a window across new year takes the year of its last day", steps.window_words("2024-12-30", "2025-01-03"), "Dec 30 to Jan 2, 2025")
+same("a step title still names another year itself, since nothing else does", steps._when({"date_from": "2024-01-05", "date_to": "2024-01-08"}), "from Jan 5 2024 to Jan 7 2024")
 same("a live window", steps.live_words(2, 24), "From now, also looking back 2 hours, and it keeps running for 24 hours")
 same("a live window with no look back", steps.live_words(0, 1), "From now, and it keeps running for 1 hour")
 same("a language name, never a code", steps.language_words("en"), "English")
@@ -208,7 +239,8 @@ JUNK = [None, [], {}, 0, 7, -3.5, "", "  ", float("nan"), float("inf"), True, ["
         {"date_from": "2026-99-99", "date_to": "not-a-date"}, {"date_from": "2026-01-01-01", "date_to": "2026"},
         {"minutes": "fifteen"}, {"seconds": -4}, {"language": 7}, {"reason": 5}, "x" * 100_000,
         {"keywords": ["x" * 100_000], "date_from": "x" * 100_000}, {"total": 10 ** 30},
-        {"keywords": ["a — b", "c; d"], "date_from": "2026-09-09", "date_to": "2026-09-10"}]
+        {"keywords": ["a — b", "c; d"], "date_from": "2026-09-09", "date_to": "2026-09-10"},
+        {"keywords": ["a - b", "c -- d"], "date_from": "2026-09-09", "date_to": "2026-09-10"}]
 TOOLS = ["mcp__harness__preview_keywords", "bluesky_recent", "bluesky_listen", "describe_sources", "save_draft",
          "request_confirmation", "submit_project", "who_knows", "", None, 7, ["x"], "x" * 100_000]
 problems, unclean, calls = [], [], 0
@@ -224,7 +256,7 @@ for tool in TOOLS:
             if not all(isinstance(part, str) for part in line) or any(len(part) > 4000 for part in line):
                 problems.append(f"{tool!r} {str(junk)[:30]!r}: {[part[:40] for part in line]}")
             for part in line:
-                if any(character in BANNED_CHARS for character in part):
+                if any(character in BANNED_CHARS for character in part) or BANNED_TEXT.search(part):
                     unclean.append(f"{tool!r} {str(junk)[:30]!r}: {part[:60]!r}")
 check(f"{calls} junk calls return a short string and never raise", not problems, "; ".join(problems[:3]) or "no exception, no runaway length")
 check("even a hostile argument cannot smuggle a banned character into a line", not unclean, "; ".join(unclean[:3]) or "titles and results stay clean")

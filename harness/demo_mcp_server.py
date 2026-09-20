@@ -478,8 +478,8 @@ def submit_project(reason: str) -> dict:
     """Submit the confirmed project to the pipeline. This is the only tool with a real side effect.
 
     Call it only after you have been told the user pressed Confirm, and never say a project was
-    submitted unless this tool returned a project_id — it refuses unless the harness itself recorded
-    an approval for exactly the draft that is saved now.
+    submitted unless this tool returned a project_id. It refuses unless the harness itself recorded an
+    approval for exactly the draft that is saved now.
     reason: one short sentence that starts with a verb, written for the user in the user's language,
     saying why you are doing this right now. Everyday words only. No tool names, no field names, no
     dashes, no semicolons. If you are changing approach, say what you noticed, for example that a word

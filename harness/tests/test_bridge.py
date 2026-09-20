@@ -398,6 +398,22 @@ async def plain_words():
               if any(character in "–—―·•→;" for character in piece) or "->" in piece]
     check("7j nothing the page shows carries a banned character", not banned, repr(banned[:1])[:200] or "why, answer and summary are clean")
 
+    # A plain hyphen is what a model reaches for once it is told not to type an em dash, and it can
+    # land on the far side of a chunk boundary with whitespace-only chunks in between. The rule needs
+    # a word before the dash, which by then has already been sent, so the runner stands one in.
+    split = await replay([
+        INIT,
+        {"type": "stream_event", "event": {"delta": {"type": "text_delta", "text": "Found 41 posts "}}},
+        {"type": "stream_event", "event": {"delta": {"type": "text_delta", "text": "   "}}},
+        {"type": "stream_event", "event": {"delta": {"type": "text_delta", "text": "  "}}},
+        {"type": "stream_event", "event": {"delta": {"type": "text_delta", "text": "- most on Sep 10."}}},
+        {"type": "result", "is_error": False, "duration_ms": 300, "num_turns": 1},
+    ])
+    pieces = [event["text"] for event in split if event.get("type") == "delta"]
+    check("7k a hyphen used as a dash across a chunk boundary is cleaned, and a blank chunk is never sent",
+          "".join(pieces) == "Found 41 posts, most on Sep 10." and all(piece.strip() for piece in pieces),
+          f"{len(pieces)} deltas: {pieces}")
+
 
 async def separate_sessions(client):
     first, second = await new_session(client), await new_session(client)
