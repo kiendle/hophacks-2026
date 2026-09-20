@@ -30,7 +30,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'C:/Users/Kaan Ero
       });
     });
     await page.goto('http://127.0.0.1:5196/');
-    await page.getByRole('textbox', { name: 'Keywords', exact: true }).fill('AI');
+    await page.getByRole('textbox', { name: 'Keyword', exact: true }).fill('AI');
     await page.getByRole('button', { name: 'Start', exact: true }).click();
     await page.getByRole('button', { name: 'Start', exact: true }).click();
     await page.getByRole('button', { name: 'Pause', exact: true }).waitFor({ timeout: 90000 });

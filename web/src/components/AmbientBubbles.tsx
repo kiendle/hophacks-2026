@@ -1,7 +1,5 @@
-import { hsl } from 'd3'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import '../ambient.css'
-import { SERIES_COLORS } from '../data/config'
 import { formatCount } from '../format'
 import { useSize } from '../hooks/useSize'
 import { sentimentColor } from '../sentimentColor'
@@ -12,6 +10,9 @@ const PERIOD = 45
 const TRAIL = 6
 /** Spacing between trail samples, as a share of the loop. */
 const TRAIL_STEP = 0.005
+
+/** Cool decorative colors, independent of the analytical chart palette. */
+const AMBIENT_COLORS = ['#579bd3', '#59b69c', '#9673cb', '#d578a1', '#50adbc', '#778cce']
 
 interface Spec {
   title: string
@@ -331,11 +332,7 @@ export function AmbientBubbles({ opacity = 0.44, labels = true, speed = 1 }: Pro
           </g>
 
           {MOVIES.map((spec, i) => {
-            // Muted well below the real views: this is a backdrop, not the chart.
-            const base = hsl(SERIES_COLORS[i % SERIES_COLORS.length])
-            base.s *= 0.72
-            base.l = Math.min(0.78, base.l + 0.05)
-            const fill = base.formatHex()
+            const fill = AMBIENT_COLORS[i % AMBIENT_COLORS.length]
             return (
               <g key={spec.title} ref={(el) => void (groups.current[i] = el)}>
                 {Array.from({ length: TRAIL }, (_, k) => (

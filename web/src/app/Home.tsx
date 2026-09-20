@@ -41,7 +41,7 @@ export function Home({ onSubmit, onCreateAutomation }: { onSubmit: (query: strin
       <AmbientBubbles />
       <div className="home-content">
       <h1 className="wordmark"><Logo variant="ascii" /></h1>
-      <p className="tagline">{automation ? 'What would you like to track live?' : 'Explore AI company sentiment'}</p>
+      <p className="tagline">{automation ? 'What would you like to track live?' : '“How do people feel about AI companies?”'}</p>
       <div className="home-modes" aria-label="Choose a workflow">
         <button type="button" aria-pressed={!automation} onClick={() => { setAutomation(false); setError(false); setNotice('') }}>Historical data</button>
         <button type="button" aria-pressed={automation} onClick={() => { setAutomation(true); setError(false); setNotice('') }}>Live data</button>
@@ -53,7 +53,7 @@ export function Home({ onSubmit, onCreateAutomation }: { onSubmit: (query: strin
           send()
         }}
       >
-        <input autoFocus value={query} maxLength={automation ? 4000 : 80} placeholder={automation ? 'Analyze sentiment about AI companies' : 'Keywords'} onChange={(e) => { setQuery(e.target.value); setError(false) }} aria-label={automation ? 'Automation goal' : 'Keywords'} aria-invalid={error} aria-describedby={error ? 'keyword-error' : undefined} />
+        <input autoFocus value={query} maxLength={automation ? 4000 : 80} placeholder={automation ? 'Analyze sentiment about AI companies' : 'Keyword'} onChange={(e) => { setQuery(e.target.value); setError(false) }} aria-label={automation ? 'Automation goal' : 'Keyword'} aria-invalid={error} aria-describedby={error ? 'keyword-error' : undefined} />
         <button type="submit" className="send" aria-label="Start" disabled={checking || !query.trim()}>
           <SendIcon size={16} />
         </button>

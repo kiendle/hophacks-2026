@@ -10,6 +10,21 @@ after(() => server.close())
 const { Message } = await server.ssrLoadModule('/src/components/ChatSidebar.tsx')
 const { HoverCard } = await server.ssrLoadModule('/src/components/HoverCard.tsx')
 const { TopBar } = await server.ssrLoadModule('/src/components/TopBar.tsx')
+const { Home } = await server.ssrLoadModule('/src/app/Home.tsx')
+
+test('landing keeps rounded ASCII branding and the singular keyword prompt', () => {
+  const html = renderToStaticMarkup(createElement(Home, { onSubmit: () => {}, onCreateAutomation: () => {} }))
+  assert.match(html, /“How do people feel about AI companies\?”/)
+  assert.match(html, /placeholder="Keyword"/)
+  assert.match(html, /aria-label="Keyword"/)
+  const ascii = html.match(/class="sentimeter-logo-ascii" role="img" aria-label="Sentimeter">([^<]+)<\/span>/)?.[1].replaceAll('&quot;', '"')
+  assert.ok(ascii)
+  assert.equal(ascii.split('\n').length, 8)
+  assert.ok(ascii.split('\n').every(row => row.length === ascii.split('\n')[0].length))
+  assert.match(ascii, /\.d8888b\./)
+  assert.match(ascii, /Y8888P/)
+  assert.doesNotMatch(ascii, /#/)
+})
 
 test('Sentibot renders collapsed evidence and scored citations before its response', () => {
   const post = { id: 'p', subtopic: 'openai', handle: 'ID 1234567890', text: 'SCORED CITATION',

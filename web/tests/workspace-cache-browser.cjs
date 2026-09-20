@@ -63,7 +63,7 @@ const sse = events => events.map(event => `data: ${JSON.stringify(event)}\n\n`).
       releaseCalls++; return route.fulfill({ json: { released: true } });
     });
     await page.goto(baseUrl);
-    await page.getByRole('textbox', { name: 'Keywords', exact: true }).fill('AI');
+    await page.getByRole('textbox', { name: 'Keyword', exact: true }).fill('AI');
     await page.getByRole('button', { name: 'Start', exact: true }).click();
     await page.getByRole('button', { name: 'Start', exact: true }).click();
     await page.waitForTimeout(100);
@@ -115,7 +115,7 @@ const sse = events => events.map(event => `data: ${JSON.stringify(event)}\n\n`).
     });
     const connections = sockets.length;
     await page.getByRole('button', { name: 'New', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Keywords', exact: true }).waitFor();
+    await page.getByRole('textbox', { name: 'Keyword', exact: true }).waitFor();
     await page.waitForTimeout(500); // Let axis easing settle before measuring background redraws.
     await page.evaluate(() => window.chartObserver.observe(window.savedChart, { subtree: true, attributes: true, childList: true }));
     frame(1, 2, 'complete');
@@ -150,7 +150,7 @@ const sse = events => events.map(event => `data: ${JSON.stringify(event)}\n\n`).
     await active.getByText('Live analysis retained.', { exact: true }).waitFor();
     await page.evaluate(() => { window.savedLiveChart = document.querySelector('.retained-workspace:not([hidden]) .chart'); });
     await page.getByRole('button', { name: 'New', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Keywords', exact: true }).waitFor();
+    await page.getByRole('textbox', { name: 'Keyword', exact: true }).waitFor();
     await page.waitForTimeout(100);
     assert.ok(pauseCalls > 0 && releaseCalls > 0, 'Leaving live still pauses tracking and releases its viewer');
     const pollsBefore = cursors.length;
@@ -172,7 +172,7 @@ const sse = events => events.map(event => `data: ${JSON.stringify(event)}\n\n`).
     assert.equal(sessionCalls, 2, 'Each workspace retains its own assistant conversation');
     await page.getByRole('button', { name: 'More actions for Live fixture', exact: true }).click();
     await page.getByRole('menuitem', { name: 'Delete', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Keywords', exact: true }).waitFor();
+    await page.getByRole('textbox', { name: 'Keyword', exact: true }).waitFor();
     assert.equal(await page.locator('.retained-workspace').count(), 1, 'Deleting a session removes its retained workspace');
     assert.deepEqual(errors, []);
     console.log('PASS: chart DOM, controls, background replay, in-flight analysis, session isolation, live cursor refresh, pause/release, and deletion.');

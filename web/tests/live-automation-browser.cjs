@@ -109,7 +109,7 @@ const englishPost = "I'm starting to see the benefits of connecting ChatGPT with
     await ingestion.getByText('Tracking stopped', {exact:true}).waitFor();
     assert.equal(await ingestion.getByText('Receiving posts', {exact:true}).count(),0);
     await page.getByRole('button',{name:'Close tracker',exact:true}).click();
-    await page.getByRole('textbox',{name:'Keywords'}).waitFor();
+    await page.getByRole('textbox',{name:'Keyword', exact:true}).waitFor();
     await page.waitForTimeout(200);
     assert.ok(paused>=1); assert.ok(released>=1); assert.ok(polls>=1);
     assert.deepEqual(errors,[]);

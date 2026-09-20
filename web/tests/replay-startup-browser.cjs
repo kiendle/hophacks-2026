@@ -82,7 +82,7 @@ async function scenario(browser, name, verify) {
   });
   try {
     await page.goto(baseUrl);
-    await page.getByRole('textbox', { name: 'Keywords', exact: true }).fill('AI');
+    await page.getByRole('textbox', { name: 'Keyword', exact: true }).fill('AI');
     await page.getByRole('button', { name: 'Start', exact: true }).click();
     await page.getByRole('button', { name: 'Start', exact: true }).click();
     const connection = await nextConnection();

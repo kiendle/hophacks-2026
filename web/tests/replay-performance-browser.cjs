@@ -41,7 +41,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'C:/Users/Kaan Ero
       requestAnimationFrame(frame);
     });
     await page.goto('http://127.0.0.1:5196/');
-    await page.getByRole('textbox', { name: 'Keywords', exact: true }).fill('AI');
+    await page.getByRole('textbox', { name: 'Keyword', exact: true }).fill('AI');
     await page.getByRole('button', { name: 'Start', exact: true }).click();
     await page.getByRole('button', { name: 'Start', exact: true }).click();
     await page.getByLabel('Playback speed', { exact: true }).selectOption('43200', { timeout: 20000 }).catch(async error => {

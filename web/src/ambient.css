@@ -8,7 +8,7 @@
   pointer-events: none;
   user-select: none;
   /* Clears just the middle, so the wordmark and query box stay crisp. */
-  mask-image: radial-gradient(46% 36% at 50% 48%, transparent 26%, #000 78%);
+  mask-image: radial-gradient(62% 42% at 50% 40%, transparent 35%, #000 90%);
 }
 
 .ambient svg {
