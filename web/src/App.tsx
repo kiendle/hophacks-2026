@@ -6,7 +6,7 @@ import { readSharedSession, useRecents, type Session, type Stage } from './app/s
 import { Workspace } from './app/Workspace'
 import { expandTerms, suggestSubtopics } from './data/terms'
 import { AutomationSetup } from './app/AutomationSetup'
-import { automationRequest, type TrackerCreated } from './data/automationSource'
+import type { TrackerCreated } from './data/automationSource'
 
 /** Subtopics proposed before the user edits them. */
 const SUGGESTED = 4
@@ -18,7 +18,6 @@ export default function App() {
   const [session, setSession] = useState<Session | null>(shared)
   const [automationQuestion, setAutomationQuestion] = useState(shared?.dataMode === 'live'
     ? `${shared.query}. Track these targets: ${shared.subtopics.join(', ')}. Proposed retrieval terms: ${shared.terms.join(', ')}.` : '')
-  const [navigationError, setNavigationError] = useState('')
   // Keep visited workspaces mounted: charts, view controls and analysis belong to
   // the session, not to the currently selected navigation item.
   const [workspaces, setWorkspaces] = useState<Session[]>([])
@@ -43,14 +42,6 @@ export default function App() {
     return () => window.removeEventListener('sentimeter:tracker-created', created)
   }, [remember])
 
-  const leave = async (next: () => void) => {
-    setNavigationError('')
-    try {
-      if (stage === 'live' && session?.automationId) await automationRequest(`${session.automationId}/pause`, {})
-      next()
-    } catch (error) { setNavigationError(`Could not confirm the tracker stopped: ${error instanceof Error ? error.message : String(error)}`) }
-  }
-
   const start = (query: string) => {
     setSession({
       id: `${Date.now()}`,
@@ -65,11 +56,11 @@ export default function App() {
 
   const open = (s: Session) => {
     if (stage === 'live' && session?.id === s.id) return
-    void leave(() => { retain(s); setSession(s); setStage('live') })
+    retain(s); setSession(s); setStage('live')
   }
 
   const goHome = () => {
-    void leave(() => { setSession(null); setStage('home') })
+    setSession(null); setStage('home')
   }
 
   const confirm = () => {
@@ -81,7 +72,6 @@ export default function App() {
 
   return (
     <div className={stage === 'setup' ? 'app app-setup' : 'app'}>
-      {navigationError && <p className="navigation-error" role="alert">{navigationError}</p>}
       <Sidebar
         recents={recents}
         activeId={session?.id ?? null}
@@ -93,8 +83,8 @@ export default function App() {
             forget(id)
             setWorkspaces(previous => previous.filter(item => item.id !== id))
           }
-          if (session?.id === id) void leave(() => { remove(); setSession(null); setStage('home') })
-          else remove()
+          remove()
+          if (session?.id === id) goHome()
         }}
         onEdit={(id, changes) => {
           edit(id, changes)

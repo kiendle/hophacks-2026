@@ -40,7 +40,7 @@ export function Home({ onSubmit, onCreateAutomation }: { onSubmit: (query: strin
     <div className="home">
       <AmbientBubbles />
       <div className="home-content">
-      <h1 className="wordmark"><Logo variant="ascii" /></h1>
+      <h1 className="wordmark"><Logo /></h1>
       <p className="tagline">{automation ? 'What would you like to track live?' : '“How do people feel about AI companies?”'}</p>
       <div className="home-modes" aria-label="Choose a workflow">
         <button type="button" aria-pressed={!automation} onClick={() => { setAutomation(false); setError(false); setNotice('') }}>Historical data</button>

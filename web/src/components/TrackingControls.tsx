@@ -20,7 +20,7 @@ export function TrackingControls({ id, state, connectionError, onClose }: { id: 
     </button>
     <button className="tool-button" onClick={onClose}>Close tracker</button>
     {state && <details><summary>Configuration & budget</summary>
-      <p>Jev total budget: ${state.max_usd.toFixed(2)}. Closing this tracker stops filtering and inference.</p>
+      <p>Jev total budget: ${state.max_usd.toFixed(2)}. Tracking continues in the background until you click Stop tracking.</p>
       {state.budget_usage && <p>Spent: ${state.budget_usage.spent.toFixed(5)} · Reserved or uncertain: ${(state.budget_usage.reserved + state.budget_usage.uncertain).toFixed(5)}</p>}
       <label>Total budget (USD) <input type="number" min="0" max="100" step="0.01" aria-label="Update Jev budget"
         value={budget} placeholder={String(state.max_usd)} onChange={e => setBudget(e.target.value)} /></label>

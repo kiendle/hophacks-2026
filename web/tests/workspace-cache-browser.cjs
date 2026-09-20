@@ -152,7 +152,8 @@ const sse = events => events.map(event => `data: ${JSON.stringify(event)}\n\n`).
     await page.getByRole('button', { name: 'New', exact: true }).click();
     await page.getByRole('textbox', { name: 'Keyword', exact: true }).waitFor();
     await page.waitForTimeout(100);
-    assert.ok(pauseCalls > 0 && releaseCalls > 0, 'Leaving live still pauses tracking and releases its viewer');
+    assert.equal(pauseCalls, 0, 'Leaving live must not stop background tracking');
+    assert.ok(releaseCalls > 0, 'Leaving live releases only the viewer');
     const pollsBefore = cursors.length;
     await page.waitForTimeout(2100);
     assert.equal(cursors.length, pollsBefore, 'Hidden live workspaces do not poll');
@@ -170,11 +171,26 @@ const sse = events => events.map(event => `data: ${JSON.stringify(event)}\n\n`).
     await page.waitForFunction(() => document.querySelector('.retained-workspace:not([hidden]) .events')?.textContent.includes('2 matching texts'));
     assert.equal(analysisCalls, 2);
     assert.equal(sessionCalls, 2, 'Each workspace retains its own assistant conversation');
+    await active.getByRole('button', { name: 'Stop tracking', exact: true }).waitFor();
+    await page.locator('.recent').filter({ hasText: /^AI$/ }).click();
+    await active.locator('.bubble-chart svg').waitFor();
+    assert.equal(pauseCalls, 0, 'Switching workspaces must not stop tracking');
+    await page.locator('.recent').filter({ hasText: /^Live fixture$/ }).click();
+    await active.getByRole('button', { name: 'Close tracker', exact: true }).click();
+    await page.getByRole('textbox', { name: 'Keyword', exact: true }).waitFor();
+    assert.equal(pauseCalls, 0, 'Close tracker only closes the view');
+    await page.locator('.recent').filter({ hasText: /^Live fixture$/ }).click();
+    await active.getByRole('button', { name: 'Stop tracking', exact: true }).click();
+    await active.getByRole('button', { name: 'Resume tracking', exact: true }).waitFor();
+    assert.equal(pauseCalls, 1, 'Only an explicit Stop tracking pauses the tracker');
+    await page.getByRole('button', { name: 'New', exact: true }).click();
+    await page.locator('.recent').filter({ hasText: /^Live fixture$/ }).click();
+    await active.getByRole('button', { name: 'Resume tracking', exact: true }).waitFor();
     await page.getByRole('button', { name: 'More actions for Live fixture', exact: true }).click();
     await page.getByRole('menuitem', { name: 'Delete', exact: true }).click();
     await page.getByRole('textbox', { name: 'Keyword', exact: true }).waitFor();
     assert.equal(await page.locator('.retained-workspace').count(), 1, 'Deleting a session removes its retained workspace');
     assert.deepEqual(errors, []);
-    console.log('PASS: chart DOM, controls, background replay, in-flight analysis, session isolation, live cursor refresh, pause/release, and deletion.');
+    console.log('PASS: chart DOM, controls, background replay, in-flight analysis, session isolation, live cursor refresh, background tracking navigation, explicit stop, and deletion.');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

@@ -2,7 +2,7 @@
 # requires-python = ">=3.11"
 # dependencies = ["aiohttp>=3.11,<4", "mcp>=2", "duckdb==1.5.5", "jsonschema>=4.23,<5", "pytz"]
 # ///
-"""Configuration authorization, retry idempotence and independent browser leases."""
+"""Configuration authorization, retry idempotence and background tracking."""
 import json
 import os
 from pathlib import Path
@@ -67,26 +67,56 @@ class Lifecycle(unittest.IsolatedAsyncioTestCase):
             with self.assertRaisesRegex(ValueError, 'Confirm'):
                 await manager.launch(Path(folder), 'superseded-hash', 0)
 
-    async def test_lost_viewer_stops_only_its_tracker_and_final_close_stops_service(self):
+    async def test_viewer_loss_keeps_tracking_until_explicit_stop(self):
         manager = FakeManager()
         await manager.release('unknown', 'viewer')
         self.assertEqual(manager.leases, {})
         manager.autos = {'a': {'id': 'a', 'enabled': True}, 'b': {'id': 'b', 'enabled': True}}
         manager.leases = {'a': {'tab1': time.monotonic() - 1}, 'b': {'tab2': time.monotonic() + 30}}
         await manager.reap()
+        self.assertTrue(manager.autos['a']['enabled'])
+        self.assertTrue(manager.autos['b']['enabled'])
+        self.assertFalse(manager.stopped)
+        await manager.release('b', 'tab2')
+        await manager.reap()
+        self.assertEqual(manager.leases, {})
+        self.assertTrue(manager.autos['a']['enabled'])
+        self.assertTrue(manager.autos['b']['enabled'])
+        self.assertFalse(manager.stopped)
+        self.assertFalse(any(path.endswith('/pause') for _, path, _ in manager.calls))
+        # With no viewers, each monitor tick must renew the CLI control watchdog.
+        manager.calls.clear()
+        with patch('automation_api.time.monotonic', return_value=time.monotonic() + 120):
+            await manager.reap()
+        self.assertIn(('GET', '/status', None), manager.calls)
+        self.assertTrue(manager.autos['a']['enabled'])
+        self.assertFalse(manager.stopped)
+        await manager.control('a', 'pause')
+        await manager.reap()
         self.assertFalse(manager.autos['a']['enabled'])
         self.assertTrue(manager.autos['b']['enabled'])
         self.assertFalse(manager.stopped)
         await manager.control('b', 'pause')
-        self.assertNotIn('launch', manager.leases['b'], 'Closing must not create a fresh 30-second lease')
-        manager.autos['b']['enabled'] = True
-        manager.leases['b']['tab3'] = time.monotonic() + 30
-        await manager.release('b', 'tab2')
-        await manager.reap()
-        self.assertTrue(manager.autos['b']['enabled'])
-        manager.leases['b'] = {'lost-browser': time.monotonic() - 1}
-        await manager.reap()
+        # Viewing a stopped tracker never restarts it.
+        await manager.watch('b', 'returning-viewer', 0)
         self.assertFalse(manager.autos['b']['enabled'])
+        await manager.release('b', 'returning-viewer')
+        await manager.reap()
+        self.assertTrue(manager.stopped)
+
+    async def test_start_without_a_viewer_keeps_service_running(self):
+        manager = FakeManager()
+        manager.autos = {'a': {'id': 'a', 'enabled': False}}
+        await manager.control('a', 'start')
+        await manager.reap()
+        self.assertTrue(manager.autos['a']['enabled'])
+        self.assertFalse(manager.stopped)
+
+    async def test_server_shutdown_still_stops_background_trackers(self):
+        manager = FakeManager()
+        manager.autos = {'a': {'id': 'a', 'enabled': True}}
+        await manager.shutdown()
+        self.assertFalse(manager.autos['a']['enabled'])
         self.assertTrue(manager.stopped)
 
     def test_historical_exposes_original_policy_not_new_live_template(self):

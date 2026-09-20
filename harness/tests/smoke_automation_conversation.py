@@ -1,8 +1,9 @@
-"""Opt-in real harness conversation. Uses the existing Claude login and per-turn budget cap.
+"""Opt-in real harness conversation. Uses the selected provider's existing login.
 
 Run with --run. The proposal-only MCP server has no collection/inference/submission tools.
 """
 import asyncio
+from contextlib import AsyncExitStack
 import json
 from pathlib import Path
 import sys
@@ -10,14 +11,18 @@ import tempfile
 import uuid
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from claude_runner import Runner
+from agent_runner import Runner
 from automation_tools import _validate
 
 
 async def main():
-    with tempfile.TemporaryDirectory(prefix="automation-conversation-") as folder:
+    async with AsyncExitStack() as cleanup:
+        folder = cleanup.enter_context(tempfile.TemporaryDirectory(prefix="automation-conversation-"))
         runner = Runner(str(uuid.uuid4()), folder)
         runner.proposal_mode = True
+        close = getattr(runner, "aclose", None)
+        if close:
+            cleanup.push_async_callback(close)
         allowed = {"get_automation_contract", "get_automation_proposal", "save_automation_proposal", "request_automation_confirmation"}
         for index, question in enumerate([
             "I want to build an automation to analyze sentiment about AI companies. Help me choose what to track before finalizing anything.",
@@ -46,5 +51,5 @@ async def main():
 
 if __name__ == "__main__":
     if "--run" not in sys.argv:
-        raise SystemExit("Opt-in only: pass --run to use the configured Claude login.")
+        raise SystemExit("Opt-in only: pass --run to use the configured provider login (HARNESS_PROVIDER=codex|claude).")
     asyncio.run(main())

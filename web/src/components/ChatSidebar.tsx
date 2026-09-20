@@ -13,6 +13,7 @@ import { BotIcon, CloseIcon, SendIcon, StopIcon } from './icons'
 import { harnessAskClient } from '../ask/harnessClient'
 import { displayHandle, scoredCitations } from '../postPresentation'
 import { TranslatablePost } from './TranslatablePost'
+import { useChatScroll } from '../ask/useChatScroll'
 
 interface Props {
   active?: boolean
@@ -101,10 +102,7 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext, i
   const subtopics = selection.subtopics.map((id) => byId.get(id)).filter((s) => s !== undefined)
   const empty = !selection.range && subtopics.length === 0
 
-  const scroller = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    scroller.current?.scrollTo({ top: scroller.current.scrollHeight })
-  }, [messages, active])
+  const { scroller, content, showLatest, onScroll, scrollToLatest } = useChatScroll(messages, active)
 
   const submit = () => {
     if (busy || !text.trim()) return
@@ -158,7 +156,9 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext, i
           event.preventDefault()
         }}
       />
-      <div className="messages" ref={scroller}>
+      <div className="chat-history">
+      <div className="messages" id={`${sidebarId}-messages`} ref={scroller} onScroll={onScroll} tabIndex={0} role="region" aria-label="Chat messages">
+        <div className="messages-content" ref={content}>
         {messages.length === 0 && (
           <div className="chat-empty">
             <BotIcon size={28} />
@@ -168,6 +168,11 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext, i
         {messages.map((m) => (
           <Message key={m.id} message={m} byId={byId} voice={voice} talking={talking} busy={busy} onConfirm={(approved) => void confirm(m.id, approved)} />
         ))}
+        </div>
+      </div>
+      {showLatest && <button type="button" className="chat-latest" aria-controls={`${sidebarId}-messages`} onClick={scrollToLatest}>
+        <SendIcon size={14} style={{ transform: 'rotate(180deg)' }} /> Latest message
+      </button>}
       </div>
       {!empty && (
         <div className="chip">
@@ -244,7 +249,7 @@ export function Message({ message: m, byId, voice, talking, busy, onConfirm }: {
 
   return (
     <div className="msg msg-assistant">
-      <ToolActivity steps={m.steps} />
+      <ToolActivity steps={m.steps} completed={m.status === 'done'} />
       {m.cards.map((card, index) => <ResultCard key={index} card={card} />)}
       {scoredCitations(m.citations).map((p) => (
         <Citation key={p.id} post={p} color={byId.get(p.subtopic)?.color} />

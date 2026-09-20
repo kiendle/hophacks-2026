@@ -37,12 +37,13 @@ configuration key and taxonomy. No historical scores are relabelled or recompute
 `harness/state/live-automations/`; the existing standalone CLI default on 8766
 is separate. One source connection is shared across active trackers.
 
-Stop tracking, Close tracker, switching workspaces, or leaving for Home pauses
-the selected automation and cancels its active Jev HTTP request before returning.
-Closing a browser tab sends a viewer-release request. Abrupt browser/network loss
-expires the viewer lease within 30 seconds (plus the 2-second monitor interval).
-Other viewing tabs and other active trackers retain their own leases. Once all
-trackers close, the daemon exits. A separate 45-second control watchdog in the
+Only **Stop tracking** pauses the selected automation and cancels its active Jev
+HTTP request before returning. Close tracker, switching workspaces, leaving for
+Home, and closing the browser leave enabled trackers running in the background.
+Viewer releases and expired viewer leases only remove viewer presence. The harness
+sends a control heartbeat every two seconds even when no browser is connected.
+Once all trackers are stopped and no viewers remain, the daemon exits. Shutting
+down the harness stops its trackers; a separate 45-second control watchdog in the
 child handles a crashed or unresponsive harness. An idle saved-result view never
 opens the upstream connection; reading it does not authorize resuming inference.
 

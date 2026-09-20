@@ -5,6 +5,9 @@ assistant lives in the chat bubble at the bottom right of it.
 
 ## Before you start
 
+The chat harness defaults to Codex/Astra low Fast. Claude remains selectable;
+see [provider setup and switching](PROVIDERS.md).
+
 1. Open a terminal in the project folder and run `python -m uv run harness/signal_server.py`.
 2. Wait for the line that says it is running on 127.0.0.1:5194.
 3. Open http://127.0.0.1:5194 in the browser. The page should say how many posts have been kept.

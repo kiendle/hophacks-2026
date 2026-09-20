@@ -1,4 +1,4 @@
-"""UI-owned CLI automations: reviewed configs, bounded budgets, viewer leases.
+"""Server-owned CLI automations: reviewed configs, bounded budgets, background tracking.
 
 The CLI remains the only writer/collector. Tokens never reach the browser. The
 child also expires its control lease if this server crashes, independently of UI cleanup.
@@ -44,7 +44,7 @@ class Manager:
         self.state, self.port = Path(state), port
         self.lock = asyncio.Lock()
         self.process = None
-        self.leases = {}  # automation -> {viewer: monotonic deadline}
+        self.leases = {}  # Viewer presence only; enabled trackers run without viewers.
 
     async def call(self, method, path, body=None):
         token = (self.state / 'service.token').read_text(encoding='utf-8').strip()
@@ -79,7 +79,7 @@ class Manager:
                 raise ValueError('The automation CLI could not start. See harness/state/live-automations/service.log.')
             try:
                 status = await self.call('GET', '/status')
-                # Nothing from an earlier browser/server lifetime resumes unattended.
+                # A service restart requires explicit resume; browser navigation does not.
                 for auto in status['automations']:
                     if auto['enabled']:
                         await self.call('POST', f"/automations/{auto['id']}/pause", {})
@@ -114,7 +114,6 @@ class Manager:
                 _write(directory / 'live-tracker.json', dict(id=auto['id'], proposal_hash=proposal_hash))
                 auto = await self.call('GET', '/automations/' + auto['id'])
             await self.call('POST', f"/automations/{auto['id']}/start", {})
-            self.leases.setdefault(auto['id'], {})['launch'] = time.monotonic() + LEASE_SECONDS
             return dict(id=auto['id'], title=proposal['title'], config=auto['config'], max_usd=auto['max_usd'])
 
     async def watch(self, auto, viewer, after):
@@ -122,9 +121,8 @@ class Manager:
             await self.ensure()
             result = await self.call('GET', f'/automations/{auto}/events?after={after}')
             leases = self.leases.setdefault(auto, {})
-            leases.pop('launch', None)
             leases[viewer] = time.monotonic() + LEASE_SECONDS
-            # Viewing a closed tracker reads its results. Resume is always an explicit action.
+            # Viewing a stopped tracker reads its results. Resume is always explicit.
             return result
 
     async def release(self, auto, viewer):
@@ -132,8 +130,8 @@ class Manager:
             if auto not in self.leases:
                 return
             self.leases[auto].pop(viewer, None)
-            # Brief grace handles React remounts and navigation between views of the same tracker.
-            self.leases.setdefault(auto, {})['closing'] = time.monotonic() + 2
+            if not self.leases[auto]:
+                del self.leases[auto]
 
     async def control(self, auto, action, value=None):
         async with self.lock:
@@ -145,8 +143,6 @@ class Manager:
             if action == 'resume-live':
                 path, body = '/source/resume-live', {'acknowledge_gap': True}
             result = await self.call('POST', path, body)
-            if action == 'start':
-                self.leases.setdefault(auto, {})['launch'] = time.monotonic() + LEASE_SECONDS
             return result
 
     async def reap(self):
@@ -155,14 +151,12 @@ class Manager:
             for auto, leases in list(self.leases.items()):
                 self.leases[auto] = {key: expiry for key, expiry in leases.items() if expiry > now}
                 if not self.leases[auto]:
-                    try:
-                        await self.call('POST', f'/automations/{auto}/pause', {})
-                        del self.leases[auto]
-                    except (ValueError, OSError, aiohttp.ClientError, asyncio.TimeoutError):
-                        pass  # Other trackers must still be reaped; retry on the next tick.
-            if not any(self.leases.values()):
+                    del self.leases[auto]
+            # This authenticated heartbeat also keeps the child's control watchdog
+            # alive when no browser is polling. Only explicit controls stop trackers.
+            status = await self.call('GET', '/status')
+            if not self.leases and not any(auto['enabled'] for auto in status['automations']):
                 await self.shutdown()
-                self.leases.clear()
 
     async def shutdown(self):
         with contextlib.suppress(ValueError, OSError, aiohttp.ClientError, asyncio.TimeoutError):

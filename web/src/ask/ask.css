@@ -1,14 +1,58 @@
 /* Ask panel conversation. */
 
 .messages {
-  display: flex;
-  flex-direction: column;
   min-width: 0;
   min-height: 0;
   overflow-wrap: anywhere;
-  gap: 14px;
-  padding: 12px 2px;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #858580 transparent;
 }
+
+.messages-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  gap: 14px;
+  padding: 12px 6px 24px 2px;
+}
+
+.messages::-webkit-scrollbar,
+.input-row textarea::-webkit-scrollbar { width: 6px; }
+.messages::-webkit-scrollbar-thumb,
+.input-row textarea::-webkit-scrollbar-thumb { background: #858580; border-radius: 999px; }
+.messages::-webkit-scrollbar-thumb:hover,
+.input-row textarea::-webkit-scrollbar-thumb:hover { background: #555550; }
+.messages::-webkit-scrollbar-track,
+.input-row textarea::-webkit-scrollbar-track { background: transparent; }
+.messages::-webkit-scrollbar-button,
+.input-row textarea::-webkit-scrollbar-button { display: none; }
+.input-row textarea { scrollbar-width: thin; scrollbar-color: #858580 transparent; }
+
+.chat { min-height: 0; min-width: 0; }
+.chat-history { position: relative; display: flex; flex: 1; min-height: 0; min-width: 0; }
+.chat-history .chat-empty { flex: 1; }
+.chat-latest {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  padding: 7px 12px;
+  border: 1px solid #cececa;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 2px 8px #00000012;
+  font-size: 12px;
+}
+.chat-latest:hover { background: var(--soft); }
+.chat-latest:focus-visible,
+.messages:focus-visible { outline: 2px solid var(--axis); outline-offset: -2px; }
 
 .msg {
   display: flex;

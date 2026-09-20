@@ -114,7 +114,8 @@ export function TimeSlider({ series, extent, view, onChange, onInteractionStart,
   }
 
   return (
-    <div ref={ref} className="slider">
+    // Reserve height before the SVG mounts so useSize can measure this container.
+    <div ref={ref} className="slider" style={{ height: HEIGHT }}>
       {width > 0 && (
         <svg
           width={width}

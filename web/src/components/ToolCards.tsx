@@ -17,10 +17,11 @@ function activityTitle(step: AskStepEvent) {
   return title
 }
 
-export function ToolActivity({ steps }: { steps: AskStepEvent[] }) {
+export function ToolActivity({ steps, completed = false }: { steps: AskStepEvent[]; completed?: boolean }) {
   if (!steps.length) return null
-  return <section className="tool-activity" aria-label="Tool activity" aria-live="polite">
-    <div className="tool-heading">Activity</div>
+  // Remount on completion to close both the report and any expanded step details.
+  return <details key={completed ? 'completed' : 'working'} className="tool-activity" aria-label="Tool activity" open={!completed}>
+    <summary className="tool-heading">{completed ? `Activity · ${steps.length} ${steps.length === 1 ? 'step' : 'steps'}` : 'Activity'}</summary>
     {steps.map(step => <div className="tool-step" key={step.id} data-state={step.phase === 'start' ? 'running' : step.ok ? 'done' : 'error'}>
       <div className="tool-step-title"><span className="tool-step-dot" />{activityTitle(step)}<span className="tool-time">{step.phase === 'start' ? 'Running' : step.ms !== undefined ? `${(step.ms / 1000).toFixed(1)}s` : ''}</span></div>
       {(step.why || step.outcome || step.request || step.facts?.length || (step.title && step.title !== activityTitle(step))) && <details><summary>Details</summary>
@@ -31,7 +32,7 @@ export function ToolActivity({ steps }: { steps: AskStepEvent[] }) {
         {step.request && <><p>{step.request.tool}</p><pre>{JSON.stringify(step.request.input, null, 2)}</pre></>}
       </details>}
     </div>)}
-  </section>
+  </details>
 }
 
 export function ConfirmationCard({ value, busy, decide }: { value: Confirmation; busy: boolean; decide: (approved: boolean) => void }) {

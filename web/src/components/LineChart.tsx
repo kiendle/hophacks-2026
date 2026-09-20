@@ -1,5 +1,5 @@
 import { area, interpolateRgb, line, max, scaleLinear, scaleSqrt, scaleUtc, stack } from 'd3'
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from 'react'
+import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from 'react'
 import { BUCKET_MS, LINE_INTERVALS, LIVE_INTERVALS } from '../data/config'
 import { chartData, type TrendPoint } from '../data/chartData'
 import type { Bucket, Post, Series, TimeRange } from '../data/types'
@@ -16,6 +16,8 @@ import type { LineDisplay } from './LineDisplayToggle'
 /** Height of the volume band under the main plot, and the gap above it. */
 const VOL_H = 104
 const VOL_GAP = 16
+/** Small hit target around a plotted point, in screen pixels. */
+const POINT_HOVER_RADIUS = 8
 
 interface Point {
   /** Interval end, or the current playhead, epoch ms. */
@@ -116,6 +118,10 @@ export function LineChart({
   selectedSubtopics = [],
   onToggleSubtopic,
 }: Props) {
+  // Retained workspaces share the document, including SVG fragment IDs.
+  const clipId = useId()
+  const plotClipId = `${clipId}-plot`
+  const volumeClipId = `${clipId}-volume`
   const showPoints = display !== 'trend'
   const showTrend = display !== 'points'
   const [ref, { width, height }] = useSize<HTMLDivElement>()
@@ -166,10 +172,12 @@ export function LineChart({
   const [hover, setHover] = useState<{ layer: number; t: number } | null>(null)
   const [pinned, setPinned] = useState<{ post: Post; anchor: { x: number; y: number } } | null>(null)
   const hideTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-  const keepCard = () => clearTimeout(hideTimer.current)
+  const keepCard = () => { clearTimeout(hideTimer.current); hideTimer.current = undefined }
   const hideCard = () => {
-    keepCard()
-    if (!pinned) hideTimer.current = setTimeout(() => setHover(null), 300)
+    if (!pinned && hideTimer.current === undefined) hideTimer.current = setTimeout(() => {
+      hideTimer.current = undefined
+      setHover(null)
+    }, 300)
   }
   const closeCard = () => { keepCard(); setPinned(null); setHover(null) }
   useEffect(() => {
@@ -182,13 +190,13 @@ export function LineChart({
   const localX = (e: PointerEvent) => e.clientX - e.currentTarget.getBoundingClientRect().left
   const localY = (e: PointerEvent) => e.clientY - e.currentTarget.getBoundingClientRect().top
 
-  const nearest = (px: number, py: number) => {
+  const nearest = (px: number, py: number, maxDistance = Infinity) => {
     let best = null
-    let bestD = Infinity
+    let bestD = maxDistance
     for (let li = 0; li < layers.length; li++) {
       for (const p of showPoints ? layers[li].points : layers[li].trend) {
         if (!Number.isFinite(p.s) || p.t < view.start || p.t > view.end) continue
-        const d = Math.hypot(x(p.t) - px, (y(p.s) - py) * 0.5)
+        const d = Math.hypot(x(p.t) - px, y(p.s) - py)
         if (d < bestD) {
           bestD = d
           best = { layer: li, t: p.t }
@@ -211,7 +219,6 @@ export function LineChart({
   }
 
   const onPointerMove = (e: PointerEvent<SVGRectElement>) => {
-    keepCard()
     if (pinned) return
     const px = localX(e)
     const d = drag.current
@@ -222,7 +229,15 @@ export function LineChart({
       onSelect(snapRange(d.anchor, x.invert(clamp(px, 0, iw)).getTime(), extent, intervalMs))
       return
     }
-    setHover(showPoints ? nearest(px, localY(e)) : null)
+    const py = localY(e)
+    const hit = showPoints && py <= ih ? nearest(px, py, POINT_HOVER_RADIUS) : null
+    if (hit) {
+      keepCard()
+      setHover(hit)
+    } else if (hover) {
+      // Allow crossing the gap into the preview without extending the timeout on every move.
+      hideCard()
+    }
   }
 
   const onPointerUp = () => {
@@ -283,10 +298,10 @@ export function LineChart({
       {width > 0 && ih > 0 && (
         <svg width={width} height={height}>
           <defs>
-            <clipPath id="plot-clip">
-              <rect x={-6} y={-8} width={iw + 12} height={ih + 16} />
+            <clipPath id={plotClipId}>
+              <rect width={iw} height={ih} />
             </clipPath>
-            <clipPath id="vol-clip">
+            <clipPath id={volumeClipId}>
               <rect width={iw} height={VOL_H} />
             </clipPath>
           </defs>
@@ -317,7 +332,7 @@ export function LineChart({
                     </text>
                   </g>
                 ))}
-              <g clipPath="url(#vol-clip)">
+              <g clipPath={`url(#${volumeClipId})`}>
                 {bands.map((band, i) => (
                   <path
                     key={band.key}
@@ -347,7 +362,7 @@ export function LineChart({
             {selection && <SelectionBand x0={x(selection.start)} x1={x(selection.end)} iw={iw} h={fullH} />}
             {hovered && <line className="hover-line" x1={x(hovered.t)} x2={x(hovered.t)} y2={fullH} />}
 
-            <g clipPath="url(#plot-clip)">
+            <g clipPath={`url(#${plotClipId})`}>
               {showPoints && layers.map((l) => (
                 <path
                   key={l.series.id}

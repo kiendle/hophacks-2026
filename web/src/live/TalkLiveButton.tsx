@@ -80,7 +80,7 @@ export function TalkLiveStrip({ live, messages = [], busy = false, onConfirm }: 
             <div className="live-workspace-scroll">
               {!activity.length && <p className="live-workspace-empty">Ask me to search or explore your data. You’ll see the tools and results here as I work.</p>}
               {[...activity].reverse().map(message => <article className="live-workspace-turn" key={message.id}>
-                <ToolActivity steps={message.steps} />
+                <ToolActivity steps={message.steps} completed={message.status === 'done'} />
                 {message.status === 'streaming' && !message.steps.length && <p role="status" className="live-workspace-empty">Checking your workspace…</p>}
                 {message.status === 'error' && <p role="alert">This request failed. You can ask me to try again.</p>}
                 {message.status === 'stopped' && <p className="live-workspace-empty">Request interrupted.</p>}

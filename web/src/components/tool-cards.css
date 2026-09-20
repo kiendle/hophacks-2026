@@ -1,5 +1,7 @@
 ﻿.tool-activity, .tool-card { font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
 .tool-heading { color: var(--muted); font-size: 11px; margin: 0 0 8px; }
+.tool-activity > summary { cursor: pointer; color: var(--axis); }
+.tool-activity:not([open]) > summary { margin-bottom: 0; }
 .tool-step { padding: 8px 0 8px 12px; border-left: 1px solid var(--border); }
 .tool-step p, .tool-card p { margin: 4px 0; white-space: pre-wrap; }
 .tool-step-title { display: flex; align-items: center; gap: 6px; font-weight: 500; }

@@ -32,7 +32,7 @@ from pathlib import Path
 
 from aiohttp import web
 
-from claude_runner import Runner
+from agent_runner import Runner
 
 ROOT = Path(__file__).resolve().parent
 WEB = ROOT / "web"
@@ -298,7 +298,13 @@ async def post_confirm(request):
 async def lifecycle(app):
     SESSIONS.mkdir(parents=True, exist_ok=True)
     app["state"]["gate"] = asyncio.Semaphore(MAX_TURNS)
-    yield
+    try:
+        yield
+    finally:
+        for session in app["state"]["sessions"].values():
+            close = getattr(session["runner"], "aclose", None)
+            if close:
+                await close()
 
 
 def load_plugins(app, names=PLUGINS):
