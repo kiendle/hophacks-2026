@@ -11,6 +11,7 @@ timestamps taken on the client side, in milliseconds of real time.
 """
 import asyncio
 import contextlib
+import html
 import io
 import json
 import os
@@ -156,6 +157,7 @@ class Fake:
 
 
 MP3 = b"ID3" + bytes(range(256)) * 8  # never played, only carried
+PNG = b"\x89PNG\r\n\x1a\n" + bytes(range(256)) * 4  # the same: a chart's picture is passed through, never read
 BRIEF = "20260919-070001"
 READY = {"id": BRIEF, "status": "ready", "step": "", "title": "AI labs trade blows", "estimated_seconds": 171,
          "audio": {"full": "brief.mp3", "voice": "Rachel", "characters": 2400},
@@ -188,6 +190,30 @@ class Briefs:
         return web.Response(body=MP3, content_type="audio/mpeg")
 
 
+class Charts:
+    """The chat server's own API, as much of it as a chart card needs: one picture, fetched by path.
+
+    `anything` is every other path on that host. Nothing on this front end may ever ask for one, so
+    what it records is the proof: a card that tries to leave /api/ leaves its footprint here.
+    """
+
+    def __init__(self, missing=False, hangs=0.0, copies=1):
+        self.missing, self.hangs, self.copies = missing, hangs, copies
+        self.asked, self.elsewhere = [], []
+
+    async def picture(self, request):
+        self.asked.append(request.path)
+        if self.hangs:
+            await asyncio.sleep(self.hangs)
+        if self.missing:
+            return web.json_response({"error": "No such chart."}, status=404)
+        return web.Response(body=PNG * self.copies, content_type="image/png")
+
+    async def anything(self, request):
+        self.elsewhere.append(request.path)
+        return web.Response(body=b"a session file, or whatever else this laptop serves")
+
+
 def message(update_id, chat_id, text, kind="private"):
     return {"update_id": update_id, "message": {"message_id": update_id, "date": 0,
                                                 "chat": {"id": chat_id, "type": kind}, "text": text}}
@@ -213,9 +239,16 @@ async def polled(box, times=2):
     return await until(lambda: len(box.fake.got("getUpdates")) >= target)
 
 
+async def served(box, chat_id=CHAT, turns=1, timeout=10.0):
+    """Wait for that many turns to have been started and for none of them to be running any more."""
+    await until(lambda: box.runners.turns() >= turns, timeout)
+    return await until(lambda: chat_id in box.bot.chats and box.bot.chats[chat_id]["busy"] is False, timeout)
+
+
 @contextlib.asynccontextmanager
-async def running(allowed, script=(), delay=0.0, start=True, scripted=(), wall=None, plans=None, briefs=None, brief_base=None):
-    clock, briefs = Clock(), briefs or Briefs()
+async def running(allowed, script=(), delay=0.0, start=True, scripted=(), wall=None, plans=None, briefs=None, brief_base=None,
+                  charts=None, http_layer=None):
+    clock, briefs, charts = Clock(), briefs or Briefs(), charts or Charts()
     fake = Fake(clock)
     for method, *answers in scripted:
         fake.script(method, *answers)
@@ -224,14 +257,16 @@ async def running(allowed, script=(), delay=0.0, start=True, scripted=(), wall=N
     app.router.add_post("/api/briefs", briefs.create)  # one port plays both Telegram and the Morning Brief server
     app.router.add_get("/api/briefs/{id}", briefs.get)
     app.router.add_get("/api/briefs/{id}/audio/{file}", briefs.audio)
+    app.router.add_get("/api/charts/{file}", charts.picture)
+    app.router.add_get("/{tail:.*}", charts.anything)  # last, so it only ever sees what the routes above did not
     server = web.AppRunner(app)
     await server.setup()
     await web.TCPSite(server, "127.0.0.1", 0).start()
     base = f"http://127.0.0.1:{server.addresses[0][1]}"
     root, runners, calls = Path(tempfile.mkdtemp(prefix="tg-test-")), Runners(script, delay), []
     async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=20)) as http:
-        bot = tg.Bot(TOKEN, allowed, http, base=base, runner_factory=runners, sleep=clock.sleep, now=clock.now,
-                     sessions=root / "sessions", chats_path=root / "telegram/chats.json",
+        bot = tg.Bot(TOKEN, allowed, http_layer(http) if http_layer else http, base=base, runner_factory=runners,
+                     sleep=clock.sleep, now=clock.now, sessions=root / "sessions", chats_path=root / "telegram/chats.json",
                      clock=wall or datetime.now, brief_base=brief_base or base)
         bot.plans.update(plans or {})
         original = bot.api.call
@@ -241,7 +276,8 @@ async def running(allowed, script=(), delay=0.0, start=True, scripted=(), wall=N
             return await original(method, **payload)
 
         bot.api.call = traced
-        box = types.SimpleNamespace(bot=bot, fake=fake, runners=runners, clock=clock, root=root, task=None, briefs=briefs, base=base,
+        box = types.SimpleNamespace(bot=bot, fake=fake, runners=runners, clock=clock, root=root, task=None, briefs=briefs,
+                                    base=base, charts=charts,
                                     sent=lambda method: [row for row in calls if row["method"] == method])
         box.task = asyncio.create_task(bot.run()) if start else None
         try:
@@ -262,41 +298,57 @@ async def running(allowed, script=(), delay=0.0, start=True, scripted=(), wall=N
 
 # ---- one served turn, rendered ---------------------------------------------------------------------
 
+# The real thing this product is about: AI. Every title, outcome and note below is written the way
+# steps.py writes it, and the model's own words arrive with the punctuation a model actually types.
 SCRIPT = [
-    {"type": "progress", "text": "Counting matching posts…"},
+    {"type": "progress", "text": "Counting the posts that match…"},
     {"type": "step", "phase": "start", "id": "t1", "n": 1, "tool": "preview_keywords",
-     "title": 'Searching the X/Twitter archive for "ps6" · Sep 9 to Sep 11',
-     "why": "to see how much there is before drafting"},
+     "title": 'Searching X/Twitter for "anthropic" and "resignation", from Sep 9 to Sep 11',
+     "why": "to see how much there is before drafting",
+     "detail": {"tool": "mcp__harness__preview_keywords",
+                "input": {"reason": "to see how much there is before drafting",
+                          "keywords": ["anthropic", "resignation"], "date_from": "2026-09-09", "date_to": "2026-09-12",
+                          "note": "the model's own em dash — kept verbatim in the code block"}},
+     "facts": [{"label": "Words searched", "value": '"anthropic", "resignation"'}, {"label": "Dates", "value": "Sep 9 to Sep 11"}]},
     {"type": "step", "phase": "end", "id": "t1", "ok": True, "ms": 3100,
-     "outcome": "484 original posts · most on Sep 9 (484)"},
-    {"type": "preview", "title": "Preview - X/Twitter archive", "total": 7221, "exact": True, "seconds": 4,
+     "outcome": "Found 7,221 posts. Most were on Sep 9 (4,821)."},
+    {"type": "preview", "title": "What we found on X/Twitter", "total": 7221, "exact": True, "seconds": 4,
      "per_day": [{"day": "2026-09-09", "count": 4821}, {"day": "2026-09-10", "count": 2400}, {"day": "2026-09-11", "count": 0}],
-     "examples": [{"body": "sony really cancelled it", "like_count": 1203, "day": "2026-09-09", "url": "https://x.com/i/status/1"}],
+     "examples": [{"body": "the whole safety team walked out today", "like_count": 1203, "day": "2026-09-09",
+                   "url": "https://x.com/i/status/1"}],
      "note": "82% of matches are one giveaway template"},
-    {"type": "step", "phase": "start", "id": "t2", "n": 2, "tool": "save_draft", "title": "Saving the project draft"},
-    {"type": "spec", "spec": {"name": "PS6 backlash"}, "spec_hash": "abcdef1234567890" + "0" * 48},
+    {"type": "step", "phase": "start", "id": "t2", "n": 2, "tool": "save_draft", "title": "Saving your project",
+     "detail": {"tool": "mcp__harness__save_draft", "input": {"spec_json": '{"name": "AI resignation backlash"}'}}},
+    {"type": "spec", "spec": {"name": "AI resignation backlash"}, "spec_hash": "abcdef1234567890" + "0" * 48},
     {"type": "step", "phase": "end", "id": "t2", "ok": True},
     {"type": "step", "phase": "start", "id": "t3", "n": 3, "title": "Checking the numbers"},
     {"type": "wat", "text": "an event type from a later version"},
     "not even a dict",
     {"type": "step"},
     {"type": "step", "phase": "end", "id": "t3", "ok": True, "outcome": "Done."},
+    {"type": "step", "phase": "start", "id": "t4", "n": 4, "tool": "bluesky_recent",
+     "title": "Searching the last 15 minutes of Bluesky", "why": "to see what is being said right now",
+     "detail": {"tool": "mcp__harness__bluesky_recent", "input": {"keywords": ["AI"], "minutes": 15}}},
+    {"type": "step", "phase": "end", "id": "t4", "ok": False, "ms": 1200,
+     "outcome": "That did not work: Bluesky did not answer."},
     {"type": "delta", "text": "partial text, not for Telegram"},
     {"type": "message", "text": "Here is what I found. **7,221 posts**."},
     {"type": "done", "duration_ms": 28000},
 ]
+QUESTION = "how did people react to the anthropic resignation post?"
 
 
 async def serving_turn():
     async with running({CHAT}, SCRIPT, delay=0.05) as box:
-        box.fake.queue.append(message(1, CHAT, "how did people react to the ps6 cancellation?"))
-        await until(lambda: box.sent("editMessageText") and box.sent("editMessageText")[-1]["text"].endswith("28 s"))
+        box.fake.queue.append(message(1, CHAT, QUESTION))
+        await until(lambda: box.sent("editMessageText") and box.sent("editMessageText")[-1]["text"].endswith("28 seconds"))
         await asyncio.sleep(0.1)
         sends, edits, typing = box.sent("sendMessage"), box.sent("editMessageText"), box.sent("sendChatAction")
         bodies = [row["text"] for row in edits]
         gaps = [round(second["at"] - first["at"], 2) for first, second in zip(edits, edits[1:])]
         answer = [row for row in sends if "7,221 posts</b>" in (row["text"] or "")]
         preview = [row for row in sends if "<pre>" in (row["text"] or "")]
+        rows = [line for body in bodies for line in body.splitlines()]
 
         check("typing is sent and the status starts as one message",
               typing and all(row["action"] == "typing" for row in typing) and sends and sends[0]["text"].startswith("Thinking"),
@@ -306,22 +358,25 @@ async def serving_turn():
               f"{len(edits)} edits for {len(SCRIPT)} events, gaps {gaps} virtual s")
         check("a running step is marked with an hourglass", any(tg.HOURGLASS in body for body in bodies),
               f"{sum(tg.HOURGLASS in body for body in bodies)} of {len(bodies)} edits showed one")
-        check("a step renders title, why and outcome with its duration",
-              any("1. Searching the X/Twitter archive" in body and "Why: to see how much there is" in body
-                  and "-&gt; 484 original posts" in body and "(3.1 s)" in body for body in bodies),
-              repr(next((line for body in bodies for line in body.splitlines() if "Why:" in line), ""))[:70])
-        two = next((body for body in bodies if "2. Saving the project draft" in body), "")
-        check("a step with no why and no outcome renders as a single line",
-              bool(two) and "Why:" not in two.split("2. Saving")[1] and "-&gt;" not in two.split("2. Saving")[1].split("3.")[0],
-              repr(two.split("2. Saving")[1][:44]) if two else "step 2 never rendered")
-        check("the draft line names the project and its version",
-              any("Draft saved: PS6 backlash (version abcdef12)" in body for body in bodies),
-              repr(next((line for body in bodies for line in body.splitlines() if "Draft saved" in line), ""))[:70])
-        check("the preview is its own message, with scaled bars and thousands separators",
+        done = next((body for body in bodies if f"{tg.OK} Saving your project" in body), "")
+        check("a finished step is one line: a check mark and the title, nothing else",
+              bool(done) and f"{tg.OK} Searching X/Twitter for &quot;anthropic&quot;" in done
+              and all(line.startswith((tg.OK, tg.HOURGLASS, tg.FAILED, "   ")) for line in done.splitlines()),
+              repr(done.splitlines()[:2]) if done else "step 2 never rendered")
+        check("the status carries no why, no result, no draft and no duration of its own",
+              not any("Why:" in row or "Took" in row or "Draft" in row or "version abcdef12" in row for row in rows)
+              and not any("7,221 posts." in row or "(3.1" in row or " s)" in row for row in rows),
+              repr(next((row for row in rows if "Why" in row or "Draft" in row or "Took" in row), "none of them")))
+        failed = next((body for body in bodies if tg.FAILED in body), "")
+        check("a step that did not work shows one short result line under its title",
+              bool(failed) and f"{tg.FAILED} Searching the last 15 minutes of Bluesky" in failed
+              and "   That did not work: Bluesky did not answer." in failed,
+              repr(failed.splitlines()[-2:]) if failed else "the failed step never rendered")
+        check("the preview is its own message, with dates in words, scaled bars and thousands separators",
               len(preview) == 1 and tg.BLOCK * 12 in preview[0]["text"] and "4,821" in preview[0]["text"]
-              and "2,400" in preview[0]["text"] and "7,221 matching posts" in preview[0]["text"]
-              and "1,203 likes" in preview[0]["text"] and "giveaway template" in preview[0]["text"]
-              and "https://x.com/i/status/1" in preview[0]["text"],
+              and "2,400" in preview[0]["text"] and "7,221 posts" in preview[0]["text"] and "Sep 9" in preview[0]["text"]
+              and "2026-09-09" not in preview[0]["text"] and "1,203 likes" in preview[0]["text"]
+              and "giveaway template" in preview[0]["text"] and "https://x.com/i/status/1" in preview[0]["text"],
               repr(next((line for line in preview[0]["text"].splitlines() if tg.BLOCK in line), "")) if preview else "no preview message")
         check("the answer arrives as a new message with **bold** rendered as <b>",
               len(answer) == 1 and answer[0]["parse_mode"] == "HTML" and "Here is what I found." in answer[0]["text"],
@@ -330,8 +385,8 @@ async def serving_turn():
               not any("wat" in (row["text"] or "") or "partial text" in (row["text"] or "") for row in sends + edits)
               and len(box.runners.made) == 1 and box.runners.turns() == 1,
               f"{len(sends)} messages, {len(edits)} edits, {box.runners.turns()} turn")
-        check("the status message collapses into one summary line",
-              bodies and bodies[-1] == "3 steps · 28 s", repr(bodies[-1] if bodies else None))
+        check("the status message collapses into one summary line in the page's own words",
+              bodies and bodies[-1] == "4 steps, 1 did not finish, 28 seconds", repr(bodies[-1] if bodies else None))
         check("the session directory is the layout the web bridge uses",
               (box.root / "sessions" / box.runners.made[0].session_id / "confirmations").is_dir()
               and 'SESSIONS = ROOT / "state/sessions"' in (HARNESS / "bridge.py").read_text(encoding="utf-8"),
@@ -358,7 +413,8 @@ async def progress_fallback():
         bodies = [row["text"] for row in box.sent("editMessageText")]
         check("with no step events the status falls back to the progress line",
               "Scanning the last minutes of Bluesky…" in bodies, repr(bodies[:2]))
-        check("a turn with no steps summarises as Done", bodies[-1] == "Done · 1 s", repr(bodies[-1]))
+        check("a turn with no steps summarises as Done and its length in words",
+              bodies[-1] == "Done, 1 second", repr(bodies[-1]))
 
 
 async def long_answer():
@@ -463,7 +519,7 @@ async def oversized_cards():
                   or (row["text"] or "").count("<b>") != (row["text"] or "").count("</b>")]
         check(f"a {len(raw):,}-character preview card is trimmed to fit, not dropped",
               preview is not None and len(preview["text"]) <= 4096 and "…" in preview["text"]
-              and tg.BLOCK in preview["text"] and "1,234,567 matching posts" in preview["text"],
+              and tg.BLOCK in preview["text"] and "1,234,567 posts" in preview["text"],
               f"{len(raw):,} -> {len(preview['text']):,} characters" if preview else "the preview never arrived")
         check("an over-long confirm card still arrives, with its two buttons",
               card is not None and len(card["text"]) <= 4096 and "…" in card["text"]
@@ -522,10 +578,17 @@ async def busy_and_commands():
         await until(lambda: any("Ask me things like" in (row["text"] or "") for row in box.sent("sendMessage")))
         await polled(box)
         texts = [row["text"] for row in box.sent("sendMessage")]
+        welcome = next((text for text in texts if "Ask me things like" in text), "")
         check("/id and /start answer without a model call",
               any(f"This chat&#x27;s ID is {CHAT}" in text or f"This chat's ID is {CHAT}" in text for text in texts)
-              and any("Ask me things like" in text and "/new" in text for text in texts) and box.runners.turns() == 1,
+              and "/new" in welcome and box.runners.turns() == 1,
               f"{box.runners.turns()} turn for 5 updates")
+        check("/start offers three real AI questions and none of the invented ones",
+              "What are people saying about AI on Bluesky right now?" in welcome
+              and "How did people react to the Anthropic resignation post around Sep 9?" in welcome
+              and "What was said about GPT-6 Astra in early September?" in welcome
+              and "/details" in welcome and not any(word in welcome for word in ("PlayStation", "student loan", "Physint")),
+              repr([line for line in welcome.splitlines() if line.startswith("- ")]))
         offsets = [row.get("offset") for row in box.sent("getUpdates") if row.get("offset")]
         check("offsets only ever advance, so an update is never handled twice",
               offsets == sorted(offsets) and max(offsets) == 6 and box.runners.turns() == 1,
@@ -624,7 +687,7 @@ async def confirm_flow():
         now = {name: json.loads(path.read_text(encoding="utf-8")) for name, path in
                (("expired", expired), ("decided", decided), ("mine", mine))}
         check("an expired, an already-decided and a re-pressed confirmation are all refused",
-              any("expired; ask for a new one" in text for text in said)
+              any("expired. Ask for a new one" in text for text in said)
               and sum("already decided" in text for text in said) == 2 and now == keep,
               " | ".join(text.splitlines()[-1][:30] for text in said))
         check("a callback for another chat's confirmation is rejected and that record is untouched",
@@ -638,9 +701,9 @@ async def confirm_flow():
               f"{len(list((directory / 'confirmations').iterdir()))} files, {turns} turns before and after, {len(said)} edits for 5 callbacks")
         check("only the button can decide: decide() refuses everything else",
               tg.decide(directory, GOOD, True) == "That confirmation was already decided."
-              and tg.decide(directory, "../../x", True) == "That confirmation is no longer valid; ask for a new one."
-              and tg.decide(directory, "nosuchid00000000", True) == "That confirmation is no longer valid; ask for a new one."
-              and tg.decide(directory, EXPIRED, True) == "That confirmation expired; ask for a new one."
+              and tg.decide(directory, "../../x", True) == tg.INVALID
+              and tg.decide(directory, "nosuchid00000000", True) == tg.INVALID
+              and tg.decide(directory, EXPIRED, True) == "That confirmation expired. Ask for a new one."
               and tg.decide(directory, ELSEWHERE, True, busy=True) == "Still working on your previous message.",
               "decided, traversal, unknown, expired and busy all refused")
 
@@ -767,6 +830,345 @@ async def brief_failures():
                   f"{len(box.fake.got('sendAudio'))} upload attempt(s), then the script as a message")
 
 
+# ---- the details panel, as a command ----------------------------------------------------------------
+
+async def details_command():
+    async with running({CHAT}, SCRIPT, delay=0.02) as box:
+        box.fake.queue.append(message(1, CHAT, "/details"))
+        await until(lambda: said(box, "I have not done anything yet"))
+        check("/details before anything has happened says so, and asks no model",
+              len(box.sent("sendMessage")) == 1 and box.runners.turns() == 0
+              and "Ask me a question first" in box.sent("sendMessage")[0]["text"],
+              repr(box.sent("sendMessage")[0]["text"][:60]))
+
+        box.fake.queue.append(message(2, CHAT, QUESTION))
+        await served(box)
+        before = len(box.sent("sendMessage"))
+        box.fake.queue.append(message(3, CHAT, "/details"))
+        await until(lambda: any("Exact request" in (row["text"] or "") for row in box.sent("sendMessage")[before:]))
+        await polled(box)
+        panels = [row["text"] for row in box.sent("sendMessage")[before:]]
+        whole = "\n".join(panels)
+        check("/details replies with every step in full: title, why, result and the exact request",
+              "<b>1. Searching X/Twitter for &quot;anthropic&quot;" in whole
+              and "Why: to see how much there is before drafting" in whole
+              and "Found 7,221 posts. Most were on Sep 9 (4,821)." in whole
+              and "Words searched: &quot;anthropic&quot;, &quot;resignation&quot;" in whole and "Dates: Sep 9 to Sep 11" in whole
+              and "Took 3.1 seconds" in whole and "<b>4. Searching the last 15 minutes of Bluesky</b>" in whole
+              and "That did not work: Bluesky did not answer." in whole and box.runners.turns() == 1,
+              f"{len(panels)} message(s), {whole.count('Exact request')} exact requests, {box.runners.turns()} turn")
+        check("the exact request is a code block with the tool and its input, kept as it was sent",
+              "<pre>mcp__harness__preview_keywords\n{\n  &quot;reason&quot;:" in whole
+              and "&quot;date_from&quot;: &quot;2026-09-09&quot;" in whole and "em dash — kept verbatim" in whole
+              and whole.count("<pre>") == whole.count("</pre>") == 4
+              and all(len(text) <= 4096 for text in panels),
+              repr(whole[whole.find("<pre>"):whole.find("<pre>") + 58]))
+        check("a message is never cut in the middle of a step",
+              all(text.startswith("<b>") and text.count("Exact request") == text.count("<pre>") for text in panels),
+              f"blocks per message: {[text.count('Exact request') for text in panels]}")
+
+
+# ---- cards -----------------------------------------------------------------------------------------
+
+CHART = {"kind": "chart", "title": "Posts about AI a day", "caption": "Sep 9 to Sep 11, the archive",
+         "png_url": "/api/charts/ai-a-day.png",
+         "bars": [{"label": "2026-09-09", "value": 4821}, {"label": "2026-09-10", "value": 2400}]}
+
+
+async def chart_cards():
+    async with running({CHAT}, [{"type": "card", "card": CHART}, {"type": "done", "duration_ms": 1000}], delay=0.02) as box:
+        box.fake.queue.append(message(1, CHAT, "chart it"))
+        await until(lambda: box.fake.got("sendPhoto"))
+        await served(box)
+        photos = box.fake.got("sendPhoto")
+        check("a chart card with a picture is sent as a photo with its caption",
+              len(photos) == 1 and photos[0]["chat_id"] == str(CHAT) and box.charts.asked == ["/api/charts/ai-a-day.png"]
+              and photos[0]["photo"] == {"filename": "chart.png", "content_type": "image/png", "bytes": len(PNG)}
+              and photos[0]["caption"] == "Posts about AI a day\nSep 9 to Sep 11, the archive"
+              and "parse_mode" not in photos[0] and not any(tg.BLOCK in (row["text"] or "") for row in box.sent("sendMessage")),
+              f"{len(photos)} photo of {len(PNG):,} bytes, caption {photos[0]['caption'][:34]!r}" if photos else "no photo")
+
+    bars_only = {key: value for key, value in CHART.items() if key != "png_url"}
+    outside = {**CHART, "png_url": "http://evil.example/api/charts/x.png"}
+    for name, card, asked in (("with no picture", bars_only, []), ("whose picture is not on this server", outside, [])):
+        async with running({CHAT}, [{"type": "card", "card": card}, {"type": "done", "duration_ms": 1}], delay=0.02) as box:
+            box.fake.queue.append(message(1, CHAT, "chart it"))
+            await until(lambda: any(tg.BLOCK in (row["text"] or "") for row in box.sent("sendMessage")))
+            await served(box)
+            drawn = next(row["text"] for row in box.sent("sendMessage") if tg.BLOCK in (row["text"] or ""))
+            check(f"a chart card {name} is sent as bars, with its dates in words",
+                  not box.fake.got("sendPhoto") and box.charts.asked == asked and "<b>Posts about AI a day</b>" in drawn
+                  and "Sep 9" in drawn and "4,821" in drawn and "2026-09-09" not in drawn,
+                  repr(next(line for line in drawn.splitlines() if tg.BLOCK in line)))
+
+    async with running({CHAT}, [{"type": "card", "card": CHART}, {"type": "done", "duration_ms": 1}], delay=0.02,
+                       charts=Charts(missing=True)) as box:
+        box.fake.queue.append(message(1, CHAT, "chart it"))
+        await until(lambda: any(tg.BLOCK in (row["text"] or "") for row in box.sent("sendMessage")))
+        check("a picture the server does not have falls back to the bars, not to nothing",
+              not box.fake.got("sendPhoto") and box.charts.asked == ["/api/charts/ai-a-day.png"], "404, then bars")
+
+    junk = [{"type": "card", "card": {"kind": "spaceship", "title": "?"}}, {"type": "card", "card": "not an object"},
+            {"type": "card", "card": {"kind": "chart"}}, {"type": "card"}, {"type": "done", "duration_ms": 1}]
+    async with running({CHAT}, junk, delay=0.02) as box:
+        box.fake.queue.append(message(1, CHAT, "surprise me"))
+        await served(box)
+        await polled(box)
+        check("a card of a kind this front end does not draw is ignored in silence",
+              not box.fake.got("sendPhoto") and not box.fake.got("sendAudio")
+              and [row["text"] for row in box.sent("sendMessage")] == ["Thinking…"],
+              repr([row["text"] for row in box.sent("sendMessage")]))
+
+
+async def hostile_cards():
+    """A card is written by the model, so it is treated as something a stranger wrote."""
+    sneaky = {**CHART, "png_url": "/api/%2e%2e/%2e%2e/state/sessions/secret.json"}
+    async with running({CHAT}, [{"type": "card", "card": sneaky}, {"type": "done", "duration_ms": 1}], delay=0.02) as box:
+        box.fake.queue.append(message(1, CHAT, "chart it"))
+        await until(lambda: any(tg.BLOCK in (row["text"] or "") for row in box.sent("sendMessage")))
+        await served(box)
+        check("a picture path that escapes /api once it is a URL is never fetched at all",
+              box.charts.elsewhere == [] and box.charts.asked == [] and not box.fake.got("sendPhoto")
+              and tg.picture_path("/api/%2e%2e/%2e%2e/secret") == "",
+              f"asked for {box.charts.elsewhere + box.charts.asked}, drew the bars instead")
+
+    hangs = Charts(hangs=2.0)
+    was = tg.CARD_FETCH_S
+    tg.CARD_FETCH_S = 0.2  # a fifth of a second here stands for the fifteen the bot really waits
+    try:
+        script = [{"type": "card", "card": CHART}, {"type": "message", "text": "here is the answer"},
+                  {"type": "done", "duration_ms": 1000}]
+        async with running({CHAT}, script, delay=0.02, charts=hangs) as box:
+            started = time.monotonic()
+            box.fake.queue.append(message(1, CHAT, "chart it"))
+            arrived = await until(lambda: any("here is the answer" in (row["text"] or "") for row in box.sent("sendMessage")),
+                                  timeout=10)
+            waited = time.monotonic() - started
+            check("a chart server that hangs costs the picture, never the answer behind it",
+                  arrived and waited < 1.2 and not box.fake.got("sendPhoto")
+                  and any(tg.BLOCK in (row["text"] or "") for row in box.sent("sendMessage")),
+                  f"the answer arrived {waited:.2f}s in, with the bars instead of the picture")
+    finally:
+        tg.CARD_FETCH_S = was
+
+    was = tg.MAX_PICTURE
+    tg.MAX_PICTURE = 2048  # 2 KB here stands for the 10 MB Telegram refuses anyway
+    try:
+        async with running({CHAT}, [{"type": "card", "card": CHART}, {"type": "done", "duration_ms": 1}], delay=0.02,
+                           charts=Charts(copies=8)) as box:
+            box.fake.queue.append(message(1, CHAT, "chart it"))
+            await until(lambda: any(tg.BLOCK in (row["text"] or "") for row in box.sent("sendMessage")))
+            await served(box)
+            check("a picture far bigger than we will hold is dropped for the bars, not uploaded",
+                  not box.fake.got("sendPhoto") and box.charts.asked == ["/api/charts/ai-a-day.png"],
+                  f"{len(PNG) * 8:,} bytes offered, cap {tg.MAX_PICTURE:,}, bars sent")
+    finally:
+        tg.MAX_PICTURE = was
+
+
+async def details_flood():
+    """A turn that called sixty tools must not answer /details with a dozen messages in a row."""
+    async with running({CHAT}, [{"type": "done", "duration_ms": 1}]) as box:
+        state, turn = box.bot.chat(CHAT), tg.Turn()
+        for index in range(60):
+            turn.event({"type": "step", "phase": "start", "id": f"s{index}", "n": index + 1,
+                        "title": f"Searching X/Twitter for \"AI\", part {index}", "why": "to see what is there",
+                        "detail": {"tool": "mcp__harness__preview_keywords", "input": {"keywords": ["AI"], "part": index}}})
+            turn.event({"type": "step", "phase": "end", "id": f"s{index}", "ok": True, "ms": 1200,
+                        "outcome": "Found 7,221 posts."})
+        state["last"] = turn
+        box.fake.queue.append(message(1, CHAT, "/details"))
+        await until(lambda: said(box, "There were 60 steps in all"))
+        await polled(box)
+        panels = [row["text"] for row in box.sent("sendMessage")]
+        check("a runaway turn is cut at twenty steps and the reader is told how many there were",
+              len(panels) <= 4 and "part 19" in "\n".join(panels) and "part 20" not in "\n".join(panels)
+              and panels[-1].endswith("These are the first 20.") and all(len(text) <= 4096 for text in panels),
+              f"{len(panels)} messages for 60 steps, ending {panels[-1][-46:]!r}")
+
+
+async def brief_cards():
+    card = {"kind": "brief", "brief_id": BRIEF, "title": "AI labs trade blows"}
+    async with running({CHAT}, [{"type": "card", "card": card}, {"type": "message", "text": "It is being made now."},
+                               {"type": "done", "duration_ms": 1000}], delay=0.02, briefs=Briefs(working=3)) as box:
+        await until(lambda: box.fake.got("getUpdates"))
+        box.fake.queue.append(message(1, CHAT, "brief me on AI in one minute"))
+        await until(lambda: any("It is being made now." in (row["text"] or "") for row in box.sent("sendMessage")))
+        turn_done = box.clock.now()
+        await until(lambda: box.fake.got("sendAudio"), timeout=20)
+        audios = box.fake.got("sendAudio")
+        check("a brief card is followed in the background, so the answer is not held up",
+              audios and audios[0]["at"] > turn_done and box.briefs.polls >= 4 and box.clock.slept.count(5.0) >= 3,
+              f"the answer came {audios[0]['at'] - turn_done:.0f} virtual s before the recording, "
+              f"{box.briefs.polls} polls 5 s apart" if audios else "no recording arrived")
+        check("the recording is uploaded with the card's own title as its caption",
+              len(audios) == 1 and audios[0]["caption"] == "AI labs trade blows" and audios[0]["title"] == "AI labs trade blows"
+              and audios[0]["audio"] == {"filename": "morning-brief.mp3", "content_type": "audio/mpeg", "bytes": len(MP3)}
+              and box.briefs.fetched == 1 and box.runners.turns() == 1,
+              repr(audios[0]["caption"]) if audios else "no upload")
+
+    slow = Briefs(working=10_000)  # never finishes: the wait has to end by itself
+    async with running({CHAT}, [{"type": "card", "card": card}, {"type": "done", "duration_ms": 1}], delay=0.02,
+                       briefs=slow) as box:
+        box.fake.queue.append(message(1, CHAT, "brief me"))
+        await until(lambda: said(box, "taking longer than usual"), timeout=30)
+        check("a brief that never finishes is given three minutes, then the chat is told where it will be",
+              not box.fake.got("sendAudio") and slow.polls <= 40 and "Morning Brief page" in said(box, "taking longer")[0],
+              f"{slow.polls} polls over three virtual minutes, then {said(box, 'taking longer')[0][:38]!r}")
+
+    failed = Briefs(working=0, final={"id": BRIEF, "status": "failed", "step": "No posts were collected in that window."})
+    for name, card_now, briefs, expected in (
+            ("a brief that fails is reported with the server's own reason", card, failed, "No posts were collected"),
+            ("a brief with no recording says so instead of promising audio", card,
+             Briefs(working=0, final={**READY, "audio": None}), "could not send the recording here"),
+            ("a brief server that answers nonsense still gets a whole sentence", card,
+             Briefs(working=0, final={"id": BRIEF}), "Morning Brief could not finish it.")):
+        async with running({CHAT}, [{"type": "card", "card": card_now}, {"type": "done", "duration_ms": 1}], delay=0.02,
+                           briefs=briefs) as box:
+            box.fake.queue.append(message(1, CHAT, "brief me"))
+            await until(lambda: said(box, expected), timeout=20)
+            check(name, bool(said(box, expected)) and not box.fake.got("sendAudio"), repr(said(box, expected)[0][:64]))
+
+    bad = [{"type": "card", "card": {"kind": "brief", "brief_id": "../../etc/passwd"}},
+           {"type": "card", "card": {"kind": "brief", "brief_id": BRIEF}},
+           {"type": "card", "card": {"kind": "brief", "brief_id": BRIEF}},  # the same brief twice: followed once
+           {"type": "done", "duration_ms": 1}]
+    async with running({CHAT}, bad, delay=0.02, briefs=Briefs(working=4)) as box:
+        box.fake.queue.append(message(1, CHAT, "brief me"))
+        await until(lambda: box.fake.got("sendAudio"), timeout=20)
+        await polled(box, 3)
+        check("a brief id that is not one is never turned into a path, and one brief is waited for once",
+              len(box.fake.got("sendAudio")) == 1 and box.briefs.fetched == 1 and not box.bot.following,
+              f"{len(box.fake.got('sendAudio'))} upload for three cards, {box.briefs.fetched} download")
+
+
+# ---- the network this laptop is on ------------------------------------------------------------------
+
+class Unreachable:
+    """An http layer where Telegram cannot be reached: the first `times` calls to it raise, as a
+    blocked network does. The Morning Brief server on the same host keeps answering."""
+
+    def __init__(self, http, times=3):
+        self.http, self.times, self.tried = http, times, 0
+
+    def post(self, url, json=None, data=None):
+        if "/bot" in url:
+            self.tried += 1
+            if self.tried <= self.times:
+                raise aiohttp.ClientConnectorError(types.SimpleNamespace(ssl=None, host="api.telegram.org", port=443),
+                                                   OSError("blocked"))
+        return self.http.post(url, json=json) if data is None else self.http.post(url, data=data)
+
+    def get(self, url):
+        return self.http.get(url)
+
+
+async def blocked_network():
+    async with running({CHAT}, [{"type": "message", "text": "here is the answer"}, {"type": "done", "duration_ms": 1}],
+                       delay=0.02, http_layer=lambda http: Unreachable(http, times=3)) as box:
+        await until(lambda: box.fake.got("getMe"), timeout=20)
+        await until(lambda: box.fake.got("getUpdates"), timeout=20)
+        printed = captured()
+        box.fake.queue.append(message(1, CHAT, "hello?"))
+        await until(lambda: any("here is the answer" in (row["text"] or "") for row in box.sent("sendMessage")), timeout=20)
+        check("a network that blocks Telegram is waited out, not a reason to stop",
+              printed.count("Telegram cannot be reached from this network.") == 1
+              and "use a phone hotspot" in printed and "@signal_test_bot" in printed
+              and not box.task.done() and box.runners.turns() == 1,
+              f"the sentence was printed once, then it connected and served {box.runners.turns()} turn")
+        check("it tries again about every minute, and the waits grow to a minute at most",
+              [wait for wait in box.clock.slept if wait in (10.0, 20.0, 40.0, 60.0)][:3] == [10.0, 20.0, 40.0]
+              and max(box.clock.slept) <= 60.0,
+              f"waited {[wait for wait in box.clock.slept if wait >= 10.0][:4]} virtual s between tries")
+
+
+# ---- one voice -------------------------------------------------------------------------------------
+
+# Everything a person reads, on the website and here, uses commas, full stops, "and" and "to" and
+# nothing else. The exact request inside /details is the one exception, exactly as the page's own
+# panel keeps it: it is what was really sent, and it is not ours to reword.
+BANNED = re.compile(r"[‒–—―·•‣▪・←-⇙;]|(?<=\S) -{1,2} (?=\S)|-&gt;|=&gt;")
+PRE = re.compile(r"<pre>.*?</pre>", re.S)
+# The other half of one voice: characters a reader cannot see but the phone obeys. A post carrying a
+# right to left override turns the rest of the message around it backwards, which is how a link or a
+# file name is disguised as something else. Nothing we show has any use for one. Listed here by
+# number, and on purpose: the bot's own table is a different list, so a mistake in one is not agreed
+# to by the other, and this file stays readable in an editor.
+UNSEEN = [chr(code) for code in (0x00, 0x07, 0x1b, 0x7f, 0x202a, 0x202b, 0x202c, 0x202d, 0x202e, 0x2066, 0x2069)]
+FLIP = chr(0x202e) + "gnp.exe" + chr(0x202c)  # reads as "exe.png" on a phone
+
+
+def voice_problems(texts):
+    problems = []
+    for text in texts:
+        body = html.unescape(re.sub(r"<[^>]*>", "", PRE.sub("", str(text or ""))))  # what the reader really sees
+        for hit in BANNED.finditer(body):
+            problems.append(f"{hit.group(0)!r} in {body[max(0, hit.start() - 30):hit.start() + 30]!r}")
+    return problems
+
+
+NASTY = [  # the punctuation a model and a server really do produce, in every place a user can read
+    {"type": "progress", "text": "Counting the posts that match — this takes a moment"},
+    {"type": "step", "phase": "start", "id": "s1", "n": 1, "tool": "preview_keywords",
+     "title": 'Searching X/Twitter for "AI" · Sep 9 to Sep 11', "why": "to size it up first; then we draft",
+     "detail": {"tool": "mcp__harness__preview_keywords", "input": {"keywords": ["AI"], "note": "kept — verbatim; here"}},
+     "facts": [{"label": "Words searched", "value": '"AI" · "AGI"'}]},
+    {"type": "step", "phase": "end", "id": "s1", "ok": False, "ms": 2200, "outcome": "That did not work: no data — sorry"},
+    {"type": "preview", "title": "What we found — X/Twitter", "total": 87, "exact": False, "seconds": 2,
+     "per_day": [{"day": "2026-09-09", "count": 87}],
+     "examples": [{"body": f"AI safety — it matters; a lot, see {FLIP}", "like_count": 12, "day": "2026-09-09",
+                   "url": "https://x.com/i/status/2"}],
+     "note": "Most of them are one template · be careful"},
+    {"type": "spec", "spec": {"name": "AI backlash"}, "spec_hash": "ab" * 32},
+    {"type": "confirm_request", "confirmation_id": GOOD, "summary": "AI backlash — 20,000 posts; about $0.36",
+     "expires_ms": int(time.time() * 1000) + 300_000},
+    {"type": "card", "card": {"kind": "chart", "title": f"Posts a day — AI {FLIP}", "caption": "Sep 9 to Sep 11; the archive",
+                              "bars": [{"label": "2026-09-09", "value": 87}]}},
+    {"type": "error", "text": "the tool server said: broken — try again; later"},
+    {"type": "message", "text": f"Here is what I found — **87 posts**; most on Sep 9 · a quiet day.{chr(0x2066)}{FLIP}"},
+    {"type": "done", "duration_ms": 22000},
+]
+
+
+async def one_voice():
+    # no recording this time, so the spoken script comes back as text and is scanned with everything else
+    spoken = Briefs(working=1, final={**READY, "title": "AI labs trade blows — day two", "audio": None,
+                                      "segments": [{"topic": "AI", "script": "Good morning — here is the news; enjoy.",
+                                                    "stories": [{"title": "A new model lands — at last"}]}]})
+    async with running({CHAT}, NASTY, delay=0.02, briefs=spoken, wall=at(6, 30)) as box:
+        for update_id, text in enumerate(["/start", "/schedule", "/schedule 7:00 3", "/schedule banana", QUESTION], start=1):
+            box.fake.queue.append(message(update_id, CHAT, text))
+            await polled(box, 2)
+        await served(box, timeout=20)
+        box.fake.queue.extend([message(6, CHAT, "/details"), message(7, CHAT, "/brief 1")])
+        await until(lambda: said(box, "Good morning"), timeout=30)
+        await until(lambda: any("Exact request" in (row["text"] or "") for row in box.sent("sendMessage")))
+        await polled(box, 2)
+        texts = ([row["text"] for row in box.sent("sendMessage") + box.sent("editMessageText")]
+                 + [row.get("caption") for row in box.fake.got("sendAudio") + box.fake.got("sendPhoto")])
+        problems = voice_problems(texts)
+        check(f"not one of the {len(texts)} things this bot said has a dash, a dot, an arrow or a semicolon in it",
+              not problems and len(texts) > 15, problems[0] if problems else f"{len(texts)} messages and captions scanned")
+        check("the words themselves survive: the commas and full stops replace the marks",
+              any("no data, sorry" in text for text in texts) and any("87 posts" in text and "quiet day" in text for text in texts)
+              and any("What we found, X/Twitter" in text for text in texts)
+              and any("about 87 posts" in text for text in texts)
+              and any("Good morning, here is the news. Enjoy." in text for text in texts),
+              repr(next((text for text in texts if "quiet day" in (text or "")), "")[:70]))
+        check("the exact request keeps what was really sent, marks and all",
+              any("kept — verbatim; here" in (text or "") for text in texts)
+              and voice_problems([text for text in texts if "<pre>" not in (text or "")]) == [],
+              "the code block is the one place a dash survives")
+        unseen = [text for text in texts if any(mark in str(text or "") for mark in UNSEEN)]
+        check("nothing a reader cannot see gets through, not even inside the exact request",
+              not unseen and any("gnp.exe" in (text or "") for text in texts),
+              f"{len(unseen)} of {len(texts)} carried one" if unseen else "the overrides are gone, the words are not")
+    every = [tg.HELP, tg.SETUP, tg.BAD_TOKEN, tg.CONFLICT, tg.UNREACHABLE, tg.PAIRING_HINT, tg.SCHEDULE_HELP,
+             tg.BRIEF_OFFLINE, tg.NOTHING_YET, tg.INVALID, tg.pairing_body(CHAT), tg.length_of(1), tg.length_of(3)]
+    check("every sentence written into this file is already in that voice",
+          not voice_problems(every), (voice_problems(every) or ["all of them"])[0])
+
+
 # ---- the fatal answers ------------------------------------------------------------------------------
 
 async def conflict_and_bad_token():
@@ -792,6 +1194,39 @@ def no_token():
           and "TELEGRAM_BOT_TOKEN=" in done.stdout and str(HARNESS.parent / ".env") in done.stdout
           and "python -m uv run harness/telegram_bot.py" in done.stdout,
           f"exit {done.returncode}, {len(done.stdout.splitlines())} lines of guidance")
+
+
+def hand_edited_files():
+    """The two files a person opens in a text editor. A typo in either may cost a line, never the bot."""
+    root = Path(tempfile.mkdtemp(prefix="tg-edited-"))
+    path = root / "chats.json"
+    path.write_text(json.dumps({"chats": {
+        "--7": {"session_id": "b6d9f0a2-1c3e-4a5b-8d7f-0123456789ab"},  # int() would have raised on this key
+        str(CHAT): {"session_id": "../../../pwned", "schedule": {"at": "07:00", "minutes": 2}},
+        "nine": {"session_id": "b6d9f0a2-1c3e-4a5b-8d7f-0123456789ab"},
+        str(OTHER): "not a record at all"}}), encoding="utf-8")
+    try:
+        bot = tg.Bot(TOKEN, {CHAT}, None, sessions=root / "sessions", chats_path=path, runner_factory=Runners())
+        loaded = dict(bot.saved)  # before chat() maps this chat to a session of its own
+        state = bot.chat(CHAT)
+        inside = str(state["dir"].resolve()).startswith(str((root / "sessions").resolve()))
+        check("a chats.json somebody edited starts the bot, and its session id never becomes a path",
+              loaded == {} and bot.plans == {CHAT: {"at": "07:00", "minutes": 2, "last": None}}
+              and inside and bool(tg.SESSION.fullmatch(state["session"])),
+              f"the schedule survived, the traversal did not, and the new session is ...{state['session'][-8:]}")
+    except Exception as error:
+        check("a chats.json somebody edited starts the bot, and its session id never becomes a path", False, repr(error))
+    shutil.rmtree(root, ignore_errors=True)
+
+    before = os.environ.get("TELEGRAM_ALLOWED_CHAT_IDS")
+    os.environ["TELEGRAM_ALLOWED_CHAT_IDS"] = f"--5, {CHAT}, , abc, -100777"
+    try:
+        token, allowed = tg.settings()
+        check("an allow list with a typo in it loses the typo, not the bot", allowed == {CHAT, -100777}, str(sorted(allowed)))
+    except Exception as error:
+        check("an allow list with a typo in it loses the typo, not the bot", False, repr(error))
+    finally:
+        os.environ["TELEGRAM_ALLOWED_CHAT_IDS"] = before or ""
 
 
 def console_encoding():
@@ -824,15 +1259,66 @@ def pure_functions():
           and tg.split_text("one\n\ntwo", 6) == ["one", "two"] and tg.split_text("hello world again", 12) == ["hello world", "again"],
           str(tg.split_text("a" * 50, 20)))
     check("escaping survives a hostile string, and the plain fallback undoes it",
-          tg.rich("<b>&</b>") == "&lt;b&gt;&amp;&lt;/b&gt;" and tg.plain(tg.rich("x **y** <i>")) == "x y <i>",
-          repr(tg.plain(tg.rich("x **y** <i>"))))
+          tg.rich("<b>&</b>") == "&lt;b&gt;&amp;&lt;/b&gt;" and tg.untagged(tg.rich("x **y** <i>")) == "x y <i>",
+          repr(tg.untagged(tg.rich("x **y** <i>"))))
     check("bars are scaled to the maximum and capped at 12",
           [tg.bars(count, 100) for count in (0, 1, 50, 100, 400)] == [0, 1, 6, 12, 12],
           str([tg.bars(count, 100) for count in (0, 1, 50, 100, 400)]))
     check("empty and malformed events still render",
-          tg.preview_body({"examples": [None], "per_day": "nope"}).startswith("<b>Preview</b>")
-          and tg.Turn().body() == "Working…" and tg.number_of(True) is None and tg.text_of(None) == "",
+          tg.preview_body({"examples": [None], "per_day": "nope"}).startswith("<b>What we found</b>")
+          and tg.Turn().body() == "Working…" and tg.number_of(True) is None and tg.text_of(None) == ""
+          and tg.chart_body({"bars": "nope"}) == "" and tg.Turn().details() == [] and tg.pack([]) == [],
           repr(tg.preview_body({})))
+    check("everything a person reads is written in plain words, mark by mark",
+          tg.say("posts - most on Sep 10 · 4,821 · sentiment fell; then it rose") ==
+          "posts, most on Sep 10, 4,821, sentiment fell. Then it rose"
+          and tg.say("Sep 9 -> Sep 11") == "Sep 9 to Sep 11" and tg.rich("a — **b**") == "a, <b>b</b>",
+          repr(tg.say("posts - most on Sep 10 · 4,821 · sentiment fell; then it rose")))
+    check("a date reads as Sep 9, a live bucket label is left alone, and a count is plain",
+          [tg.day_words(value) for value in ("2026-09-09", "2025-01-02", "19:05", "2026-13-01", None)]
+          == ["Sep 9", "Jan 2 2025", "19:05", "2026-13-01", ""]
+          and (tg.posts_words(1), tg.posts_words(7221)) == ("1 post", "7,221 posts"),
+          str([tg.day_words(value) for value in ("2026-09-09", "2025-01-02", "19:05")]))
+    check("a length is the same words as the page, and a step's own length has one decimal",
+          [tg.duration_words(ms) for ms in (1000, 22000, 65000, 120000, None, -5)]
+          == ["1 second", "22 seconds", "1 minute 5 seconds", "2 minutes", "", ""]
+          and [tg.duration_words(ms, exact=True) for ms in (3100, 9960, 1000)] == ["3.1 seconds", "10 seconds", "1 second"],
+          str([tg.duration_words(ms) for ms in (22000, 65000, 120000)]))
+    paths = ("/api/charts/a.png", "/api/../../secret", "http://evil/api/x.png", "//evil/api/x.png", "api/x.png",
+             "/api/%2e%2e/%2e%2e/secret", "/api/x/..%2f..%2fsecret", "/api/x?y=/api/z", "/api/x#/api/y",
+             "/api/a:b@evil/x.png", "", None, 7)
+    check("only our own API on our own host is ever fetched for a chart",
+          [tg.picture_path(value) for value in paths] == ["/api/charts/a.png"] + [""] * 12,
+          str([tg.picture_path(value) for value in paths[:3] + paths[5:7]]))
+    family = "\U0001f468" + chr(0x200d) + "\U0001f469" + chr(0x200d) + "\U0001f466"  # one emoji, held together by joiners
+    arabic = "".join(map(chr, (0x645, 0x631, 0x62d, 0x628, 0x627)))
+    check("a character a reader cannot see never reaches the chat, and real writing is untouched",
+          tg.say(f"see {FLIP} now") == "see gnp.exe now" and tg.clean(f"a{chr(0x2066)}b{chr(0x2069)}c\x00d\x07e") == "abcde"
+          and tg.say(f"{family} {arabic}\ttab\nline") == f"{family} {arabic}\ttab\nline"
+          and tg.chart_caption({"title": f"AI {FLIP}", "caption": ""}) == "AI gnp.exe"
+          and tg.brief_caption({"title": f"AI {FLIP}", "segments": []}) == "AI gnp.exe",
+          repr(tg.say(f"see {FLIP} now")))
+    check("a file somebody edited by hand cannot stop the bot from starting",
+          tg.CHAT_ID.fullmatch("-100123") and not tg.CHAT_ID.fullmatch("--5") and not tg.CHAT_ID.fullmatch("1e5")
+          and bool(tg.SESSION.fullmatch("b6d9f0a2-1c3e-4a5b-8d7f-0123456789ab"))
+          and not tg.SESSION.fullmatch("../../../pwned"),
+          "a chat id is digits, a session is a uuid, and neither is trusted to be one")
+    check("a chart with no picture becomes its own bars, from either shape of row",
+          tg.BLOCK * 12 in tg.chart_body({"title": "Posts a day", "bars": [{"label": "2026-09-09", "value": 10},
+                                                                           ["2026-09-10", 5]]})
+          and "Sep 9" in tg.chart_body({"bars": [{"day": "2026-09-09", "count": 10}]})
+          and "<b>Posts a day</b>" in tg.chart_body({"title": "Posts a day", "bars": [["a", 1]]}),
+          repr([line for line in tg.chart_body({"bars": [{"label": "2026-09-09", "value": 10}, ["2026-09-10", 5]]}).splitlines()]))
+    check("the exact request is printed like the page's own panel, whatever it holds",
+          tg.request_text({"tool": "mcp__harness__preview_keywords", "input": {"keywords": ["AI"]}})
+          == 'mcp__harness__preview_keywords\n{\n  "keywords": [\n    "AI"\n  ]\n}'
+          and tg.request_text(None).startswith("(unknown tool)") and tg.request_text({"input": {1, 2}}).endswith("could not be shown)"),
+          repr(tg.request_text({"tool": "x", "input": None})))
+    check("details messages hold whole steps, and one too big for a message gets its own",
+          tg.pack(["a" * 100, "b" * 100], limit=250) == ["a" * 100 + "\n\n" + "b" * 100]
+          and tg.pack(["a" * 200, "b" * 200], limit=250) == ["a" * 200, "b" * 200]
+          and tg.pack(["a" * 400], limit=250) == ["a" * 400],
+          f"{len(tg.pack(['a' * 200, 'b' * 200], limit=250))} messages for two blocks of 200")
     times = ("7", "7:30 2", "7am", "12am", "9pm 9", "19:05 1min", "24:00", "7:60", "13pm", "soon", "")
     check("a schedule reads clock times, caps the length at three minutes and refuses what is not a time",
           [tg.parse_plan(text) for text in times] == [("07:00", 3, False), ("07:30", 2, False), ("07:00", 3, False), ("00:00", 3, False),
@@ -842,6 +1328,10 @@ def pure_functions():
     check("a caption fits Telegram's 1024 and a malformed brief still renders",
           len(tg.brief_caption(long_brief)) <= 1024 and tg.brief_caption({}) == "Your morning brief" and tg.brief_script({"segments": [None]}) == "",
           f"{len(tg.brief_caption(long_brief))} characters")
+    check("a caption is in plain words too, and keeps its list marks",
+          tg.brief_caption({"title": "AI labs — day two", "segments": [{"stories": [{"title": "A model lands; at last"}]}]})
+          == "AI labs, day two\n- A model lands. At last",
+          repr(tg.brief_caption({"title": "AI labs — day two", "segments": [{"stories": [{"title": "A model lands; at last"}]}]})))
 
 
 async def main():
@@ -855,12 +1345,20 @@ async def main():
     await busy_and_commands()
     await pairing_and_refusal()
     await confirm_flow()
+    await details_command()
+    await details_flood()
+    await chart_cards()
+    await hostile_cards()
+    await brief_cards()
     await schedule_commands()
     await scheduled_delivery()
     await brief_on_demand()
     await brief_failures()
+    await blocked_network()
+    await one_voice()
     await conflict_and_bad_token()
     no_token()
+    hand_edited_files()
     console_encoding()
     pure_functions()
     leaked = [part for part in (TOKEN, TOKEN.split(":")[1]) if part in captured()]

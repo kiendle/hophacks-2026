@@ -1,0 +1,20 @@
+/* The audio brief card in the chat. brief.js adds this sheet itself, because index.html belongs to the
+   chat and a plug-in that is not installed must cost the page nothing. The card borrows .card and
+   .card-title from chat.css, so it sits in the answer looking like every other card. */
+
+.brief-card { display: grid; gap: 9px; }
+.brief-title { margin: 0; }
+.brief-status { margin: 0; font-size: 11.5px; line-height: 1.5; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.brief-player { display: grid; gap: 6px; }
+.brief-audio { width: 100%; height: 34px; border-radius: 9px; }
+.brief-note { margin: 0; font-size: 10.5px; color: var(--muted); }
+
+.brief-stories { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.brief-stories:not(:empty) { padding-top: 10px; border-top: 1px solid var(--border); }
+.brief-stories li {
+  font-size: 11.5px; line-height: 1.55; color: #202b28; padding-left: 12px; position: relative; overflow-wrap: anywhere;
+}
+.brief-stories li::before {
+  content: ""; position: absolute; left: 0; top: 7px; width: 5px; height: 5px; border-radius: 50%; background: var(--green);
+}

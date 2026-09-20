@@ -1,0 +1,433 @@
+{
+  "chart_id": "share_daily__group",
+  "type": "line",
+  "title": "Share of relevant posts by group per day",
+  "x": {
+    "field": "day",
+    "type": "date"
+  },
+  "y": {
+    "field": "share",
+    "unit": "share of relevant posts 0..1"
+  },
+  "series": [
+    {
+      "name": "alarm and agreement",
+      "points": [
+        {
+          "x": "2026-09-06",
+          "y": 0.058824,
+          "count": 5,
+          "n": 85,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-07",
+          "y": 0.077519,
+          "count": 10,
+          "n": 129,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-08",
+          "y": 0.05814,
+          "count": 10,
+          "n": 172,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-09",
+          "y": 0.266319,
+          "count": 102,
+          "n": 383,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-10",
+          "y": 0.201717,
+          "count": 47,
+          "n": 233,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-11",
+          "y": 0.189474,
+          "count": 36,
+          "n": 190,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-12",
+          "y": 0.204348,
+          "count": 47,
+          "n": 230,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-13",
+          "y": 0.207407,
+          "count": 56,
+          "n": 270,
+          "sampled_fraction": 1.0
+        }
+      ]
+    },
+    {
+      "name": "doubt and dismissal",
+      "points": [
+        {
+          "x": "2026-09-06",
+          "y": 0.035294,
+          "count": 3,
+          "n": 85,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-07",
+          "y": 0.062016,
+          "count": 8,
+          "n": 129,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-08",
+          "y": 0.034884,
+          "count": 6,
+          "n": 172,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-09",
+          "y": 0.044386,
+          "count": 17,
+          "n": 383,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-10",
+          "y": 0.081545,
+          "count": 19,
+          "n": 233,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-11",
+          "y": 0.031579,
+          "count": 6,
+          "n": 190,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-12",
+          "y": 0.06087,
+          "count": 14,
+          "n": 230,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-13",
+          "y": 0.066667,
+          "count": 18,
+          "n": 270,
+          "sampled_fraction": 1.0
+        }
+      ]
+    },
+    {
+      "name": "blame on companies",
+      "points": [
+        {
+          "x": "2026-09-06",
+          "y": 0.141176,
+          "count": 12,
+          "n": 85,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-07",
+          "y": 0.139535,
+          "count": 18,
+          "n": 129,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-08",
+          "y": 0.168605,
+          "count": 29,
+          "n": 172,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-09",
+          "y": 0.18799,
+          "count": 72,
+          "n": 383,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-10",
+          "y": 0.128755,
+          "count": 30,
+          "n": 233,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-11",
+          "y": 0.126316,
+          "count": 24,
+          "n": 190,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-12",
+          "y": 0.16087,
+          "count": 37,
+          "n": 230,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-13",
+          "y": 0.144444,
+          "count": 39,
+          "n": 270,
+          "sampled_fraction": 1.0
+        }
+      ]
+    },
+    {
+      "name": "jokes",
+      "points": [
+        {
+          "x": "2026-09-06",
+          "y": 0.070588,
+          "count": 6,
+          "n": 85,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-07",
+          "y": 0.139535,
+          "count": 18,
+          "n": 129,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-08",
+          "y": 0.139535,
+          "count": 24,
+          "n": 172,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-09",
+          "y": 0.086162,
+          "count": 33,
+          "n": 383,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-10",
+          "y": 0.081545,
+          "count": 19,
+          "n": 233,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-11",
+          "y": 0.078947,
+          "count": 15,
+          "n": 190,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-12",
+          "y": 0.047826,
+          "count": 11,
+          "n": 230,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-13",
+          "y": 0.062963,
+          "count": 17,
+          "n": 270,
+          "sampled_fraction": 1.0
+        }
+      ]
+    },
+    {
+      "name": "news",
+      "points": [
+        {
+          "x": "2026-09-06",
+          "y": 0.541176,
+          "count": 46,
+          "n": 85,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-07",
+          "y": 0.449612,
+          "count": 58,
+          "n": 129,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-08",
+          "y": 0.447674,
+          "count": 77,
+          "n": 172,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-09",
+          "y": 0.334204,
+          "count": 128,
+          "n": 383,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-10",
+          "y": 0.420601,
+          "count": 98,
+          "n": 233,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-11",
+          "y": 0.515789,
+          "count": 98,
+          "n": 190,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-12",
+          "y": 0.478261,
+          "count": 110,
+          "n": 230,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-13",
+          "y": 0.437037,
+          "count": 118,
+          "n": 270,
+          "sampled_fraction": 1.0
+        }
+      ]
+    },
+    {
+      "name": "other",
+      "points": [
+        {
+          "x": "2026-09-06",
+          "y": 0.152941,
+          "count": 13,
+          "n": 85,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-07",
+          "y": 0.131783,
+          "count": 17,
+          "n": 129,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-08",
+          "y": 0.151163,
+          "count": 26,
+          "n": 172,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-09",
+          "y": 0.08094,
+          "count": 31,
+          "n": 383,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-10",
+          "y": 0.085837,
+          "count": 20,
+          "n": 233,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-11",
+          "y": 0.057895,
+          "count": 11,
+          "n": 190,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-12",
+          "y": 0.047826,
+          "count": 11,
+          "n": 230,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-13",
+          "y": 0.081481,
+          "count": 22,
+          "n": 270,
+          "sampled_fraction": 1.0
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "start": {
+      "x": "2026-09-06",
+      "y": 0.058824,
+      "series": "alarm and agreement"
+    },
+    "end": {
+      "x": "2026-09-13",
+      "y": 0.081481,
+      "series": "other"
+    },
+    "min": {
+      "x": "2026-09-11",
+      "y": 0.031579,
+      "series": "doubt and dismissal"
+    },
+    "max": {
+      "x": "2026-09-06",
+      "y": 0.541176,
+      "series": "news"
+    }
+  },
+  "annotations": [
+    {
+      "x": "2026-09-09",
+      "kind": "largest_change",
+      "delta": 0.208179,
+      "from": "2026-09-08",
+      "days_apart": 1,
+      "series": "alarm and agreement"
+    },
+    {
+      "x": "2026-09-06",
+      "kind": "low_n",
+      "n": 85
+    }
+  ],
+  "method": {
+    "relevance_gate": 0.5,
+    "n_levels": 5,
+    "denominator": "relevant scored posts per day",
+    "counts": "distinct tweet IDs"
+  },
+  "drilldown": {
+    "tool": "get_posts",
+    "args_template": {
+      "from": "{x}",
+      "to": "{x}+1d",
+      "question": "group",
+      "label": "{series}"
+    }
+  }
+}

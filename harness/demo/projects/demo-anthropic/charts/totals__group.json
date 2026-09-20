@@ -1,0 +1,102 @@
+{
+  "chart_id": "totals__group",
+  "type": "bar",
+  "title": "Relevant posts by group, whole window",
+  "x": {
+    "field": "option",
+    "type": "string"
+  },
+  "y": {
+    "field": "posts",
+    "unit": "posts"
+  },
+  "series": [
+    {
+      "name": "group",
+      "points": [
+        {
+          "x": "alarm and agreement",
+          "y": 313,
+          "n": 313,
+          "share": 0.184988,
+          "of": 1692
+        },
+        {
+          "x": "doubt and dismissal",
+          "y": 91,
+          "n": 91,
+          "share": 0.053783,
+          "of": 1692
+        },
+        {
+          "x": "blame on companies",
+          "y": 261,
+          "n": 261,
+          "share": 0.154255,
+          "of": 1692
+        },
+        {
+          "x": "jokes",
+          "y": 143,
+          "n": 143,
+          "share": 0.084515,
+          "of": 1692
+        },
+        {
+          "x": "news",
+          "y": 733,
+          "n": 733,
+          "share": 0.433215,
+          "of": 1692
+        },
+        {
+          "x": "other",
+          "y": 151,
+          "n": 151,
+          "share": 0.089243,
+          "of": 1692
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "start": {
+      "x": "alarm and agreement",
+      "y": 313
+    },
+    "end": {
+      "x": "other",
+      "y": 151
+    },
+    "min": {
+      "x": "doubt and dismissal",
+      "y": 91
+    },
+    "max": {
+      "x": "news",
+      "y": 733
+    }
+  },
+  "annotations": [
+    {
+      "x": "doubt and dismissal",
+      "kind": "low_n",
+      "n": 91
+    }
+  ],
+  "method": {
+    "relevance_gate": 0.5,
+    "n_levels": 5,
+    "denominator": "relevant scored posts in the window",
+    "counts": "distinct tweet IDs"
+  },
+  "drilldown": {
+    "tool": "get_posts",
+    "args_template": {
+      "from": "2026-09-06",
+      "to": "2026-09-14",
+      "question": "group",
+      "label": "{x}"
+    }
+  }
+}

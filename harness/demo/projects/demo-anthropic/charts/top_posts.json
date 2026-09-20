@@ -1,0 +1,273 @@
+{
+  "chart_id": "top_posts",
+  "type": "table",
+  "title": "Most liked relevant posts",
+  "x": {
+    "field": "id",
+    "type": "string"
+  },
+  "y": {
+    "field": "like_count",
+    "unit": "likes"
+  },
+  "series": [
+    {
+      "name": "top posts",
+      "points": [
+        {
+          "x": "2097476196791709843",
+          "y": 801270,
+          "id": "2097476196791709843",
+          "day": "2026-09-09",
+          "like_count": 801270,
+          "sentiment": -0.775,
+          "sentiment_confidence": 0.63,
+          "body": "I resigned from Anthropic today. I spent the last three years doing pretraining research at both OpenAI and Anthropic. Neither company is acting responsibly. They are racing straight to self-improving superintelligence and gambling with our lives. More thoughts below.",
+          "group": "blame on companies"
+        },
+        {
+          "x": "2098773920774074715",
+          "y": 88431,
+          "id": "2098773920774074715",
+          "day": "2026-09-12",
+          "like_count": 88431,
+          "sentiment": 0.04,
+          "sentiment_confidence": 0.67,
+          "body": "We Must Pace the Frontier: I’ve written a new essay on why the AI industry should slow down, with a three-part plan for doing so.\n\nAnthropic is unilaterally committing to the first of these steps. We’ll provide third-party evaluators with permanent, employee-level access to our s",
+          "group": "alarm and agreement"
+        },
+        {
+          "x": "2098973625252708460",
+          "y": 72093,
+          "id": "2098973625252708460",
+          "day": "2026-09-13",
+          "like_count": 72093,
+          "sentiment": -0.5,
+          "sentiment_confidence": 0.89,
+          "body": "Dario has written that we need to “pace the frontier,” and Sam has agreed. People may be surprised by my response: go ahead.\n\nYou guys are the frontier. By any reasonable metric — market share, revenue growth, model capability — the two of you have a duopoly on frontier intellige",
+          "group": "blame on companies"
+        },
+        {
+          "x": "2097780683745988995",
+          "y": 56085,
+          "id": "2097780683745988995",
+          "day": "2026-09-09",
+          "like_count": 56085,
+          "sentiment": -0.225,
+          "sentiment_confidence": 0.3,
+          "body": "Anthropic: We are going to kill you\n\nOpenAI: We are going to kill you first\n\nApple: now you can fold iPhone",
+          "group": "jokes"
+        },
+        {
+          "x": "2097600761270296635",
+          "y": 46745,
+          "id": "2097600761270296635",
+          "day": "2026-09-09",
+          "like_count": 46745,
+          "sentiment": -0.95,
+          "sentiment_confidence": 0.91,
+          "body": "BREAKING:\n\nAnthropic researcher Jacob Coxon resigns, warning that AI systems will soon be able to hack anything and that the company is racing toward superintelligence that could kill us all by the end of the decade. https://t.co/YV3tRcL8Iv",
+          "group": "alarm and agreement"
+        },
+        {
+          "x": "2098798209455870057",
+          "y": 39994,
+          "id": "2098798209455870057",
+          "day": "2026-09-12",
+          "like_count": 39994,
+          "sentiment": -0.995,
+          "sentiment_confidence": 0.99,
+          "body": "Ok this is starting to feel like a f*cking disaster.\n\nThe CEO of Anthropic just published an article admitting AI is already building the next generation of AI by itself.\n\nHe says within 6 to 12 months a rogue swarm could take over the entire internet and cause hundreds of https:",
+          "group": "alarm and agreement"
+        },
+        {
+          "x": "2097514328429846569",
+          "y": 35279,
+          "id": "2097514328429846569",
+          "day": "2026-09-09",
+          "like_count": 35279,
+          "sentiment": -0.66,
+          "sentiment_confidence": 0.73,
+          "body": "Crazy to think that in 2026 we've had:\n\n• Anthropic's head of safeguards quit, warning \"the world is in peril\" (Feb)\n• OpenAI dissolved its own mission alignment team (Feb)\n• Unrestricted AI usage for the Pentagon (causing several researchers to quit)\n• Several AI models",
+          "group": "alarm and agreement"
+        },
+        {
+          "x": "2099231290730135794",
+          "y": 31558,
+          "id": "2099231290730135794",
+          "day": "2026-09-13",
+          "like_count": 31558,
+          "sentiment": -0.345,
+          "sentiment_confidence": 0.52,
+          "body": "BREAKING: Bernie Sanders has proposed a 20-year prison sentence for AI developers who move forward with Artificial Superintelligence plans, a penalty comparable to illegally developing rogue nuclear weapons.",
+          "group": "alarm and agreement"
+        },
+        {
+          "x": "2097492258438201671",
+          "y": 30724,
+          "id": "2097492258438201671",
+          "day": "2026-09-09",
+          "like_count": 30724,
+          "sentiment": -0.845,
+          "sentiment_confidence": 0.74,
+          "body": "BREAKING: Anthropic researcher Jacob Coxon resigns, warning the company is racing toward superintelligence that “could kill us all by the end of the decade.”",
+          "group": "news"
+        },
+        {
+          "x": "2097522348056518726",
+          "y": 27479,
+          "id": "2097522348056518726",
+          "day": "2026-09-09",
+          "like_count": 27479,
+          "sentiment": -0.525,
+          "sentiment_confidence": 0.95,
+          "body": "AI is probably the biggest prisoner’s dilemma we’ve ever created. Everyone knows slowing down might be safer. But if OpenAI slows down and Anthropic doesn’t, OpenAI loses. If the US slows down and China doesn’t, the US loses. So nobody slows down.\n\nThat’s what makes this so",
+          "group": "alarm and agreement"
+        },
+        {
+          "x": "2098480585119572317",
+          "y": 26531,
+          "id": "2098480585119572317",
+          "day": "2026-09-11",
+          "like_count": 26531,
+          "sentiment": -0.49,
+          "sentiment_confidence": 0.97,
+          "body": "I left Anthropic's safety team two weeks ago. Now feels like a good moment to explain why. \n\nAI companies are racing to build machines that are much smarter than any human, and we may not survive this. I want to work from the outside to ensure the public is informed about these r",
+          "group": "alarm and agreement"
+        },
+        {
+          "x": "2097679796687769689",
+          "y": 25499,
+          "id": "2097679796687769689",
+          "day": "2026-09-09",
+          "like_count": 25499,
+          "sentiment": 0.055,
+          "sentiment_confidence": 0.91,
+          "body": "Anthropic’s Economics team is sharing a new model of how AI might affect economic growth, jobs, wages, and more by 2030.\n\nExplore the scenarios, tell us what you think will happen, and see how your answers compare to more than 10,000 Americans. https://t.co/AvQlEZNxR0",
+          "group": "news"
+        },
+        {
+          "x": "2098431473539788892",
+          "y": 25188,
+          "id": "2098431473539788892",
+          "day": "2026-09-11",
+          "like_count": 25188,
+          "sentiment": -0.26,
+          "sentiment_confidence": 0.57,
+          "body": "JUST IN: Yemen's Houthis used Anthropic's Claude AI to build ballistic missiles. https://t.co/WlaGxKXgVS",
+          "group": "news"
+        },
+        {
+          "x": "2097720574500102615",
+          "y": 23133,
+          "id": "2097720574500102615",
+          "day": "2026-09-09",
+          "like_count": 23133,
+          "sentiment": -0.495,
+          "sentiment_confidence": 0.98,
+          "body": "I worked at Google DeepMind and now at Anthropic. This is a common sentiment amongst my peers. \n\n(I write this in personal capacity.)\n\nThere is not yet a viable scientific plan to solve risks from recursively self-improving AI. Please look up!",
+          "group": "alarm and agreement"
+        },
+        {
+          "x": "2097913768852480455",
+          "y": 22972,
+          "id": "2097913768852480455",
+          "day": "2026-09-10",
+          "like_count": 22972,
+          "sentiment": -0.19,
+          "sentiment_confidence": 0.68,
+          "body": "Former OpenAI and Anthropic researcher Jacob Coxon, who publicly resigned from Anthropic yesterday with a stark warning about AI safety, was interviewed by Anderson Cooper on his show this evening. https://t.co/guCU547VAD",
+          "group": "news"
+        },
+        {
+          "x": "2097769059937047002",
+          "y": 22926,
+          "id": "2097769059937047002",
+          "day": "2026-09-09",
+          "like_count": 22926,
+          "sentiment": -0.47,
+          "sentiment_confidence": 0.94,
+          "body": "OpenAI: “We’ve solved math” \n\nAnthropic: “Our AI is so powerful it’s going to kill you”\n\nGoogle: “Introducing Gemini 3.9 Flash! It’s 30% faster and 15% worse than the last Gemini”",
+          "group": "jokes"
+        },
+        {
+          "x": "2098115046069223631",
+          "y": 21828,
+          "id": "2098115046069223631",
+          "day": "2026-09-10",
+          "like_count": 21828,
+          "sentiment": -0.555,
+          "sentiment_confidence": 0.53,
+          "body": "Anthropic’s new threat report is absolutely insane.\n\nThey claim:\n\n-Alibaba extracted 151M+ Claude exchanges to help train Qwen\n-Kimi secretly routed some users to Claude without them knowing\n-DeepSeek apparently did the same\n-A weapons group used multiple Claude instances as an",
+          "group": "news"
+        },
+        {
+          "x": "2098147407666049324",
+          "y": 21544,
+          "id": "2098147407666049324",
+          "day": "2026-09-10",
+          "like_count": 21544,
+          "sentiment": -0.72,
+          "sentiment_confidence": 0.53,
+          "body": "Holy shit. Anthropic caught Iran using Claude to target Navy bases, automate dossiers on Americans, and run influence campaigns on US social media. Details are insane. The morons uploaded everything including the organization plans of the Ayatollah's funderal lmao https://t.co/yD",
+          "group": "news"
+        },
+        {
+          "x": "2097734040921035186",
+          "y": 21219,
+          "id": "2097734040921035186",
+          "day": "2026-09-09",
+          "like_count": 21219,
+          "sentiment": -0.4,
+          "sentiment_confidence": 0.25,
+          "body": "Anthropic: We are going to kill you\n\nOpenAI: We are going to kill you first\n\nApple: You can take even better pictures now :)",
+          "group": "jokes"
+        },
+        {
+          "x": "2097861257714172270",
+          "y": 21140,
+          "id": "2097861257714172270",
+          "day": "2026-09-10",
+          "like_count": 21140,
+          "sentiment": -0.42,
+          "sentiment_confidence": 0.87,
+          "body": "Jacob was a senior researcher who joined Anthropic in May. My Anthropic colleagues and I had been trying to recruit him for ~2 years, because we knew he was a strong researcher at OpenAI. Before he left, I pitched him to stay and join my team, and I was sad he decided to leave,",
+          "group": "news"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "start": {
+      "x": "2097476196791709843",
+      "y": 801270
+    },
+    "end": {
+      "x": "2097861257714172270",
+      "y": 21140
+    },
+    "min": {
+      "x": "2097861257714172270",
+      "y": 21140
+    },
+    "max": {
+      "x": "2097476196791709843",
+      "y": 801270
+    }
+  },
+  "annotations": [],
+  "method": {
+    "relevance_gate": 0.5,
+    "n_levels": 5,
+    "denominator": "relevant scored posts in the window",
+    "counts": "distinct tweet IDs"
+  },
+  "drilldown": {
+    "tool": "get_posts",
+    "args_template": {
+      "from": "2026-09-06",
+      "to": "2026-09-14",
+      "sort": "engagement"
+    }
+  }
+}

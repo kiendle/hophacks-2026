@@ -1,0 +1,21 @@
+/* Chart cards, on top of /chat.css. The frame is .card, so a chart sits in the answer exactly like
+   the preview and project cards; only the picture and the three lines under it are new. */
+
+.chart-card { display: grid; gap: 0; }
+
+.chart-picture {
+  display: block; width: 100%; height: auto; margin: 0 0 10px;
+  border: 1px solid var(--border); border-radius: 9px; background: #fcfcfb;
+}
+
+.chart-caption { font-size: 12px; line-height: 1.5; margin: 0; color: #202b28; overflow-wrap: anywhere; }
+
+.chart-points {
+  display: grid; gap: 3px; margin: 11px 0 0;
+  border-top: 1px solid var(--border); padding-top: 10px;
+}
+.chart-point {
+  margin: 0; font-size: 11.5px; line-height: 1.5; color: #45594b;
+  font-variant-numeric: tabular-nums; overflow-wrap: anywhere;
+}
+.chart-point-label { color: var(--muted); font-weight: 600; }

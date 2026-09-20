@@ -1,0 +1,129 @@
+{
+  "chart_id": "volume_daily",
+  "type": "line",
+  "title": "Matching posts per day",
+  "x": {
+    "field": "day",
+    "type": "date"
+  },
+  "y": {
+    "field": "matched_posts",
+    "unit": "posts per day"
+  },
+  "series": [
+    {
+      "name": "matching original posts",
+      "points": [
+        {
+          "x": "2026-09-06",
+          "y": 92,
+          "n": 92,
+          "per_100k": 31.745703,
+          "originals": 289803,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-07",
+          "y": 138,
+          "n": 138,
+          "per_100k": 39.356156,
+          "originals": 350644,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-08",
+          "y": 177,
+          "n": 177,
+          "per_100k": 58.706078,
+          "originals": 301502,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-09",
+          "y": 396,
+          "n": 396,
+          "per_100k": 175.116634,
+          "originals": 226135,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-10",
+          "y": 239,
+          "n": 239,
+          "per_100k": 180.457713,
+          "originals": 132441,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-11",
+          "y": 196,
+          "n": 196,
+          "per_100k": 148.064212,
+          "originals": 132375,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-12",
+          "y": 235,
+          "n": 235,
+          "per_100k": 156.927166,
+          "originals": 149751,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-13",
+          "y": 274,
+          "n": 274,
+          "per_100k": 139.805905,
+          "originals": 195986,
+          "sampled_fraction": 1.0
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "start": {
+      "x": "2026-09-06",
+      "y": 92
+    },
+    "end": {
+      "x": "2026-09-13",
+      "y": 274
+    },
+    "min": {
+      "x": "2026-09-06",
+      "y": 92
+    },
+    "max": {
+      "x": "2026-09-09",
+      "y": 396
+    }
+  },
+  "annotations": [
+    {
+      "x": "2026-09-09",
+      "kind": "largest_change",
+      "delta": 219,
+      "from": "2026-09-08",
+      "days_apart": 1
+    },
+    {
+      "x": "2026-09-06",
+      "kind": "low_n",
+      "n": 92
+    }
+  ],
+  "method": {
+    "relevance_gate": 0.5,
+    "n_levels": 5,
+    "denominator": "originals, en, per day (topic-analysis/daily-denominators.csv)",
+    "counts": "distinct tweet IDs"
+  },
+  "drilldown": {
+    "tool": "get_posts",
+    "args_template": {
+      "from": "{x}",
+      "to": "{x}+1d"
+    }
+  }
+}

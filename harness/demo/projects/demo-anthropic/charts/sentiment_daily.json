@@ -1,0 +1,130 @@
+{
+  "chart_id": "sentiment_daily",
+  "type": "line",
+  "title": "Mean sentiment per day (likes-weighted)",
+  "x": {
+    "field": "day",
+    "type": "date"
+  },
+  "y": {
+    "field": "mean_sentiment",
+    "unit": "score -1..+1"
+  },
+  "series": [
+    {
+      "name": "all relevant posts",
+      "points": [
+        {
+          "x": "2026-09-06",
+          "y": -0.204973,
+          "y_unweighted": 0.023765,
+          "n": 85,
+          "n_gated_out": 7,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-07",
+          "y": 0.358535,
+          "y_unweighted": -0.020775,
+          "n": 129,
+          "n_gated_out": 9,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-08",
+          "y": 0.024412,
+          "y_unweighted": 0.012442,
+          "n": 172,
+          "n_gated_out": 5,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-09",
+          "y": -0.634428,
+          "y_unweighted": -0.285418,
+          "n": 383,
+          "n_gated_out": 13,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-10",
+          "y": -0.373516,
+          "y_unweighted": -0.237339,
+          "n": 233,
+          "n_gated_out": 6,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-11",
+          "y": -0.442912,
+          "y_unweighted": -0.214079,
+          "n": 190,
+          "n_gated_out": 6,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-12",
+          "y": -0.342179,
+          "y_unweighted": -0.249109,
+          "n": 230,
+          "n_gated_out": 5,
+          "sampled_fraction": 1.0
+        },
+        {
+          "x": "2026-09-13",
+          "y": -0.361228,
+          "y_unweighted": -0.211926,
+          "n": 270,
+          "n_gated_out": 4,
+          "sampled_fraction": 1.0
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "start": {
+      "x": "2026-09-06",
+      "y": -0.204973
+    },
+    "end": {
+      "x": "2026-09-13",
+      "y": -0.361228
+    },
+    "min": {
+      "x": "2026-09-09",
+      "y": -0.634428
+    },
+    "max": {
+      "x": "2026-09-07",
+      "y": 0.358535
+    }
+  },
+  "annotations": [
+    {
+      "x": "2026-09-09",
+      "kind": "largest_change",
+      "delta": -0.65884,
+      "from": "2026-09-08",
+      "days_apart": 1
+    },
+    {
+      "x": "2026-09-06",
+      "kind": "low_n",
+      "n": 85
+    }
+  ],
+  "method": {
+    "weighting": "likes (1 + like_count)",
+    "relevance_gate": 0.5,
+    "n_levels": 5,
+    "denominator": "relevant scored posts per day",
+    "counts": "distinct tweet IDs"
+  },
+  "drilldown": {
+    "tool": "get_posts",
+    "args_template": {
+      "from": "{x}",
+      "to": "{x}+1d"
+    }
+  }
+}
