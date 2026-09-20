@@ -1,0 +1,111 @@
+/* Ask panel conversation. */
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 12px 2px;
+}
+
+.msg {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.msg-user {
+  align-items: flex-end;
+}
+
+.msg-bubble {
+  max-width: 88%;
+  padding: 8px 12px;
+  border-radius: 14px 14px 4px 14px;
+  background: #fff;
+  border: 1px solid var(--border);
+  white-space: pre-wrap;
+}
+
+.msg-scope {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.msg-scope-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.msg-text {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.msg-error {
+  margin: 0;
+  color: #c0392b;
+  font-size: 13px;
+}
+
+.caret {
+  display: inline-block;
+  width: 7px;
+  height: 14px;
+  margin-left: 2px;
+  vertical-align: -2px;
+  background: var(--text);
+  animation: ask-blink 1s steps(1) infinite;
+}
+
+.typing {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+  animation: ask-blink 1s ease-in-out infinite;
+}
+
+@keyframes ask-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.cite {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--muted);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 12.5px;
+}
+
+.cite-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.cite-head .handle {
+  font-size: 12.5px;
+}
+
+.cite-score {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.cite-text {
+  margin: 3px 0 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
