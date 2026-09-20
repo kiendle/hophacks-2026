@@ -47,16 +47,19 @@ These are investigation prompts, not predetermined conclusions. Historical repla
 
 Jev is the System 1 model used in the enrichment pipeline. The workflow separates inexpensive retrieval from semantic judgment:
 
-```text
-Captured social activity
-        ↓
-Keyword candidate retrieval
-        ↓
-Jev relevance classification for each target
-        ↓
-Target-specific sentiment for accepted targets
-        ↓
-Time-based analysis and exploration
+```mermaid
+flowchart TD
+    historical["Historical Twitter data · Calcifer"] --> capture["Capture text and timestamps"]
+    live["Live Bluesky activity"] --> capture
+    capture --> filtering["Keyword filtering<br/>Aliases, keywords, and context"]
+    filtering --> candidates["Candidate posts"]
+    candidates --> categorization["Jev categorization<br/>Evaluate relevance to each target"]
+    categorization --> accepted{"Any target meets<br/>the relevance cutoff?"}
+    accepted -->|No| others["Others<br/>Skip sentiment analysis"]
+    accepted -->|Yes| sentiment["Jev sentiment analysis<br/>Judge each accepted target independently"]
+    sentiment --> labels["Positive · Negative · Neutral<br/>Mixed · Insufficient evidence"]
+    labels --> enrichment["Cache enrichment<br/>Reuse for compatible text and engagement updates"]
+    enrichment --> analysis["Time-based sentiment analysis<br/>Visualizations and agentic exploration"]
 ```
 
 1. **Capture and preserve.** Retain captured text and timestamps so results can be traced back to the source material.
