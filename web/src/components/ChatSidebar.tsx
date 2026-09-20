@@ -49,7 +49,7 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext, i
   }, [])
 
   useEffect(() => {
-    if (!resizing) return
+    if (!resizing || !active) return
     const { cursor, userSelect } = document.body.style
     document.body.style.cursor = 'col-resize'
     document.body.style.userSelect = 'none'
@@ -57,7 +57,7 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext, i
       document.body.style.cursor = cursor
       document.body.style.userSelect = userSelect
     }
-  }, [resizing])
+  }, [resizing, active])
 
   const [text, setText] = useState('')
   const composer = useRef<HTMLTextAreaElement>(null)
@@ -89,13 +89,13 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext, i
     },
     onActiveChange: active => { if (active && !talking) setLiveStart(messages.length); setTalking(active); if (active) { voice.stopSpeaking(); voice.cancelRecording() } },
   })
+  const { stopSpeaking, cancelRecording } = voice
   useEffect(() => {
     if (active) return
-    voice.stopSpeaking()
-    voice.cancelRecording()
-    setResizing(false)
+    stopSpeaking()
+    cancelRecording()
     drag.current = null
-  }, [active, voice.stopSpeaking, voice.cancelRecording])
+  }, [active, stopSpeaking, cancelRecording])
   const byId = new Map(series.map((s) => [s.id, s]))
   const subtopics = selection.subtopics.map((id) => byId.get(id)).filter((s) => s !== undefined)
   const empty = !selection.range && subtopics.length === 0
