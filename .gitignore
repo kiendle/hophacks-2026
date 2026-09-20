@@ -21,3 +21,5 @@ harness/demo/projects/*/jev_cache*.jsonl
 
 # Local UI server output
 harness/ui-server.*.log
+# Local shared Bluesky journal, inference checkpoint, and control token
+bluesky-automation/data/
