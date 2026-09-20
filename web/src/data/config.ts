@@ -12,6 +12,16 @@ export const LINE_INTERVALS = [
 export const DEFAULT_LINE_INTERVAL = 12 * HOUR
 export const TREND_WINDOW_MS = 24 * HOUR
 
+/** Historical seconds advanced per real second, shared by both chart views. */
+export const PLAYBACK_SPEEDS = [
+  { value: 3600, label: '1h / s' },
+  { value: 14400, label: '4h / s' },
+  { value: 43200, label: '12h / s' },
+  { value: 86400, label: '1d / s' },
+  { value: 259200, label: '3d / s' },
+  { value: 604800, label: '7d / s' },
+] as const
+
 /** Paul Tol's muted scheme: nine colorblind-safe categorical colors. */
 export const SERIES_COLORS = [
   '#CC6677',

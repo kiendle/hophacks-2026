@@ -14,6 +14,9 @@
 .tool-step pre { max-height: 200px; overflow: auto; white-space: pre-wrap; font-size: 10px; padding: 8px; background: #fff; border: 1px solid var(--border); border-radius: 6px; }
 .tool-card { border: 1px solid var(--border); border-radius: 10px; padding: 12px; background: #fff; }
 .tool-card h4 { margin: 0 0 6px; font-size: 12px; font-weight: 600; }
+.tool-preview > summary { color: var(--text); font-size: 12px; font-weight: 600; }
+.tool-preview[open] > summary { margin-bottom: 6px; }
+.tool-example details p { max-height: 240px; overflow-y: auto; overscroll-behavior: contain; }
 .tool-card audio, .tool-chart { display: block; width: 100%; margin: 10px 0; }
 .proposal-status { color: var(--muted); font-size: 11px; margin-bottom: 8px; }
 .proposal-group { padding: 8px 0; border-bottom: 1px solid var(--border); }

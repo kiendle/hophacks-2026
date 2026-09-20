@@ -11,6 +11,7 @@ import { formatRange } from '../format'
 import { sentimentColor } from '../sentimentColor'
 import { BotIcon, CloseIcon, SendIcon, StopIcon } from './icons'
 import { harnessAskClient } from '../ask/harnessClient'
+import { displayHandle, scoredCitations } from '../postPresentation'
 
 interface Props {
   initialQuestion?: string
@@ -212,7 +213,7 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext, i
   )
 }
 
-function Message({ message: m, byId, voice, talking, busy, onConfirm }: { message: ChatMessage; byId: Map<string, Series>; voice: Voice; talking: boolean; busy: boolean; onConfirm: (approved: boolean) => void }) {
+export function Message({ message: m, byId, voice, talking, busy, onConfirm }: { message: ChatMessage; byId: Map<string, Series>; voice: Voice; talking: boolean; busy: boolean; onConfirm: (approved: boolean) => void }) {
   if (m.role === 'user')
     return (
       <div className="msg msg-user">
@@ -232,6 +233,10 @@ function Message({ message: m, byId, voice, talking, busy, onConfirm }: { messag
   return (
     <div className="msg msg-assistant">
       <ToolActivity steps={m.steps} />
+      {m.cards.map((card, index) => <ResultCard key={index} card={card} />)}
+      {scoredCitations(m.citations).map((p) => (
+        <Citation key={p.id} post={p} color={byId.get(p.subtopic)?.color} />
+      ))}
       {m.text && (
         <p className="msg-text">
           {m.text}
@@ -240,23 +245,20 @@ function Message({ message: m, byId, voice, talking, busy, onConfirm }: { messag
       )}
       {!m.text && !m.steps.length && m.status === 'streaming' && <span className="typing" aria-label="Answering" />}
       {m.status === 'error' && <p className="msg-error">No response</p>}
-      {m.cards.map((card, index) => <ResultCard key={index} card={card} />)}
       {m.confirmation && <ConfirmationCard value={m.confirmation} busy={busy} decide={onConfirm} />}
-      {m.citations.map((p) => (
-        <Citation key={p.id} post={p} color={byId.get(p.subtopic)?.color} />
-      ))}
       {m.status === 'done' && m.text && <ReplyActions voice={voice} id={m.id} text={m.text} disabled={busy || talking} />}
     </div>
   )
 }
 
 function Citation({ post, color }: { post: EvidencePost; color?: string }) {
+  const handle = displayHandle(post.handle)
   return (
     <div className="cite" style={{ borderLeftColor: color }}>
       <div className="cite-head">
-        <span className="handle">{post.handle}</span>
-        <span className="cite-score" style={{ color: post.scored === false ? undefined : sentimentColor(post.sentiment) }}>
-          {post.scored === false ? 'Unscored' : post.sentiment.toFixed(1)}
+        {handle && <span className="handle">{handle}</span>}
+        <span className="cite-score" style={{ color: sentimentColor(post.sentiment) }}>
+          {post.sentiment.toFixed(1)}
         </span>
       </div>
       <p className="cite-text">{post.text}</p>

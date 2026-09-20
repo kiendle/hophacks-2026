@@ -1,10 +1,9 @@
+import { useLayoutEffect, useRef, useState } from 'react'
 import type { Post } from '../data/types'
 import { formatCount, formatTime } from '../format'
 import { sentimentColor } from '../sentimentColor'
 import { HeartIcon, ReplyIcon, RetweetIcon } from './icons'
-
-const CARD_WIDTH = 280
-const GAP = 18
+import { displayHandle, hoverCardLayout, postExcerpt } from '../postPresentation'
 
 interface Props {
   post: Post
@@ -13,17 +12,27 @@ interface Props {
 }
 
 export function HoverCard({ post, anchor, bounds }: Props) {
-  const flip = anchor.x + GAP + CARD_WIDTH > bounds.width
-  const left = flip ? anchor.x - GAP - CARD_WIDTH : anchor.x + GAP
-  const top = Math.min(Math.max(anchor.y, 80), bounds.height - 80)
+  const ref = useRef<HTMLDivElement>(null)
+  const [height, setHeight] = useState(0)
+  const layout = hoverCardLayout(anchor, bounds, height)
+  const handle = displayHandle(post.handle)
+  useLayoutEffect(() => {
+    const card = ref.current
+    if (!card) return
+    const measure = () => setHeight(card.getBoundingClientRect().height)
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(card)
+    return () => observer.disconnect()
+  }, [])
 
   return (
-    <div className="card" style={{ left: Math.max(0, left), top, width: CARD_WIDTH }}>
+    <div ref={ref} className="card tweet-card" style={layout}>
       <div className="card-head">
-        <span className="handle">{post.handle}</span>
+        {handle && <span className="handle">{handle}</span>}
         <span className="muted">{post.timeKnown === false ? '—' : formatTime(post.time)}</span>
       </div>
-      <p className="card-text">{post.text}</p>
+      <p className="card-text">{postExcerpt(post.text)}</p>
       <div className="card-foot">
         <div className="card-stats muted">
           <span aria-label={post.periodLikes === undefined ? 'Likes' : 'Likes received in this period'}>

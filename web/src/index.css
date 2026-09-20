@@ -290,7 +290,15 @@ button {
   line-height: 1.45;
 }
 
+.tweet-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: none;
+}
+
 .card-head {
+  flex: none;
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -305,9 +313,16 @@ button {
 
 .card-text {
   margin: 6px 0 10px;
+  min-height: 0;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 8;
 }
 
 .card-foot {
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;

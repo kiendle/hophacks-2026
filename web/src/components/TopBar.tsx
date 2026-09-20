@@ -3,7 +3,7 @@ import { FiltersMenu } from '../app/FiltersMenu'
 import { textOn } from '../color'
 import { formatCount } from '../format'
 import type { Series } from '../data/types'
-import { LINE_INTERVALS } from '../data/config'
+import { LINE_INTERVALS, PLAYBACK_SPEEDS } from '../data/config'
 import { BubblesIcon, ChevronLeftIcon, LineChartIcon, PauseIcon, PlayIcon } from './icons'
 
 export type ViewMode = 'line' | 'bubble'
@@ -101,9 +101,7 @@ export function TopBar({
       </label>}
       <select className="stream-speed" aria-label="Playback speed" value={speed}
         onChange={(e) => onSpeedChange(Number(e.target.value))} disabled={disabled}>
-        <option value={3600}>1h / s</option>
-        <option value={14400}>4h / s</option>
-        <option value={43200}>12h / s</option>
+        {PLAYBACK_SPEEDS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
       </select>
       <button className="round-btn" aria-label={playing ? 'Pause' : 'Play'} onClick={onTogglePlay} disabled={disabled}>
         {playing ? <PauseIcon size={14} /> : <PlayIcon size={14} />}

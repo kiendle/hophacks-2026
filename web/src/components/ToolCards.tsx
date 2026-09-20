@@ -5,6 +5,7 @@ import { postLink } from '../ask/links'
 import type { Brief } from '../brief/types'
 import './tool-cards.css'
 import { AutomationProposalCard } from './AutomationProposalCard'
+import { postExcerpt } from '../postPresentation'
 
 const words = (value: unknown) => typeof value === 'string' ? value : ''
 const rows = (value: unknown): Record<string, unknown>[] => Array.isArray(value) ? value.filter(x => x && typeof x === 'object') : []
@@ -115,17 +116,19 @@ export function ResultCard({ card }: { card: AskCard }) {
   if (card.kind === 'draft') return <details className="tool-card"><summary>Project draft</summary>
     {(Array.isArray(card.lines) ? card.lines as DraftLine[] : []).map((line, i) => <p key={i}><strong>{line.label}: </strong>{line.value}{line.groups?.map(group => <span className="tool-block" key={group.name}>{group.name}: {group.description}</span>)}</p>)}
   </details>
-  if (card.kind === 'preview') return <section className="tool-card"><h4>{words(card.title) || 'Preview'}</h4>
+  if (card.kind === 'preview') return <details className="tool-card tool-preview"><summary>{words(card.title) || 'Preview'}</summary>
     {typeof card.total === 'number' && <p><strong>{card.total.toLocaleString()}</strong> matching posts</p>}
     {words(card.note) && <p className="tool-muted">{words(card.note)}</p>}
     {!!rows(card.perDay).length && <div className="tool-counts">{rows(card.perDay).map((row, i) => <span key={i}>{words(row.day)} <strong>{Number(row.count).toLocaleString()}</strong></span>)}</div>}
     {(Array.isArray(card.examples) ? card.examples as ExamplePost[] : []).map((post, i) => {
       const link = postLink(post.url)
-      return <div className="tool-example" key={post.id || i}><p>{post.body}</p><small>{post.day}{post.likes !== null ? ` · ${post.likes.toLocaleString()} likes` : ''}</small>
-        {post.fullText && post.fullText !== post.body && <details><summary>Show full post</summary><p>{post.fullText}</p></details>}
+      const excerpt = postExcerpt(post.body)
+      const fullText = post.fullText || post.body
+      return <div className="tool-example" key={post.id || i}><p>{excerpt}</p><small>{post.day}{post.likes !== null ? ` · ${post.likes.toLocaleString()} likes` : ''}</small>
+        {fullText !== excerpt && <details><summary>Show full post</summary><p>{fullText}</p></details>}
         {link && <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>}</div>
     })}
-  </section>
+  </details>
   if (card.kind === 'chart') {
     const png = words(card.png_url)
     const safe = /^\/api\/projects\/[a-z0-9_-]{1,60}\/charts\/[a-z0-9_-]{1,60}\.png$/.test(png)

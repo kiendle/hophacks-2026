@@ -125,7 +125,7 @@ export interface EvidencePost {
  */
 export type AskEvent =
   | { type: 'text'; delta: string }
-  /** A post the answer relies on; the UI shows it under the answer. */
+  /** A post the answer relies on; scored citations appear before the answer. */
   | { type: 'citation'; postId: string }
   | { type: 'done' }
   | { type: 'error'; message: string }
