@@ -2,6 +2,7 @@ import type { Post } from '../data/types'
 import { formatCount, formatTime } from '../format'
 import { sentimentColor } from '../sentimentColor'
 import { HeartIcon, ReplyIcon, RetweetIcon } from './icons'
+import { TranslatablePost } from './TranslatablePost'
 
 const CARD_WIDTH = 280
 const GAP = 18
@@ -10,20 +11,28 @@ interface Props {
   post: Post
   anchor: { x: number; y: number }
   bounds: { width: number; height: number }
+  onEnter?: () => void
+  onLeave?: () => void
+  onInteract?: () => void
+  onClose?: () => void
 }
 
-export function HoverCard({ post, anchor, bounds }: Props) {
-  const flip = anchor.x + GAP + CARD_WIDTH > bounds.width
-  const left = flip ? anchor.x - GAP - CARD_WIDTH : anchor.x + GAP
-  const top = Math.min(Math.max(anchor.y, 80), bounds.height - 80)
+export function HoverCard({ post, anchor, bounds, onEnter, onLeave, onInteract, onClose }: Props) {
+  const width = Math.min(CARD_WIDTH, Math.max(180, bounds.width - 16))
+  const flip = anchor.x + GAP + width > bounds.width
+  const left = flip ? anchor.x - GAP - width : anchor.x + GAP
+  const top = Math.max(8, Math.min(anchor.y - 80, bounds.height - 320))
 
   return (
-    <div className="card" style={{ left: Math.max(0, left), top, width: CARD_WIDTH }}>
+    <div className="card post-hover-card" role="region" aria-label="Post preview"
+      onPointerEnter={onEnter} onPointerLeave={onLeave} onFocus={onEnter}
+      style={{ left: Math.max(0, left), top, width, maxHeight: Math.max(100, bounds.height - top - 8) }}>
+      {onClose && <button type="button" className="post-preview-close" aria-label="Close post preview" onClick={onClose}>×</button>}
       <div className="card-head">
         <span className="handle">{post.handle}</span>
         <span className="muted">{post.timeKnown === false ? '—' : formatTime(post.time)}</span>
       </div>
-      <p className="card-text">{post.text}</p>
+      <TranslatablePost text={post.text} className="card-text" onInteract={onInteract} />
       <div className="card-foot">
         <div className="card-stats muted">
           <span aria-label={post.periodLikes === undefined ? 'Likes' : 'Likes received in this period'}>

@@ -2,6 +2,7 @@ import type { Session } from './session'
 import { useEffect, useRef, useState } from 'react'
 import { RecentItem, type RecentChanges } from './RecentItem'
 import { PlusIcon } from '../components/icons'
+import { Logo } from '../components/Logo'
 
 interface Props {
   recents: Session[]
@@ -70,7 +71,7 @@ export function Sidebar({ recents, activeId, onNew, onHome, onOpen, onDelete, on
         }}
       />
       <button className="brand" onClick={onHome}>
-        Sentimeter
+        <Logo />
       </button>
       <button className="new-btn" onClick={onNew}>
         <PlusIcon size={15} />

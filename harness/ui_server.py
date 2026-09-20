@@ -194,4 +194,7 @@ def compose():
 if __name__ == '__main__':
     # Run as a script this file is __main__, and load_plugins would otherwise import a second copy of it.
     sys.modules.setdefault('ui_server', sys.modules[__name__])
-    web.run_app(compose(), host='127.0.0.1', port=int(os.environ.get('PORT', 5196)))
+    application = compose()
+    import replay_api
+    application.on_startup.append(replay_api.warm)  # only here: tests and the combined server compose() without it
+    web.run_app(application, host='127.0.0.1', port=int(os.environ.get('PORT', 5196)))

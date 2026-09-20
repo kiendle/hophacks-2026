@@ -10,6 +10,11 @@ export const LINE_INTERVALS = [
   { value: 24 * HOUR, label: '1d' },
 ] as const
 export const DEFAULT_LINE_INTERVAL = 12 * HOUR
+export const LIVE_INTERVALS = [
+  { value: 60_000, label: '1m' },
+  { value: 300_000, label: '5m' },
+  { value: 900_000, label: '15m' },
+] as const
 export const TREND_WINDOW_MS = 24 * HOUR
 
 /** Paul Tol's muted scheme: nine colorblind-safe categorical colors. */

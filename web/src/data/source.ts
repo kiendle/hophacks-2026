@@ -1,10 +1,11 @@
 import { generateDevSeries } from './devMock'
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { Series } from './types'
 import type { ReplayCommand, ReplayStatus } from './replayTypes'
 
 /** What the views read: the series so far, plus where the stream has reached. */
 export interface StreamSnapshot {
+  live?: import('./automationSource').LiveState
   series: Series[]
   /** The moment the stream has reached, or null when all data is already in. */
   now: number | null
@@ -46,14 +47,28 @@ export function createDevMockSource(subtopics?: string[]): DataSource {
 
 export const devMockSource = createDevMockSource()
 
-export function useStream(source: DataSource): StreamSnapshot {
-  const [snapshot, setSnapshot] = useState<StreamSnapshot>({
-    series: [],
-    now: null,
-    streaming: false,
-    read: 0,
-    kept: 0,
-  })
-  useEffect(() => source.subscribe(setSnapshot), [source])
-  return snapshot
+const EMPTY_SNAPSHOT: StreamSnapshot = { series: [], now: null, streaming: false, read: 0, kept: 0 }
+
+/** Buffer background replay updates without redrawing hidden charts. Live sources
+ * disconnect while hidden and resume from their saved cursor when shown again. */
+export function useStream(source: DataSource, active = true, keepConnected = false): StreamSnapshot {
+  const [current, setCurrent] = useState({ source, snapshot: EMPTY_SNAPSHOT })
+  const latest = useRef(current)
+  const visible = useRef(active)
+  useLayoutEffect(() => {
+    visible.current = active
+    if (active && latest.current.source === source) setCurrent(latest.current)
+  }, [source, active])
+  const connected = active || keepConnected
+  useEffect(() => {
+    if (!connected) return
+    let disposed = false
+    const unsubscribe = source.subscribe(snapshot => {
+      if (disposed) return
+      latest.current = { source, snapshot }
+      if (visible.current) setCurrent(latest.current)
+    })
+    return () => { disposed = true; unsubscribe() }
+  }, [source, connected])
+  return current.source === source ? current.snapshot : EMPTY_SNAPSHOT
 }

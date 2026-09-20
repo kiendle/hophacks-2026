@@ -50,6 +50,7 @@ def _validate(config):
 def _card(proposal):
     config = proposal["configuration"]
     return {"kind": "automation_proposal", "id": proposal["proposal_hash"], "title": proposal["title"],
+            "session_id": os.environ.get('HARNESS_SESSION'),
             "revision": proposal["revision"], "status": proposal["status"], "configuration": config,
             "open_questions": proposal["open_questions"], "validation": proposal["validation"],
             "target_labels": [target["label"] for target in config["targets"]],
@@ -184,7 +185,9 @@ def decide_proposal(directory: Path, confirmation_id: str, approved: bool) -> di
     record.update(decision="approved" if approved else "declined", decided_ms=now, consumed=True)
     _write(directory / "automation-proposal.json", proposal)
     _write(path, record)
-    return _result(proposal)
+    result = _result(proposal)
+    result['_card']['session_id'] = directory.name
+    return result
 
 
 TOOLS = (get_automation_contract, get_automation_proposal, save_automation_proposal, request_automation_confirmation)

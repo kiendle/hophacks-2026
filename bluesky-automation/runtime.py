@@ -16,6 +16,7 @@ from collections.abc import Mapping, Sequence
 import contextlib
 import json
 import math
+import os
 from pathlib import Path
 import sqlite3
 import sys
@@ -143,6 +144,9 @@ class Runtime:
         self._pacer = _GlobalPacer(self.requests_per_minute)
         self._running = False
         self._loop_stop: asyncio.Event | None = None
+        self._enrichment_task: asyncio.Task | None = None
+        self._source_connection = None
+        self.managed = os.environ.get('SENTIMETER_MANAGED') == '1'
 
     # ------------------------------------------------------------------
     # Public lifecycle/control surface
@@ -239,6 +243,17 @@ class Runtime:
             self._loop_stop = None
             self._running = False
 
+    async def stop_automation(self, identifier: str) -> None:
+        """Cancel an active provider request before acknowledging tracker closure."""
+        task = self._enrichment_task
+        if self._active_automation_id == identifier and task and not task.done():
+            task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await task
+        if self.managed and not any(a['enabled'] for a in self.store.list_automations()):
+            if self._source_connection is not None:
+                await self._source_connection.close()
+
     def wake(self) -> None:
         """Wake control loops and stop native work only for changed authorization."""
         # Controls reset only the targeted automation's durable worker_state.
@@ -297,6 +312,10 @@ class Runtime:
             if source["status"] == "gap":
                 await self._wait_wake(stop)
                 continue
+            if self.managed and not any(a['enabled'] for a in self.store.list_automations()):
+                self._set_source_status('paused')
+                await self._wait_or_wake(stop, _LOOP_WAIT_SECONDS)
+                continue
             cursor = source["cursor"]
             endpoint = self._cursor_url(cursor)
             gap_reason = None
@@ -307,9 +326,10 @@ class Runtime:
                     subprotocols=["xrpc.v1.json"],
                     max_size=None,
                 ) as websocket:
+                    self._source_connection = websocket
                     retry = 0
                     self._set_source_status("connected")
-                    while not stop.is_set():
+                    while not stop.is_set() and (not self.managed or any(a['enabled'] for a in self.store.list_automations())):
                         event, error = self._decode_frame(await websocket.recv())
                         if error is not None:
                             gap_reason = f"Jetstream frame error: {error}"
@@ -319,6 +339,8 @@ class Runtime:
             except Exception as error:
                 if stop.is_set():
                     break
+                if self.managed and not any(a['enabled'] for a in self.store.list_automations()):
+                    continue
                 gap_reason = self._cursor_gap_reason(error)
                 if gap_reason is None:
                     retry += 1
@@ -587,7 +609,15 @@ class Runtime:
                     automation_id = str(summary["id"])
                     if automation_id in self._blocked:
                         continue
-                    result = await self._enrich_one(automation_id)
+                    self._enrichment_task = asyncio.create_task(self._enrich_one(automation_id))
+                    try:
+                        result = await self._enrichment_task
+                    except asyncio.CancelledError:
+                        if stop.is_set():
+                            raise
+                        result = False
+                    finally:
+                        self._enrichment_task = None
                     self._rr_index = (index + 1) % len(summaries)
                     if result:
                         did_work = True
@@ -686,6 +716,12 @@ class Runtime:
             self._active_engine = engine
             with engine:
                 run_id = engine.prepare(manifest, records)
+                # Engine caps are per native run. Each streaming batch gets a new
+                # run, so subtract all other batches before giving this one its cap.
+                # Include uncertain charges after cancellation and recovery.
+                from budgeting import usage
+                committed = usage(db_path, automation_id, excluding_run=run_id)
+                batch_cap = max(0., max_usd - sum(committed.values()))
                 self.store.worker_status(
                     automation_id,
                     "running",
@@ -696,7 +732,7 @@ class Runtime:
                 native_status = await engine.execute(
                     run_id,
                     self.api_key,
-                    max_usd,
+                    batch_cap,
                     concurrency=self.concurrency,
                     requests_per_minute=self.requests_per_minute,
                     transport=request_transport,

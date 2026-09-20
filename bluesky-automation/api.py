@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
-import fcntl
 import json
 import math
 import os
@@ -13,11 +12,13 @@ import secrets
 import signal
 import stat
 import sys
+import time
 from urllib.parse import urlsplit
 
 from aiohttp import web
 
 from common import ROOT, compile_config
+from file_lock import lock_file
 from runtime import Runtime
 from store import Store
 
@@ -44,9 +45,11 @@ def _token(state_dir: Path) -> str:
     try:
         fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
     except FileExistsError:
-        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+        if path.is_symlink():
+            raise ValueError('Service token must not be a symbolic link')
+        fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0))
         with os.fdopen(fd, "r", encoding="utf-8") as stream:
-            if stat.S_IMODE(os.fstat(stream.fileno()).st_mode) & 0o077:
+            if os.name != 'nt' and stat.S_IMODE(os.fstat(stream.fileno()).st_mode) & 0o077:
                 raise ValueError(f"{path} must be private (chmod 600)")
             token = stream.read().strip()
         if len(token) < 32:
@@ -114,6 +117,7 @@ def make_app(
                 {"error": "valid local service token required"}, status=401
             )
         try:
+            app['owner_clock']['last_control'] = time.monotonic()
             return await handler(request)
         except KeyError as error:
             return web.json_response(
@@ -134,6 +138,7 @@ def make_app(
             )
 
     app = web.Application(middlewares=[guarded], client_max_size=16 * 1024 * 1024)
+    app['owner_clock'] = {'last_control': time.monotonic()}
 
     async def status(request):
         return web.json_response(
@@ -145,14 +150,14 @@ def make_app(
             json.loads(
                 (
                     ROOT / "twitter-preparation" / "automation-config.schema.json"
-                ).read_text()
+                ).read_text(encoding='utf-8')
             )
         )
 
     async def example(request):
         filename = EXAMPLES[request.match_info["name"]]
         return web.json_response(
-            json.loads((ROOT / "twitter-preparation" / filename).read_text())
+            json.loads((ROOT / "twitter-preparation" / filename).read_text(encoding='utf-8'))
         )
 
     async def guidance(request):
@@ -194,6 +199,8 @@ def make_app(
         else:
             raise KeyError(action)
         runtime.wake()
+        if action == 'pause':
+            await runtime.stop_automation(identifier)
         return web.json_response(result)
 
     async def results(request):
@@ -212,6 +219,10 @@ def make_app(
                 "snapshot": True,
             }
         )
+
+    async def chart_events(request):
+        from visualization import changes
+        return web.json_response(changes(store, request.match_info['id'], int(request.query.get('after', '0'))))
 
     async def resume_live(request):
         body = await _body(request, {"acknowledge_gap"})
@@ -239,6 +250,7 @@ def make_app(
     app.router.add_route("POST", "/v1/automations", automations)
     app.router.add_get("/v1/automations/{id}", automation)
     app.router.add_get("/v1/automations/{id}/results", results)
+    app.router.add_get("/v1/automations/{id}/events", chart_events)
     app.router.add_post("/v1/automations/{id}/{action}", control)
     app.router.add_post("/v1/source/resume-live", resume_live)
     app.router.add_post("/v1/shutdown", shutdown)
@@ -274,11 +286,11 @@ async def serve(args) -> int:
         raise ValueError("non-loopback sources require wss")
 
     lock_fd = os.open(
-        state_dir / "service.lock", os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600
+        state_dir / "service.lock", os.O_RDWR | os.O_CREAT | getattr(os, 'O_NOFOLLOW', 0), 0o600
     )
     with os.fdopen(lock_fd, "a+") as lock:
         try:
-            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            lock_file(lock.fileno())
         except BlockingIOError as error:
             raise ValueError(
                 f"a service already owns {state_dir}; use its CLI/MCP API instead of starting another collector"
@@ -291,6 +303,7 @@ async def serve(args) -> int:
         loop = asyncio.get_running_loop()
         installed_signals = []
         timer = None
+        watchdog = None
         try:
             store.set_source(args.source_url)
             runtime = Runtime(
@@ -307,8 +320,19 @@ async def serve(args) -> int:
             await runner.setup()
             await web.TCPSite(runner, "127.0.0.1", args.port).start()
             for signum in (signal.SIGINT, signal.SIGTERM):
-                loop.add_signal_handler(signum, stop.set)
-                installed_signals.append(signum)
+                try:
+                    loop.add_signal_handler(signum, stop.set)
+                    installed_signals.append(signum)
+                except NotImplementedError:
+                    pass  # Windows uses the shutdown API.
+            idle_timeout = float(os.environ.get('SENTIMETER_CONTROL_TTL', '0'))
+            if idle_timeout > 0:
+                async def watch_owner():
+                    while not stop.is_set():
+                        await asyncio.sleep(1)
+                        if time.monotonic() - app['owner_clock']['last_control'] > idle_timeout:
+                            stop.set()
+                watchdog = asyncio.create_task(watch_owner())
             if args.run_seconds is not None:
                 timer = loop.call_later(args.run_seconds, stop.set)
             runtime_task = asyncio.create_task(
@@ -344,6 +368,10 @@ async def serve(args) -> int:
             stop.set()
             if timer:
                 timer.cancel()
+            if watchdog:
+                watchdog.cancel()
+                with contextlib.suppress(asyncio.CancelledError):
+                    await watchdog
             for signum in installed_signals:
                 loop.remove_signal_handler(signum)
             if runtime_task is not None and not runtime_task.done():

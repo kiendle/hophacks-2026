@@ -2,7 +2,7 @@ import { liveFeed, useTalkLive, TalkLiveButton, TalkLiveStrip } from '../live'
 import { ToolActivity, ResultCard, ConfirmationCard } from './ToolCards'
 import { useVoice, type Voice } from '../voice/useVoice'
 import { VoiceBar, VoiceMic, ReplyActions } from '../voice/VoiceControls'
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { askClient, buildAskRequest, useAsk, type AskContext, type ChatMessage, type EvidencePost } from '../ask'
 import '../ask/ask.css'
 import { textOn } from '../color'
@@ -11,8 +11,10 @@ import { formatRange } from '../format'
 import { sentimentColor } from '../sentimentColor'
 import { BotIcon, CloseIcon, SendIcon, StopIcon } from './icons'
 import { harnessAskClient } from '../ask/harnessClient'
+import { TranslatablePost } from './TranslatablePost'
 
 interface Props {
+  active?: boolean
   initialQuestion?: string
   proposalMode?: boolean
   selection: Selection
@@ -23,7 +25,8 @@ interface Props {
   getContext: () => AskContext | null
 }
 
-export function ChatSidebar({ selection, series, onClearSelection, getContext, initialQuestion, proposalMode = false }: Props) {
+export function ChatSidebar({ selection, series, onClearSelection, getContext, initialQuestion, proposalMode = false, active = true }: Props) {
+  const sidebarId = useId()
   const sidebar = useRef<HTMLElement>(null)
   const drag = useRef<{ x: number; width: number } | null>(null)
   const [width, setWidth] = useState(340)
@@ -36,6 +39,7 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext, i
     const parent = sidebar.current?.parentElement
     if (!parent) return
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry.contentRect.width) return
       const maximum = Math.max(180, Math.min(720, entry.contentRect.width - 320))
       setMaxWidth(maximum)
       setWidth(previous => Math.min(maximum, Math.max(Math.min(280, maximum), previous)))
@@ -62,7 +66,7 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext, i
     if (!field) return
     field.style.height = 'auto'
     field.style.height = `${field.scrollHeight}px`
-  }, [text, width])
+  }, [text, width, active])
   const [talking, setTalking] = useState(false)
   const [liveStart, setLiveStart] = useState(0)
   const { messages, send, stop, confirm, addVoiceMessage, busy } = useAsk(liveFeed.watch(proposalMode ? harnessAskClient : askClient), getContext)
@@ -74,16 +78,24 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext, i
   }, [initialQuestion, send])
   const voice = useVoice(busy, (words) => setText(previous => previous ? `${previous} ${words}` : words))
   const live = useTalkLive({
+    enabled: active,
     send: words => send(words, { fromVoice: true }), stop, onTranscript: addVoiceMessage,
     context: () => messages.slice(-10).map(m => `${m.role}: ${m.text}`).join('\n'),
     workspaceContext: () => {
       const context = getContext()
       if (!context) return ''
       const request = buildAskRequest(context, '', [], '')
-      return JSON.stringify({ purpose: request.purpose, topic: request.topic, scope: request.scope })
+      return JSON.stringify({ purpose: request.purpose, topic: request.topic, scope: request.scope, dataset: request.dataset })
     },
     onActiveChange: active => { if (active && !talking) setLiveStart(messages.length); setTalking(active); if (active) { voice.stopSpeaking(); voice.cancelRecording() } },
   })
+  useEffect(() => {
+    if (active) return
+    voice.stopSpeaking()
+    voice.cancelRecording()
+    setResizing(false)
+    drag.current = null
+  }, [active, voice.stopSpeaking, voice.cancelRecording])
   const byId = new Map(series.map((s) => [s.id, s]))
   const subtopics = selection.subtopics.map((id) => byId.get(id)).filter((s) => s !== undefined)
   const empty = !selection.range && subtopics.length === 0
@@ -91,7 +103,7 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext, i
   const scroller = useRef<HTMLDivElement>(null)
   useEffect(() => {
     scroller.current?.scrollTo({ top: scroller.current.scrollHeight })
-  }, [messages])
+  }, [messages, active])
 
   const submit = () => {
     if (busy || !text.trim()) return
@@ -102,13 +114,13 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext, i
   }
 
   return (
-    <aside className="chat" id="chat-sidebar" ref={sidebar} style={{ width }}>
+    <aside className="chat" id={sidebarId} ref={sidebar} style={{ width }}>
       <div
         className="chat-resize-handle"
         role="separator"
         tabIndex={0}
         aria-label="Resize chat sidebar"
-        aria-controls="chat-sidebar"
+        aria-controls={sidebarId}
         aria-orientation="vertical"
         aria-valuemin={minWidth}
         aria-valuemax={maxWidth}
@@ -259,7 +271,7 @@ function Citation({ post, color }: { post: EvidencePost; color?: string }) {
           {post.scored === false ? 'Unscored' : post.sentiment.toFixed(1)}
         </span>
       </div>
-      <p className="cite-text">{post.text}</p>
+      <TranslatablePost text={post.text} className="cite-text" />
     </div>
   )
 }

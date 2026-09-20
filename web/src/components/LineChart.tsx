@@ -1,8 +1,8 @@
 import { area, interpolateRgb, line, max, scaleLinear, scaleSqrt, scaleUtc, stack } from 'd3'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from 'react'
-import { BUCKET_MS, LINE_INTERVALS } from '../data/config'
+import { BUCKET_MS, LINE_INTERVALS, LIVE_INTERVALS } from '../data/config'
 import { chartData, type TrendPoint } from '../data/chartData'
-import type { Bucket, Series, TimeRange } from '../data/types'
+import type { Bucket, Post, Series, TimeRange } from '../data/types'
 import { formatCount, formatTick } from '../format'
 import { useSize } from '../hooks/useSize'
 import { useSmoothed } from '../hooks/useSmoothed'
@@ -164,6 +164,19 @@ export function LineChart({
 
   // Hover and drag selection.
   const [hover, setHover] = useState<{ layer: number; t: number } | null>(null)
+  const [pinned, setPinned] = useState<{ post: Post; anchor: { x: number; y: number } } | null>(null)
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const keepCard = () => clearTimeout(hideTimer.current)
+  const hideCard = () => {
+    keepCard()
+    if (!pinned) hideTimer.current = setTimeout(() => setHover(null), 300)
+  }
+  const closeCard = () => { keepCard(); setPinned(null); setHover(null) }
+  useEffect(() => {
+    const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') { setPinned(null); setHover(null) } }
+    window.addEventListener('keydown', escape)
+    return () => { clearTimeout(hideTimer.current); window.removeEventListener('keydown', escape) }
+  }, [])
   const drag = useRef<{ anchor: number; px: number; moved: boolean } | null>(null)
 
   const localX = (e: PointerEvent) => e.clientX - e.currentTarget.getBoundingClientRect().left
@@ -186,6 +199,7 @@ export function LineChart({
   }
 
   const onPointerDown = (e: PointerEvent<SVGRectElement>) => {
+    setPinned(null)
     if ((e.metaKey || e.ctrlKey) && onToggleSubtopic) {
       const hit = nearest(localX(e), localY(e))
       if (hit) onToggleSubtopic(layers[hit.layer].series.id)
@@ -197,6 +211,8 @@ export function LineChart({
   }
 
   const onPointerMove = (e: PointerEvent<SVGRectElement>) => {
+    keepCard()
+    if (pinned) return
     const px = localX(e)
     const d = drag.current
     if (d) {
@@ -239,12 +255,16 @@ export function LineChart({
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    const handler = (e: WheelEvent) => onWheel.current(e)
+    const handler = (e: WheelEvent) => {
+      if (e.target instanceof Element && e.target.closest('.post-hover-card')) return
+      onWheel.current(e)
+    }
     el.addEventListener('wheel', handler, { passive: false })
     return () => el.removeEventListener('wheel', handler)
   }, [ref])
 
   const hovered = showPoints && hover && layers[hover.layer]?.points.find((p) => p.t === hover.t && p.grow === 1)
+  const preview = pinned ?? (hovered ? { post: hovered.bucket.topPost, anchor: { x: M.left + x(hovered.t), y: M.top + y(hovered.s) } } : null)
   const faded = (id: string) => selectedSubtopics.length > 0 && !selectedSubtopics.includes(id)
 
   // Direct labels at each line's visible end, nudged apart vertically.
@@ -310,7 +330,7 @@ export function LineChart({
               </g>
               <line x2={iw} y1={VOL_H} y2={VOL_H} className="baseline" />
               <text className="axis-label" transform={`translate(${-M.left + 12},${VOL_H / 2}) rotate(-90)`}>
-                Posts / {LINE_INTERVALS.find(interval => interval.value === intervalMs)?.label}
+                Posts / {[...LINE_INTERVALS, ...LIVE_INTERVALS].find(interval => interval.value === intervalMs)?.label}
               </text>
             </g>
 
@@ -391,16 +411,18 @@ export function LineChart({
               onPointerMove={onPointerMove}
               onPointerUp={onPointerUp}
               onPointerCancel={onPointerUp}
-              onPointerLeave={() => setHover(null)}
+              onPointerLeave={hideCard}
             />
           </g>
         </svg>
       )}
-      {hovered && (
+      {preview && (
         <HoverCard
-          post={hovered.bucket.topPost}
-          anchor={{ x: M.left + x(hovered.t), y: M.top + y(hovered.s) }}
+          post={preview.post}
+          anchor={preview.anchor}
           bounds={{ width, height }}
+          onEnter={keepCard} onLeave={hideCard} onClose={closeCard}
+          onInteract={() => { keepCard(); setPinned(preview) }}
         />
       )}
     </div>

@@ -5,6 +5,8 @@ export type Stage = 'home' | 'setup' | 'live' | 'automation'
 
 export interface Session {
   id: string
+  automationId?: string
+  dataMode?: 'historical' | 'live'
   query: string
   /** Search terms a post must match; editable before and during a run. */
   terms: string[]
@@ -71,7 +73,8 @@ export function useRecents() {
 export function shareSessionUrl(session: Session): string {
   const url = new URL(location.href)
   url.search = ''
-  url.hash = `workspace=${encodeURIComponent(JSON.stringify({ query: session.query, title: session.title, terms: session.terms, subtopics: session.subtopics }))}`
+  url.hash = `workspace=${encodeURIComponent(JSON.stringify({ query: session.query, title: session.title, terms: session.terms, subtopics: session.subtopics,
+    ...(session.automationId || session.dataMode === 'live' ? { dataMode: 'live' } : {}) }))}`
   return url.href
 }
 
@@ -83,6 +86,7 @@ export function readSharedSession(hash: string): Session | null {
     const strings = (list: unknown): list is string[] => Array.isArray(list) && list.length <= 100 && list.every(item => typeof item === 'string' && item.length <= 500)
     if (!strings(value.terms) || !strings(value.subtopics)) return null
     return { id: crypto.randomUUID(), query: value.query, terms: value.terms, subtopics: value.subtopics,
-      startedAt: Date.now(), title: typeof value.title === 'string' ? value.title.slice(0, 120) : undefined }
+      startedAt: Date.now(), title: typeof value.title === 'string' ? value.title.slice(0, 120) : undefined,
+      ...(value.dataMode === 'live' ? { dataMode: 'live' as const } : {}) }
   } catch { return null }
 }

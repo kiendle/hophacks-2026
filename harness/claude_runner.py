@@ -37,7 +37,7 @@ PROGRESS = {
 }
 
 
-TOOL_MODULES = ("brief_tools", "analysis_tools", "jev_tools", "classified_tools", "automation_tools")  # the same optional modules the tool server loads
+TOOL_MODULES = ("brief_tools", "analysis_tools", "jev_tools", "classified_tools", "automation_tools", "live_tracking_tools")  # the same optional modules the tool server loads
 
 
 def load_wording(names=TOOL_MODULES):

@@ -29,4 +29,16 @@ with patch.object(data, 'load', return_value=fixture), patch.object(data, 'manif
     assert later['companies'][0]['posts'] == 0 and later['companies'][0]['sentiment'] == 8
     assert data.preview(['AI'])['total'] == 1
     assert data.preview(['AI'], language='en')['error']['code'] == 'language_unavailable'
-print('PASS: classified labels preserved, product matching, exact time windows, duplicate openings, no regrading.')
+    # One pattern with a substring shortcut still means whole words, any case, and re.I's odd letters.
+    said = lambda text: dict(id=text, postId=text, kind='post', t=0, text=text, grades=[])
+    found = data.matcher(['chatbot', 'Sam Altman'])
+    long_s, dotted_i, dotless_i = chr(0x17f), chr(0x130), chr(0x131)
+    assert [found(said(t)) for t in ('a ChatBot!', 'chatbots', 'my_chatbot', 'SAM ALTMAN said', long_s + 'am altman', 'nothing here')] == [True, False, False, True, True, False]
+    assert all(data.matcher(['openai'])(said(t)) for t in ('OPENA' + dotted_i, 'opena' + dotless_i + ' news'))
+    assert data.matcher(['nvidia'])(event('graded', 'post', 0)) is False and data.matcher(['chatgpt'])(event('graded', 'post', 0)) is True
+    # The same words on the same export are selected once; another export is selected again.
+    assert data.scan(['OpenAI'], [])['dataset']['events'] is data.scan(['OpenAI'], [])['dataset']['events']
+    assert data.scan(['AI'], [])['dataset']['events'] == events and data.scan(['nvidia'], [])['kept'] == 0
+    with patch.object(data, 'load', return_value={**fixture, 'events': events[:1], 'counts': {'posts': 1, 'likes': 0}}):
+        assert data.scan(['OpenAI'], [])['dataset']['counts'] == {'posts': 1, 'likes': 0}
+print('PASS: classified labels preserved, product matching, exact time windows, duplicate openings, no regrading, fast matching unchanged.')

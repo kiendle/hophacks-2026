@@ -23,3 +23,13 @@ test('invalid shared settings do not open a workspace', () => {
     assert.equal(readSharedSession(hash), null)
   }
 })
+
+test('sharing a live tracker preserves its mode without transferring its running identity', () => {
+  Object.defineProperty(globalThis, 'location', { configurable: true, value: { href: 'https://example.com/' } })
+  const session: Session = { id: 'local', automationId: 'private-tracker', dataMode: 'live',
+    query: 'Transit', terms: ['transit'], subtopics: ['Bus service'], startedAt: 1 }
+  const restored = readSharedSession(new URL(shareSessionUrl(session)).hash)!
+  assert.equal(restored.dataMode, 'live')
+  assert.equal(restored.automationId, undefined)
+  assert.notEqual(restored.id, session.id)
+})

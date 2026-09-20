@@ -33,7 +33,7 @@ const card = (revision, status) => ({kind:'automation_proposal', id:`proposal-${
       return route.fulfill({contentType:'text/event-stream',body:sse([{type:'card',card:card(1,'final')},{type:'message',text:'Your final configuration is ready.'},{type:'done'}])});
     });
     await page.goto(process.env.AUTOMATION_UI_URL || 'http://127.0.0.1:5197');
-    await page.getByRole('button',{name:'Build automation',exact:true}).click();
+    await page.getByRole('button',{name:'Live data',exact:true}).click();
     await page.getByRole('textbox',{name:'Automation goal'}).fill('Analyze sentiment about public transport policy');
     await page.getByRole('button',{name:'Start',exact:true}).click();
     await page.getByText('Should we track congestion pricing, transit funding, or both?').waitFor();

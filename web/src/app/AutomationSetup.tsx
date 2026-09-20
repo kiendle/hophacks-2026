@@ -8,7 +8,7 @@ export function AutomationSetup({ question }: { question: string }) {
     view: { start: 0, end: 1 }, now: 1 }))
   const getContext = useCallback(() => context, [context])
   return <main className="automation-setup">
-    <header><h1>Build an automation</h1><p>Discuss what to track, refine the rules, and review your configuration.</p></header>
+    <header><h1>Build a live automation</h1><p>Chat to choose your targets and rules. Finalize the schema here, then start tracking to open your charts.</p></header>
     <ChatSidebar selection={context.selection} series={context.series} onClearSelection={() => {}}
       getContext={getContext} initialQuestion={question} proposalMode />
   </main>

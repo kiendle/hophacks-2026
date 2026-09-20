@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
+  <defs>
+    <mask id="signal">
+      <circle cx="20" cy="20" r="18" fill="#fff"/>
+      <path d="M9 0v40M16.3 0v40M23.7 0v40M31 0v40" stroke="#000" stroke-width="1.4"/>
+      <path d="M0 22h10l4-6 5 13 5-19 4 12h12" stroke="#000" stroke-width="2.6" stroke-linejoin="miter" stroke-miterlimit="8"/>
+    </mask>
+  </defs>
+  <circle cx="20" cy="20" r="20" fill="#fff"/>
+  <g mask="url(#signal)">
+    <path fill="#00b8cc" d="M2 2h36v6H2z"/>
+    <path fill="#ffc43d" d="M2 8h36v6H2z"/>
+    <path fill="#ff654a" d="M2 14h36v6H2z"/>
+    <path fill="#ed3f91" d="M2 20h36v6H2z"/>
+    <path fill="#7949d8" d="M2 26h36v6H2z"/>
+    <path fill="#385ce1" d="M2 32h36v6H2z"/>
+  </g>
+</svg>

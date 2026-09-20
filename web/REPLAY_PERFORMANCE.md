@@ -7,7 +7,7 @@ intervals were also regrouped repeatedly.
 
 The client still ingests every event, validates message sequence, and retains
 the exact activity used by historical queries and popups. Ordinary messages
-share a chart publication every 100 ms; pause, resume, speed changes, errors,
+share a chart publication every 100 ms; the first data frame, pause, resume, speed changes, errors,
 and completion publish immediately. This changes presentation frequency, not
 event delivery, playback speed, or data coverage.
 
@@ -16,6 +16,12 @@ changed buckets or activity. The active aggregation bucket processes new
 arrivals incrementally. Live viewport calculation no longer renders the
 previous playhead and rebuilds a historical snapshot before following the new
 tick. Historical inspection and drag gestures retain their chosen coordinates.
+
+The workspace renders its loading shell before replay metadata arrives and
+keeps it visible until the first chart buckets exist. Empty, paused, and failed
+starts have explicit states; a failed replay can reconnect with Try again.
+The Python all-AI selection reuses the original event list and caches its exact
+company membership and counts, avoiding repeated full-export selection passes.
 
 ## Measurements on the development machine
 
@@ -50,3 +56,6 @@ build checks. `scripts/benchmark-replay.ts` provides reproducible before/after
 engine and publication benchmarks; its full commands are in the local report.
 `tests/replay-performance-browser.cjs` measures browser responsiveness, and
 `tests/replay-complete-browser.cjs` verifies complete delivery and interactions.
+`tests/replay-startup-browser.cjs` holds back replay metadata in the browser to
+verify first-paint loading, gradual data, empty completion, and retry without
+loading the real export.
