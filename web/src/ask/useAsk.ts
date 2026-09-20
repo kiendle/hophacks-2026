@@ -24,7 +24,7 @@ export interface ChatMessage {
 const newId = () => crypto.randomUUID()
 const answer = (id: string): ChatMessage => ({ id, role: 'assistant', text: '', citations: [], steps: [], cards: [], status: 'streaming' })
 
-export function useAsk(client: AskClient, getContext: () => AskContext | null) {
+export function useAsk(client: AskClient, getContext: () => AskContext | null, onSent?: () => void) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const conversationId = useRef(newId())
   const inFlight = useRef<AbortController | null>(null)
@@ -104,8 +104,10 @@ export function useAsk(client: AskClient, getContext: () => AskContext | null) {
     const id = newId()
     setMessages(ms => [...ms,
       ...(!options?.fromVoice ? [{ id: newId(), role: 'user' as const, text: request.question, scope: request.purpose === 'automation_proposal' ? undefined : request.scope, citations: [], steps: [], cards: [], status: 'done' as const }] : []), answer(id)])
+    // The request and message already own their scope; clear only the composer selection.
+    onSent?.()
     return await run(id, new Map(request.evidence.map(p => [p.id, p])), (receive, signal) => client.ask(request, receive, signal)).catch(voiceFailure)
-  }, [client, getContext, run])
+  }, [client, getContext, onSent, run])
 
   const confirm = useCallback(async (messageId: string, approved: boolean) => {
     const pending = history.current.find(m => m.id === messageId)?.confirmation

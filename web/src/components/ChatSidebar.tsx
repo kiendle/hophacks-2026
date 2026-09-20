@@ -66,7 +66,7 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext, i
   }, [text, width])
   const [talking, setTalking] = useState(false)
   const [liveStart, setLiveStart] = useState(0)
-  const { messages, send, stop, confirm, addVoiceMessage, busy } = useAsk(liveFeed.watch(proposalMode ? harnessAskClient : askClient), getContext)
+  const { messages, send, stop, confirm, addVoiceMessage, busy } = useAsk(liveFeed.watch(proposalMode ? harnessAskClient : askClient), getContext, onClearSelection)
   const initialSent = useRef(false)
   useEffect(() => {
     if (!initialQuestion || initialSent.current) return

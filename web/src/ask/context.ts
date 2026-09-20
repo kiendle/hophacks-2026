@@ -84,7 +84,7 @@ export function buildAskRequest(
     scope: {
       range: isoRange(scopeRange),
       rangeSource: ctx.selection.range ? 'selection' : 'view',
-      subtopics: ctx.selection.subtopics,
+      subtopics: [...ctx.selection.subtopics],
     },
     view: { mode: ctx.mode, range: isoRange(ctx.view), now: new Date(ctx.now).toISOString() },
     topic: {

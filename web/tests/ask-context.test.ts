@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { buildAskRequest } from '../src/ask/context'
+import { buildAskRequest, type AskContext } from '../src/ask/context'
 import { message, harnessAskClient } from '../src/ask/harnessClient'
 import { Aggregator } from '../src/data/aggregator'
 import { chartData } from '../src/data/chartData'
@@ -10,6 +10,22 @@ import { failureMessage, voiceFailure } from '../src/ask/failure'
 
 const HOUR = 3600000
 const companies = Array.from({ length: 27 }, (_, i) => ({ id: `company${i}`, name: `Company ${i}` }))
+
+test('clearing the composer selection preserves the sent scope but not the next request', () => {
+  const context: AskContext = { topic: 'AI', series: [], hidden: new Set(), mode: 'line', now: 10 * HOUR,
+    view: { start: 0, end: 10 * HOUR }, selection: { range: { start: HOUR, end: 5 * HOUR }, subtopics: ['openai'] } }
+  const sent = buildAskRequest(context, 'What happened here?', [], 'selection-test')
+  context.selection.subtopics.length = 0
+  context.selection.range = null
+  assert.deepEqual(sent.scope.subtopics, ['openai'])
+  assert.equal(sent.scope.range.start, HOUR)
+  assert.equal(sent.scope.range.end, 5 * HOUR)
+  assert.equal(sent.scope.rangeSource, 'selection')
+  const next = buildAskRequest(context, 'What about now?', [], 'selection-test')
+  assert.deepEqual(next.scope.subtopics, [])
+  assert.equal(next.scope.rangeSource, 'view')
+  assert.equal(next.scope.range.end, 10 * HOUR)
+})
 
 test('chat retains the 27th company, exact selection, dataset filter and replay cutoff', () => {
   const series: Series[] = companies.map(c => ({ ...c, color: '', buckets: [] }))
