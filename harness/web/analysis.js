@@ -10,6 +10,7 @@ import { onEvent, appendCard, el, plainText } from './chat.js';
 const STYLESHEET = '/analysis.css';
 const PNG = /^\/api\/projects\/[a-z0-9_-]{1,60}\/charts\/[a-z0-9_-]{1,60}\.png$/;
 const LINES = 3;
+const BARS = 8;
 
 // The stylesheet lives in its own file because the page forbids inline styles.
 function addStylesheet() {
@@ -39,10 +40,37 @@ function pointLine(point) {
     document.createTextNode(tail));
 }
 
+// A card that carries no picture may carry its numbers instead: one row per group, each with a bar as
+// wide as its share of the posts. The width goes on a custom property because the page forbids inline
+// styles, and a share is drawn as a share while anything else is measured against the biggest number.
+function barRows(card) {
+  const given = (Array.isArray(card.bars) ? card.bars : []).slice(0, BARS)
+    .map((bar) => {
+      const label = words(bar && bar.label, 60);
+      const share = Number(bar && bar.share);
+      const count = Number(bar && (bar.posts ?? bar.value ?? bar.count));
+      return label ? { label, share: share >= 0 && share <= 1 ? share : null, count: count >= 0 ? count : null } : null;
+    })
+    .filter(Boolean);
+  const top = Math.max(0, ...given.map((row) => row.count || 0));
+  return given.map((row) => {
+    const part = row.share !== null ? row.share : (top ? row.count / top : 0);
+    const said = row.share !== null ? `${Math.round(row.share * 100)} percent`
+      : (row.count !== null ? `${row.count.toLocaleString('en-US')} posts` : '');
+    const fill = el('i', { class: 'chart-bar-fill' });
+    fill.style.setProperty('--part', `${Math.round(Math.max(0, Math.min(1, part)) * 100)}%`);
+    return el('div', { class: 'chart-bar' },
+      el('span', { class: 'chart-bar-label', text: row.label }),
+      el('span', { class: 'chart-bar-track' }, fill),
+      el('span', { class: 'chart-bar-value', text: said }));
+  });
+}
+
 function chartCard(card) {
   const title = words(card.title, 120) || 'A chart';
   const caption = words(card.caption, 240);
   const source = typeof card.png_url === 'string' && PNG.test(card.png_url) ? card.png_url : '';
+  const bars = source ? [] : barRows(card);
   const points = (Array.isArray(card.points) ? card.points : []).slice(0, LINES).map(pointLine).filter(Boolean);
   const picture = source
     ? el('img', {
@@ -54,6 +82,7 @@ function chartCard(card) {
   return el('div', { class: 'card chart-card' },
     el('p', { class: 'card-title', text: title }),
     picture,
+    bars.length ? el('div', { class: 'chart-bars' }, ...bars) : null,
     caption ? el('p', { class: 'chart-caption', text: caption }) : null,
     points.length ? el('div', { class: 'chart-points' }, ...points) : null);
 }

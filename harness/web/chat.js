@@ -857,7 +857,7 @@ export function appendCard(node) {
   return node;
 }
 
-const PLUGINS = ['/voice.js', '/analysis.js', '/brief.js'];  // each one optional: a missing file is not an error
+const PLUGINS = ['/voice.js', '/analysis.js', '/brief.js', '/realtime.js'];  // each one optional: a missing file is not an error
 
 function loadPlugins() {
   for (const path of PLUGINS) {

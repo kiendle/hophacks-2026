@@ -212,8 +212,10 @@ export function show(card) {
   return view;
 }
 
-if (typeof document !== 'undefined' && !document.querySelector('link[href="/brief.css"]')) {
-  document.head.append(el('link', { rel: 'stylesheet', href: '/brief.css' }));
+// Named brief-card.css, not brief.css: the Morning Brief page already serves its own /brief.css, and
+// on the one combined server the two would be the same address.
+if (typeof document !== 'undefined' && !document.querySelector('link[href="/brief-card.css"]')) {
+  document.head.append(el('link', { rel: 'stylesheet', href: '/brief-card.css' }));
 }
 
 onEvent((event) => {

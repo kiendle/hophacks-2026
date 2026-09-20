@@ -49,7 +49,7 @@ HEADERS = {
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "no-referrer",
 }
-PLUGINS = ("voice", "analysis_api")  # optional modules, each with setup(app)
+PLUGINS = ("voice", "analysis_api", "realtime_api")  # optional modules, each with setup(app)
 VOICE_MAX = 10 * 1024 * 1024  # a recorded clip, on the voice routes only
 PLACEHOLDER = b"<!doctype html><title>Signal harness</title><p>The chat page has not been written yet. The API is live.\n"
 CONFIRMATION = re.compile(r"[A-Za-z0-9_-]{16}")
@@ -74,14 +74,18 @@ async def local_only(request, handler):
     return await handler(request)
 
 
-def web_file(name):
-    """A file of any name under harness/web/, and never one outside it."""
+def web_file(name, root=None):
+    """A file of any name under harness/web/, and never one outside it.
+
+    root lets the combined server hand in its own copy of the folder, so both servers share one rule.
+    """
+    root = root or WEB
     parts = str(name or "").split("/")
     if not parts or any(part in ("", ".", "..") or part.startswith(".") or "\\" in part or ":" in part for part in parts):
         return None
     try:
-        path = (WEB / "/".join(parts)).resolve()
-        path.relative_to(WEB.resolve())  # a symlink out of the folder resolves out of it and is refused here
+        path = (root / "/".join(parts)).resolve()
+        path.relative_to(root.resolve())  # a symlink out of the folder resolves out of it and is refused here
     except (OSError, ValueError):
         return None
     return path if path.is_file() else None

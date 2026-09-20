@@ -170,6 +170,18 @@ def collector_control(action: str) -> dict:
     return {"collector": collector_state(status), "paused": bool(status.get("paused")), "posts_kept": status.get("posts", 0)}
 
 
+def card(brief_id, title, status):
+    """The player the page draws for this brief, or nothing at all when there is no brief to follow.
+
+    brief.js keeps one card per id, so make_brief and get_brief can both carry it: the second one
+    renames the first card instead of adding another.
+    """
+    brief_id = str(brief_id or "").strip()
+    if not brief_id:
+        return {}
+    return {"_card": {"kind": "brief", "brief_id": brief_id, "title": str(title or "Your audio brief")[:120], "status": str(status or "working")}}
+
+
 def make_brief(hours: float = 8, seconds: int = 60, interest_ids: list[str] | None = None, long_length_requested: bool = False) -> dict:
     """Order a brief: Claude picks the stories from the collected posts and writes a script, then it is voiced as one recording. Returns the brief's id at once.
 
@@ -194,7 +206,8 @@ def make_brief(hours: float = 8, seconds: int = 60, interest_ids: list[str] | No
     if "error" in answer:
         return answer
     return {"brief_id": answer.get("id"), "status": "working", "hours": hours, "seconds": wanted,
-            "note": "It takes 30 to 90 seconds. The player appears on the page and in the chat; call get_brief with this id to follow it."}
+            "note": "It takes 30 to 90 seconds. The player appears on the page and in the chat; call get_brief with this id to follow it.",
+            **card(answer.get("id"), None, "working")}
 
 
 def get_brief(brief_id: str) -> dict:
@@ -224,6 +237,7 @@ def get_brief(brief_id: str) -> dict:
                             for post in story.get("posts") or []],
             } for story in segment.get("stories") or []],
         } for segment in brief.get("segments") or []],
+        **card(brief.get("id"), brief.get("title"), brief.get("status")),
     }
 
 

@@ -419,7 +419,7 @@ def plain_words(*results):
     # A guard written with the characters it removes hides them in its own source, where a tidy edit
     # deletes one without a trace and nothing fails. These two files say the marks as numbers instead.
     mine = {name: (ROOT / name).read_text(encoding="utf-8")
-            for name in ("web/brief.js", "jev_tools.py", "web/brief.css", "prompts/brief.md", "prompts/jev.md")}
+            for name in ("web/brief.js", "jev_tools.py", "web/brief-card.css", "prompts/brief.md", "prompts/jev.md")}
     hiding = [f"{name} holds {ord(letter):#06x}" for name, text in mine.items() for letter in text
               if any(low <= ord(letter) <= high for low, high in jev_tools.HIDDEN_RANGES) and letter not in "\t\n\r"]
     check("6e no hidden mark is hiding in the code that takes hidden marks out", not hiding, hiding[0] if hiding else "clean")
@@ -628,8 +628,8 @@ def browser():
     if done.returncode or "CHECK " not in done.stdout:
         check("7 the card's own checks all ran", False, (done.stderr or done.stdout)[-400:].replace("\n", " "))
     check("7l the card brings its own stylesheet",
-          (ROOT / "web/brief.css").exists() and 'href="/brief.css"' in (ROOT / "web/brief.js").read_text(encoding="utf-8"),
-          "brief.css")
+          (ROOT / "web/brief-card.css").exists() and 'href="/brief-card.css"' in (ROOT / "web/brief.js").read_text(encoding="utf-8"),
+          "brief-card.css")
 
 
 # --------------------------------------------------------------- 8. the saved posts really answer

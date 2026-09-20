@@ -10,6 +10,15 @@
 
 .chart-caption { font-size: 12px; line-height: 1.5; margin: 0; color: #202b28; overflow-wrap: anywhere; }
 
+/* A card with numbers and no picture: a row per group, the bar as wide as its share. The width comes
+   from --part, set on the element itself, because the page allows no style attribute. */
+.chart-bars { display: grid; gap: 6px; margin: 0 0 11px; }
+.chart-bar { display: grid; grid-template-columns: minmax(64px, 1fr) 2.2fr auto; align-items: center; gap: 9px; }
+.chart-bar-label { font-size: 11.5px; line-height: 1.4; color: #45594b; overflow-wrap: anywhere; }
+.chart-bar-track { height: 9px; border-radius: 5px; background: #e8efe6; overflow: hidden; }
+.chart-bar-fill { display: block; height: 100%; width: var(--part, 0%); border-radius: 5px; background: var(--green); }
+.chart-bar-value { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
 .chart-points {
   display: grid; gap: 3px; margin: 11px 0 0;
   border-top: 1px solid var(--border); padding-top: 10px;

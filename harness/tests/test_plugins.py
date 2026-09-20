@@ -44,8 +44,12 @@ OUTCOMES = []
 TEMP = Path(tempfile.mkdtemp(prefix="signal-plugins-"))
 BANNED = "‒–—―·•‣▪・←→↔⇒⇨➡;"
 
+# Named so that no real module can ever shadow them: harness/voice.py and harness/analysis_api.py are
+# imported by bridge.py at import time, long before this folder reaches sys.path, so a throwaway
+# called "voice" would silently be the real one. The addresses they serve are still the real ones,
+# because the body limit is decided by the address and not by the module's name.
 MODULES = {
-    "voice": """
+    "probe_voice_routes": """
 from aiohttp import web
 
 def setup(app):
@@ -57,7 +61,7 @@ def setup(app):
 
     app.add_routes([web.get("/api/voice/ping", ping), web.post("/api/voice/clip", clip)])
 """,
-    "analysis_api": """
+    "probe_analysis_routes": """
 from aiohttp import web
 
 def setup(app):
@@ -66,9 +70,20 @@ def setup(app):
 
     app.add_routes([web.get("/api/analysis/ping", ping)])
 """,
-    "broken_api": "import there_is_no_such_module\n\ndef setup(app):\n    pass\n",
-    "no_setup_api": "VALUE = 1\n",
-    "fake_tools": '''
+    # A module of its own for 2b: aiohttp refuses the same method on the same address twice, so the
+    # module that proves "the next one still loads" must not be one 2a has already put on this app.
+    "probe_more_routes": """
+from aiohttp import web
+
+def setup(app):
+    async def ping(request):
+        return web.json_response({"more": "here"})
+
+    app.add_routes([web.get("/api/analysis/more", ping)])
+""",
+    "probe_broken_api": "import there_is_no_such_module\n\ndef setup(app):\n    pass\n",
+    "probe_no_setup_api": "VALUE = 1\n",
+    "probe_fake_tools": '''
 import steps
 
 def register(mcp):
@@ -84,7 +99,7 @@ def register(mcp):
         lambda fields: [{"label": "Words searched", "value": steps.word_list(fields.get("words") or [], 8)}],
     )
 ''',
-    "broken_tools": "raise RuntimeError('this module is broken on purpose')\n",
+    "probe_broken_tools": "raise RuntimeError('this module is broken on purpose')\n",
 }
 FRAGMENTS = {"aa-test-plugins.md": "First fragment: the analysis tools are for counting.",
              "zz-test-plugins.md": "Last fragment: the voice tools speak the answer."}
@@ -129,10 +144,15 @@ async def absent():
 def routes():
     app = bridge.attach(web.Application(middlewares=[bridge.local_only], client_max_size=64 * 1024))
     app.add_routes([web.get("/", bridge.asset), web.get("/{name:.*}", bridge.asset)])
-    check("2a bridge.attach loads every route module that is there", app["plugins"] == ["voice", "analysis_api"], str(app["plugins"]))
-    broken, said = caught(bridge.load_plugins, app, ("broken_api", "no_setup_api", "analysis_api"))
+    # realtime_api is being written in another stream: whether it is there yet is not this test's business.
+    check("2a bridge.attach loads every route module that is there",
+          set(app["plugins"]) >= {"voice", "analysis_api"} and set(app["plugins"]) <= set(bridge.PLUGINS), str(app["plugins"]))
+    added, _ = caught(bridge.load_plugins, app, ("probe_voice_routes", "probe_analysis_routes"))
+    check("2a the throwaway modules of this test load too", added == ["probe_voice_routes", "probe_analysis_routes"], str(added))
+    broken, said = caught(bridge.load_plugins, app, ("probe_broken_api", "probe_no_setup_api", "probe_more_routes"))
     check("2b a broken route module is skipped with its traceback, a module without setup is skipped, and the next one still loads",
-          broken == ["analysis_api"] and "Traceback" in said and "there_is_no_such_module" in said and "no_setup_api.py has no setup(app)" in said,
+          broken == ["probe_more_routes"] and "Traceback" in said and "there_is_no_such_module" in said
+          and "probe_no_setup_api.py has no setup(app)" in said,
           f"loaded {broken}, printed {len(said)} characters")
     return app
 
@@ -206,10 +226,10 @@ async def talk(client):
 # ------------------------------------------------------------------ tools
 async def tool_modules():
     server = MCPServer("plugins-test")
-    loaded, said = caught(tools.load_plugins, server, ("fake_tools", "broken_tools", "brief_tools"))
+    loaded, said = caught(tools.load_plugins, server, ("probe_fake_tools", "probe_broken_tools", "brief_tools"))
     listed = {tool.name: tool.input_schema.get("required", []) for tool in await server.list_tools()}
     check("4a every tool module that is there is registered, a broken one is skipped with its traceback",
-          loaded == ["fake_tools", "brief_tools"] and "Traceback" in said and "broken on purpose" in said,
+          loaded == ["probe_fake_tools", "brief_tools"] and "Traceback" in said and "broken on purpose" in said,
           f"loaded {loaded}")
     check("4b every tool of every module takes a reason first, and it is required",
           len(listed) == 8 and all(names and names[0] == "reason" for names in listed.values())
@@ -383,8 +403,8 @@ def browser():
                 if re.search(rf"^export (?:async )?function {name}\b", source, re.M)]
     check("9a chat.js exports the four things a plug-in builds on, and el", exported == ["onEvent", "appendCard", "send", "plainText", "el"], str(exported))
     check("9b each optional module is imported after start-up and a missing one is ignored",
-          "'/voice.js', '/analysis.js', '/brief.js'" in source and "import(path).catch(() => {})" in source and "loadPlugins();" in source,
-          "voice, analysis and brief")
+          "'/voice.js', '/analysis.js', '/brief.js', '/realtime.js'" in source and "import(path).catch(() => {})" in source and "loadPlugins();" in source,
+          "voice, analysis, brief and realtime")
     check("9c a turn tells a plug-in where it begins and ends",
           "emit({ type: 'turn_start', source })" in source and "emit({ type: 'turn_end' })" in source and "'confirm')" in source,
           "turn_start with its source, and turn_end")

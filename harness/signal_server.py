@@ -41,11 +41,11 @@ import collector  # noqa: E402  (compile_terms, so search matches exactly as col
 import server  # noqa: E402  (loads morning-brief/.env, then builds the Morning Brief app and routes)
 
 WEB = ROOT / "web"
-# The chat widget's own files, read out of harness/web/ per request. The three plug-in modules are
-# optional: chat.js imports each one after start-up and ignores the ones that are not there, so a
-# file nobody has written yet is a 404 the page expects.
-WIDGET = {f"/{name}": (WEB / name, bridge.TYPES.get(Path(name).suffix, "application/octet-stream"))
-          for name in ("chat.js", "chat.css", "voice.js", "analysis.js", "brief.js")}
+# Every file under harness/web/, read per request, so the scripts, the stylesheets and anything in
+# vendor/ reach the page without this file listing them. The plug-in modules are optional: chat.js
+# imports each one after start-up and ignores the ones that are not there, so a file nobody has
+# written yet is a 404 the page expects. The four addresses Morning Brief owns are served by its own
+# handlers, which are registered first, so nothing here can shadow them.
 HEADERS = server.HEADERS | bridge.HEADERS  # one page, so the stricter of the two everywhere: bridge's adds media-src blob: and the microphone
 MARKERS = ("<!-- chat-widget:start -->", "<!-- chat-widget:end -->")
 # chat.js wires the landing page's two intro buttons unconditionally; this page has neither.
@@ -82,7 +82,10 @@ async def home(request):
 
 
 async def widget_asset(request):
-    path, content_type = WIDGET[request.path]
+    path = bridge.web_file(request.match_info.get("name"), WEB)  # never a file outside harness/web/
+    if path is None:
+        return server.fail(404, "No such file.")
+    content_type = bridge.TYPES.get(path.suffix.lower(), "application/octet-stream")
     try:
         body = path.read_bytes()
     except OSError:  # the clean 404 bridge.asset() gives while harness/web/ is being edited, rather than a 500
@@ -161,8 +164,9 @@ def compose():
     for route in server.app.router.routes():  # the same handlers, minus "/": home() serves that with the widget in it
         if route.resource.canonical != "/":
             app.router.add_route(route.method, route.resource.canonical, route.handler)
-    bridge.attach(app)
-    app.add_routes([web.get("/", home), *[web.get(path, widget_asset) for path in WIDGET], web.get("/api/posts/search", search)])
+    bridge.attach(app)  # the chat API, and every optional route module: voice, analysis_api, realtime_api
+    app.add_routes([web.get("/", home), web.get("/api/posts/search", search),
+                    web.get("/{name:.*}", widget_asset)])  # last: a catch-all registered earlier would shadow the routes above
     return app
 
 

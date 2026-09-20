@@ -77,18 +77,17 @@ async def degrades(client):
         async with client.get(BASE + path) as response:
             return response.status, await response.text()
 
-    real_web, real_widget = signal_server.WEB, signal_server.WIDGET
+    real_web = signal_server.WEB
     spare = Path(tempfile.mkdtemp(prefix="signal-test-web-"))
     try:
         (spare / "index.html").write_text("<p>a landing page without the markers</p>", encoding="utf-8")
-        signal_server.WEB = spare
-        signal_server.WIDGET = {path: (spare / Path(path).name, kind) for path, (_, kind) in real_widget.items()}
+        signal_server.WEB = spare  # every file of the widget is read out of this folder, so moving it moves all of them
         unmarked, without_widget = await get("/")
         shutil.rmtree(spare)
         absent, plain = await get("/")
         missing, said = await get("/chat.js")
     finally:
-        signal_server.WEB, signal_server.WIDGET = real_web, real_widget
+        signal_server.WEB = real_web
         shutil.rmtree(spare, ignore_errors=True)
     back, whole = await get("/")
     check("1 an unreadable harness/web costs the widget, not the home page", unmarked == 200 and absent == 200
@@ -100,11 +99,21 @@ async def degrades(client):
 
 async def assets(client):
     found = {}
-    for path in ("/app.js", "/brief.css", "/signal.css", "/chat.js", "/chat.css"):
+    # Morning Brief's own four, then every file the chat widget and its plug-ins ask for by name.
+    for path in ("/app.js", "/brief.css", "/signal.css", "/chat.js", "/chat.css",
+                 "/voice.js", "/voice.css", "/analysis.js", "/analysis.css", "/brief.js", "/brief-card.css"):
         async with client.get(BASE + path) as response:
             found[path] = (response.status, response.content_type, len(await response.read()))
     check("2 every asset of both apps is served", all(status == 200 and size > 500 for status, _, size in found.values()),
           ", ".join(f"{path} {status} {kind} {size}b" for path, (status, kind, size) in found.items()))
+
+    outside = {}
+    for path in ("/..%2Fbridge.py", "/%2e%2e/signal_server.py", "/nothing-like-this.js", "/vendor/../../bridge.py"):
+        async with client.get(BASE + path) as response:
+            outside[path] = (response.status, "aiohttp" in (await response.text()))
+    check("2 nothing outside harness/web can be read through the catch-all",
+          all(status == 404 and not leaked for status, leaked in outside.values()),
+          ", ".join(f"{path} {status}" for path, (status, _) in outside.items()))
 
 
 async def collector_live(client, seconds=60):

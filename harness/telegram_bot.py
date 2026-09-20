@@ -77,9 +77,9 @@ INVISIBLE = dict.fromkeys((*range(0x00, 0x09), 0x0b, 0x0c, *range(0x0e, 0x20), 0
 NETWORK = (aiohttp.ClientError, asyncio.TimeoutError, OSError)
 
 BRIEF_BASE = (os.environ.get("SIGNAL_BASE_URL") or "http://127.0.0.1:5194").rstrip("/")  # the server brief_tools.py talks to
-# A chart's picture is served by the chat server, which is 5195 on its own and the same port as the
-# briefs once the combined server is switched on; one SIGNAL_BASE_URL then points both at it.
-CARD_BASE = (os.environ.get("SIGNAL_BASE_URL") or "http://127.0.0.1:5195").rstrip("/")
+# A chart's picture and the briefs now come from the same place: the combined server on 5194. Set
+# SIGNAL_BASE_URL only to point the bot at a chat server running on its own again.
+CARD_BASE = (os.environ.get("SIGNAL_BASE_URL") or "http://127.0.0.1:5194").rstrip("/")
 # Our own API on our own host, nothing else. No percent escape is allowed in it: aiohttp decodes and
 # normalises the path it is given, so "/api/%2e%2e/%2e%2e/x" leaves /api/ and asks the server for /x.
 CARD_PATH = re.compile(r"/api/[A-Za-z0-9._~/-]{1,300}")

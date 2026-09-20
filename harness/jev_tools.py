@@ -402,7 +402,9 @@ def score_live(keywords: list[str], minutes: int = 15, language: str | None = "e
         # stream draws it: a dash or a right to left mark they typed must not reach the page.
         "_card": {"kind": "chart", "title": readable(f"How Bluesky feels about {steps.word_list(words, 2)} right now", 140),
                   "caption": readable(caption + (f" Most of them {PHRASES.get(biggest, 'are in one group')}." if biggest else ""), 200),
-                  "bars": [{"label": group["group"], "share": group["share"]} for group in groups if group["posts"]]},
+                  # share draws the bar on the website, posts is the number Telegram prints beside it.
+                  "bars": [{"label": group["group"], "share": group["share"], "posts": group["posts"]}
+                           for group in groups if group["posts"]]},
     }
 
 
