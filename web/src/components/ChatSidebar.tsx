@@ -3,15 +3,18 @@ import { ToolActivity, ResultCard, ConfirmationCard } from './ToolCards'
 import { useVoice, type Voice } from '../voice/useVoice'
 import { VoiceBar, VoiceMic, ReplyActions } from '../voice/VoiceControls'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { askClient, useAsk, type AskContext, type ChatMessage, type EvidencePost } from '../ask'
+import { askClient, buildAskRequest, useAsk, type AskContext, type ChatMessage, type EvidencePost } from '../ask'
 import '../ask/ask.css'
 import { textOn } from '../color'
 import type { Selection, Series } from '../data/types'
 import { formatRange } from '../format'
 import { sentimentColor } from '../sentimentColor'
 import { BotIcon, CloseIcon, SendIcon, StopIcon } from './icons'
+import { harnessAskClient } from '../ask/harnessClient'
 
 interface Props {
+  initialQuestion?: string
+  proposalMode?: boolean
   selection: Selection
   /** Used to name and color the selected subtopics. */
   series: Series[]
@@ -20,7 +23,7 @@ interface Props {
   getContext: () => AskContext | null
 }
 
-export function ChatSidebar({ selection, series, onClearSelection, getContext }: Props) {
+export function ChatSidebar({ selection, series, onClearSelection, getContext, initialQuestion, proposalMode = false }: Props) {
   const sidebar = useRef<HTMLElement>(null)
   const drag = useRef<{ x: number; width: number } | null>(null)
   const [width, setWidth] = useState(340)
@@ -61,12 +64,25 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext }:
     field.style.height = `${field.scrollHeight}px`
   }, [text, width])
   const [talking, setTalking] = useState(false)
-  const { messages, send, stop, confirm, addVoiceMessage, busy } = useAsk(liveFeed.watch(askClient), getContext)
+  const [liveStart, setLiveStart] = useState(0)
+  const { messages, send, stop, confirm, addVoiceMessage, busy } = useAsk(liveFeed.watch(proposalMode ? harnessAskClient : askClient), getContext)
+  const initialSent = useRef(false)
+  useEffect(() => {
+    if (!initialQuestion || initialSent.current) return
+    const timer = setTimeout(() => { initialSent.current = true; void send(initialQuestion) }, 0)
+    return () => clearTimeout(timer)
+  }, [initialQuestion, send])
   const voice = useVoice(busy, (words) => setText(previous => previous ? `${previous} ${words}` : words))
   const live = useTalkLive({
     send: words => send(words, { fromVoice: true }), stop, onTranscript: addVoiceMessage,
     context: () => messages.slice(-10).map(m => `${m.role}: ${m.text}`).join('\n'),
-    onActiveChange: active => { setTalking(active); if (active) { voice.stopSpeaking(); voice.cancelRecording() } },
+    workspaceContext: () => {
+      const context = getContext()
+      if (!context) return ''
+      const request = buildAskRequest(context, '', [], '')
+      return JSON.stringify({ purpose: request.purpose, topic: request.topic, scope: request.scope })
+    },
+    onActiveChange: active => { if (active && !talking) setLiveStart(messages.length); setTalking(active); if (active) { voice.stopSpeaking(); voice.cancelRecording() } },
   })
   const byId = new Map(series.map((s) => [s.id, s]))
   const subtopics = selection.subtopics.map((id) => byId.get(id)).filter((s) => s !== undefined)
@@ -148,14 +164,14 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext }:
                 {s.name}
               </span>
             ))}
-            {selection.range && <span className="chip-range">{formatRange(selection.range)}</span>}
+            {selection.range && <span className="chip-range">{formatRange(selection.range)} UTC</span>}
           </div>
           <button className="icon-btn" aria-label="Clear selection" onClick={onClearSelection}>
             <CloseIcon size={13} />
           </button>
         </div>
       )}
-      <TalkLiveStrip live={live} />
+      <TalkLiveStrip live={live} messages={messages.slice(liveStart)} busy={busy} onConfirm={(id, approved) => void confirm(id, approved)} />
       <VoiceBar voice={voice} />
       <form
         className="input-row"
@@ -169,7 +185,7 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext }:
           rows={1}
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Ask"
+          placeholder={selection.range ? 'Ask about this time range' : 'Ask'}
           aria-label="Message"
           onKeyDown={(event) => {
             if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
@@ -178,17 +194,19 @@ export function ChatSidebar({ selection, series, onClearSelection, getContext }:
             }
           }}
         />
-        <VoiceMic voice={voice} busy={busy || talking} />
-        <TalkLiveButton live={live} disabled={busy || voice.recording !== 'idle'} />
-        {busy ? (
-          <button type="button" className="send" aria-label="Stop" onClick={stop}>
-            <StopIcon size={16} />
-          </button>
-        ) : (
-          <button type="submit" className="send" aria-label="Send">
-            <SendIcon size={16} />
-          </button>
-        )}
+        <div className="input-actions">
+          <VoiceMic voice={voice} busy={busy || talking} />
+          <TalkLiveButton live={live} disabled={busy || voice.recording !== 'idle'} />
+          {busy ? (
+            <button type="button" className="send" aria-label="Stop" onClick={stop}>
+              <StopIcon size={16} />
+            </button>
+          ) : (
+            <button type="submit" className="send" aria-label="Send">
+              <SendIcon size={16} />
+            </button>
+          )}
+        </div>
       </form>
     </aside>
   )

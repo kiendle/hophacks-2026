@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 
 /** home: the query box. setup: the blank graph with its filters. live: generating. */
-export type Stage = 'home' | 'setup' | 'live'
+export type Stage = 'home' | 'setup' | 'live' | 'automation'
 
 export interface Session {
   id: string
@@ -11,6 +11,9 @@ export interface Session {
   /** Subtopics each post is sorted into. */
   subtopics: string[]
   startedAt: number
+  title?: string
+  pinned?: boolean
+  archived?: boolean
 }
 
 const RECENTS_KEY = 'sentimeter.recents'
@@ -45,5 +48,41 @@ export function useRecents() {
     })
   }, [])
 
-  return { recents, remember }
+  const forget = useCallback((id: string) => {
+    setRecents((prev) => {
+      const next = prev.filter((s) => s.id !== id)
+      saveRecents(next)
+      return next
+    })
+  }, [])
+
+  const edit = useCallback((id: string, changes: Partial<Pick<Session, 'title' | 'pinned' | 'archived'>>) => {
+    setRecents(previous => {
+      const next = previous.map(session => session.id === id ? { ...session, ...changes } : session)
+      saveRecents(next)
+      return next
+    })
+  }, [])
+
+  return { recents, remember, forget, edit }
+}
+
+/** Share search settings only; conversations stay in this browser. */
+export function shareSessionUrl(session: Session): string {
+  const url = new URL(location.href)
+  url.search = ''
+  url.hash = `workspace=${encodeURIComponent(JSON.stringify({ query: session.query, title: session.title, terms: session.terms, subtopics: session.subtopics }))}`
+  return url.href
+}
+
+export function readSharedSession(hash: string): Session | null {
+  if (!hash.startsWith('#workspace=') || hash.length > 20000) return null
+  try {
+    const value = JSON.parse(decodeURIComponent(hash.slice(11)))
+    if (!value || typeof value.query !== 'string' || !value.query.trim() || value.query.length > 500) return null
+    const strings = (list: unknown): list is string[] => Array.isArray(list) && list.length <= 100 && list.every(item => typeof item === 'string' && item.length <= 500)
+    if (!strings(value.terms) || !strings(value.subtopics)) return null
+    return { id: crypto.randomUUID(), query: value.query, terms: value.terms, subtopics: value.subtopics,
+      startedAt: Date.now(), title: typeof value.title === 'string' ? value.title.slice(0, 120) : undefined }
+  } catch { return null }
 }

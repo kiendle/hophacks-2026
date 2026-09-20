@@ -21,23 +21,23 @@ export function HoverCard({ post, anchor, bounds }: Props) {
     <div className="card" style={{ left: Math.max(0, left), top, width: CARD_WIDTH }}>
       <div className="card-head">
         <span className="handle">{post.handle}</span>
-        <span className="muted">{formatTime(post.time)}</span>
+        <span className="muted">{post.timeKnown === false ? '—' : formatTime(post.time)}</span>
       </div>
       <p className="card-text">{post.text}</p>
       <div className="card-foot">
         <div className="card-stats muted">
-          <span>
+          <span aria-label={post.periodLikes === undefined ? 'Likes' : 'Likes received in this period'}>
             <HeartIcon size={13} />
-            {formatCount(post.likes)}
+            {post.periodLikes !== undefined ? formatCount(post.periodLikes) : post.likesKnown === false ? '—' : formatCount(post.likes)}
           </span>
-          <span>
+          {post.otherMetricsKnown !== false && <span>
             <ReplyIcon size={13} />
             {formatCount(post.replies)}
-          </span>
-          <span>
+          </span>}
+          {post.otherMetricsKnown !== false && <span>
             <RetweetIcon size={13} />
             {formatCount(post.retweets)}
-          </span>
+          </span>}
         </div>
         <SentimentGauge value={post.sentiment} />
       </div>
@@ -47,6 +47,7 @@ export function HoverCard({ post, anchor, bounds }: Props) {
 
 /** A 0 to 10 track with a marker, plus the score. */
 export function SentimentGauge({ value }: { value: number }) {
+  if (!Number.isFinite(value)) return <span className="muted">—</span>
   const color = sentimentColor(value)
   return (
     <div className="gauge">

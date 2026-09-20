@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
 import { generateDevSeries } from './devMock'
+import { useEffect, useState } from 'react'
 import type { Series } from './types'
+import type { ReplayCommand, ReplayStatus } from './replayTypes'
 
 /** What the views read: the series so far, plus where the stream has reached. */
 export interface StreamSnapshot {
@@ -13,10 +14,18 @@ export interface StreamSnapshot {
   read: number
   kept: number
   note?: string
+  start?: number
+  end?: number
+  run?: string
+  status?: ReplayStatus
+  speed?: number
+  error?: string
 }
 
 export interface DataSource {
   subscribe(onUpdate: (snapshot: StreamSnapshot) => void): () => void
+  command?: (command: ReplayCommand) => void
+  snapshotAt?: (time: number) => Series[]
 }
 
 /** Firehose posts scanned for each one kept, for the fixture's event readout. */

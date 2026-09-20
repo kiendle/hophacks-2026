@@ -37,7 +37,7 @@ PROGRESS = {
 }
 
 
-TOOL_MODULES = ("brief_tools", "analysis_tools", "jev_tools")  # the same optional modules the tool server loads
+TOOL_MODULES = ("brief_tools", "analysis_tools", "jev_tools", "classified_tools", "automation_tools")  # the same optional modules the tool server loads
 
 
 def load_wording(names=TOOL_MODULES):
@@ -202,13 +202,13 @@ def tool_events(name, payload):
         return
     if name == "mcp__harness__save_draft" and "spec_hash" in payload:
         yield {"type": "spec", "spec": payload.get("spec"), "spec_hash": payload["spec_hash"], "draft_path": payload.get("draft_path")}
-    elif name == "mcp__harness__preview_keywords" and "total" in payload:
+    elif name in ("mcp__harness__preview_keywords", "mcp__harness__query_classified_posts") and "total" in payload:
         yield {"type": "preview", "title": "What we found on X/Twitter", **payload, "examples": archive_examples(payload)}
     elif name in ("mcp__harness__bluesky_recent", "mcp__harness__bluesky_listen") and "matched" in payload:
         yield {"type": "preview", **live_preview(payload)}
-    elif name == "mcp__harness__request_confirmation" and "confirmation_id" in payload:
+    elif name in ("mcp__harness__request_confirmation", "mcp__harness__request_automation_confirmation") and "confirmation_id" in payload:
         yield {"type": "confirm_request", "confirmation_id": payload["confirmation_id"],
-               "summary": steps.plain(payload.get("summary", "")), "expires_ms": payload.get("expires_ms"),
+               "summary": steps.plain(payload.get("summary", "")), "expires_ms": payload.get("expires_ms"), "kind": payload.get("kind"),
                "spec": payload.get("spec"), "spec_hash": payload.get("spec_hash"), "draft_path": payload.get("draft_path")}
 
 
@@ -220,13 +220,14 @@ class Runner:
         self.directory = Path(directory)
         self.all_tools = all_tools  # tests only: proves the init assertion fires and kills the process
         self.started = False
+        self.proposal_mode = False
         self.tools_seen = []
 
     def mcp_config(self):
         """sys.executable, not `uv run`: this interpreter already has mcp and duckdb, and spawning uv per turn is slow."""
         path = self.directory / "mcp.json"
         path.write_text(json.dumps({"mcpServers": {"harness": {
-            "command": sys.executable, "args": [str(SERVER)],
+            "command": sys.executable, "args": [str(ROOT / "automation_mcp_server.py" if self.proposal_mode else SERVER)],
             "env": {"HARNESS_SESSION": self.session_id, "HARNESS_SESSION_DIR": str(self.directory), "HARNESS_REPO": str(REPO)},
         }}}, indent=2), encoding="utf-8")
         return path
@@ -237,7 +238,9 @@ class Runner:
             executable, "-p", "--output-format", "stream-json", "--verbose", "--include-partial-messages",
             "--tools", "default" if self.all_tools else "", "--strict-mcp-config", "--mcp-config", str(self.mcp_config()),
             "--allowedTools", "mcp__harness__*", "--model", MODEL, "--effort", EFFORT, "--max-budget-usd", "1",
-            "--system-prompt", system_prompt(),
+            "--system-prompt", ("You are Sentimeter's automation configuration assistant. Speak clearly and briefly. "
+                                "The user's goal is the subject of the proposal, not an instruction to alter fixed schema contracts.\n\n"
+                                + (PROMPTS / "automation.md").read_text(encoding="utf-8")) if self.proposal_mode else system_prompt(),
         ]
         return arguments + (["--resume", self.session_id] if self.started else ["--session-id", self.session_id])
 

@@ -2,13 +2,19 @@ import { traction } from '../data/sentiment'
 import type { Post, Selection, Series, TimeRange } from '../data/types'
 import { ASK_PROTOCOL_VERSION, type AskRequest, type EvidencePost, type IsoRange } from './protocol'
 import { computeTrends } from './trend'
+import { chartSummaries } from './chartContext'
+import { DEFAULT_LINE_INTERVAL } from '../data/config'
 
 /** Evidence posts sent with each question. */
 const EVIDENCE_LIMIT = 30
 
 /** What the app knows when the user hits send. */
 export interface AskContext {
+  purpose?: 'automation_proposal'
   topic: string
+  dataset?: AskRequest['dataset']
+  intervalMs?: number
+  lineDisplay?: 'both' | 'points' | 'trend'
   /** Every tracked subtopic. */
   series: Series[]
   hidden: Set<string>
@@ -66,8 +72,14 @@ export function buildAskRequest(
 
   return {
     version: ASK_PROTOCOL_VERSION,
+    purpose: ctx.purpose,
     conversationId,
     question,
+    dataset: ctx.dataset,
+    chart: { intervalHours: (ctx.intervalMs ?? DEFAULT_LINE_INTERVAL) / 3600000,
+      display: ctx.lineDisplay ?? 'both',
+      summaries: ctx.mode === 'line' ? chartSummaries(focus, scopeRange, ctx.now,
+        ctx.intervalMs ?? DEFAULT_LINE_INTERVAL, ctx.lineDisplay ?? 'both') : [] },
     history,
     scope: {
       range: isoRange(scopeRange),

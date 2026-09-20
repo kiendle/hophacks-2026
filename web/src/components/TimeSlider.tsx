@@ -1,19 +1,17 @@
 import { max, scaleLinear, scaleUtc } from 'd3'
-import { useMemo, useRef, useState, type PointerEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react'
 import { BUCKET_MS } from '../data/config'
 import type { Series, TimeRange } from '../data/types'
 import { formatTime } from '../format'
 import { useSize } from '../hooks/useSize'
-import { clampView, MIN_WINDOW } from '../view'
+import { clampView, dragTimeView, trailingView, type DragMode, type TimeDrag } from '../view'
 
 /** Histogram bar width, in buckets. */
 const BIN = 3
 const BARS_H = 44
 const TRACK_Y = BARS_H + 14
 const HEIGHT = TRACK_Y + 8
-const EDGE = 8
-
-type Mode = 'move' | 'left' | 'right'
+const EDGE = 12
 
 interface Props {
   series: Series[]
@@ -21,6 +19,8 @@ interface Props {
   extent: TimeRange
   view: TimeRange
   onChange: (r: TimeRange) => void
+  onInteractionStart?: () => void
+  onInteractionEnd?: () => void
   /**
    * Fixed-length window ending at the current moment: dragging only scrubs
    * `view.end`, and a quiet label shows that moment by the handle.
@@ -30,21 +30,27 @@ interface Props {
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
 
-export function TimeSlider({ series, extent, view, onChange, trailing = false }: Props) {
+export function TimeSlider({ series, extent, view, onChange, onInteractionStart, onInteractionEnd, trailing = false }: Props) {
   const [ref, { width }] = useSize<HTMLDivElement>()
+  const [dragExtent, setDragExtent] = useState<TimeRange | null>(null)
+  const displayedExtent = dragExtent ?? extent
+  const drag = useRef<TimeDrag | null>(null)
+  useEffect(() => () => {
+    if (drag.current) onInteractionEnd?.()
+  }, [onInteractionEnd])
 
   const bins = useMemo(() => {
     const byStart = new Map<number, number>()
     for (const s of series)
       for (const b of s.buckets) {
-        if (b.start + BUCKET_MS / 2 > extent.end) continue
+        if (b.start > extent.end) continue
         const start = extent.start + Math.floor((b.start - extent.start) / (BIN * BUCKET_MS)) * BIN * BUCKET_MS
         byStart.set(start, (byStart.get(start) ?? 0) + b.volume)
       }
     return [...byStart].sort((a, b) => a[0] - b[0])
   }, [series, extent.start, extent.end])
 
-  const x = scaleUtc().domain([extent.start, extent.end]).range([0, width])
+  const x = scaleUtc().domain([displayedExtent.start, displayedExtent.end]).range([0, width])
   const y = scaleLinear()
     .domain([0, max(bins, (d) => d[1]) ?? 1])
     .range([BARS_H, 4])
@@ -54,21 +60,24 @@ export function TimeSlider({ series, extent, view, onChange, trailing = false }:
   // During replay the view can start before the data does.
   const xl = clamp(x(view.start), 0, width)
   const xr = clamp(x(view.end), 0, width)
-  const modeAt = (px: number): Mode | null => {
+  const modeAt = (px: number): DragMode | null => {
     if (trailing) return px > xl - EDGE && px < xr + EDGE ? 'move' : null
-    if (Math.abs(px - xl) <= EDGE) return 'left'
-    if (Math.abs(px - xr) <= EDGE) return 'right'
+    const leftDistance = Math.abs(px - xl)
+    const rightDistance = Math.abs(px - xr)
+    if (Math.min(leftDistance, rightDistance) <= EDGE) return leftDistance <= rightDistance ? 'left' : 'right'
     if (px > xl && px < xr) return 'move'
     return null
   }
 
-  const drag = useRef<{ mode: Mode; t0: number; view: TimeRange } | null>(null)
   const [cursor, setCursor] = useState('pointer')
 
   const localX = (e: PointerEvent) => e.clientX - e.currentTarget.getBoundingClientRect().left
 
   const onPointerDown = (e: PointerEvent<SVGSVGElement>) => {
+    if (e.button !== 0 || drag.current) return
     e.currentTarget.setPointerCapture(e.pointerId)
+    onInteractionStart?.()
+    setDragExtent({ ...extent })
     const px = localX(e)
     let start = clampView(view, extent)
     let mode = modeAt(px)
@@ -77,11 +86,11 @@ export function TimeSlider({ series, extent, view, onChange, trailing = false }:
       // Jump the window to the click (centered, or ending there when trailing), then keep dragging it.
       const w = start.end - start.start
       const t = x.invert(px).getTime()
-      start = trailing ? trail(t, w) : clampView({ start: t - w / 2, end: t + w / 2 }, extent)
+      start = trailing ? trailingView(t, w, extent) : clampView({ start: t - w / 2, end: t + w / 2 }, extent)
       onChange(start)
       mode = 'move'
     }
-    drag.current = { mode, t0: x.invert(px).getTime(), view: start }
+    drag.current = { mode, x: px, width, view: start, extent: { ...extent }, trailing }
     setCursor(mode === 'move' ? 'grabbing' : 'ew-resize')
   }
 
@@ -93,28 +102,15 @@ export function TimeSlider({ series, extent, view, onChange, trailing = false }:
       setCursor(mode === 'move' ? 'grab' : mode ? 'ew-resize' : 'pointer')
       return
     }
-    const dt = x.invert(px).getTime() - d.t0
-    const { start, end } = d.view
-    if (trailing) {
-      onChange(trail(end + dt, end - start))
-    } else if (d.mode === 'move') {
-      onChange(clampView({ start: start + dt, end: end + dt }, extent))
-    } else if (d.mode === 'left') {
-      onChange({ start: clamp(start + dt, extent.start, end - MIN_WINDOW), end })
-    } else {
-      onChange({ start, end: clamp(end + dt, start + MIN_WINDOW, extent.end) })
-    }
-  }
-
-  /** A trailing window ending at `t`; it may begin before the data does. */
-  function trail(t: number, w: number): TimeRange {
-    const end = clamp(t, extent.start + BUCKET_MS, extent.end)
-    return { start: end - w, end }
+    onChange(dragTimeView(d, px))
   }
 
   const onPointerUp = () => {
+    if (!drag.current) return
     drag.current = null
+    setDragExtent(null)
     setCursor('grab')
+    onInteractionEnd?.()
   }
 
   return (
@@ -123,11 +119,12 @@ export function TimeSlider({ series, extent, view, onChange, trailing = false }:
         <svg
           width={width}
           height={HEIGHT}
-          style={{ cursor }}
+          style={{ cursor, touchAction: 'none' }}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
+          onLostPointerCapture={onPointerUp}
         >
           <rect className="slider-window" x={xl} width={xr - xl} height={BARS_H + 4} />
           {bins.map(([start, v]) => {

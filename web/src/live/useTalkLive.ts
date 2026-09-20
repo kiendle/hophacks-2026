@@ -7,6 +7,7 @@ export interface TalkLiveOptions {
   stop?(): void
   onTranscript?(message: Transcript): void
   context?(): string
+  workspaceContext?(): string
   onActiveChange?(active: boolean): void
 }
 export interface TalkLive extends AgentView {
@@ -28,8 +29,10 @@ export function useTalkLive(options: TalkLiveOptions): TalkLive {
     stopWorkspace: () => latest.current.stop?.(),
     onTranscript: message => latest.current.onTranscript?.(message),
     context: () => latest.current.context?.() || '',
+    workspaceContext: () => latest.current.workspaceContext?.() || '',
   }))
   const [view, setView] = useState(session.view)
+  useEffect(() => { session.syncWorkspaceContext() })
   const [available, setAvailable] = useState(false)
   useEffect(() => session.watch(setView), [session])
   useEffect(() => {

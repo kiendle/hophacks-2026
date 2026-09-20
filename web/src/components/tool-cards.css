@@ -15,6 +15,10 @@
 .tool-card { border: 1px solid var(--border); border-radius: 10px; padding: 12px; background: #fff; }
 .tool-card h4 { margin: 0 0 6px; font-size: 12px; font-weight: 600; }
 .tool-card audio, .tool-chart { display: block; width: 100%; margin: 10px 0; }
+.proposal-status { color: var(--muted); font-size: 11px; margin-bottom: 8px; }
+.proposal-group { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.automation-proposal pre { max-height: 300px; overflow: auto; white-space: pre-wrap; font-size: 11px; }
+.automation-proposal .tool-actions { flex-wrap: wrap; }
 .tool-counts { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 10px; margin: 8px 0; }
 .tool-example { border-top: 1px solid var(--border); margin-top: 10px; padding-top: 8px; }
 .tool-example a { display: block; color: var(--text); font-size: 11px; margin-top: 4px; }

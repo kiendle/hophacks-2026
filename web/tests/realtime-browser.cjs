@@ -30,6 +30,9 @@ const path = require('node:path');
       await page.route('**/api/sessions/voice-workspace-test/messages', route => {
         workspaceCalls++;
         return route.fulfill({ contentType: 'text/event-stream', body: [
+          { type: 'step', phase: 'start', id: 'search-test', title: 'Searching X/Twitter', tool: 'search_posts', input: { query: 'AI workflows' } },
+          { type: 'step', phase: 'end', id: 'search-test', title: 'Searching X/Twitter', ok: true, ms: 1100 },
+          { type: 'card', card: { kind: 'preview', title: 'What we found on X/Twitter', total: 12, examples: [{ id: '1', body: 'An example AI workflow from the saved archive.', day: '2026-09-10', likes: 20, url: 'https://x.com/example/status/1' }] } },
           { type: 'delta', text: 'There are twelve posts in your chart.' }, { type: 'done' },
         ].map(event => `data: ${JSON.stringify(event)}\n\n`).join('') });
       });
@@ -43,17 +46,34 @@ const path = require('node:path');
     await page.waitForTimeout(1800);
     await page.screenshot({ path: 'harness/state/realtime-cloud-desktop.png' });
     await page.getByRole('button', { name: 'Show transcript', exact: true }).click();
-    await page.locator('.live-transcript p[data-role="assistant"]').filter({ hasText: workspace ? /twelve|12/i : /hello|hi\b/i }).first().waitFor({ timeout: 35000 });
+    await page.locator('.live-transcript p[data-role="assistant"]').filter({ hasText: workspace ? /twelve|12/i : /hello|hi\b/i }).first().waitFor({ timeout: 60000 });
     await page.waitForFunction(() => document.querySelector('.live-room-state')?.textContent === 'Speaking' && Number(document.querySelector('.cloud-orb')?.style.transform.match(/[\d.]+/)?.[0]) > 1.005, { timeout: 10000 });
     await page.waitForFunction(() => window.voiceMedia.some(audio => audio.currentTime > 0 && !audio.muted && audio.volume > 0), { timeout: 10000 });
     assert(await page.locator('.live-transcript p[data-role="user"]').count());
     assert.deepEqual(oldRequests, [], 'Realtime voice must not use the old separate STT/TTS routes');
-    if (workspace) assert.equal(workspaceCalls, 1, 'One voice question must make exactly one workspace request');
+    if (workspace) {
+      assert.equal(workspaceCalls, 1, 'One voice question must make exactly one workspace request');
+      const panel = page.getByRole('region', { name: 'Live searches and results' });
+      await panel.locator('.tool-step-title').filter({ hasText: 'Searching X/Twitter' }).waitFor();
+      await panel.getByText('12 matching posts').waitFor();
+      assert(await panel.getByRole('link', { name: 'Open on X' }).isVisible());
+      await page.waitForFunction(() => document.querySelector('.live-room-state')?.textContent === "I'm listening", { timeout: 20000 });
+      const replies = await page.locator('.live-transcript p[data-role="assistant"]').allTextContents();
+      await page.waitForTimeout(32000);
+      assert.deepEqual(await page.locator('.live-transcript p[data-role="assistant"]').allTextContents(), replies, 'Silence must not cause another spoken summary');
+      assert.equal(workspaceCalls, 1, 'Silence must not repeat the search');
+    }
     await page.getByRole('button', { name: 'Mute microphone', exact: true }).click();
     await page.getByRole('button', { name: 'Unmute microphone', exact: true }).waitFor();
     await page.screenshot({ path: 'harness/state/realtime-cloud-transcript.png' });
     await page.setViewportSize({ width: 390, height: 844 });
     await page.getByRole('button', { name: 'Hide transcript', exact: true }).click();
+    if (workspace) {
+      const panel = page.locator('.live-workspace');
+      assert(await panel.isVisible());
+      const bounds = await panel.boundingBox();
+      assert(bounds.width > 250 && bounds.height > 150 && bounds.x >= 0 && bounds.x + bounds.width <= 390);
+    }
     await page.screenshot({ path: 'harness/state/realtime-cloud-mobile.png' });
     await page.getByRole('button', { name: 'End live voice', exact: true }).click();
     await page.waitForFunction(() => window.voiceTracks.every(track => track.readyState === 'ended'));

@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.11"
-# dependencies = ["aiohttp>=3.11,<4", "mcp>=2", "duckdb>=1.4,<2", "pytz"]
+# dependencies = ["aiohttp>=3.11,<4", "mcp>=2", "duckdb==1.5.5", "jsonschema>=4.23,<5", "pytz"]
 # ///
 """Run: python -m uv run harness/bridge.py   then open http://127.0.0.1:5195
 
@@ -72,6 +72,7 @@ BUILD_FIRST = """<!doctype html>
 CONFIRMATION = re.compile(r"[A-Za-z0-9_-]{16}")
 GONE = (ConnectionResetError, RuntimeError, OSError)  # the page may be gone before the last frame is written
 MAX_TURNS = 2  # at most two Claude Code processes at once: one laptop, one subscription (DESIGN.md §0)
+SSE_HEARTBEAT_SECONDS = 10
 
 
 def fail(status, message):
@@ -196,9 +197,22 @@ async def stream(request, session, text):
     response.content_type, response.charset = "text/event-stream", "utf-8"
     await response.prepare(request)
     started, finished = time.monotonic(), False
+    write_lock = asyncio.Lock()
 
     async def send(event):
-        await response.write(f"data: {json.dumps(event)}\n\n".encode("utf-8"))
+        async with write_lock:
+            await response.write(f"data: {json.dumps(event)}\n\n".encode("utf-8"))
+
+    async def keep_alive():
+        try:
+            while True:
+                await asyncio.sleep(SSE_HEARTBEAT_SECONDS)
+                async with write_lock:
+                    await response.write(b": keepalive\n\n")
+        except GONE:
+            return
+
+    heartbeat = asyncio.create_task(keep_alive())
 
     try:
         async with request.app["state"]["gate"]:
@@ -206,9 +220,13 @@ async def stream(request, session, text):
                 finished = finished or event["type"] == "done"
                 await send(event)
     except Exception as error:  # a broken turn must still close the stream, or the page waits forever
+        print(f"chat {session['id']}: stream interrupted after {time.monotonic() - started:.1f}s ({type(error).__name__})", flush=True)
         with contextlib.suppress(*GONE):
             await send({"type": "error", "text": f"The harness failed: {error!r}"[:300]})
     finally:
+        heartbeat.cancel()
+        with contextlib.suppress(asyncio.CancelledError, *GONE):
+            await heartbeat
         session["busy"] = False
         with contextlib.suppress(*GONE):
             if not finished:
@@ -222,10 +240,17 @@ async def post_message(request):
     if session is None:
         return fail(404, "No such session.")
     text = payload.get("text")
-    if not isinstance(text, str) or not text.strip() or len(text) > 4000:
-        return fail(400, "Send a message between 1 and 4000 characters.")
+    if not isinstance(text, str) or not text.strip() or len(text) > 32000:
+        return fail(400, "Send a message and chart context between 1 and 32000 characters.")
+    purpose = payload.get("purpose")
+    if purpose not in (None, "automation_proposal"):
+        return fail(400, "Unknown conversation purpose.")
     if session["busy"]:
         return fail(409, "This chat is still answering the previous message.")
+    proposal_mode = purpose == "automation_proposal"
+    if session["runner"].started and session["runner"].proposal_mode != proposal_mode:
+        return fail(409, "Start a new conversation to change its purpose.")
+    session["runner"].proposal_mode = proposal_mode
     session["busy"] = True  # claimed here, with no await in between, so two messages cannot both pass
     return await stream(request, session, text.strip())
 
@@ -248,6 +273,19 @@ async def post_confirm(request):
         return fail(409, "That confirmation was already decided.")
     if session["busy"]:
         return fail(409, "This chat is still answering the previous message.")
+    if record.get("kind") == "automation_proposal":
+        from automation_tools import decide_proposal, ProposalError
+        try:
+            result = decide_proposal(session["dir"], confirmation_id, approved)
+        except (ProposalError, ValueError) as error:
+            return fail(409, str(error))
+        events = [
+            {"type": "card", "card": result["_card"]},
+            {"type": "message", "text": "Your final automation configuration is ready to download. No automation has been started." if approved else "The proposal remains editable. Tell me what you would like to change."},
+            {"type": "done"},
+        ]
+        return web.Response(text="".join(f"data: {json.dumps(event)}\n\n" for event in events),
+                            content_type="text/event-stream", headers={"Cache-Control": "no-store"})
     record.update(decision="approved" if approved else "declined", decided_ms=int(time.time() * 1000))
     temp = path.with_name(f"{path.name}.tmp")
     temp.write_text(json.dumps(record, indent=2), encoding="utf-8")

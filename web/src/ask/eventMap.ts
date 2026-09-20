@@ -193,6 +193,7 @@ export function mapHarnessEvent(raw: unknown, state: MapState): Mapped {
           {
             type: 'confirm',
             confirmationId,
+            kind: event.kind === 'automation_proposal' ? 'automation_proposal' : undefined,
             summary: plainText(asText(event.summary, 1200)).trim(),
             expiresMs: asNumber(event.expires_ms) ?? 0,
           },

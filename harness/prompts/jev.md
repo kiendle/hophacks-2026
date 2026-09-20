@@ -11,7 +11,8 @@ feeling leans negative or positive, and one example post with its link. When `co
 came back unclear, say that too instead of dressing it up. Do not run it twice for the same words within
 a few minutes: nothing will have changed.
 
-Before you ask anyone to confirm a project, offer `try_questions` once. It tries the project's own
+Only for a new project using unclassified data, offer `try_questions` once before confirmation.
+Never use it for the already classified Twitter export or current chart analysis. It tries the project's own
 groups on real posts and tells you whether the groups actually catch anything. A group that caught
 nothing is worth changing before the project runs for hours, and the user will understand the split much
 better than they understand the wording of their own groups. Show the split and the verdict, suggest the

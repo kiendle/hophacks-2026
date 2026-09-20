@@ -9,11 +9,15 @@
 export const ASK_PROTOCOL_VERSION = 1
 
 export interface AskRequest {
+  purpose?: 'automation_proposal'
   version: typeof ASK_PROTOCOL_VERSION
   /** Stable per conversation, so the backend can keep its own state if it wants. */
   conversationId: string
   /** The user's text, verbatim. */
   question: string
+  /** Exact replay filter and display settings, retained when asking the local data tools. */
+  dataset?: { source: 'twitter_archive' | 'bluesky_live'; keywords: string[] }
+  chart?: { intervalHours: number; display: 'both' | 'points' | 'trend'; summaries: import('./chartContext').ChartSummary[] }
   /** Earlier turns in this conversation, oldest first. */
   history: { role: 'user' | 'assistant'; content: string }[]
   /** What the question is about. */
@@ -132,7 +136,7 @@ export type AskEvent =
   /** Something to draw under the answer. */
   | { type: 'card'; card: AskCard }
   /** A decision only the user may make. Answered with `confirmDecision`, never by the model. */
-  | { type: 'confirm'; confirmationId: string; summary: string; expiresMs: number }
+  | { type: 'confirm'; confirmationId: string; summary: string; expiresMs: number; kind?: string }
 
 export interface AskStepEvent {
   type: 'step'

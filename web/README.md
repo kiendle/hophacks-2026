@@ -22,17 +22,37 @@ Missing services produce a visible error, not mock results.
 
 ## Default dataset
 
-A topic such as **AI** uses the saved **X/Twitter archive**, never a background
-Bluesky scan. The dashboard reads `harness/data/prepared/sample.parquet`, the
-existing deduplicated 1% archive sample. It selects up to 150 matching posts,
-prioritizing the chosen subtopics and spreading the selection across days,
-then scores them with Jev. Results are cached by filters and dataset version.
-The status line reports sample sizes; these are not full-archive totals.
+A topic such as **AI** uses the Jev-classified **X/Twitter export**, never a
+background Bluesky scan or a new Jev scoring call. Supplied ZIPs are extracted
+under `harness/data/classified/`. The `processed-streams-20260920T063350Z` package
+is the active version: 766,605 post events, 273,718 like events and 27 company
+categories. It includes every event from `processed-streams-20260920T034707Z`,
+including its updated classifications. Earlier packages are retained for rollback.
+All manifest file hashes were verified. This is a partial classified export,
+not the entire Twitter firehose.
 
-Charts use four-hour buckets, a 0–10 sentiment scale, and saved engagement totals.
-Historical playback moves through publication dates; it does not reconstruct how
-engagement accumulated. Archive results do not poll continuously. Simultaneous
-identical requests share one job instead of rejecting each other.
+The dashboard uses the UI branch's event-stream playback through `/api/replay`.
+Its clock sends only the saved posts and like changes reached so far, starting
+at 4 archive hours per second. Pause, resume, speed changes and restart operate
+on that clock; historical inspection uses the received events only. There is no
+full-dataset download before drawing the chart and no new Jev scoring.
+`preview_keywords` searches the same export; `classified_sentiment` reports
+saved sentiment for exact selected timestamps. Opening like balances count once,
+later changes affect their own periods, and multi-company posts retain all labels.
+
+To rebuild the local chart data without model calls:
+
+```powershell
+uv run web/scripts/prepare_demo.py harness/data/classified/processed-streams-20260920T063350Z
+```
+
+The generated `web/data/demo.json.gz` and source Parquet files remain local.
+Preparation uses bounded batches and writes valid JSON with one event per line,
+so runtime loaders can read large exports without building an oversized string.
+The Python server serves the same replay messages consumed by the UI branch.
+The UI retains every event while coalescing redraws and reusing completed chart
+calculations. See [replay performance](REPLAY_PERFORMANCE.md) for measurements
+and integrity checks.
 
 Explicitly asking for live/real-time data or Bluesky enables that source. The
 assistant follows the same archive-first rule. A spoken conversation is separate
@@ -84,3 +104,21 @@ preview, brief and confirmation responses, plus a fake microphone. Run from the
 repo root with the app running and Playwright available. `PLAYWRIGHT_MODULE` can
 point to its package directory and `UI_BROWSER_PATH` to an installed Chromium
 binary. The test generates its own audio and makes no paid model/voice calls.
+
+## UI branch integration (75bf5e2)
+
+The current homepage/setup flow and harness remain the default. The updated charts
+support 4h, 12h and 1d points, a trailing 24h trend, display toggles, adaptive axes,
+and improved timeline gestures. Recents can be deleted; both sidebars resize.
+Selected ranges and subtopics are sent to text and voice context; the range chip
+shows dates without a ?Focus:? prefix.
+
+Saved sentiment probabilities map to `5 * (1 + P(positive) - P(negative))`.
+Within a period, each published post contributes a baseline of one, plus
+`log(1 + max(0, net likes))`. Insufficient-evidence results do not contribute
+to sentiment means; their post events remain part of volume counts.
+
+Event replay is the default archive dashboard. The package is not included in
+Git; the three tests requiring it explicitly skip when it is absent. The local
+package is installed, so those tests run here. Verify the running server with
+`npx --prefix web tsx web/tests/stream.integration.ts ws://127.0.0.1:5196/api/replay`.

@@ -565,6 +565,10 @@ def try_questions(sample_size: int = 20) -> dict:
     the reader was least sure about, and one sentence about whether the groups work. Show the user the
     split and the verdict in your own words, and offer to change a group before confirming.
     """
+    import classified_data
+    if classified_data.available():
+        return fail('already_classified', 'The active export already contains Jev classifications.',
+                    'Use classified_sentiment to read the saved labels and preview_keywords to inspect posts. Do not reclassify this export.')
     started = time.monotonic()
     if not isinstance(sample_size, int) or isinstance(sample_size, bool) or not 1 <= sample_size <= MAX_SAMPLE:
         return fail("bad_sample", f"Try between 1 and {MAX_SAMPLE} posts.", "Twenty posts is enough to see a problem.")

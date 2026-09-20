@@ -2,17 +2,20 @@ import { useState } from 'react'
 import { Home } from './app/Home'
 import { SetupPanel } from './app/SetupPanel'
 import { Sidebar } from './app/Sidebar'
-import { useRecents, type Session, type Stage } from './app/session'
+import { readSharedSession, useRecents, type Session, type Stage } from './app/session'
 import { Workspace } from './app/Workspace'
 import { expandTerms, suggestSubtopics } from './data/terms'
+import { AutomationSetup } from './app/AutomationSetup'
 
 /** Subtopics proposed before the user edits them. */
 const SUGGESTED = 4
 
 export default function App() {
-  const { recents, remember } = useRecents()
-  const [stage, setStage] = useState<Stage>('home')
-  const [session, setSession] = useState<Session | null>(null)
+  const { recents, remember, forget, edit } = useRecents()
+  const [shared] = useState(() => readSharedSession(location.hash))
+  const [stage, setStage] = useState<Stage>(shared ? 'setup' : 'home')
+  const [session, setSession] = useState<Session | null>(shared)
+  const [automationQuestion, setAutomationQuestion] = useState('')
 
   const start = (query: string) => {
     setSession({
@@ -49,8 +52,21 @@ export default function App() {
         onNew={goHome}
         onHome={goHome}
         onOpen={open}
+        onDelete={id => { forget(id); if (session?.id === id) goHome() }}
+        onEdit={(id, changes) => {
+          edit(id, changes)
+          if (session?.id === id) {
+            if (changes.archived) goHome()
+            else setSession({ ...session, ...changes })
+          }
+        }}
       />
-      {stage === 'home' && <Home onSubmit={start} />}
+      {stage === 'home' && <Home onSubmit={start} onCreateAutomation={question => {
+        setSession(null)
+        setAutomationQuestion(question)
+        setStage('automation')
+      }} />}
+      {stage === 'automation' && <AutomationSetup question={automationQuestion} />}
       {stage === 'setup' && session && (
         <>
           <Workspace session={session} onSessionChange={setSession} preview />

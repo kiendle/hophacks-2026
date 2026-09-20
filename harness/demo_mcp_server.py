@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.11"
-# dependencies = ["mcp>=2", "duckdb>=1.4,<2", "pytz", "aiohttp>=3.11,<4"]
+# dependencies = ["mcp>=2", "duckdb==1.5.5", "jsonschema>=4.23,<5", "pytz", "aiohttp>=3.11,<4"]
 # ///
 """The only tool surface the headless Claude Code can reach (harness/DESIGN.md §0, §7).
 
@@ -226,7 +226,9 @@ def describe_sources(reason: str) -> dict:
     dashes, no semicolons. If you are changing approach, say what you noticed, for example that a word
     was pulling in posts about something else. The user reads it exactly as you wrote it.
     """
-    return {"sources": SOURCES, "preview_window_limit_days": MAX_WINDOW_DAYS,
+    import classified_data
+    sources = [classified_data.info() if source['id'] == 'twitter_firehose' and classified_data.available() else source for source in SOURCES]
+    return {"sources": sources, "preview_window_limit_days": MAX_WINDOW_DAYS,
             "live_source": "bluesky_live", "historical_sources": ["twitter_firehose", "congress"]}
 
 
@@ -287,6 +289,9 @@ def example_post(identifier, day, like_count, lang, body, full_text) -> dict:
 
 
 def scan(keywords: list[str], low: str, high: str, language: str | None) -> dict:
+    import classified_data
+    if classified_data.available():
+        return classified_data.preview(keywords, low, high, language)
     started = time.time()
     connection = duckdb.connect()  # connections are not thread-safe: this one is born and dies inside this thread
     timer = threading.Timer(SCAN_TIMEOUT_S, connection.interrupt)
@@ -350,6 +355,11 @@ def preview_keywords(reason: str, keywords: list[str], date_from: str, date_to: 
 
     Call this before finalizing a project. Show the user the numbers and the examples and ask whether
     that is what they meant. It is the only way either of you learns whether the words work.
+    For the active classified export, dates also accept exact UTC ISO timestamps with an exclusive
+    end, with no three-day limit. It uses saved company/product aliases or whole-word text, ANY
+    keyword; AI means the whole export. Only publication events are counted. For activity driving
+    the displayed chart, use query_classified_posts instead. Language labels are unavailable.
+    The following limits apply only to the legacy raw archive fallback:
     Dates look like 2026-09-09. date_from is the first day counted and date_to is the day after the
     last one, at most three days apart in this demo. Words are matched against the post with its
     links taken out, and capitals are ignored. A word of four letters or fewer, or one written in
@@ -366,6 +376,12 @@ def preview_keywords(reason: str, keywords: list[str], date_from: str, date_to: 
         return fail("bad_keywords", "Give 1 to 20 search words, each 2 to 80 letters long.", "Try the words people actually type, for example a product name and a nickname for it.")
     if len(keywords) > 20:
         return fail("bad_keywords", "We can look for at most 20 words at a time.", "Preview the most promising ones first.")
+    import classified_data
+    if classified_data.available():
+        try:
+            return classified_data.preview([k.strip() for k in keywords], date_from, date_to, language)
+        except (TypeError, ValueError) as error:
+            return fail("bad_dates", str(error), "Use ISO dates or UTC timestamps with a start before the exclusive end.")
     if any(not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date or "") for date in (date_from, date_to)):
         return fail("bad_dates", "Dates have to look like 2026-09-09.", "date_from is the first day counted, date_to is the day after the last one.")
     low, high = f"{date_from}T00:00:00+00", f"{date_to}T00:00:00+00"
@@ -542,7 +558,7 @@ def submit_project(reason: str) -> dict:
                 "Call save_draft, then request_confirmation, then wait for the user to press Confirm.")
 
 
-TOOL_MODULES = ("brief_tools", "analysis_tools", "jev_tools")  # optional, each with register(mcp)
+TOOL_MODULES = ("brief_tools", "analysis_tools", "jev_tools", "classified_tools", "automation_tools")  # optional, each with register(mcp)
 
 
 def load_plugins(server=None, names=TOOL_MODULES):

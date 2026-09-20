@@ -1,5 +1,6 @@
 ﻿"""Archive-only scoring and cache regression test; no network or paid scoring."""
 import asyncio
+import math
 import os
 import sys
 import tempfile
@@ -26,7 +27,7 @@ def main():
         calls = []
         async def fake_score(texts, questions):
             calls.append(texts)
-            return [dict(relevant=dict(noul=.95), feeling=dict(score=3), subtopic=dict(choice='topic-0')) for text in texts], [], 0
+            return [dict(relevant=dict(noul=.95), feeling=dict(choice='positive', probabilities=dict(positive=.6, negative=.1, neutral=.3)), subtopic=dict(choice='topic-0')) for text in texts], [], 0
         with patch.object(ui_archive, 'SAMPLE', sample), patch.object(ui_archive, 'CACHE', root / 'cache'), \
              patch.object(ui_archive.jev, 'score_texts', fake_score), patch.dict(os.environ, {'TYPESAFE_API_KEY': 'test'}), \
              patch.object(ui_server, 'scan', side_effect=AssertionError('Archive requests must never call Bluesky')):
@@ -34,7 +35,7 @@ def main():
             assert result['source'] == 'twitter_archive' and result['streaming'] is False and result['now'] is None
             assert result['read'] == 4 and result['kept'] == 2
             bucket = result['series'][0]['buckets'][0]
-            assert bucket['volume'] == 2 and bucket['sentiment'] == 7.5 and bucket['snapshots'] == []
+            assert bucket['volume'] == 2 and math.isclose(bucket['sentiment'], 7.5) and bucket['snapshots'] == []
             assert '1% sample' in result['note'] and 'No live collection' in result['note']
             assert ui_archive.scan_archive(['AI'], ['OpenAI']) == result
             assert len(calls) == 1, 'Cached requests must not pay for scoring again'

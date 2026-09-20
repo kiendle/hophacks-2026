@@ -1,0 +1,824 @@
+{
+ "note": "Whole-word RE2 patterns, matched on the tweet body with links removed. need_ai_context terms only count when a context_terms pattern also matches the same post.",
+ "standalone": [
+  {
+   "keyword": "AI",
+   "pattern": "\\bAI\\b",
+   "case_sensitive": true
+  },
+  {
+   "keyword": "Grok",
+   "pattern": "\\bgrok\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Claude",
+   "pattern": "\\bclaude\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "IA",
+   "pattern": "\\bIA\\b",
+   "case_sensitive": true
+  },
+  {
+   "keyword": "ChatGPT",
+   "pattern": "\\bchatgpt\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "AIイラスト",
+   "pattern": "AIイラスト",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "GPT",
+   "pattern": "\\bgpt\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "OpenAI",
+   "pattern": "\\bopenai\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Nvidia",
+   "pattern": "\\bnvidia\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Codex",
+   "pattern": "\\bcodex\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "AI agent",
+   "pattern": "\\bAI agents?\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Anthropic",
+   "pattern": "\\banthropic\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "LLM",
+   "pattern": "\\bLLMs?\\b",
+   "case_sensitive": true
+  },
+  {
+   "keyword": "生成AI",
+   "pattern": "生成AI",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Claude Code",
+   "pattern": "\\bclaude ?code\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "agentic",
+   "pattern": "\\bagentic\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Astra",
+   "pattern": "\\bastra\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Cursor",
+   "pattern": "\\bcursor\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "AI-generated",
+   "pattern": "\\bAI[- ]generated\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Qwen",
+   "pattern": "\\bqwen",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "DeepSeek",
+   "pattern": "\\bdeepseek\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "vibe coding",
+   "pattern": "\\bvibe[- ]?cod",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "ذكاء اصطناعي",
+   "pattern": "ذكاء ال?ا?صطناعي",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "AI slop",
+   "pattern": "\\bAI[- ]slop\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "MCP",
+   "pattern": "\\bMCP\\b",
+   "case_sensitive": true
+  },
+  {
+   "keyword": "yapay zeka",
+   "pattern": "yapay zek",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Seedance",
+   "pattern": "\\bseedance\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "AI model",
+   "pattern": "\\bAI models?\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "inteligencia artificial",
+   "pattern": "intelig[eê]ncia artificial",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "GLM",
+   "pattern": "\\bGLM\\b",
+   "case_sensitive": true
+  },
+  {
+   "keyword": "artificial intelligence",
+   "pattern": "\\bartificial intelligence\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "AGI",
+   "pattern": "\\bAGI\\b",
+   "case_sensitive": true
+  },
+  {
+   "keyword": "Hugging Face",
+   "pattern": "\\bhugging ?face\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "GPT-5",
+   "pattern": "\\bgpt[- ]?5(?:\\.[0-9])?\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Suno",
+   "pattern": "\\bsuno\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Copilot",
+   "pattern": "\\bcopilot\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "MiniMax",
+   "pattern": "\\bminimax\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Grok Imagine",
+   "pattern": "\\bgrok[- ]?imagine\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "chatbot",
+   "pattern": "\\bchat ?bots?\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "physical AI",
+   "pattern": "\\bphysical ai\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "GPT-6",
+   "pattern": "\\bgpt[- ]?6\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "PixAI",
+   "pattern": "\\bpixai\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "OpenRouter",
+   "pattern": "\\bopenrouter\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "xAI",
+   "pattern": "\\bxai\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Midjourney",
+   "pattern": "\\bmidjourney\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "人工知能",
+   "pattern": "人工知能|人工智能|인공지능",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "generative AI",
+   "pattern": "\\bgenerative ?ai\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "GenAI",
+   "pattern": "\\bgen[- ]?ai\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "A.I.",
+   "pattern": "\\bA\\.I\\.",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Waymo",
+   "pattern": "\\bwaymo\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Wan",
+   "pattern": "\\bwan ?[0-9]",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Google AI",
+   "pattern": "\\bgoogle ai\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Perplexity",
+   "pattern": "\\bperplexity\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "RAG",
+   "pattern": "\\bRAG\\b",
+   "case_sensitive": true
+  },
+  {
+   "keyword": "AI art",
+   "pattern": "\\bAI[- ]art\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "machine learning",
+   "pattern": "\\bmachine learning\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "keep4o",
+   "pattern": "\\b(?:keep|bringback|free|opensource)4o\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "deepfake",
+   "pattern": "\\bdeep ?fakes?\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Jensen Huang",
+   "pattern": "\\bjensen huang\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "language model",
+   "pattern": "\\blanguage models?\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "OAI",
+   "pattern": "\\bOAI\\b",
+   "case_sensitive": true
+  },
+  {
+   "keyword": "superintelligence",
+   "pattern": "\\bsuper[- ]?intelligence\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "ИИ",
+   "pattern": "(?:^|[^\\p{L}\\p{N}])ИИ(?:[^\\p{L}\\p{N}]|$)",
+   "case_sensitive": true
+  },
+  {
+   "keyword": "AI safety",
+   "pattern": "\\bAI safety\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Nano Banana",
+   "pattern": "\\bnano[- ]?banana\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Vera Rubin",
+   "pattern": "\\bvera rubin\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Amodei",
+   "pattern": "\\bamodei\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "AI Overviews",
+   "pattern": "\\bAI overviews?\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "AI bubble",
+   "pattern": "\\bAI[- ]bubble\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Nebius",
+   "pattern": "\\bnebius\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "intelligence artificielle",
+   "pattern": "intelligence artificielle",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Ollama",
+   "pattern": "\\bollama\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Cerebras",
+   "pattern": "\\bcerebras\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "ElevenLabs",
+   "pattern": "\\beleven ?labs\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "DeepMind",
+   "pattern": "\\bdeepmind\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Replit",
+   "pattern": "\\breplit\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "neural network",
+   "pattern": "\\bneural net(?:work)?s?\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "NotebookLM",
+   "pattern": "\\bnotebooklm\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "GPT-4",
+   "pattern": "\\bgpt[- ]?4(?:o|\\.[0-9])?\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Meta AI",
+   "pattern": "\\bmeta ai\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Apodex",
+   "pattern": "\\bapodex\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "AI bro",
+   "pattern": "\\bAI bros?\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "deep learning",
+   "pattern": "\\bdeep learning\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Kling",
+   "pattern": "\\bkling\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Groq",
+   "pattern": "\\bgroq\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Karpathy",
+   "pattern": "\\bkarpathy\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Pollo AI",
+   "pattern": "\\bpollo ?ai\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "PyTorch",
+   "pattern": "\\bpytorch\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "AI Mode",
+   "pattern": "\\bAI mode\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "NijiJourney",
+   "pattern": "\\bniji ?journey\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "LangChain",
+   "pattern": "\\blangchain\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Nscale",
+   "pattern": "\\bnscale\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "LLMO",
+   "pattern": "\\bllmo\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Scale AI",
+   "pattern": "\\bscale ai\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Aschenbrenner",
+   "pattern": "\\baschenbrenner\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Claudeforce",
+   "pattern": "\\bclaudeforce\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Apple Intelligence",
+   "pattern": "\\bapple intelligence\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "AIGC",
+   "pattern": "\\baigc\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "SeaArt",
+   "pattern": "\\bseaart\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Dwarkesh",
+   "pattern": "\\bdwarkesh\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "TensorFlow",
+   "pattern": "\\btensorflow\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Stable Diffusion",
+   "pattern": "\\bstable diffusion\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "RunwayML",
+   "pattern": "\\brunwayml\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "DALL-E",
+   "pattern": "\\bdall[-·–]e\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Windsurf",
+   "pattern": "\\bwindsurf\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Boston Dynamics",
+   "pattern": "\\bboston dynamics\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Hassabis",
+   "pattern": "\\bhassabis\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Character.AI",
+   "pattern": "\\bcharacter[. ]ai\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Figure AI",
+   "pattern": "\\bfigure (?:ai|0[23])\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Stability AI",
+   "pattern": "\\bstability ai\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Doubao",
+   "pattern": "\\bdoubao\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Fei-Fei Li",
+   "pattern": "\\bfei[- ]?fei li\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Hunyuan",
+   "pattern": "\\bhunyuan\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "LeCun",
+   "pattern": "\\blecun\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Sutskever",
+   "pattern": "\\bsutskever\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Udio",
+   "pattern": "(?:^|[^\\p{L}\\p{N}])udio(?:[^\\p{L}\\p{N}]|$)",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "safe superintelligence",
+   "pattern": "\\bsafe superintelligence\\b",
+   "case_sensitive": false
+  }
+ ],
+ "need_ai_context": [
+  {
+   "keyword": "prompt",
+   "pattern": "\\bprompts?\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Gemini",
+   "pattern": "\\bgemini\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Kimi",
+   "pattern": "\\bkimi\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Fable",
+   "pattern": "\\bfable\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Optimus",
+   "pattern": "\\boptimus\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Opus",
+   "pattern": "\\bopus\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "harness",
+   "pattern": "\\bharness\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Alexa",
+   "pattern": "\\balexa\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Siri",
+   "pattern": "\\bsiri\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Palantir",
+   "pattern": "\\bpalantir\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Altman",
+   "pattern": "\\baltman\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Gemma",
+   "pattern": "\\bgemma\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Lovable",
+   "pattern": "\\blovable\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Sonnet",
+   "pattern": "\\bsonnet\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Mistral",
+   "pattern": "\\bmistral\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Manus",
+   "pattern": "\\bmanus\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "o3",
+   "pattern": "\\bo3\\b",
+   "case_sensitive": true
+  },
+  {
+   "keyword": "deep research",
+   "pattern": "\\bdeep research\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "SSI",
+   "pattern": "\\bSSI\\b",
+   "case_sensitive": true
+  },
+  {
+   "keyword": "Hinton",
+   "pattern": "\\bhinton\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "HUMAIN",
+   "pattern": "\\bHUMAIN\\b",
+   "case_sensitive": true
+  },
+  {
+   "keyword": "Baidu",
+   "pattern": "\\bbaidu\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Cohere",
+   "pattern": "\\bcohere\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Thinking Machines",
+   "pattern": "\\bthinking machines\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Murati",
+   "pattern": "\\bmurati\\b",
+   "case_sensitive": false
+  }
+ ],
+ "context_terms": [
+  {
+   "keyword": "AI",
+   "pattern": "\\bAI\\b",
+   "case_sensitive": true
+  },
+  {
+   "keyword": "A.I.",
+   "pattern": "\\bA\\.I\\.",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "artificial intelligence",
+   "pattern": "\\bartificial intelligence\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "LLM",
+   "pattern": "\\bLLMs?\\b",
+   "case_sensitive": true
+  },
+  {
+   "keyword": "chatbot",
+   "pattern": "\\bchat ?bots?\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "OpenAI",
+   "pattern": "\\bopenai\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "ChatGPT",
+   "pattern": "\\bchatgpt\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "Anthropic",
+   "pattern": "\\banthropic\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "DeepSeek",
+   "pattern": "\\bdeepseek\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "language model",
+   "pattern": "\\blanguage models?\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "GenAI",
+   "pattern": "\\bgen[- ]?ai\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "AGI",
+   "pattern": "\\bAGI\\b",
+   "case_sensitive": true
+  },
+  {
+   "keyword": "machine learning",
+   "pattern": "\\bmachine learning\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "neural network",
+   "pattern": "\\bneural net(?:work)?s?\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "AI model",
+   "pattern": "\\bAI models?\\b",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "inteligencia artificial",
+   "pattern": "intelig[eê]ncia artificial",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "intelligence artificielle",
+   "pattern": "intelligence artificielle",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "yapay zeka",
+   "pattern": "yapay zek",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "ذكاء اصطناعي",
+   "pattern": "ذكاء ال?ا?صطناعي",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "人工知能",
+   "pattern": "人工知能|人工智能|인공지능",
+   "case_sensitive": false
+  },
+  {
+   "keyword": "ИИ",
+   "pattern": "(?:^|[^\\p{L}\\p{N}])ИИ(?:[^\\p{L}\\p{N}]|$)",
+   "case_sensitive": true
+  }
+ ]
+}

@@ -11,7 +11,12 @@ export function traction(p: Pick<Post, 'likes' | 'replies' | 'retweets' | 'quote
  * means posts with no engagement still count.
  */
 export function weight(p: Post): number {
-  return 1 + Math.log1p(traction(p))
+  return engagementWeight(traction(p))
+}
+
+/** Unknown engagement has baseline influence; invalid negative balances cannot invert it. */
+export function engagementWeight(engagement: number | undefined): number {
+  return 1 + Math.log1p(Number.isFinite(engagement) ? Math.max(0, engagement!) : 0)
 }
 
 /** Traction-weighted mean sentiment: sum(w * s) / sum(w). */

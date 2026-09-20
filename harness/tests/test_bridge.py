@@ -13,6 +13,7 @@ import json
 import os
 import sys
 import time
+from unittest.mock import patch
 from pathlib import Path
 
 import aiohttp
@@ -184,13 +185,14 @@ async def confirmation_gate(client):
     def frames(name, payload):  # what the page will receive, from a real tool result wrapped as Claude Code wraps it
         block = {"type": "tool_result", "tool_use_id": "t1", "content": [{"type": "text", "text": json.dumps(payload)}]}
         return list(claude_runner.tool_events(name, claude_runner.tool_payload(block)))
-    preview = tools.preview_keywords("to check that word catches the right conversation", ["ps6"], "2026-09-09", "2026-09-10", "en")
+    preview = tools.preview_keywords("to check that word catches the right conversation", ["AI"], "2026-09-09", "2026-09-10")
     spec_frame, preview_frame, confirm_frame = (frames(f"mcp__harness__{tool}", payload) for tool, payload in
                                                 (("save_draft", saved), ("preview_keywords", preview), ("request_confirmation", third)))
     check("4h tool results become spec / preview / confirm_request frames",
           spec_frame[0]["type"] == "spec" and spec_frame[0]["spec_hash"] == saved["spec_hash"]
           and preview_frame[0]["type"] == "preview" and preview_frame[0]["per_day"] == preview["per_day"]
           and confirm_frame[0] == {"type": "confirm_request", "confirmation_id": third["confirmation_id"],
+                                   "kind": third.get("kind"),
                                    "summary": third["summary"], "expires_ms": third["expires_ms"],
                                    "spec": third["spec"], "spec_hash": third["spec_hash"], "draft_path": third["draft_path"]}
           and not frames("mcp__harness__preview_keywords", {"error": {"code": "x"}}),
@@ -475,7 +477,10 @@ async def main():
             if "4" in STEPS:
                 await confirmation_gate(client)
             if "5" in STEPS:
-                await asyncio.to_thread(preview_numbers)
+                # These fixed counts and language assertions belong to the legacy raw fixture.
+                # Classified export behavior is covered in test_classified_queries.py.
+                with patch('classified_data.available', return_value=False):
+                    await asyncio.to_thread(preview_numbers)
             if "6" in STEPS:
                 await separate_sessions(client)
             if "7" in STEPS:

@@ -1,8 +1,10 @@
 ﻿import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { buildAskRequest, type AskContext } from './context'
+import { failureMessage, voiceFailure } from './failure'
 import type { AskCard, AskClient, AskEvent, AskScope, AskStepEvent, EvidencePost } from './protocol'
 
 export interface Confirmation {
+  kind?: string
   id: string
   summary: string
   expiresMs: number
@@ -38,13 +40,26 @@ export function useAsk(client: AskClient, getContext: () => AskContext | null) {
     const controller = new AbortController()
     inFlight.current = controller
     let resultText = ''
+    let lastStep = ''
     const resultCards: AskCard[] = []
     let needsConfirmation = ''
     const receive = (event: AskEvent) => {
       if (controller.signal.aborted) return
+      if (event.type === 'step' && event.phase === 'start') lastStep = event.title || 'running the query'
       if (event.type === 'error') throw new Error(event.message)
       if (event.type === 'text') resultText += event.delta
       if (event.type === 'card') resultCards.push(event.card)
+      if (event.type === 'card' && event.card.kind === 'automation_proposal') {
+        setMessages(ms => {
+          const previous = ms.flatMap(m => m.cards).filter(card => card.kind === 'automation_proposal' && !card.superseded).at(-1)
+          if (!previous || (previous.id === event.card.id && previous.status === event.card.status)) return ms
+          return ms.map(m => m.id === id ? m : { ...m,
+          cards: m.cards.map(card => card.kind === 'automation_proposal' ? { ...card, superseded: true } : card),
+          confirmation: m.confirmation?.kind === 'automation_proposal' && !m.confirmation.decision
+            ? { ...m.confirmation, expiresMs: Date.now() } : m.confirmation,
+          })
+        })
+      }
       if (event.type === 'confirm') needsConfirmation = event.summary
       if (event.type === 'posts') { event.posts.forEach(post => evidence.set(post.id, post)); return }
       update(id, m => {
@@ -63,7 +78,7 @@ export function useAsk(client: AskClient, getContext: () => AskContext | null) {
           const existing = key ? m.cards.findIndex(card => card.kind === event.card.kind && (card.brief_id ?? card.id) === key) : -1
           return { ...m, cards: existing < 0 ? [...m.cards, event.card] : m.cards.map((card, index) => index === existing ? event.card : card) }
         }
-        if (event.type === 'confirm') return { ...m, confirmation: { id: event.confirmationId, summary: event.summary, expiresMs: event.expiresMs } }
+        if (event.type === 'confirm') return { ...m, confirmation: { id: event.confirmationId, kind: event.kind, summary: event.summary, expiresMs: event.expiresMs } }
         return m
       })
     }
@@ -72,12 +87,13 @@ export function useAsk(client: AskClient, getContext: () => AskContext | null) {
       update(id, m => ({ ...m, status: controller.signal.aborted ? 'stopped' : 'done', steps: m.steps.map(step => step.phase === 'start' ? { ...step, phase: 'end', ok: false, outcome: 'Finished without a reported result.' } : step) }))
       return JSON.stringify({ answer: resultText, cards: resultCards, confirmation_required: needsConfirmation || undefined, stopped: controller.signal.aborted })
     } catch (error) {
+      const detail = failureMessage(error, lastStep)
       update(id, m => ({ ...m,
-        text: controller.signal.aborted ? m.text : [m.text, error instanceof Error ? error.message : 'Unable to reach the assistant.'].filter(Boolean).join('\n\n'),
+        text: controller.signal.aborted ? m.text : [m.text, detail].filter(Boolean).join('\n\n'),
         status: controller.signal.aborted ? 'stopped' : 'error',
-        steps: m.steps.map(step => step.phase === 'start' ? { ...step, phase: 'end', ok: false, outcome: controller.signal.aborted ? 'Stopped.' : 'The request did not finish.' } : step),
+        steps: m.steps.map(step => step.phase === 'start' ? { ...step, phase: 'end', ok: false, outcome: controller.signal.aborted ? 'Stopped.' : detail } : step),
       }))
-      throw error
+      throw new Error(detail)
     } finally { if (inFlight.current === controller) inFlight.current = null }
   }, [update])
 
@@ -87,8 +103,8 @@ export function useAsk(client: AskClient, getContext: () => AskContext | null) {
     const request = buildAskRequest(ctx, question.trim(), history.current.filter(m => m.status === 'done' && m.text).map(m => ({ role: m.role, content: m.text })), conversationId.current)
     const id = newId()
     setMessages(ms => [...ms,
-      ...(!options?.fromVoice ? [{ id: newId(), role: 'user' as const, text: request.question, scope: request.scope, citations: [], steps: [], cards: [], status: 'done' as const }] : []), answer(id)])
-    return await run(id, new Map(request.evidence.map(p => [p.id, p])), (receive, signal) => client.ask(request, receive, signal)).catch(() => 'The workspace request failed. Do not claim it completed.')
+      ...(!options?.fromVoice ? [{ id: newId(), role: 'user' as const, text: request.question, scope: request.purpose === 'automation_proposal' ? undefined : request.scope, citations: [], steps: [], cards: [], status: 'done' as const }] : []), answer(id)])
+    return await run(id, new Map(request.evidence.map(p => [p.id, p])), (receive, signal) => client.ask(request, receive, signal)).catch(voiceFailure)
   }, [client, getContext, run])
 
   const confirm = useCallback(async (messageId: string, approved: boolean) => {

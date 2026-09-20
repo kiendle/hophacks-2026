@@ -1,5 +1,6 @@
 """Offline adapter checks: scoring, honest counts, input validation and HTTP wiring."""
 import asyncio
+import math
 import sys
 import time
 from pathlib import Path
@@ -7,6 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from aiohttp.test_utils import TestClient, TestServer
 import ui_server as ui
 import ui_archive
+import classified_data
 
 
 def test_pack():
@@ -16,7 +18,9 @@ def test_pack():
     answer = dict(subtopic=dict(choice='topic-0'), feeling=dict(score=4), relevant=dict(noul=.9))
     result = ui.pack(found, [post, post, post], [answer, None, {**answer, 'subtopic': {'choice': 'other'}}], ['AI'], ['timeout'])
     bucket = result['series'][0]['buckets'][0]
-    assert bucket['sentiment'] == 10 and bucket['weight'] == 10
+    assert bucket['sentiment'] == 10 and math.isclose(bucket['weight'], 1 + math.log(3))
+    assert math.isclose(ui.sentiment_score({'feeling': {'choice': 'positive', 'probabilities': {'positive': .7, 'negative': .1}}}), 8)
+    assert ui.sentiment_score({'feeling': {'choice': 'insufficient_evidence'}}) is None
     assert bucket['traction'] == 9 and bucket['volume'] == 1
     assert result['kept'] == 1 and result['read'] == 1000
     assert bucket['snapshots'][0]['t'] == result['now'] > bucket['topPost']['time']
@@ -31,13 +35,13 @@ def test_pack():
 
 
 async def test_http():
-    original = ui_archive.scan_archive
+    original = classified_data.scan
     calls = []
     def fake_archive(words, names):
         calls.append(words)
         time.sleep(.05)
         return {'series': [], 'read': 7, 'kept': 0, 'now': None, 'streaming': False}
-    ui_archive.scan_archive = fake_archive
+    classified_data.scan = fake_archive
     try:
         async with TestClient(TestServer(ui.compose())) as client:
             response = await client.post('/api/ui/scan', json={'terms': ['AI'], 'subtopics': ['OpenAI']})
@@ -59,7 +63,7 @@ async def test_http():
             policy = response.headers['Content-Security-Policy']
             assert "style-src-attr 'unsafe-inline'" in policy or "style-src 'self' 'unsafe-inline'" in policy
     finally:
-        ui_archive.scan_archive = original
+        classified_data.scan = original
 
 
 if __name__ == '__main__':

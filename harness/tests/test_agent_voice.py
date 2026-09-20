@@ -18,12 +18,27 @@ async def check():
         calls.append(request.headers.get('xi-api-key'))
         assert request.query['agent_id'] == 'test-agent'
         return web.json_response({'error': 'secret-provider-message'} if failed else {'token': 'short-lived-token'}, status=401 if failed else 200)
+    saved = {'conversation_config': {'agent': {'prompt': {'prompt': 'old policy', 'built_in_tools': {'end_call': {'name': 'end_call'}}}}}}
+    async def get_agent(request):
+        return web.json_response(saved)
+    async def patch_agent(request):
+        assert request.headers['xi-api-key'] == 'private-key'
+        change = (await request.json())['conversation_config']
+        assert 'tts' not in change and 'tools' not in change['agent']['prompt']
+        assert change['agent']['prompt']['built_in_tools']['end_call']['name'] == 'end_call'
+        saved['conversation_config'] = change
+        return web.json_response(saved)
     upstream = web.Application()
     upstream.router.add_get('/v1/convai/conversation/token', token)
+    upstream.router.add_get('/v1/convai/agents/test-agent', get_agent)
+    upstream.router.add_patch('/v1/convai/agents/test-agent', patch_agent)
     async with TestServer(upstream) as provider:
         with patch.dict(os.environ, {'ELEVENLABS_API_KEY': 'private-key', 'ELEVENLABS_AGENT_ID': 'test-agent', 'ELEVENLABS_API_BASE': str(provider.make_url('')).rstrip('/')}):
             app = web.Application()
             agent.setup(app)
+            assert (await agent.sync_conversation())['updated']
+            assert saved['conversation_config']['turn']['turn_timeout'] == 30
+            assert saved['conversation_config']['agent']['prompt']['built_in_tools']['skip_turn']
             async with TestClient(TestServer(app)) as client:
                 status = await client.get('/api/live/agent/status')
                 assert (await status.json())['available'] and not calls

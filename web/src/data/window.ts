@@ -1,11 +1,9 @@
 import { BUCKET_MS } from './config'
 import { spread } from './sentiment'
+import { ActivityAccumulator } from './activity'
 import type { Bucket, Snapshot } from './types'
 
-/**
- * Traction of a bucket's posts as known at time `t`: the most recent snapshot
- * at or before `t`, never a later one, so replays cannot leak future engagement.
- */
+/** Signed engagement changes known at t (opening balances are not new likes). */
 export function tractionAt(bucket: Bucket, t: number): number {
   const s = bucket.snapshots
   let lo = 0
@@ -19,23 +17,22 @@ export function tractionAt(bucket: Bucket, t: number): number {
     } else hi = mid - 1
   }
   if (found) return found.traction
-  // A streamed bucket carries no snapshot until it closes, and its running
-  // total is current rather than final, so it is safe to read directly.
   return s.length === 0 ? bucket.traction : 0
 }
 
 export interface WindowStat {
-  /** Posts inside the window. */
+  /** New posts inside the window, not the number of like updates. */
   volume: number
-  /** Engagement of those posts as of the window's end. */
+  /** Signed non-opening like changes received in the window. */
   traction: number
-  /** Traction-weighted mean sentiment, NaN when the window is empty. */
   sentiment: number
-  /** Weighted standard deviation of sentiment across the window, 0 to 5. */
+  /** Weighted population standard deviation, 0 to 5. */
   spread: number
+  scored?: number
+  /** Distinct posts with positive influence, including resurfacing older posts. */
+  activePosts?: number
 }
 
-/** First bucket index whose span ends after `t`. */
 function firstAfter(buckets: Bucket[], t: number): number {
   let lo = 0
   let hi = buckets.length
@@ -48,31 +45,39 @@ function firstAfter(buckets: Bucket[], t: number): number {
 }
 
 /**
- * Aggregates the posts created in [start, end], as seen at `end`. Posts are
- * assumed spread evenly within a bucket, so partial overlap counts
- * proportionally and values move continuously as the window slides.
+ * Streamed activity uses receipt times in [start, end). Group a post's initial
+ * popularity and deltas over the entire window before applying log damping.
+ * Synthetic buckets retain their legacy proportional-overlap approximation.
  */
 export function windowStat(buckets: Bucket[], start: number, end: number): WindowStat {
-  let volume = 0
-  let traction = 0
-  let weighted = 0
-  // Spreads cannot be averaged, so the moments are summed and combined at the end.
-  let weight = 0
-  let sqSum = 0
+  if (buckets.some(b => b.activity !== undefined)) {
+    const stats = new ActivityAccumulator()
+    for (let i = firstAfter(buckets, start); i < buckets.length; i++) {
+      const b = buckets[i]
+      if (b.start >= end) break
+      const cutoff = Math.min(Math.ceil(end) - 1, b.asOf ?? Infinity)
+      for (const activity of b.activity ?? []) {
+        if (activity.event.t > cutoff) break
+        if (activity.event.t >= start) stats.add(activity)
+      }
+    }
+    const { volume, activePosts, traction, sentiment, spread, scored } = stats.result()
+    return { volume, activePosts, traction, sentiment, spread, scored }
+  }
+  let volume = 0, traction = 0, weighted = 0, weight = 0, sqSum = 0, scored = 0
   for (let i = firstAfter(buckets, start); i < buckets.length; i++) {
     const b = buckets[i]
     if (b.start >= end) break
     const from = Math.max(start, b.start)
-    // Posts after `end` do not exist yet.
     const seen = (Math.min(end, b.start + BUCKET_MS) - from) / BUCKET_MS
-    // Snapshots cover the whole bucket; drop only the share that left the window.
     const kept = (b.start + BUCKET_MS - from) / BUCKET_MS
     volume += seen * b.volume
     weight += seen * b.weight
+    scored += seen * (b.scored ?? b.volume)
     weighted += seen * b.weight * b.sentiment
     sqSum += seen * b.sqSum
     traction += kept * tractionAt(b, end)
   }
   const mean = weight > 0 ? weighted / weight : NaN
-  return { volume, traction, sentiment: mean, spread: spread(weight, mean, sqSum) }
+  return { volume, traction, sentiment: mean, spread: spread(weight, mean, sqSum), scored }
 }

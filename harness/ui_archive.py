@@ -18,7 +18,7 @@ def scan_archive(words, names):
     import ui_server
     if not SAMPLE.exists():
         raise ValueError('The prepared Twitter dataset is missing. Run harness/prepare_data.py first.')
-    key = hashlib.sha256(json.dumps([words, names, SAMPLE.stat().st_mtime_ns, 'archive-v3']).encode()).hexdigest()
+    key = hashlib.sha256(json.dumps([words, names, SAMPLE.stat().st_mtime_ns, 'archive-v5-probability-log-likes']).encode()).hexdigest()
     cached = CACHE / f'{key}.json'
     if cached.exists():
         return json.loads(cached.read_text(encoding='utf-8'))

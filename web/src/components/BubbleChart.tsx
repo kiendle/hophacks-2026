@@ -7,15 +7,14 @@ import { windowStat, type WindowStat } from '../data/window'
 import { formatCount } from '../format'
 import { useEased } from '../hooks/useEased'
 import { useSize } from '../hooks/useSize'
-import { useSmoothed } from '../hooks/useSmoothed'
 import { MARGIN as M } from '../layout'
 import { SentimentGauge } from './HoverCard'
-import { InfoIcon, PostsIcon, SpreadIcon, TractionIcon } from './icons'
+import { PostsIcon, SpreadIcon, TractionIcon } from './icons'
 
 /** Past positions drawn behind each bubble, one per bucket. */
 const TRAIL = 6
 /** Bubble radius per sqrt(post), as a share of plot height. */
-const RADIUS_K = 0.00065
+const RADIUS_K = 0.0025
 const CARD_WIDTH = 190
 
 interface Props {
@@ -33,7 +32,9 @@ const MAX_SPREAD = 5
 
 /** A window's values as [spread, sentiment, volume], carrying `fallback` when empty. */
 function encode(stat: WindowStat, fallback: number[]): number[] {
-  return stat.volume > 0 ? [stat.spread, stat.sentiment, stat.volume] : [fallback[0], fallback[1], 0]
+  const posts = stat.activePosts ?? stat.volume
+  return posts > 0 && Number.isFinite(stat.sentiment)
+    ? [stat.spread, stat.sentiment, posts] : [fallback[0], fallback[1], 0]
 }
 
 export function BubbleChart({ series, now, windowMs, selected, onToggle, onClearSubtopics }: Props) {
@@ -41,31 +42,6 @@ export function BubbleChart({ series, now, windowMs, selected, onToggle, onClear
   const iw = Math.max(0, width - M.left - M.right)
   const ih = Math.max(0, height - M.top - M.bottom)
   const [hover, setHover] = useState<string | null>(null)
-
-  // Running axis bounds at every bucket boundary, from values known by then.
-  const bounds = useMemo(() => {
-    const start = Math.min(...series.map((s) => s.buckets[0]?.start ?? Infinity))
-    const end = Math.max(...series.map((s) => (s.buckets.at(-1)?.start ?? -Infinity) + BUCKET_MS))
-    const out: { t: number; y: [number, number] }[] = []
-    let y: [number, number] = [Infinity, -Infinity]
-    // Only full windows count; half-empty early ones would drag the minimum down.
-    for (let t = start + windowMs; t <= end; t += BUCKET_MS) {
-      for (const s of series) {
-        const w = windowStat(s.buckets, t - windowMs, t)
-        if (!(w.volume > 0)) continue
-        y = [Math.min(y[0], w.sentiment), Math.max(y[1], w.sentiment)]
-      }
-      out.push({ t, y })
-    }
-    return out
-  }, [series, windowMs])
-
-  const known = bounds.findLast((b) => b.t <= now) ?? bounds[0]
-  const yPad = known ? Math.max(0.3, (known.y[1] - known.y[0]) * 0.12) : 0
-  const [yLo, yHi] = useSmoothed(
-    known && isFinite(known.y[0]) ? Math.max(0, known.y[0] - yPad) : 4,
-    known && isFinite(known.y[1]) ? Math.min(10, known.y[1] + yPad) : 8,
-  )
 
   // Head plus trail values for every subtopic, flattened so they can be eased together.
   const { target, stats } = useMemo(() => {
@@ -87,7 +63,7 @@ export function BubbleChart({ series, now, windowMs, selected, onToggle, onClear
   const eased = useEased(target)
 
   const x = scaleLinear().domain([0, MAX_SPREAD]).range([0, iw])
-  const y = scaleLinear().domain([yLo, yHi]).range([ih, 0])
+  const y = scaleLinear().domain([0, 10]).range([ih, 0])
   const stride = 3 + TRAIL * 2
 
   const bubbles = series
@@ -107,11 +83,16 @@ export function BubbleChart({ series, now, windowMs, selected, onToggle, onClear
     .sort((a, b) => b.r - a.r)
 
   const anySelected = selected.length > 0
+  // Keep labels readable when real companies occupy similar coordinates.
+  const labels = bubbles.map((b) => ({ ...b, labelX: Math.min(iw - 95, b.cx + b.r + 10), labelY: b.cy }))
+    .sort((a, b) => a.labelY - b.labelY)
+  for (let i = 1; i < labels.length; i++) labels[i].labelY = Math.max(labels[i].labelY, labels[i - 1].labelY + 16)
+  const overflow = Math.max(0, (labels.at(-1)?.labelY ?? 0) - ih + 5)
+  for (const label of labels) label.labelY -= overflow
   const hovered = bubbles.find((b) => b.series.id === hover)
   const hoveredStat = hover ? stats.get(hover) : undefined
 
   const xTicks = [0, 1, 2, 3, 4, 5]
-  const windowHours = Math.round(windowMs / 3_600_000)
 
   return (
     <div ref={ref} className="chart bubble-chart">
@@ -170,45 +151,42 @@ export function BubbleChart({ series, now, windowMs, selected, onToggle, onClear
                   cy={b.cy}
                   r={b.r}
                   fill={b.series.color}
-                  opacity={anySelected && !isSelected ? 0.3 : 0.92}
+                  opacity={anySelected && !isSelected ? 0.3 : (stats.get(b.series.id)?.scored ?? 0) < 30 ? 0.45 : 0.85}
                   onPointerEnter={() => setHover(b.series.id)}
                   onPointerLeave={() => setHover(null)}
                   onClick={() => onToggle(b.series.id)}
+                  aria-label={b.series.name}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle(b.series.id) } }}
                 />
               )
             })}
 
-            {bubbles.map((b) => {
-              const inside = b.r * 2 - 8 >= b.series.name.length * 6.6
-              return (
+            {labels.map((b) => (
+              <g key={b.series.id} pointerEvents="none">
+                <line x1={b.cx + b.r} y1={b.cy} x2={b.labelX - 3} y2={b.labelY}
+                  stroke={b.series.color} strokeOpacity={0.5} />
                 <text
-                  key={b.series.id}
-                  x={b.cx}
-                  y={inside ? b.cy : b.cy + b.r + 12}
-                  dy={inside ? '0.34em' : 0}
-                  textAnchor="middle"
-                  className={inside ? 'bubble-label' : 'bubble-label bubble-label-out'}
-                  fill={inside ? textOn(b.series.color) : '#333'}
+                  x={b.labelX}
+                  y={b.labelY}
+                  dy="0.34em"
+                  textAnchor="start"
+                  className="bubble-label bubble-label-out"
+                  fill="#333"
                   opacity={anySelected && !selected.includes(b.series.id) ? 0.4 : 1}
                 >
                   {b.series.name}
                 </text>
-              )
-            })}
+              </g>
+            ))}
           </g>
         </svg>
       )}
 
       {width > 0 && (
         <div className="bubble-x-label" style={{ left: M.left + iw / 2, top: M.top + ih + 26 }}>
-          Divisiveness, past {windowHours}h
-          <span className="info" tabIndex={0} aria-label="How divisiveness is measured">
-            <InfoIcon size={14} />
-            <span className="info-tip" role="tooltip">
-              Spread of sentiment within the subtopic, 0 to 5. Low and right is a fight, low and left is
-              agreement that it is bad, high and left is quiet approval.
-            </span>
-          </span>
+          Sentiment spread
         </div>
       )}
 
@@ -242,7 +220,7 @@ export function BubbleChart({ series, now, windowMs, selected, onToggle, onClear
             </span>
             <span>
               <PostsIcon size={13} />
-              {formatCount(Math.round(hoveredStat.volume))}
+              {formatCount(Math.round(hoveredStat.activePosts ?? hoveredStat.volume))}
             </span>
           </div>
         </div>

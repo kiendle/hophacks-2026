@@ -4,22 +4,20 @@ import '../bubble.css'
 import { BubbleChart } from '../components/BubbleChart'
 import { ChatSidebar } from '../components/ChatSidebar'
 import { LineChart } from '../components/LineChart'
+import { LineDisplayToggle, type LineDisplay } from '../components/LineDisplayToggle'
 import { LiveButton } from '../components/LiveButton'
 import { TimeSlider } from '../components/TimeSlider'
 import { TopBar, type ViewMode } from '../components/TopBar'
-import { BUCKET_MS } from '../data/config'
-import { createDevMockSource, useStream } from '../data/source'
-import { createHarnessSource } from '../data/harnessSource'
+import { BUCKET_MS, DEFAULT_LINE_INTERVAL } from '../data/config'
+import { useStream, type DataSource } from '../data/source'
 import { createStreamSource } from '../data/streamSource'
-import { devEventConnect } from '../data/devEvents'
+import { createHarnessSource } from '../data/harnessSource'
+import { DEFAULT_COMPANIES } from '../data/replayTypes'
 import type { Selection, TimeRange } from '../data/types'
 import type { Session } from './session'
 import { useLiveFollow } from '../hooks/useLiveFollow'
-import { usePlayback } from '../hooks/usePlayback'
 import { MARGIN } from '../layout'
 
-/** Firehose posts scanned for each one kept, for the event readout. */
-const EVENTS_PER_KEPT = 38
 /** Subtopics shown when the line view first opens. */
 const LINE_DEFAULT_SHOWN = 2
 /** Length of the bubble view's trailing window. */
@@ -33,52 +31,52 @@ interface Props {
   preview?: boolean
 }
 
-const EMPTY_SOURCE = { subscribe: () => () => {} }
-
-/** ?stream=<speed> replays the fixture as a live event stream at that speed. */
-const STREAM_SPEED = Number(new URLSearchParams(location.search).get('stream')) || 0
+const EMPTY_SOURCE: DataSource = { subscribe: () => () => {} }
 
 export function Workspace({ session, onSessionChange, preview }: Props) {
-  const source = useMemo(() => {
+  const source = useMemo<DataSource>(() => {
     if (preview) return EMPTY_SOURCE
-    if (!STREAM_SPEED) return import.meta.env.VITE_DEMO_MODE === 'true' ? createDevMockSource(session.subtopics) : createHarnessSource(session)
-    const names = new Map(session.subtopics.map((n) => [n.toLowerCase().replace(/[^a-z0-9]+/g, '-'), n]))
-    return createStreamSource(devEventConnect(session.subtopics, STREAM_SPEED), { names })
+    const live = /\b(?:bluesky|live|real[ -]?time)\b/i.test(session.query) && !/\b(?:no|not|without)\s+(?:live|bluesky|real[ -]?time)\b/i.test(session.query)
+    return live ? createHarnessSource(session) : createStreamSource(session.terms)
   }, [preview, session])
   const stream = useStream(source)
-  const series = stream.series
+  const allSeries = stream.series
   const [mode, setMode] = useState<ViewMode>('line')
+  const [intervalMs, setIntervalMs] = useState(DEFAULT_LINE_INTERVAL)
+  const [lineDisplay, setLineDisplay] = useState<LineDisplay>('both')
   // Each view keeps its own shown subtopics. The line view starts with a few so it stays readable.
   const [hiddenByMode, setHiddenByMode] = useState<Record<ViewMode, Set<string> | null>>({ line: null, bubble: null })
   const hidden = useMemo(
     () =>
       hiddenByMode[mode] ??
-      new Set(mode === 'line' ? series.slice(LINE_DEFAULT_SHOWN).map((s) => s.id) : []),
-    [hiddenByMode, mode, series],
+      new Set(allSeries.filter((s, i) => mode === 'line' ? i >= LINE_DEFAULT_SHOWN : !DEFAULT_COMPANIES.includes(s.id)).map((s) => s.id)),
+    [hiddenByMode, mode, allSeries],
   )
   const setHidden = (update: (prev: Set<string>) => Set<string>) =>
     setHiddenByMode((h) => ({ ...h, [mode]: update(hidden) }))
-  const visible = useMemo(() => series.filter((s) => !hidden.has(s.id)), [series, hidden])
 
   const extent = useMemo<TimeRange | null>(() => {
-    const all = series.flatMap((s) => s.buckets)
-    if (!all.length) return null
-    return {
-      start: Math.min(...all.map((b) => b.start)),
-      end: Math.max(...all.map((b) => b.start)) + BUCKET_MS,
-    }
-  }, [series])
+    const start = stream.start ?? Math.min(...allSeries.flatMap(s => s.buckets.map(b => b.start)))
+    if (!Number.isFinite(start) || stream.now === null) return null
+    return { start, end: Math.max(start + 1, stream.now) }
+  }, [stream.start, stream.now, allSeries])
 
   const [viewState, setView] = useState<TimeRange | null>(null)
-  const view = viewState ?? extent
+  const retainedView = viewState ?? extent
   const [selection, setSelection] = useState<Selection>(NO_SELECTION)
-  const live = stream.streaming
-  const playback = usePlayback(live ? null : extent, view, setView)
-  const follow = useLiveFollow(extent, view, setView, stream.now, live)
-  const playhead = live ? stream.now : playback.playhead
-  const playing = live ? follow.following : playback.playing
-  const toggle = live ? follow.toggle : playback.toggle
-  const setUserView = live ? follow.setUserView : playback.setUserView
+  const follow = useLiveFollow(extent, retainedView, setView, stream.now, true)
+  const view = follow.displayView
+  const playhead = stream.now
+  const playing = source.command ? stream.status === 'playing' : follow.following
+  const toggle = () => {
+    if (!source.command) { follow.toggle(); return }
+    if (stream.status === 'complete') {
+      setView(null)
+      source.command?.({ type: 'restart' })
+      follow.resume(true)
+    } else source.command?.({ type: playing ? 'pause' : 'resume' })
+  }
+  const setUserView = follow.setUserView
 
   // During replay nothing past the playhead is reachable.
   const liveExtent = useMemo(
@@ -87,11 +85,15 @@ export function Workspace({ session, onSessionChange, preview }: Props) {
   )
   // The current moment, shared by both views: the right edge of the view.
   const now = view && liveExtent ? Math.min(view.end, liveExtent.end) : 0
+  const series = useMemo(() => now && stream.now !== null && now < stream.now
+    ? source.snapshotAt?.(now) ?? allSeries : allSeries, [source, now, stream.now, allSeries])
+  const visible = useMemo(() => series.filter((s) => !hidden.has(s.id)), [series, hidden])
   // Tracking live means the view ends at the newest data; the Live control snaps back there.
-  const isLive = !!view && !!liveExtent && view.end >= liveExtent.end - BUCKET_MS
+  const isLive = follow.following
   const goLive = () => {
     if (!view || !liveExtent) return
-    setUserView({ start: liveExtent.end - (view.end - view.start), end: liveExtent.end })
+    setUserView({ start: Math.max(liveExtent.start, liveExtent.end - (view.end - view.start)), end: liveExtent.end })
+    follow.resume()
   }
 
   // What the Ask panel sends with a question, read at send time so it is never stale.
@@ -101,6 +103,9 @@ export function Workspace({ session, onSessionChange, preview }: Props) {
       view && liveExtent
         ? {
             topic: session.query,
+            dataset: { source: source.command ? 'twitter_archive' : 'bluesky_live', keywords: session.terms },
+            intervalMs,
+            lineDisplay,
             series,
             hidden,
             selection,
@@ -108,24 +113,12 @@ export function Workspace({ session, onSessionChange, preview }: Props) {
             view: mode === 'bubble' ? { start: now - BUBBLE_WINDOW_MS, end: now } : { start: view.start, end: now },
             now,
           }
-        : { topic: session.query, series, hidden, selection, mode, view: { start: Date.now() - 900_000, end: Date.now() }, now: Date.now() }
+        : null
   })
   const getAskContext = useCallback(() => askContext.current, [])
 
-  // Events read from the firehose and kept after filtering, up to the current moment.
-  const events = useMemo(() => {
-    if (live || import.meta.env.VITE_DEMO_MODE !== 'true') return { read: stream.read, kept: stream.kept }
-    let kept = 0
-    for (const s of series) for (const b of s.buckets) if (b.start + BUCKET_MS <= now) kept += b.volume
-    return { kept, read: kept * EVENTS_PER_KEPT }
-  }, [live, stream.read, stream.kept, series, now])
-
-  const started = useRef(false)
-  useEffect(() => {
-    if (preview || live || import.meta.env.VITE_DEMO_MODE !== 'true' || started.current || !series.length) return
-    started.current = true
-    toggle()
-  }, [preview, live, series, toggle])
+  // Actual delivered source events, counted once regardless of company overlap.
+  const events = { read: stream.read, kept: stream.kept }
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -174,20 +167,32 @@ export function Workspace({ session, onSessionChange, preview }: Props) {
           onIsolateSeries={isolateSeries}
           playing={playing}
           onTogglePlay={toggle}
+          speed={stream.speed ?? 14_400}
+          onSpeedChange={(speed) => source.command?.({ type: 'speed', speed })}
+          intervalMs={intervalMs}
+          onIntervalChange={(interval) => { setIntervalMs(interval); setSelection(NO_SELECTION) }}
+          disabled={stream.status === 'loading' || stream.status === 'error'}
           terms={session.terms}
-          onTermsChange={(terms) => onSessionChange({ ...session, terms })}
+          onTermsChange={terms => onSessionChange({ ...session, terms })}
           events={events}
           mode={mode}
           onModeChange={setMode}
         />
-        {!preview && stream.note && <p className="dataset-note" role="status" style={{ margin: '8px 24px', width: 'auto', flexShrink: 0 }}>{stream.note}</p>}
+        {!preview && stream.status === 'loading' && <p role="status">Loading saved posts?</p>}
+        {!preview && stream.note && <p role="status">{stream.note}</p>}
+        {stream.error && <p role="alert">{stream.error}</p>}
         {extent && liveExtent && view && mode === 'line' && (
           <>
+            <div style={{ paddingLeft: MARGIN.left }}>
+              <LineDisplayToggle value={lineDisplay} onChange={setLineDisplay} />
+            </div>
             <LineChart
+              display={lineDisplay}
+              intervalMs={intervalMs}
               series={visible}
               view={view}
               extent={liveExtent}
-              playhead={playhead}
+              playhead={now}
               selection={selection.range}
               onSelect={(range) => setSelection((s) => ({ ...s, range }))}
               onViewChange={setUserView}
@@ -200,7 +205,8 @@ export function Workspace({ session, onSessionChange, preview }: Props) {
               }
             />
             <div className="timeline" style={{ position: 'relative', paddingLeft: MARGIN.left, paddingRight: MARGIN.right }}>
-              <TimeSlider series={visible} extent={liveExtent} view={view} onChange={setUserView} />
+              <TimeSlider series={visible} extent={liveExtent} view={view} onChange={setUserView}
+                onInteractionStart={follow.beginInteraction} onInteractionEnd={follow.endInteraction} />
               <LiveButton live={isLive} onGoLive={goLive} />
             </div>
           </>
@@ -221,6 +227,8 @@ export function Workspace({ session, onSessionChange, preview }: Props) {
                 extent={liveExtent}
                 view={{ start: now - BUBBLE_WINDOW_MS, end: now }}
                 onChange={(r) => scrubTo(r.end)}
+                onInteractionStart={follow.beginInteraction}
+                onInteractionEnd={follow.endInteraction}
                 trailing
               />
               <LiveButton live={isLive} onGoLive={goLive} />

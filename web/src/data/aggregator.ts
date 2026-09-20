@@ -1,173 +1,158 @@
-import { SERIES_COLORS } from './config'
-import type { StreamEvent } from './events'
-import { spread } from './sentiment'
-import type { Bucket, Post, Series } from './types'
+import { BUCKET_MS, SERIES_COLORS } from './config'
+import { ActivityAccumulator, type Activity } from './activity'
+import type { ReplayDataset, ReplayEvent } from './replayTypes'
+import type { Bucket, LikeBalance, Post, Series, Snapshot } from './types'
 
-/** Candidate top posts kept per bucket before pruning. */
-const TOP_KEEP = 24
-const TOP_PRUNE_AT = 64
+export function atOrBefore<T extends { t: number }>(rows: readonly T[], t: number): T | undefined {
+  let lo = 0
+  let hi = rows.length
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1
+    if (rows[mid].t <= t) lo = mid + 1
+    else hi = mid
+  }
+  return rows[lo - 1]
+}
 
-interface BucketAcc {
+interface Acc {
+  activity: Activity[]
+  likes: Snapshot[]
+  closed?: Bucket
+}
+
+interface Partial {
   start: number
-  weight: number
-  wSum: number
-  sqSum: number
-  volume: number
-  traction: number
-  /** Post id to its running significance, pruned to the leaders. */
-  top: Map<string, { score: number; post: Post }>
+  count: number
+  through: number
+  stats: ActivityAccumulator
+  result?: ReturnType<ActivityAccumulator['result']>
+  bucket?: Bucket
 }
 
-interface SeriesAcc {
-  id: string
-  name: string
-  buckets: Map<number, BucketAcc>
-}
+const emptyPost = (time: number): Post => ({ id: '', handle: '', text: '', time, sentiment: NaN,
+  likes: 0, replies: 0, retweets: 0, quotes: 0, likesKnown: false, otherMetricsKnown: false })
 
-const emptyPost = (start: number): Post => ({
-  id: `none-${start}`,
-  handle: '',
-  text: '',
-  time: start,
-  likes: 0,
-  replies: 0,
-  retweets: 0,
-  quotes: 0,
-  sentiment: 5,
-})
-
-/**
- * Buckets a live event stream into the `Series[]` the views read. Everything is
- * a running sum, so no posts are retained and late engagement is just another
- * event in the current bucket.
- */
+/** Attribute influence to receipt time, never back to an older publication bucket. */
 export class Aggregator {
-  private series = new Map<string, SeriesAcc>()
-  private order: string[] = []
+  private companies: ReplayDataset['companies']
+  private buckets = new Map<string, Map<number, Acc>>()
+  private seen = new Set<string>()
+  private balances = new Map<string, LikeBalance[]>()
+  // Only the inspected partial bucket retains its per-post map. Completed
+  // buckets keep their compact result and original activity for exact windows.
+  private partial = new Map<string, Partial>()
+  private gaps = new Map<string, Map<number, Bucket>>()
+  posts = 0
+  likes = 0
 
-  private bucketMs: number
-
-  /** `names` maps subtopic id to display name, so series keep the user's order. */
-  constructor(bucketMs: number, names: Map<string, string> = new Map()) {
-    this.bucketMs = bucketMs
-    for (const [id, name] of names) this.ensure(id, name)
-  }
-
-  private ensure(id: string, name?: string): SeriesAcc {
-    let s = this.series.get(id)
-    if (!s) {
-      s = { id, name: name ?? id, buckets: new Map() }
-      this.series.set(id, s)
-      this.order.push(id)
-    }
-    return s
-  }
-
-  add(e: StreamEvent) {
-    const s = this.ensure(e.subtopic)
-    const start = Math.floor(e.t / this.bucketMs) * this.bucketMs
-    let b = s.buckets.get(start)
-    if (!b) {
-      b = { start, weight: 0, wSum: 0, sqSum: 0, volume: 0, traction: 0, top: new Map() }
-      s.buckets.set(start, b)
-    }
-    const w = e.significance
-    b.weight += w
-    b.wSum += w * e.sentiment
-    b.sqSum += w * e.sentiment * e.sentiment
-    if (e.kind === 'post') b.volume += e.count ?? 1
-    else b.traction += w
-
-    const seen = b.top.get(e.postId)
-    if (seen) seen.score += w
-    else
-      b.top.set(e.postId, {
-        score: w,
-        post: {
-          id: e.postId,
-          handle: e.handle,
-          text: e.text,
-          time: e.postTime,
-          likes: e.likes ?? 0,
-          replies: e.replies ?? 0,
-          retweets: e.reposts ?? 0,
-          quotes: 0,
-          sentiment: e.sentiment,
-        },
-      })
-    if (b.top.size > TOP_PRUNE_AT) {
-      const kept = [...b.top].sort((a, c) => c[1].score - a[1].score).slice(0, TOP_KEEP)
-      b.top = new Map(kept)
+  constructor(companies: ReplayDataset['companies']) {
+    this.companies = companies
+    for (const company of companies) {
+      this.buckets.set(company.id, new Map())
+      this.gaps.set(company.id, new Map())
     }
   }
 
-  addBatch(events: StreamEvent[]) {
-    for (const e of events) this.add(e)
-  }
+  addBatch(events: ReplayEvent[]) { for (const event of events) this.add(event) }
 
-  /** Contiguous buckets per subtopic, from the first bucket seen to `now`. */
-  snapshot(now: number): Series[] {
-    return this.order.map((id, i) => {
-      const acc = this.series.get(id)!
-      const starts = [...acc.buckets.keys()]
-      const buckets: Bucket[] = []
-      if (starts.length) {
-        const first = Math.min(...starts)
-        const last = Math.floor(now / this.bucketMs) * this.bucketMs
-        let carried = emptyPost(first)
-        let carriedSentiment = 5
-        for (let start = first; start <= last; start += this.bucketMs) {
-          const b = acc.buckets.get(start)
-          if (!b || !b.weight) {
-            // A quiet bucket holds the line where it was, with no posts.
-            buckets.push({
-              start,
-              sentiment: carriedSentiment,
-              weight: 0,
-              sqSum: 0,
-              volume: 0,
-              traction: 0,
-              snapshots: [{ t: start + this.bucketMs, traction: 0 }],
-              topPost: carried,
-            })
-            continue
-          }
-          const mean = b.wSum / b.weight
-          let top = carried
-          let best = -1
-          for (const { score, post } of b.top.values())
-            if (score > best) {
-              best = score
-              top = post
-            }
-          carried = top
-          carriedSentiment = mean
-          buckets.push({
-            start,
-            sentiment: mean,
-            weight: b.weight,
-            sqSum: b.sqSum,
-            volume: b.volume,
-            traction: b.traction,
-            snapshots: [{ t: start + this.bucketMs, traction: b.traction }],
-            topPost: top,
-          })
-        }
+  add(event: ReplayEvent) {
+    if (this.seen.has(event.id)) return
+    this.seen.add(event.id)
+    let likes = 0
+    if (event.kind === 'post') this.posts++
+    else {
+      this.likes++
+      const balances = this.balances.get(event.postId) ?? []
+      const prev = balances.at(-1)
+      // An opening initializes popularity once; a repeated opening isn't new activity.
+      likes = event.opening && prev?.known ? 0 : event.delta!
+      balances.push({ t: event.t, value: event.opening ? event.delta! : (prev?.value ?? 0) + event.delta!,
+        known: event.opening || prev?.known || false })
+      this.balances.set(event.postId, balances)
+    }
+    const start = Math.floor(event.t / BUCKET_MS) * BUCKET_MS
+    for (const grade of event.grades) {
+      const series = this.buckets.get(grade.company)
+      if (!series) continue
+      let bucket = series.get(start)
+      if (!bucket) {
+        bucket = { activity: [], likes: [] }
+        series.set(start, bucket)
+        this.gaps.get(grade.company)!.delete(start)
       }
-      return { id, name: acc.name, color: SERIES_COLORS[i % SERIES_COLORS.length], buckets }
+      bucket.activity.push({ event, grade, likes })
+      bucket.closed = undefined
+      if (event.kind === 'like' && !event.opening) {
+        bucket.likes.push({ t: event.t, traction: (bucket.likes.at(-1)?.traction ?? 0) + likes })
+      }
+    }
+  }
+
+  snapshot(now: number): Series[] {
+    return this.companies.map((company, index) => {
+      const buckets: Bucket[] = []
+      let retained = this.partial.get(company.id)
+      for (const [start, acc] of this.buckets.get(company.id)!) {
+        if (start > now || acc.activity[0]?.event.t > now) continue
+        const end = start + BUCKET_MS - 1
+        if (acc.closed && now >= end) {
+          if (retained?.start === start) retained = undefined
+          buckets.push(acc.closed)
+          continue
+        }
+        const cutoff = Math.min(now, end)
+        let partial = retained
+        // Rewinding within a bucket must start over if already-applied events
+        // fall beyond the cutoff. Forward ticks only group newly visible rows.
+        if (!partial || partial.start !== start || partial.through > cutoff) {
+          partial = { start, count: 0, through: -Infinity, stats: new ActivityAccumulator() }
+        }
+        while (partial.count < acc.activity.length && acc.activity[partial.count].event.t <= cutoff) {
+          const activity = acc.activity[partial.count++]
+          partial.stats.add(activity)
+          partial.through = Math.max(partial.through, activity.event.t)
+          partial.result = undefined
+          partial.bucket = undefined
+        }
+        // result() still sums in the original post insertion order, preserving
+        // exact floating-point calculations and the existing popularity ties.
+        const result = partial.result ??= partial.stats.result()
+        const balance = atOrBefore(this.balances.get(result.topPost?.id ?? '') ?? [], cutoff)
+        let bucket = partial.bucket
+        if (!bucket || bucket.asOf !== cutoff || bucket.topPost.likes !== (balance?.value ?? 0) ||
+          bucket.topPost.likesKnown !== (balance?.known ?? false)) {
+          const topPost = { ...(result.topPost ?? emptyPost(start)),
+            likes: balance?.value ?? 0, likesKnown: balance?.known ?? false }
+          bucket = { start, sentiment: result.sentiment, weight: result.weight, sqSum: result.sqSum,
+            volume: result.volume, activePosts: result.activePosts, scored: result.scored, traction: result.traction,
+            activity: acc.activity, asOf: cutoff, snapshots: acc.likes, topPost }
+          partial.bucket = bucket
+        }
+        if (now >= end) {
+          acc.closed = bucket
+          if (retained?.start === start) retained = undefined
+        } else retained = partial
+        buckets.push(bucket)
+      }
+      if (retained) this.partial.set(company.id, retained)
+      else this.partial.delete(company.id)
+      buckets.sort((a, b) => a.start - b.start)
+      const filled: Bucket[] = []
+      const gaps = this.gaps.get(company.id)!
+      for (const bucket of buckets) {
+        const previous = filled.at(-1)
+        if (previous) for (let start = previous.start + BUCKET_MS; start < bucket.start; start += BUCKET_MS) {
+          let gap = gaps.get(start)
+          if (!gap) {
+            gap = { start, sentiment: NaN, weight: 0, sqSum: 0, volume: 0, activePosts: 0, scored: 0,
+              traction: 0, snapshots: [], activity: [], asOf: start + BUCKET_MS - 1, topPost: emptyPost(start) }
+            gaps.set(start, gap)
+          }
+          filled.push(gap)
+        }
+        filled.push(bucket)
+      }
+      return { ...company, color: SERIES_COLORS[index % SERIES_COLORS.length], buckets: filled }
     })
   }
-}
-
-/** Weighted spread of sentiment over a set of buckets, 0 to 5. */
-export function spreadOver(buckets: Bucket[]): number {
-  let weight = 0
-  let wSum = 0
-  let sqSum = 0
-  for (const b of buckets) {
-    weight += b.weight
-    wSum += b.weight * b.sentiment
-    sqSum += b.sqSum
-  }
-  return weight ? spread(weight, wSum / weight, sqSum) : 0
 }

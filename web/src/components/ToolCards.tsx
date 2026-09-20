@@ -4,6 +4,7 @@ import type { Confirmation } from '../ask/useAsk'
 import { postLink } from '../ask/links'
 import type { Brief } from '../brief/types'
 import './tool-cards.css'
+import { AutomationProposalCard } from './AutomationProposalCard'
 
 const words = (value: unknown) => typeof value === 'string' ? value : ''
 const rows = (value: unknown): Record<string, unknown>[] => Array.isArray(value) ? value.filter(x => x && typeof x === 'object') : []
@@ -39,10 +40,10 @@ export function ConfirmationCard({ value, busy, decide }: { value: Confirmation;
     const timer = setTimeout(() => setExpired(true), Math.max(0, value.expiresMs - Date.now()))
     return () => clearTimeout(timer)
   }, [value.expiresMs])
-  return <section className="tool-card"><h4>Confirm project</h4><p>{value.summary}</p>
+  return <section className="tool-card"><h4>{value.kind === 'automation_proposal' ? 'Confirm automation proposal' : 'Confirm project'}</h4><p>{value.summary}</p>
     {value.decision ? <p>{value.decision === 'approved' ? 'Confirmed.' : 'Cancelled.'}</p>
       : expired ? <p>This confirmation expired. Ask for a new one.</p>
-      : <div className="tool-actions"><button className="primary-btn" disabled={busy} onClick={() => decide(true)}>Confirm</button><button className="tool-button" disabled={busy} onClick={() => decide(false)}>Cancel</button></div>}
+      : <div className="tool-actions"><button className="primary-btn" disabled={busy} onClick={() => decide(true)}>{value.kind === 'automation_proposal' ? 'Confirm configuration' : 'Confirm'}</button><button className="tool-button" disabled={busy} onClick={() => decide(false)}>Cancel</button></div>}
   </section>
 }
 
@@ -109,6 +110,7 @@ function BriefCard({ card }: { card: AskCard }) {
 }
 
 export function ResultCard({ card }: { card: AskCard }) {
+  if (card.kind === 'automation_proposal') return <AutomationProposalCard card={card} />
   if (card.kind === 'brief') return <BriefCard card={card} />
   if (card.kind === 'draft') return <details className="tool-card"><summary>Project draft</summary>
     {(Array.isArray(card.lines) ? card.lines as DraftLine[] : []).map((line, i) => <p key={i}><strong>{line.label}: </strong>{line.value}{line.groups?.map(group => <span className="tool-block" key={group.name}>{group.name}: {group.description}</span>)}</p>)}

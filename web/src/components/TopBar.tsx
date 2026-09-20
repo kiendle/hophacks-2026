@@ -3,6 +3,7 @@ import { FiltersMenu } from '../app/FiltersMenu'
 import { textOn } from '../color'
 import { formatCount } from '../format'
 import type { Series } from '../data/types'
+import { LINE_INTERVALS } from '../data/config'
 import { BubblesIcon, ChevronLeftIcon, LineChartIcon, PauseIcon, PlayIcon } from './icons'
 
 export type ViewMode = 'line' | 'bubble'
@@ -19,7 +20,11 @@ interface Props {
   onIsolateSeries: (id: string) => void
   playing: boolean
   onTogglePlay: () => void
-  /** Search terms a post must match, editable mid-run. */
+  speed: number
+  onSpeedChange: (speed: number) => void
+  intervalMs: number
+  onIntervalChange: (interval: number) => void
+  disabled?: boolean
   terms: string[]
   onTermsChange: (terms: string[]) => void
   /** Firehose events seen and kept so far. */
@@ -36,6 +41,11 @@ export function TopBar({
   onIsolateSeries,
   playing,
   onTogglePlay,
+  speed,
+  onSpeedChange,
+  intervalMs,
+  onIntervalChange,
+  disabled,
   terms,
   onTermsChange,
   events,
@@ -49,7 +59,6 @@ export function TopBar({
   return (
     <header className="topbar">
       <span className="topic">{topic}</span>
-      <span className="topic-sub">Subtopics</span>
       <div className="pills">
       {shown.map((s) => {
         const on = !hidden.has(s.id)
@@ -79,12 +88,24 @@ export function TopBar({
       <div className="spacer" />
 
       <span className="events">
-        read {formatCount(events.read)} · maintained {formatCount(events.kept)}
+        {formatCount(events.read)} posts · {formatCount(events.kept)} updates
       </span>
+      <div className="chart-controls">
       <FiltersMenu terms={terms} onChange={onTermsChange} />
-      <span className="divider" />
-
-      <button className="round-btn" aria-label={playing ? 'Pause' : 'Play'} onClick={onTogglePlay}>
+      {mode === 'line' && <label className="interval-control">
+        Interval
+        <select className="stream-speed" aria-label="Point interval" value={intervalMs}
+          onChange={(e) => onIntervalChange(Number(e.target.value))}>
+          {LINE_INTERVALS.map(interval => <option key={interval.value} value={interval.value}>{interval.label}</option>)}
+        </select>
+      </label>}
+      <select className="stream-speed" aria-label="Playback speed" value={speed}
+        onChange={(e) => onSpeedChange(Number(e.target.value))} disabled={disabled}>
+        <option value={3600}>1h / s</option>
+        <option value={14400}>4h / s</option>
+        <option value={43200}>12h / s</option>
+      </select>
+      <button className="round-btn" aria-label={playing ? 'Pause' : 'Play'} onClick={onTogglePlay} disabled={disabled}>
         {playing ? <PauseIcon size={14} /> : <PlayIcon size={14} />}
       </button>
       <span className="divider" />
@@ -99,6 +120,7 @@ export function TopBar({
         >
           <BubblesIcon size={17} />
         </button>
+      </div>
       </div>
     </header>
   )

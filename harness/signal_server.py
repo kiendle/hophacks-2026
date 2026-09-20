@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.11"
-# dependencies = ["aiohttp>=3.11,<4", "anthropic>=0.75", "mcp>=2", "duckdb>=1.4,<2", "pytz", "imageio-ffmpeg>=0.6"]
+# dependencies = ["aiohttp>=3.11,<4", "anthropic>=0.75", "mcp>=2", "duckdb==1.5.5", "jsonschema>=4.23,<5", "pytz", "imageio-ffmpeg>=0.6"]
 # ///
 """Run: python -m uv run harness/signal_server.py   then open http://127.0.0.1:5194
 

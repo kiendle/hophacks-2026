@@ -1,0 +1,4207 @@
+{
+ "core_tweets": 1077838,
+ "background_tweets": 775812,
+ "method": "tokens in tweets carrying a CORE AI term, ranked by rate lift over a 1-in-200 hash(id) sample of all originals; >=40 core tweets required",
+ "candidates": [
+  {
+   "token": "oai said",
+   "form": "caps2",
+   "core_tweets": 905,
+   "bg_tweets": 0,
+   "lift": 1302.8
+  },
+  {
+   "token": "can ai",
+   "form": "caps2",
+   "core_tweets": 495,
+   "bg_tweets": 0,
+   "lift": 712.6
+  },
+  {
+   "token": "overviews",
+   "form": "caps",
+   "core_tweets": 411,
+   "bg_tweets": 0,
+   "lift": 591.7
+  },
+  {
+   "token": "ai cloud",
+   "form": "caps2",
+   "core_tweets": 386,
+   "bg_tweets": 0,
+   "lift": 555.7
+  },
+  {
+   "token": "pass it",
+   "form": "caps2",
+   "core_tweets": 360,
+   "bg_tweets": 0,
+   "lift": 518.2
+  },
+  {
+   "token": "ai overviews",
+   "form": "caps2",
+   "core_tweets": 313,
+   "bg_tweets": 0,
+   "lift": 450.6
+  },
+  {
+   "token": "fuck ai",
+   "form": "caps2",
+   "core_tweets": 312,
+   "bg_tweets": 0,
+   "lift": 449.1
+  },
+  {
+   "token": "enterprise ai",
+   "form": "caps2",
+   "core_tweets": 306,
+   "bg_tweets": 0,
+   "lift": 440.5
+  },
+  {
+   "token": "#claude",
+   "form": "hashtag",
+   "core_tweets": 914,
+   "bg_tweets": 1,
+   "lift": 438.6
+  },
+  {
+   "token": "nscale",
+   "form": "caps",
+   "core_tweets": 302,
+   "bg_tweets": 0,
+   "lift": 434.8
+  },
+  {
+   "token": "@artificiallyinu",
+   "form": "mention",
+   "core_tweets": 296,
+   "bg_tweets": 0,
+   "lift": 426.1
+  },
+  {
+   "token": "ai eu",
+   "form": "caps2",
+   "core_tweets": 886,
+   "bg_tweets": 1,
+   "lift": 425.2
+  },
+  {
+   "token": "flash 0731",
+   "form": "model",
+   "core_tweets": 286,
+   "bg_tweets": 0,
+   "lift": 411.7
+  },
+  {
+   "token": "github copilot",
+   "form": "caps2",
+   "core_tweets": 281,
+   "bg_tweets": 0,
+   "lift": 404.5
+  },
+  {
+   "token": "dgrid",
+   "form": "caps",
+   "core_tweets": 265,
+   "bg_tweets": 0,
+   "lift": 381.5
+  },
+  {
+   "token": "llmo",
+   "form": "caps",
+   "core_tweets": 261,
+   "bg_tweets": 0,
+   "lift": 375.7
+  },
+  {
+   "token": "grok ai",
+   "form": "caps2",
+   "core_tweets": 258,
+   "bg_tweets": 0,
+   "lift": 371.4
+  },
+  {
+   "token": "pytorch",
+   "form": "caps",
+   "core_tweets": 258,
+   "bg_tweets": 0,
+   "lift": 371.4
+  },
+  {
+   "token": "artificiallyinu",
+   "form": "caps",
+   "core_tweets": 254,
+   "bg_tweets": 0,
+   "lift": 365.7
+  },
+  {
+   "token": "agentic ai",
+   "form": "caps2",
+   "core_tweets": 1227,
+   "bg_tweets": 2,
+   "lift": 353.3
+  },
+  {
+   "token": "neosoulai",
+   "form": "caps",
+   "core_tweets": 233,
+   "bg_tweets": 0,
+   "lift": 335.4
+  },
+  {
+   "token": "chinese ai",
+   "form": "caps2",
+   "core_tweets": 689,
+   "bg_tweets": 1,
+   "lift": 330.6
+  },
+  {
+   "token": "moonshot ai",
+   "form": "caps2",
+   "core_tweets": 228,
+   "bg_tweets": 0,
+   "lift": 328.2
+  },
+  {
+   "token": "claudeforce",
+   "form": "caps",
+   "core_tweets": 228,
+   "bg_tweets": 0,
+   "lift": 328.2
+  },
+  {
+   "token": "@neosoulai",
+   "form": "mention",
+   "core_tweets": 228,
+   "bg_tweets": 0,
+   "lift": 328.2
+  },
+  {
+   "token": "web apps",
+   "form": "caps2",
+   "core_tweets": 226,
+   "bg_tweets": 0,
+   "lift": 325.3
+  },
+  {
+   "token": "ai gente",
+   "form": "caps2",
+   "core_tweets": 224,
+   "bg_tweets": 0,
+   "lift": 322.5
+  },
+  {
+   "token": "@deepseek_ai",
+   "form": "mention",
+   "core_tweets": 224,
+   "bg_tweets": 0,
+   "lift": 322.5
+  },
+  {
+   "token": "chatgpt images",
+   "form": "caps2",
+   "core_tweets": 222,
+   "bg_tweets": 0,
+   "lift": 319.6
+  },
+  {
+   "token": "ai studio",
+   "form": "caps2",
+   "core_tweets": 220,
+   "bg_tweets": 0,
+   "lift": 316.7
+  },
+  {
+   "token": "@dgrid_ai",
+   "form": "mention",
+   "core_tweets": 219,
+   "bg_tweets": 0,
+   "lift": 315.3
+  },
+  {
+   "token": "ai overview",
+   "form": "caps2",
+   "core_tweets": 218,
+   "bg_tweets": 0,
+   "lift": 313.8
+  },
+  {
+   "token": "@openaidevs",
+   "form": "mention",
+   "core_tweets": 218,
+   "bg_tweets": 0,
+   "lift": 313.8
+  },
+  {
+   "token": "openaidevs",
+   "form": "caps",
+   "core_tweets": 218,
+   "bg_tweets": 0,
+   "lift": 313.8
+  },
+  {
+   "token": "aitools",
+   "form": "caps",
+   "core_tweets": 217,
+   "bg_tweets": 0,
+   "lift": 312.4
+  },
+  {
+   "token": "@chatgpt",
+   "form": "mention",
+   "core_tweets": 1947,
+   "bg_tweets": 4,
+   "lift": 311.4
+  },
+  {
+   "token": "#grokimagine",
+   "form": "hashtag",
+   "core_tweets": 211,
+   "bg_tweets": 0,
+   "lift": 303.7
+  },
+  {
+   "token": "american ai",
+   "form": "caps2",
+   "core_tweets": 210,
+   "bg_tweets": 0,
+   "lift": 302.3
+  },
+  {
+   "token": "bigdata",
+   "form": "caps",
+   "core_tweets": 207,
+   "bg_tweets": 0,
+   "lift": 298.0
+  },
+  {
+   "token": "meta ai",
+   "form": "caps2",
+   "core_tweets": 618,
+   "bg_tweets": 1,
+   "lift": 296.6
+  },
+  {
+   "token": "large language",
+   "form": "caps2",
+   "core_tweets": 206,
+   "bg_tweets": 0,
+   "lift": 296.6
+  },
+  {
+   "token": "seaart",
+   "form": "caps",
+   "core_tweets": 205,
+   "bg_tweets": 0,
+   "lift": 295.1
+  },
+  {
+   "token": "grokimagine",
+   "form": "caps",
+   "core_tweets": 204,
+   "bg_tweets": 0,
+   "lift": 293.7
+  },
+  {
+   "token": "before ai",
+   "form": "caps2",
+   "core_tweets": 203,
+   "bg_tweets": 0,
+   "lift": 292.2
+  },
+  {
+   "token": "tensorflow",
+   "form": "caps",
+   "core_tweets": 201,
+   "bg_tweets": 0,
+   "lift": 289.4
+  },
+  {
+   "token": "flash vision",
+   "form": "caps2",
+   "core_tweets": 200,
+   "bg_tweets": 0,
+   "lift": 287.9
+  },
+  {
+   "token": "voice ai",
+   "form": "caps2",
+   "core_tweets": 198,
+   "bg_tweets": 0,
+   "lift": 285.0
+  },
+  {
+   "token": "grace blackwell",
+   "form": "caps2",
+   "core_tweets": 198,
+   "bg_tweets": 0,
+   "lift": 285.0
+  },
+  {
+   "token": "ai saas",
+   "form": "caps2",
+   "core_tweets": 197,
+   "bg_tweets": 0,
+   "lift": 283.6
+  },
+  {
+   "token": "chatgpt 5.6",
+   "form": "model",
+   "core_tweets": 195,
+   "bg_tweets": 0,
+   "lift": 280.7
+  },
+  {
+   "token": "serverless",
+   "form": "caps",
+   "core_tweets": 194,
+   "bg_tweets": 0,
+   "lift": 279.3
+  },
+  {
+   "token": "more ai",
+   "form": "caps2",
+   "core_tweets": 191,
+   "bg_tweets": 0,
+   "lift": 275.0
+  },
+  {
+   "token": "bringback4o",
+   "form": "caps",
+   "core_tweets": 190,
+   "bg_tweets": 0,
+   "lift": 273.5
+  },
+  {
+   "token": "autonomous ai",
+   "form": "caps2",
+   "core_tweets": 190,
+   "bg_tweets": 0,
+   "lift": 273.5
+  },
+  {
+   "token": "now ai",
+   "form": "caps2",
+   "core_tweets": 189,
+   "bg_tweets": 0,
+   "lift": 272.1
+  },
+  {
+   "token": "weex",
+   "form": "caps",
+   "core_tweets": 189,
+   "bg_tweets": 0,
+   "lift": 272.1
+  },
+  {
+   "token": "claude ai",
+   "form": "caps2",
+   "core_tweets": 561,
+   "bg_tweets": 1,
+   "lift": 269.2
+  },
+  {
+   "token": "iiot",
+   "form": "caps",
+   "core_tweets": 187,
+   "bg_tweets": 0,
+   "lift": 269.2
+  },
+  {
+   "token": "and ai",
+   "form": "caps2",
+   "core_tweets": 186,
+   "bg_tweets": 0,
+   "lift": 267.8
+  },
+  {
+   "token": "ai cover",
+   "form": "caps2",
+   "core_tweets": 185,
+   "bg_tweets": 0,
+   "lift": 266.3
+  },
+  {
+   "token": "ai gateway",
+   "form": "caps2",
+   "core_tweets": 183,
+   "bg_tweets": 0,
+   "lift": 263.4
+  },
+  {
+   "token": "brainsick",
+   "form": "caps",
+   "core_tweets": 183,
+   "bg_tweets": 0,
+   "lift": 263.4
+  },
+  {
+   "token": "#agenticai",
+   "form": "hashtag",
+   "core_tweets": 543,
+   "bg_tweets": 1,
+   "lift": 260.6
+  },
+  {
+   "token": "ai automation",
+   "form": "caps2",
+   "core_tweets": 179,
+   "bg_tweets": 0,
+   "lift": 257.7
+  },
+  {
+   "token": "genai",
+   "form": "caps",
+   "core_tweets": 1240,
+   "bg_tweets": 3,
+   "lift": 255.0
+  },
+  {
+   "token": "martech",
+   "form": "caps",
+   "core_tweets": 175,
+   "bg_tweets": 0,
+   "lift": 251.9
+  },
+  {
+   "token": "#iiot",
+   "form": "hashtag",
+   "core_tweets": 174,
+   "bg_tweets": 0,
+   "lift": 250.5
+  },
+  {
+   "token": "deeplearning",
+   "form": "caps",
+   "core_tweets": 173,
+   "bg_tweets": 0,
+   "lift": 249.0
+  },
+  {
+   "token": "#rstats",
+   "form": "hashtag",
+   "core_tweets": 173,
+   "bg_tweets": 0,
+   "lift": 249.0
+  },
+  {
+   "token": "oai",
+   "form": "caps",
+   "core_tweets": 1210,
+   "bg_tweets": 3,
+   "lift": 248.8
+  },
+  {
+   "token": "rstats",
+   "form": "caps",
+   "core_tweets": 172,
+   "bg_tweets": 0,
+   "lift": 247.6
+  },
+  {
+   "token": "ai model",
+   "form": "caps2",
+   "core_tweets": 170,
+   "bg_tweets": 0,
+   "lift": 244.7
+  },
+  {
+   "token": "ai pro",
+   "form": "caps2",
+   "core_tweets": 170,
+   "bg_tweets": 0,
+   "lift": 244.7
+  },
+  {
+   "token": "@openai",
+   "form": "mention",
+   "core_tweets": 4228,
+   "bg_tweets": 12,
+   "lift": 243.5
+  },
+  {
+   "token": "accelerator",
+   "form": "caps",
+   "core_tweets": 169,
+   "bg_tweets": 0,
+   "lift": 243.3
+  },
+  {
+   "token": "ai assistant",
+   "form": "caps2",
+   "core_tweets": 169,
+   "bg_tweets": 0,
+   "lift": 243.3
+  },
+  {
+   "token": "agenticai",
+   "form": "caps",
+   "core_tweets": 505,
+   "bg_tweets": 1,
+   "lift": 242.3
+  },
+  {
+   "token": "#tensorflow",
+   "form": "hashtag",
+   "core_tweets": 168,
+   "bg_tweets": 0,
+   "lift": 241.8
+  },
+  {
+   "token": "#serverless",
+   "form": "hashtag",
+   "core_tweets": 167,
+   "bg_tweets": 0,
+   "lift": 240.4
+  },
+  {
+   "token": "#deeplearning",
+   "form": "hashtag",
+   "core_tweets": 166,
+   "bg_tweets": 0,
+   "lift": 239.0
+  },
+  {
+   "token": "ai pas",
+   "form": "caps2",
+   "core_tweets": 163,
+   "bg_tweets": 0,
+   "lift": 234.7
+  },
+  {
+   "token": "veio ai",
+   "form": "caps2",
+   "core_tweets": 162,
+   "bg_tweets": 0,
+   "lift": 233.2
+  },
+  {
+   "token": "techmeme",
+   "form": "caps",
+   "core_tweets": 162,
+   "bg_tweets": 0,
+   "lift": 233.2
+  },
+  {
+   "token": "#martech",
+   "form": "hashtag",
+   "core_tweets": 162,
+   "bg_tweets": 0,
+   "lift": 233.2
+  },
+  {
+   "token": "local ai",
+   "form": "caps2",
+   "core_tweets": 479,
+   "bg_tweets": 1,
+   "lift": 229.9
+  },
+  {
+   "token": "reactjs",
+   "form": "caps",
+   "core_tweets": 159,
+   "bg_tweets": 0,
+   "lift": 228.9
+  },
+  {
+   "token": "ask ai",
+   "form": "caps2",
+   "core_tweets": 156,
+   "bg_tweets": 0,
+   "lift": 224.6
+  },
+  {
+   "token": "#reactjs",
+   "form": "hashtag",
+   "core_tweets": 155,
+   "bg_tweets": 0,
+   "lift": 223.1
+  },
+  {
+   "token": "ai vou",
+   "form": "caps2",
+   "core_tweets": 154,
+   "bg_tweets": 0,
+   "lift": 221.7
+  },
+  {
+   "token": "ai content",
+   "form": "caps2",
+   "core_tweets": 152,
+   "bg_tweets": 0,
+   "lift": 218.8
+  },
+  {
+   "token": "hassabis",
+   "form": "caps",
+   "core_tweets": 151,
+   "bg_tweets": 0,
+   "lift": 217.4
+  },
+  {
+   "token": "ai porra",
+   "form": "caps2",
+   "core_tweets": 150,
+   "bg_tweets": 0,
+   "lift": 215.9
+  },
+  {
+   "token": "visit techmeme",
+   "form": "caps2",
+   "core_tweets": 149,
+   "bg_tweets": 0,
+   "lift": 214.5
+  },
+  {
+   "token": "an ai",
+   "form": "caps2",
+   "core_tweets": 1901,
+   "bg_tweets": 6,
+   "lift": 210.5
+  },
+  {
+   "token": "china ai",
+   "form": "caps2",
+   "core_tweets": 146,
+   "bg_tweets": 0,
+   "lift": 210.2
+  },
+  {
+   "token": "using ai",
+   "form": "caps2",
+   "core_tweets": 727,
+   "bg_tweets": 2,
+   "lift": 209.3
+  },
+  {
+   "token": "artificial inu",
+   "form": "caps2",
+   "core_tweets": 145,
+   "bg_tweets": 0,
+   "lift": 208.7
+  },
+  {
+   "token": "ai native",
+   "form": "caps2",
+   "core_tweets": 143,
+   "bg_tweets": 0,
+   "lift": 205.9
+  },
+  {
+   "token": "first ai",
+   "form": "caps2",
+   "core_tweets": 143,
+   "bg_tweets": 0,
+   "lift": 205.9
+  },
+  {
+   "token": "eylem plan",
+   "form": "caps2",
+   "core_tweets": 142,
+   "bg_tweets": 0,
+   "lift": 204.4
+  },
+  {
+   "token": "#generativeai",
+   "form": "hashtag",
+   "core_tweets": 424,
+   "bg_tweets": 1,
+   "lift": 203.5
+  },
+  {
+   "token": "ai infra",
+   "form": "caps2",
+   "core_tweets": 141,
+   "bg_tweets": 0,
+   "lift": 203.0
+  },
+  {
+   "token": "ai plus",
+   "form": "caps2",
+   "core_tweets": 141,
+   "bg_tweets": 0,
+   "lift": 203.0
+  },
+  {
+   "token": "chatgpt image",
+   "form": "caps2",
+   "core_tweets": 141,
+   "bg_tweets": 0,
+   "lift": 203.0
+  },
+  {
+   "token": "all ai",
+   "form": "caps2",
+   "core_tweets": 141,
+   "bg_tweets": 0,
+   "lift": 203.0
+  },
+  {
+   "token": "learn ai",
+   "form": "caps2",
+   "core_tweets": 140,
+   "bg_tweets": 0,
+   "lift": 201.5
+  },
+  {
+   "token": "ai image",
+   "form": "caps2",
+   "core_tweets": 139,
+   "bg_tweets": 0,
+   "lift": 200.1
+  },
+  {
+   "token": "gpt-5.5",
+   "form": "model",
+   "core_tweets": 138,
+   "bg_tweets": 0,
+   "lift": 198.7
+  },
+  {
+   "token": "nvidia ai",
+   "form": "caps2",
+   "core_tweets": 137,
+   "bg_tweets": 0,
+   "lift": 197.2
+  },
+  {
+   "token": "#adtech",
+   "form": "hashtag",
+   "core_tweets": 137,
+   "bg_tweets": 0,
+   "lift": 197.2
+  },
+  {
+   "token": "just ai",
+   "form": "caps2",
+   "core_tweets": 137,
+   "bg_tweets": 0,
+   "lift": 197.2
+  },
+  {
+   "token": "aschenbrenner",
+   "form": "caps",
+   "core_tweets": 137,
+   "bg_tweets": 0,
+   "lift": 197.2
+  },
+  {
+   "token": "use ai",
+   "form": "caps2",
+   "core_tweets": 685,
+   "bg_tweets": 2,
+   "lift": 197.2
+  },
+  {
+   "token": "atlassian",
+   "form": "caps",
+   "core_tweets": 136,
+   "bg_tweets": 0,
+   "lift": 195.8
+  },
+  {
+   "token": "adtech",
+   "form": "caps",
+   "core_tweets": 136,
+   "bg_tweets": 0,
+   "lift": 195.8
+  },
+  {
+   "token": "which ai",
+   "form": "caps2",
+   "core_tweets": 406,
+   "bg_tweets": 1,
+   "lift": 194.8
+  },
+  {
+   "token": "siemens",
+   "form": "caps",
+   "core_tweets": 135,
+   "bg_tweets": 0,
+   "lift": 194.3
+  },
+  {
+   "token": "golang",
+   "form": "caps",
+   "core_tweets": 135,
+   "bg_tweets": 0,
+   "lift": 194.3
+  },
+  {
+   "token": "ai bubble",
+   "form": "caps2",
+   "core_tweets": 135,
+   "bg_tweets": 0,
+   "lift": 194.3
+  },
+  {
+   "token": "aigc",
+   "form": "caps",
+   "core_tweets": 135,
+   "bg_tweets": 0,
+   "lift": 194.3
+  },
+  {
+   "token": "ai boom",
+   "form": "caps2",
+   "core_tweets": 135,
+   "bg_tweets": 0,
+   "lift": 194.3
+  },
+  {
+   "token": "turnitin",
+   "form": "caps",
+   "core_tweets": 134,
+   "bg_tweets": 0,
+   "lift": 192.9
+  },
+  {
+   "token": "the openai",
+   "form": "caps2",
+   "core_tweets": 134,
+   "bg_tweets": 0,
+   "lift": 192.9
+  },
+  {
+   "token": "axg",
+   "form": "caps",
+   "core_tweets": 402,
+   "bg_tweets": 1,
+   "lift": 192.9
+  },
+  {
+   "token": "local llm",
+   "form": "caps2",
+   "core_tweets": 133,
+   "bg_tweets": 0,
+   "lift": 191.5
+  },
+  {
+   "token": "micro1",
+   "form": "model",
+   "core_tweets": 133,
+   "bg_tweets": 0,
+   "lift": 191.5
+  },
+  {
+   "token": "#aigirls",
+   "form": "hashtag",
+   "core_tweets": 133,
+   "bg_tweets": 0,
+   "lift": 191.5
+  },
+  {
+   "token": "#aipictors",
+   "form": "hashtag",
+   "core_tweets": 133,
+   "bg_tweets": 0,
+   "lift": 191.5
+  },
+  {
+   "token": "apodex 1.1",
+   "form": "model",
+   "core_tweets": 131,
+   "bg_tweets": 0,
+   "lift": 188.6
+  },
+  {
+   "token": "domains",
+   "form": "caps",
+   "core_tweets": 131,
+   "bg_tweets": 0,
+   "lift": 188.6
+  },
+  {
+   "token": "#golang",
+   "form": "hashtag",
+   "core_tweets": 131,
+   "bg_tweets": 0,
+   "lift": 188.6
+  },
+  {
+   "token": "@gdb",
+   "form": "mention",
+   "core_tweets": 131,
+   "bg_tweets": 0,
+   "lift": 188.6
+  },
+  {
+   "token": "ai agents",
+   "form": "caps2",
+   "core_tweets": 1964,
+   "bg_tweets": 7,
+   "lift": 188.5
+  },
+  {
+   "token": "generativeai",
+   "form": "caps",
+   "core_tweets": 390,
+   "bg_tweets": 1,
+   "lift": 187.1
+  },
+  {
+   "token": "open chatgpt",
+   "form": "caps2",
+   "core_tweets": 130,
+   "bg_tweets": 0,
+   "lift": 187.1
+  },
+  {
+   "token": "generative ai",
+   "form": "caps2",
+   "core_tweets": 650,
+   "bg_tweets": 2,
+   "lift": 187.1
+  },
+  {
+   "token": "wan3.0",
+   "form": "model",
+   "core_tweets": 129,
+   "bg_tweets": 0,
+   "lift": 185.7
+  },
+  {
+   "token": "#pytorch",
+   "form": "hashtag",
+   "core_tweets": 129,
+   "bg_tweets": 0,
+   "lift": 185.7
+  },
+  {
+   "token": "#datascience",
+   "form": "hashtag",
+   "core_tweets": 386,
+   "bg_tweets": 1,
+   "lift": 185.2
+  },
+  {
+   "token": "chatgpt work",
+   "form": "caps2",
+   "core_tweets": 1157,
+   "bg_tweets": 4,
+   "lift": 185.1
+  },
+  {
+   "token": "axisrobotics",
+   "form": "caps",
+   "core_tweets": 128,
+   "bg_tweets": 0,
+   "lift": 184.3
+  },
+  {
+   "token": "demis hassabis",
+   "form": "caps2",
+   "core_tweets": 128,
+   "bg_tweets": 0,
+   "lift": 184.3
+  },
+  {
+   "token": "amodei",
+   "form": "caps",
+   "core_tweets": 892,
+   "bg_tweets": 3,
+   "lift": 183.4
+  },
+  {
+   "token": "slack code",
+   "form": "caps2",
+   "core_tweets": 127,
+   "bg_tweets": 0,
+   "lift": 182.8
+  },
+  {
+   "token": "chatgpt plus",
+   "form": "caps2",
+   "core_tweets": 631,
+   "bg_tweets": 2,
+   "lift": 181.7
+  },
+  {
+   "token": "ai compute",
+   "form": "caps2",
+   "core_tweets": 126,
+   "bg_tweets": 0,
+   "lift": 181.4
+  },
+  {
+   "token": "datascience",
+   "form": "caps",
+   "core_tweets": 378,
+   "bg_tweets": 1,
+   "lift": 181.4
+  },
+  {
+   "token": "full course",
+   "form": "caps2",
+   "core_tweets": 126,
+   "bg_tweets": 0,
+   "lift": 181.4
+  },
+  {
+   "token": "daysai",
+   "form": "caps",
+   "core_tweets": 876,
+   "bg_tweets": 3,
+   "lift": 180.2
+  },
+  {
+   "token": "gb200",
+   "form": "model",
+   "core_tweets": 125,
+   "bg_tweets": 0,
+   "lift": 179.9
+  },
+  {
+   "token": "kling ai",
+   "form": "caps2",
+   "core_tweets": 125,
+   "bg_tweets": 0,
+   "lift": 179.9
+  },
+  {
+   "token": "vem ai",
+   "form": "caps2",
+   "core_tweets": 374,
+   "bg_tweets": 1,
+   "lift": 179.5
+  },
+  {
+   "token": "deepseek harness",
+   "form": "caps2",
+   "core_tweets": 869,
+   "bg_tweets": 3,
+   "lift": 178.7
+  },
+  {
+   "token": "deai",
+   "form": "caps",
+   "core_tweets": 124,
+   "bg_tweets": 0,
+   "lift": 178.5
+  },
+  {
+   "token": "prompt engineering",
+   "form": "caps2",
+   "core_tweets": 124,
+   "bg_tweets": 0,
+   "lift": 178.5
+  },
+  {
+   "token": "gpt-5",
+   "form": "model",
+   "core_tweets": 124,
+   "bg_tweets": 0,
+   "lift": 178.5
+  },
+  {
+   "token": "watching netflix",
+   "form": "caps2",
+   "core_tweets": 122,
+   "bg_tweets": 0,
+   "lift": 175.6
+  },
+  {
+   "token": "#llms",
+   "form": "hashtag",
+   "core_tweets": 122,
+   "bg_tweets": 0,
+   "lift": 175.6
+  },
+  {
+   "token": "@trymira",
+   "form": "mention",
+   "core_tweets": 122,
+   "bg_tweets": 0,
+   "lift": 175.6
+  },
+  {
+   "token": "squirrelly",
+   "form": "caps",
+   "core_tweets": 365,
+   "bg_tweets": 1,
+   "lift": 175.1
+  },
+  {
+   "token": "ai news",
+   "form": "caps2",
+   "core_tweets": 121,
+   "bg_tweets": 0,
+   "lift": 174.2
+  },
+  {
+   "token": "ai is",
+   "form": "caps2",
+   "core_tweets": 847,
+   "bg_tweets": 3,
+   "lift": 174.2
+  },
+  {
+   "token": "the llm",
+   "form": "caps2",
+   "core_tweets": 121,
+   "bg_tweets": 0,
+   "lift": 174.2
+  },
+  {
+   "token": "top ai",
+   "form": "caps2",
+   "core_tweets": 120,
+   "bg_tweets": 0,
+   "lift": 172.7
+  },
+  {
+   "token": "yapay zeka",
+   "form": "caps2",
+   "core_tweets": 595,
+   "bg_tweets": 2,
+   "lift": 171.3
+  },
+  {
+   "token": "asahiminori",
+   "form": "caps",
+   "core_tweets": 119,
+   "bg_tweets": 0,
+   "lift": 171.3
+  },
+  {
+   "token": "gpt astra",
+   "form": "caps2",
+   "core_tweets": 119,
+   "bg_tweets": 0,
+   "lift": 171.3
+  },
+  {
+   "token": "nvidia gpus",
+   "form": "caps2",
+   "core_tweets": 119,
+   "bg_tweets": 0,
+   "lift": 171.3
+  },
+  {
+   "token": "#asahiminori",
+   "form": "hashtag",
+   "core_tweets": 119,
+   "bg_tweets": 0,
+   "lift": 171.3
+  },
+  {
+   "token": "ai nao",
+   "form": "caps2",
+   "core_tweets": 118,
+   "bg_tweets": 0,
+   "lift": 169.9
+  },
+  {
+   "token": "with ai",
+   "form": "caps2",
+   "core_tweets": 825,
+   "bg_tweets": 3,
+   "lift": 169.7
+  },
+  {
+   "token": "ai api",
+   "form": "caps2",
+   "core_tweets": 117,
+   "bg_tweets": 0,
+   "lift": 168.4
+  },
+  {
+   "token": "ai pc",
+   "form": "caps2",
+   "core_tweets": 117,
+   "bg_tweets": 0,
+   "lift": 168.4
+  },
+  {
+   "token": "#daysai",
+   "form": "hashtag",
+   "core_tweets": 818,
+   "bg_tweets": 3,
+   "lift": 168.2
+  },
+  {
+   "token": "edge ai",
+   "form": "caps2",
+   "core_tweets": 116,
+   "bg_tweets": 0,
+   "lift": 167.0
+  },
+  {
+   "token": "ai max",
+   "form": "caps2",
+   "core_tweets": 116,
+   "bg_tweets": 0,
+   "lift": 167.0
+  },
+  {
+   "token": "#forbes",
+   "form": "hashtag",
+   "core_tweets": 116,
+   "bg_tweets": 0,
+   "lift": 167.0
+  },
+  {
+   "token": "on ai",
+   "form": "caps2",
+   "core_tweets": 116,
+   "bg_tweets": 0,
+   "lift": 167.0
+  },
+  {
+   "token": "ai meu",
+   "form": "caps2",
+   "core_tweets": 809,
+   "bg_tweets": 3,
+   "lift": 166.4
+  },
+  {
+   "token": "nvidia dgx",
+   "form": "caps2",
+   "core_tweets": 115,
+   "bg_tweets": 0,
+   "lift": 165.6
+  },
+  {
+   "token": "dwarkesh",
+   "form": "caps",
+   "core_tweets": 115,
+   "bg_tweets": 0,
+   "lift": 165.6
+  },
+  {
+   "token": "claude academy",
+   "form": "caps2",
+   "core_tweets": 345,
+   "bg_tweets": 1,
+   "lift": 165.6
+  },
+  {
+   "token": "time100",
+   "form": "model",
+   "core_tweets": 115,
+   "bg_tweets": 0,
+   "lift": 165.6
+  },
+  {
+   "token": "pixai ai",
+   "form": "caps2",
+   "core_tweets": 114,
+   "bg_tweets": 0,
+   "lift": 164.1
+  },
+  {
+   "token": "vercel ai",
+   "form": "caps2",
+   "core_tweets": 114,
+   "bg_tweets": 0,
+   "lift": 164.1
+  },
+  {
+   "token": "ai hub",
+   "form": "caps2",
+   "core_tweets": 113,
+   "bg_tweets": 0,
+   "lift": 162.7
+  },
+  {
+   "token": "ai girl",
+   "form": "caps2",
+   "core_tweets": 113,
+   "bg_tweets": 0,
+   "lift": 162.7
+  },
+  {
+   "token": "#genai",
+   "form": "hashtag",
+   "core_tweets": 339,
+   "bg_tweets": 1,
+   "lift": 162.7
+  },
+  {
+   "token": "images 2.0",
+   "form": "model",
+   "core_tweets": 112,
+   "bg_tweets": 0,
+   "lift": 161.2
+  },
+  {
+   "token": "ai que",
+   "form": "caps2",
+   "core_tweets": 1900,
+   "bg_tweets": 8,
+   "lift": 160.9
+  },
+  {
+   "token": "sarvam",
+   "form": "caps",
+   "core_tweets": 111,
+   "bg_tweets": 0,
+   "lift": 159.8
+  },
+  {
+   "token": "aimanga",
+   "form": "caps",
+   "core_tweets": 111,
+   "bg_tweets": 0,
+   "lift": 159.8
+  },
+  {
+   "token": "#aimanga",
+   "form": "hashtag",
+   "core_tweets": 111,
+   "bg_tweets": 0,
+   "lift": 159.8
+  },
+  {
+   "token": "shiftai",
+   "form": "caps",
+   "core_tweets": 111,
+   "bg_tweets": 0,
+   "lift": 159.8
+  },
+  {
+   "token": "#shiftai",
+   "form": "hashtag",
+   "core_tweets": 110,
+   "bg_tweets": 0,
+   "lift": 158.4
+  },
+  {
+   "token": "karp",
+   "form": "caps",
+   "core_tweets": 110,
+   "bg_tweets": 0,
+   "lift": 158.4
+  },
+  {
+   "token": "@vercel",
+   "form": "mention",
+   "core_tweets": 110,
+   "bg_tweets": 0,
+   "lift": 158.4
+  },
+  {
+   "token": "when ai",
+   "form": "caps2",
+   "core_tweets": 546,
+   "bg_tweets": 2,
+   "lift": 157.2
+  },
+  {
+   "token": "ai lab",
+   "form": "caps2",
+   "core_tweets": 109,
+   "bg_tweets": 0,
+   "lift": 156.9
+  },
+  {
+   "token": "scale ai",
+   "form": "caps2",
+   "core_tweets": 109,
+   "bg_tweets": 0,
+   "lift": 156.9
+  },
+  {
+   "token": "#ai_data_centre_stock",
+   "form": "hashtag",
+   "core_tweets": 109,
+   "bg_tweets": 0,
+   "lift": 156.9
+  },
+  {
+   "token": "chatgpt codex",
+   "form": "caps2",
+   "core_tweets": 109,
+   "bg_tweets": 0,
+   "lift": 156.9
+  },
+  {
+   "token": "tempus ai",
+   "form": "caps2",
+   "core_tweets": 108,
+   "bg_tweets": 0,
+   "lift": 155.5
+  },
+  {
+   "token": "coding agent",
+   "form": "caps2",
+   "core_tweets": 108,
+   "bg_tweets": 0,
+   "lift": 155.5
+  },
+  {
+   "token": "dobot",
+   "form": "caps",
+   "core_tweets": 108,
+   "bg_tweets": 0,
+   "lift": 155.5
+  },
+  {
+   "token": "of ai",
+   "form": "caps2",
+   "core_tweets": 107,
+   "bg_tweets": 0,
+   "lift": 154.0
+  },
+  {
+   "token": "@itspolloai",
+   "form": "mention",
+   "core_tweets": 107,
+   "bg_tweets": 0,
+   "lift": 154.0
+  },
+  {
+   "token": "#anthropic",
+   "form": "hashtag",
+   "core_tweets": 749,
+   "bg_tweets": 3,
+   "lift": 154.0
+  },
+  {
+   "token": "ai development",
+   "form": "caps2",
+   "core_tweets": 106,
+   "bg_tweets": 0,
+   "lift": 152.6
+  },
+  {
+   "token": "synthid",
+   "form": "caps",
+   "core_tweets": 106,
+   "bg_tweets": 0,
+   "lift": 152.6
+  },
+  {
+   "token": "leopold aschenbrenner",
+   "form": "caps2",
+   "core_tweets": 106,
+   "bg_tweets": 0,
+   "lift": 152.6
+  },
+  {
+   "token": "fake ai",
+   "form": "caps2",
+   "core_tweets": 106,
+   "bg_tweets": 0,
+   "lift": 152.6
+  },
+  {
+   "token": "#novelai",
+   "form": "hashtag",
+   "core_tweets": 106,
+   "bg_tweets": 0,
+   "lift": 152.6
+  },
+  {
+   "token": "#machinelearning",
+   "form": "hashtag",
+   "core_tweets": 742,
+   "bg_tweets": 3,
+   "lift": 152.6
+  },
+  {
+   "token": "novel ai",
+   "form": "caps2",
+   "core_tweets": 106,
+   "bg_tweets": 0,
+   "lift": 152.6
+  },
+  {
+   "token": "anthropic",
+   "form": "caps",
+   "core_tweets": 24663,
+   "bg_tweets": 116,
+   "lift": 152.4
+  },
+  {
+   "token": "yzi labs",
+   "form": "caps2",
+   "core_tweets": 105,
+   "bg_tweets": 0,
+   "lift": 151.2
+  },
+  {
+   "token": "video ai",
+   "form": "caps2",
+   "core_tweets": 105,
+   "bg_tweets": 0,
+   "lift": 151.2
+  },
+  {
+   "token": "ai research",
+   "form": "caps2",
+   "core_tweets": 105,
+   "bg_tweets": 0,
+   "lift": 151.2
+  },
+  {
+   "token": "private ai",
+   "form": "caps2",
+   "core_tweets": 105,
+   "bg_tweets": 0,
+   "lift": 151.2
+  },
+  {
+   "token": "ai vsf",
+   "form": "caps2",
+   "core_tweets": 105,
+   "bg_tweets": 0,
+   "lift": 151.2
+  },
+  {
+   "token": "solohost",
+   "form": "caps",
+   "core_tweets": 105,
+   "bg_tweets": 0,
+   "lift": 151.2
+  },
+  {
+   "token": "open ai",
+   "form": "caps2",
+   "core_tweets": 734,
+   "bg_tweets": 3,
+   "lift": 150.9
+  },
+  {
+   "token": "not ai",
+   "form": "caps2",
+   "core_tweets": 522,
+   "bg_tweets": 2,
+   "lift": 150.3
+  },
+  {
+   "token": "#seaart",
+   "form": "hashtag",
+   "core_tweets": 104,
+   "bg_tweets": 0,
+   "lift": 149.7
+  },
+  {
+   "token": "#voicesinger_bot",
+   "form": "hashtag",
+   "core_tweets": 104,
+   "bg_tweets": 0,
+   "lift": 149.7
+  },
+  {
+   "token": "ai tools",
+   "form": "caps2",
+   "core_tweets": 311,
+   "bg_tweets": 1,
+   "lift": 149.2
+  },
+  {
+   "token": "openai",
+   "form": "caps",
+   "core_tweets": 35080,
+   "bg_tweets": 169,
+   "lift": 149.0
+  },
+  {
+   "token": "openai gpt",
+   "form": "caps2",
+   "core_tweets": 103,
+   "bg_tweets": 0,
+   "lift": 148.3
+  },
+  {
+   "token": "#marketingtechnology",
+   "form": "hashtag",
+   "core_tweets": 103,
+   "bg_tweets": 0,
+   "lift": 148.3
+  },
+  {
+   "token": "flop network",
+   "form": "caps2",
+   "core_tweets": 103,
+   "bg_tweets": 0,
+   "lift": 148.3
+  },
+  {
+   "token": "michael burry",
+   "form": "caps2",
+   "core_tweets": 102,
+   "bg_tweets": 0,
+   "lift": 146.8
+  },
+  {
+   "token": "xring",
+   "form": "caps",
+   "core_tweets": 102,
+   "bg_tweets": 0,
+   "lift": 146.8
+  },
+  {
+   "token": "uyas",
+   "form": "caps",
+   "core_tweets": 102,
+   "bg_tweets": 0,
+   "lift": 146.8
+  },
+  {
+   "token": "#uyas",
+   "form": "hashtag",
+   "core_tweets": 102,
+   "bg_tweets": 0,
+   "lift": 146.8
+  },
+  {
+   "token": "hacker news",
+   "form": "caps2",
+   "core_tweets": 101,
+   "bg_tweets": 0,
+   "lift": 145.4
+  },
+  {
+   "token": "neosoul",
+   "form": "caps",
+   "core_tweets": 101,
+   "bg_tweets": 0,
+   "lift": 145.4
+  },
+  {
+   "token": "wispr",
+   "form": "caps",
+   "core_tweets": 101,
+   "bg_tweets": 0,
+   "lift": 145.4
+  },
+  {
+   "token": "ai chip",
+   "form": "caps2",
+   "core_tweets": 101,
+   "bg_tweets": 0,
+   "lift": 145.4
+  },
+  {
+   "token": "#contentmarketing",
+   "form": "hashtag",
+   "core_tweets": 101,
+   "bg_tweets": 0,
+   "lift": 145.4
+  },
+  {
+   "token": "ai passport",
+   "form": "caps2",
+   "core_tweets": 303,
+   "bg_tweets": 1,
+   "lift": 145.4
+  },
+  {
+   "token": "ulas",
+   "form": "caps",
+   "core_tweets": 101,
+   "bg_tweets": 0,
+   "lift": 145.4
+  },
+  {
+   "token": "ai mode",
+   "form": "caps2",
+   "core_tweets": 303,
+   "bg_tweets": 1,
+   "lift": 145.4
+  },
+  {
+   "token": "marketingtechnology",
+   "form": "caps",
+   "core_tweets": 101,
+   "bg_tweets": 0,
+   "lift": 145.4
+  },
+  {
+   "token": "machinelearning",
+   "form": "caps",
+   "core_tweets": 703,
+   "bg_tweets": 3,
+   "lift": 144.6
+  },
+  {
+   "token": "inteligencia artificial",
+   "form": "caps2",
+   "core_tweets": 1503,
+   "bg_tweets": 7,
+   "lift": 144.2
+  },
+  {
+   "token": "mistral ai",
+   "form": "caps2",
+   "core_tweets": 100,
+   "bg_tweets": 0,
+   "lift": 144.0
+  },
+  {
+   "token": "gfeai",
+   "form": "caps",
+   "core_tweets": 100,
+   "bg_tweets": 0,
+   "lift": 144.0
+  },
+  {
+   "token": "#ulas",
+   "form": "hashtag",
+   "core_tweets": 100,
+   "bg_tweets": 0,
+   "lift": 144.0
+  },
+  {
+   "token": "then ai",
+   "form": "caps2",
+   "core_tweets": 100,
+   "bg_tweets": 0,
+   "lift": 144.0
+  },
+  {
+   "token": "chatgpt",
+   "form": "caps",
+   "core_tweets": 56206,
+   "bg_tweets": 281,
+   "lift": 143.7
+  },
+  {
+   "token": "humain",
+   "form": "caps",
+   "core_tweets": 297,
+   "bg_tweets": 1,
+   "lift": 142.5
+  },
+  {
+   "token": "#deai",
+   "form": "hashtag",
+   "core_tweets": 99,
+   "bg_tweets": 0,
+   "lift": 142.5
+  },
+  {
+   "token": "stability ai",
+   "form": "caps2",
+   "core_tweets": 99,
+   "bg_tweets": 0,
+   "lift": 142.5
+  },
+  {
+   "token": "because ai",
+   "form": "caps2",
+   "core_tweets": 99,
+   "bg_tweets": 0,
+   "lift": 142.5
+  },
+  {
+   "token": "anti ai",
+   "form": "caps2",
+   "core_tweets": 99,
+   "bg_tweets": 0,
+   "lift": 142.5
+  },
+  {
+   "token": "#gfeai",
+   "form": "hashtag",
+   "core_tweets": 99,
+   "bg_tweets": 0,
+   "lift": 142.5
+  },
+  {
+   "token": "the ai",
+   "form": "caps2",
+   "core_tweets": 6035,
+   "bg_tweets": 30,
+   "lift": 142.4
+  },
+  {
+   "token": "coinwings ai",
+   "form": "caps2",
+   "core_tweets": 98,
+   "bg_tweets": 0,
+   "lift": 141.1
+  },
+  {
+   "token": "domainforsale",
+   "form": "caps",
+   "core_tweets": 98,
+   "bg_tweets": 0,
+   "lift": 141.1
+  },
+  {
+   "token": "coinwings",
+   "form": "caps",
+   "core_tweets": 98,
+   "bg_tweets": 0,
+   "lift": 141.1
+  },
+  {
+   "token": "ai factory",
+   "form": "caps2",
+   "core_tweets": 98,
+   "bg_tweets": 0,
+   "lift": 141.1
+  },
+  {
+   "token": "ai vtuber",
+   "form": "caps2",
+   "core_tweets": 98,
+   "bg_tweets": 0,
+   "lift": 141.1
+  },
+  {
+   "token": "ed25519",
+   "form": "model",
+   "core_tweets": 98,
+   "bg_tweets": 0,
+   "lift": 141.1
+  },
+  {
+   "token": "coingatepad",
+   "form": "caps",
+   "core_tweets": 98,
+   "bg_tweets": 0,
+   "lift": 141.1
+  },
+  {
+   "token": "#coingatepad",
+   "form": "hashtag",
+   "core_tweets": 98,
+   "bg_tweets": 0,
+   "lift": 141.1
+  },
+  {
+   "token": "dario amodei",
+   "form": "caps2",
+   "core_tweets": 681,
+   "bg_tweets": 3,
+   "lift": 140.0
+  },
+  {
+   "token": "figure ai",
+   "form": "caps2",
+   "core_tweets": 97,
+   "bg_tweets": 0,
+   "lift": 139.6
+  },
+  {
+   "token": "warner chappell",
+   "form": "caps2",
+   "core_tweets": 97,
+   "bg_tweets": 0,
+   "lift": 139.6
+  },
+  {
+   "token": "@moviton_p2p",
+   "form": "mention",
+   "core_tweets": 97,
+   "bg_tweets": 0,
+   "lift": 139.6
+  },
+  {
+   "token": "another ai",
+   "form": "caps2",
+   "core_tweets": 97,
+   "bg_tweets": 0,
+   "lift": 139.6
+  },
+  {
+   "token": "ai trop",
+   "form": "caps2",
+   "core_tweets": 97,
+   "bg_tweets": 0,
+   "lift": 139.6
+  },
+  {
+   "token": "#aiphotography",
+   "form": "hashtag",
+   "core_tweets": 97,
+   "bg_tweets": 0,
+   "lift": 139.6
+  },
+  {
+   "token": "machine learning",
+   "form": "caps2",
+   "core_tweets": 866,
+   "bg_tweets": 4,
+   "lift": 138.5
+  },
+  {
+   "token": "contentmarketing",
+   "form": "caps",
+   "core_tweets": 96,
+   "bg_tweets": 0,
+   "lift": 138.2
+  },
+  {
+   "token": "ai minha",
+   "form": "caps2",
+   "core_tweets": 96,
+   "bg_tweets": 0,
+   "lift": 138.2
+  },
+  {
+   "token": "ai ceos",
+   "form": "caps2",
+   "core_tweets": 96,
+   "bg_tweets": 0,
+   "lift": 138.2
+  },
+  {
+   "token": "mistralai",
+   "form": "caps",
+   "core_tweets": 96,
+   "bg_tweets": 0,
+   "lift": 138.2
+  },
+  {
+   "token": "benioff",
+   "form": "caps",
+   "core_tweets": 96,
+   "bg_tweets": 0,
+   "lift": 138.2
+  },
+  {
+   "token": "llms",
+   "form": "caps",
+   "core_tweets": 6990,
+   "bg_tweets": 36,
+   "lift": 137.8
+  },
+  {
+   "token": "one ai",
+   "form": "caps2",
+   "core_tweets": 287,
+   "bg_tweets": 1,
+   "lift": 137.7
+  },
+  {
+   "token": "anthropic ipo",
+   "form": "caps2",
+   "core_tweets": 287,
+   "bg_tweets": 1,
+   "lift": 137.7
+  },
+  {
+   "token": "ai builder",
+   "form": "caps2",
+   "core_tweets": 95,
+   "bg_tweets": 0,
+   "lift": 136.8
+  },
+  {
+   "token": "@mistralai",
+   "form": "mention",
+   "core_tweets": 95,
+   "bg_tweets": 0,
+   "lift": 136.8
+  },
+  {
+   "token": "will ai",
+   "form": "caps2",
+   "core_tweets": 285,
+   "bg_tweets": 1,
+   "lift": 136.8
+  },
+  {
+   "token": "ai music",
+   "form": "caps2",
+   "core_tweets": 285,
+   "bg_tweets": 1,
+   "lift": 136.8
+  },
+  {
+   "token": "embodied ai",
+   "form": "caps2",
+   "core_tweets": 95,
+   "bg_tweets": 0,
+   "lift": 136.8
+  },
+  {
+   "token": "ai will",
+   "form": "caps2",
+   "core_tweets": 95,
+   "bg_tweets": 0,
+   "lift": 136.8
+  },
+  {
+   "token": "#marketingtech",
+   "form": "hashtag",
+   "core_tweets": 95,
+   "bg_tweets": 0,
+   "lift": 136.8
+  },
+  {
+   "token": "marketingtech",
+   "form": "caps",
+   "core_tweets": 94,
+   "bg_tweets": 0,
+   "lift": 135.3
+  },
+  {
+   "token": "#alltoscan",
+   "form": "hashtag",
+   "core_tweets": 94,
+   "bg_tweets": 0,
+   "lift": 135.3
+  },
+  {
+   "token": "are ai",
+   "form": "caps2",
+   "core_tweets": 94,
+   "bg_tweets": 0,
+   "lift": 135.3
+  },
+  {
+   "token": "software engineer",
+   "form": "caps2",
+   "core_tweets": 94,
+   "bg_tweets": 0,
+   "lift": 135.3
+  },
+  {
+   "token": "two ai",
+   "form": "caps2",
+   "core_tweets": 94,
+   "bg_tweets": 0,
+   "lift": 135.3
+  },
+  {
+   "token": "#powerelectronics",
+   "form": "hashtag",
+   "core_tweets": 94,
+   "bg_tweets": 0,
+   "lift": 135.3
+  },
+  {
+   "token": "#agents",
+   "form": "hashtag",
+   "core_tweets": 94,
+   "bg_tweets": 0,
+   "lift": 135.3
+  },
+  {
+   "token": "spacehood",
+   "form": "caps",
+   "core_tweets": 94,
+   "bg_tweets": 0,
+   "lift": 135.3
+  },
+  {
+   "token": "alltoscan",
+   "form": "caps",
+   "core_tweets": 94,
+   "bg_tweets": 0,
+   "lift": 135.3
+  },
+  {
+   "token": "#engineer",
+   "form": "hashtag",
+   "core_tweets": 94,
+   "bg_tweets": 0,
+   "lift": 135.3
+  },
+  {
+   "token": "harness",
+   "form": "caps",
+   "core_tweets": 1409,
+   "bg_tweets": 7,
+   "lift": 135.2
+  },
+  {
+   "token": "@hansmahanakon",
+   "form": "mention",
+   "core_tweets": 93,
+   "bg_tweets": 0,
+   "lift": 133.9
+  },
+  {
+   "token": "fastx",
+   "form": "caps",
+   "core_tweets": 93,
+   "bg_tweets": 0,
+   "lift": 133.9
+  },
+  {
+   "token": "hansmahanakon",
+   "form": "caps",
+   "core_tweets": 93,
+   "bg_tweets": 0,
+   "lift": 133.9
+  },
+  {
+   "token": "#weex",
+   "form": "hashtag",
+   "core_tweets": 93,
+   "bg_tweets": 0,
+   "lift": 133.9
+  },
+  {
+   "token": "siri ai",
+   "form": "caps2",
+   "core_tweets": 463,
+   "bg_tweets": 2,
+   "lift": 133.3
+  },
+  {
+   "token": "no ai",
+   "form": "caps2",
+   "core_tweets": 1203,
+   "bg_tweets": 6,
+   "lift": 133.2
+  },
+  {
+   "token": "#openai",
+   "form": "hashtag",
+   "core_tweets": 1199,
+   "bg_tweets": 6,
+   "lift": 132.8
+  },
+  {
+   "token": "ai skills",
+   "form": "caps2",
+   "core_tweets": 92,
+   "bg_tweets": 0,
+   "lift": 132.4
+  },
+  {
+   "token": "chatgpt voice",
+   "form": "caps2",
+   "core_tweets": 92,
+   "bg_tweets": 0,
+   "lift": 132.4
+  },
+  {
+   "token": "#aiengineering",
+   "form": "hashtag",
+   "core_tweets": 92,
+   "bg_tweets": 0,
+   "lift": 132.4
+  },
+  {
+   "token": "so ai",
+   "form": "caps2",
+   "core_tweets": 92,
+   "bg_tweets": 0,
+   "lift": 132.4
+  },
+  {
+   "token": "#wsj",
+   "form": "hashtag",
+   "core_tweets": 92,
+   "bg_tweets": 0,
+   "lift": 132.4
+  },
+  {
+   "token": "artificial intelligence",
+   "form": "caps2",
+   "core_tweets": 1923,
+   "bg_tweets": 10,
+   "lift": 131.8
+  },
+  {
+   "token": "rlhf",
+   "form": "caps",
+   "core_tweets": 91,
+   "bg_tweets": 0,
+   "lift": 131.0
+  },
+  {
+   "token": "modern ai",
+   "form": "caps2",
+   "core_tweets": 91,
+   "bg_tweets": 0,
+   "lift": 131.0
+  },
+  {
+   "token": "glm5",
+   "form": "model",
+   "core_tweets": 91,
+   "bg_tweets": 0,
+   "lift": 131.0
+  },
+  {
+   "token": "#sherryai",
+   "form": "hashtag",
+   "core_tweets": 91,
+   "bg_tweets": 0,
+   "lift": 131.0
+  },
+  {
+   "token": "aiengineering",
+   "form": "caps",
+   "core_tweets": 90,
+   "bg_tweets": 0,
+   "lift": 129.6
+  },
+  {
+   "token": "sbig",
+   "form": "caps",
+   "core_tweets": 90,
+   "bg_tweets": 0,
+   "lift": 129.6
+  },
+  {
+   "token": "siber",
+   "form": "caps",
+   "core_tweets": 90,
+   "bg_tweets": 0,
+   "lift": 129.6
+  },
+  {
+   "token": "dgrid ai",
+   "form": "caps2",
+   "core_tweets": 90,
+   "bg_tweets": 0,
+   "lift": 129.6
+  },
+  {
+   "token": "openai astra",
+   "form": "caps2",
+   "core_tweets": 90,
+   "bg_tweets": 0,
+   "lift": 129.6
+  },
+  {
+   "token": "polloai",
+   "form": "caps",
+   "core_tweets": 90,
+   "bg_tweets": 0,
+   "lift": 129.6
+  },
+  {
+   "token": "while ai",
+   "form": "caps2",
+   "core_tweets": 90,
+   "bg_tweets": 0,
+   "lift": 129.6
+  },
+  {
+   "token": "#llm",
+   "form": "hashtag",
+   "core_tweets": 809,
+   "bg_tweets": 4,
+   "lift": 129.4
+  },
+  {
+   "token": "yapay",
+   "form": "caps",
+   "core_tweets": 3672,
+   "bg_tweets": 20,
+   "lift": 128.9
+  },
+  {
+   "token": "llm",
+   "form": "caps",
+   "core_tweets": 18814,
+   "bg_tweets": 105,
+   "lift": 128.4
+  },
+  {
+   "token": "thomson reuters",
+   "form": "caps2",
+   "core_tweets": 89,
+   "bg_tweets": 0,
+   "lift": 128.1
+  },
+  {
+   "token": "aigirls",
+   "form": "caps",
+   "core_tweets": 89,
+   "bg_tweets": 0,
+   "lift": 128.1
+  },
+  {
+   "token": "nvidia gpu",
+   "form": "caps2",
+   "core_tweets": 89,
+   "bg_tweets": 0,
+   "lift": 128.1
+  },
+  {
+   "token": "#nytimes",
+   "form": "hashtag",
+   "core_tweets": 89,
+   "bg_tweets": 0,
+   "lift": 128.1
+  },
+  {
+   "token": "powerelectronics",
+   "form": "caps",
+   "core_tweets": 89,
+   "bg_tweets": 0,
+   "lift": 128.1
+  },
+  {
+   "token": "deepseek",
+   "form": "caps",
+   "core_tweets": 9484,
+   "bg_tweets": 53,
+   "lift": 127.6
+  },
+  {
+   "token": "#hierarchy",
+   "form": "hashtag",
+   "core_tweets": 265,
+   "bg_tweets": 1,
+   "lift": 127.2
+  },
+  {
+   "token": "chatgpt business",
+   "form": "caps2",
+   "core_tweets": 88,
+   "bg_tweets": 0,
+   "lift": 126.7
+  },
+  {
+   "token": "sokotele",
+   "form": "caps",
+   "core_tweets": 88,
+   "bg_tweets": 0,
+   "lift": 126.7
+  },
+  {
+   "token": "powerdeveces",
+   "form": "caps",
+   "core_tweets": 88,
+   "bg_tweets": 0,
+   "lift": 126.7
+  },
+  {
+   "token": "#inverter",
+   "form": "hashtag",
+   "core_tweets": 88,
+   "bg_tweets": 0,
+   "lift": 126.7
+  },
+  {
+   "token": "#yuktamfile",
+   "form": "hashtag",
+   "core_tweets": 88,
+   "bg_tweets": 0,
+   "lift": 126.7
+  },
+  {
+   "token": "deploy ai",
+   "form": "caps2",
+   "core_tweets": 88,
+   "bg_tweets": 0,
+   "lift": 126.7
+  },
+  {
+   "token": "stockclaw",
+   "form": "caps",
+   "core_tweets": 88,
+   "bg_tweets": 0,
+   "lift": 126.7
+  },
+  {
+   "token": "#powerdeveces",
+   "form": "hashtag",
+   "core_tweets": 88,
+   "bg_tweets": 0,
+   "lift": 126.7
+  },
+  {
+   "token": "ai4",
+   "form": "model",
+   "core_tweets": 88,
+   "bg_tweets": 0,
+   "lift": 126.7
+  },
+  {
+   "token": "#voltedge2026",
+   "form": "hashtag",
+   "core_tweets": 88,
+   "bg_tweets": 0,
+   "lift": 126.7
+  },
+  {
+   "token": "ai chat",
+   "form": "caps2",
+   "core_tweets": 87,
+   "bg_tweets": 0,
+   "lift": 125.2
+  },
+  {
+   "token": "nikke fashion",
+   "form": "caps2",
+   "core_tweets": 87,
+   "bg_tweets": 0,
+   "lift": 125.2
+  },
+  {
+   "token": "buyandsellkenya",
+   "form": "caps",
+   "core_tweets": 87,
+   "bg_tweets": 0,
+   "lift": 125.2
+  },
+  {
+   "token": "real value",
+   "form": "caps2",
+   "core_tweets": 87,
+   "bg_tweets": 0,
+   "lift": 125.2
+  },
+  {
+   "token": "ai and",
+   "form": "caps2",
+   "core_tweets": 87,
+   "bg_tweets": 0,
+   "lift": 125.2
+  },
+  {
+   "token": "#polloai",
+   "form": "hashtag",
+   "core_tweets": 87,
+   "bg_tweets": 0,
+   "lift": 125.2
+  },
+  {
+   "token": "zero data",
+   "form": "caps2",
+   "core_tweets": 87,
+   "bg_tweets": 0,
+   "lift": 125.2
+  },
+  {
+   "token": "aiinvesting",
+   "form": "caps",
+   "core_tweets": 87,
+   "bg_tweets": 0,
+   "lift": 125.2
+  },
+  {
+   "token": "sokotelemarketplace",
+   "form": "caps",
+   "core_tweets": 87,
+   "bg_tweets": 0,
+   "lift": 125.2
+  },
+  {
+   "token": "nano 2",
+   "form": "model",
+   "core_tweets": 87,
+   "bg_tweets": 0,
+   "lift": 125.2
+  },
+  {
+   "token": "#sokotelemarketplace",
+   "form": "hashtag",
+   "core_tweets": 87,
+   "bg_tweets": 0,
+   "lift": 125.2
+  },
+  {
+   "token": "#aiinvesting",
+   "form": "hashtag",
+   "core_tweets": 87,
+   "bg_tweets": 0,
+   "lift": 125.2
+  },
+  {
+   "token": "applied ai",
+   "form": "caps2",
+   "core_tweets": 86,
+   "bg_tweets": 0,
+   "lift": 123.8
+  },
+  {
+   "token": "suno ai",
+   "form": "caps2",
+   "core_tweets": 258,
+   "bg_tweets": 1,
+   "lift": 123.8
+  },
+  {
+   "token": "gfs",
+   "form": "caps",
+   "core_tweets": 86,
+   "bg_tweets": 0,
+   "lift": 123.8
+  },
+  {
+   "token": "carv",
+   "form": "caps",
+   "core_tweets": 86,
+   "bg_tweets": 0,
+   "lift": 123.8
+  },
+  {
+   "token": "#reuters",
+   "form": "hashtag",
+   "core_tweets": 86,
+   "bg_tweets": 0,
+   "lift": 123.8
+  },
+  {
+   "token": "#chatgpt",
+   "form": "hashtag",
+   "core_tweets": 3862,
+   "bg_tweets": 22,
+   "lift": 123.5
+  },
+  {
+   "token": "ai art",
+   "form": "caps2",
+   "core_tweets": 257,
+   "bg_tweets": 1,
+   "lift": 123.3
+  },
+  {
+   "token": "devtools",
+   "form": "caps",
+   "core_tweets": 257,
+   "bg_tweets": 1,
+   "lift": 123.3
+  },
+  {
+   "token": "ai slop",
+   "form": "caps2",
+   "core_tweets": 767,
+   "bg_tweets": 4,
+   "lift": 122.7
+  },
+  {
+   "token": "mlops",
+   "form": "caps",
+   "core_tweets": 85,
+   "bg_tweets": 0,
+   "lift": 122.4
+  },
+  {
+   "token": "#ihub_stockposts",
+   "form": "hashtag",
+   "core_tweets": 85,
+   "bg_tweets": 0,
+   "lift": 122.4
+  },
+  {
+   "token": "together ai",
+   "form": "caps2",
+   "core_tweets": 85,
+   "bg_tweets": 0,
+   "lift": 122.4
+  },
+  {
+   "token": "mythos 5.1",
+   "form": "model",
+   "core_tweets": 85,
+   "bg_tweets": 0,
+   "lift": 122.4
+  },
+  {
+   "token": "@kimi_moonshot",
+   "form": "mention",
+   "core_tweets": 85,
+   "bg_tweets": 0,
+   "lift": 122.4
+  },
+  {
+   "token": "#newtothestreet",
+   "form": "hashtag",
+   "core_tweets": 85,
+   "bg_tweets": 0,
+   "lift": 122.4
+  },
+  {
+   "token": "@seaart_ai",
+   "form": "mention",
+   "core_tweets": 85,
+   "bg_tweets": 0,
+   "lift": 122.4
+  },
+  {
+   "token": "#cloudcomputing",
+   "form": "hashtag",
+   "core_tweets": 254,
+   "bg_tweets": 1,
+   "lift": 121.9
+  },
+  {
+   "token": "#bringback4o",
+   "form": "hashtag",
+   "core_tweets": 253,
+   "bg_tweets": 1,
+   "lift": 121.4
+  },
+  {
+   "token": "#aitools",
+   "form": "hashtag",
+   "core_tweets": 253,
+   "bg_tweets": 1,
+   "lift": 121.4
+  },
+  {
+   "token": "if anthropic",
+   "form": "caps2",
+   "core_tweets": 84,
+   "bg_tweets": 0,
+   "lift": 120.9
+  },
+  {
+   "token": "software development",
+   "form": "caps2",
+   "core_tweets": 84,
+   "bg_tweets": 0,
+   "lift": 120.9
+  },
+  {
+   "token": "chatgpt astra",
+   "form": "caps2",
+   "core_tweets": 84,
+   "bg_tweets": 0,
+   "lift": 120.9
+  },
+  {
+   "token": "cloudcomputing",
+   "form": "caps",
+   "core_tweets": 250,
+   "bg_tweets": 1,
+   "lift": 120.0
+  },
+  {
+   "token": "machine age",
+   "form": "caps2",
+   "core_tweets": 83,
+   "bg_tweets": 0,
+   "lift": 119.5
+  },
+  {
+   "token": "combinator",
+   "form": "caps",
+   "core_tweets": 83,
+   "bg_tweets": 0,
+   "lift": 119.5
+  },
+  {
+   "token": "viruses",
+   "form": "caps",
+   "core_tweets": 83,
+   "bg_tweets": 0,
+   "lift": 119.5
+  },
+  {
+   "token": "erc-7231",
+   "form": "model",
+   "core_tweets": 83,
+   "bg_tweets": 0,
+   "lift": 119.5
+  },
+  {
+   "token": "#aifilmmaking",
+   "form": "hashtag",
+   "core_tweets": 83,
+   "bg_tweets": 0,
+   "lift": 119.5
+  },
+  {
+   "token": "hyperscaler",
+   "form": "caps",
+   "core_tweets": 83,
+   "bg_tweets": 0,
+   "lift": 119.5
+  },
+  {
+   "token": "carv id",
+   "form": "caps2",
+   "core_tweets": 83,
+   "bg_tweets": 0,
+   "lift": 119.5
+  },
+  {
+   "token": "pi desktop",
+   "form": "caps2",
+   "core_tweets": 83,
+   "bg_tweets": 0,
+   "lift": 119.5
+  },
+  {
+   "token": "ai caralho",
+   "form": "caps2",
+   "core_tweets": 414,
+   "bg_tweets": 2,
+   "lift": 119.2
+  },
+  {
+   "token": "gemini pro",
+   "form": "caps2",
+   "core_tweets": 82,
+   "bg_tweets": 0,
+   "lift": 118.0
+  },
+  {
+   "token": "#aiboys",
+   "form": "hashtag",
+   "core_tweets": 82,
+   "bg_tweets": 0,
+   "lift": 118.0
+  },
+  {
+   "token": "the agentic",
+   "form": "caps2",
+   "core_tweets": 82,
+   "bg_tweets": 0,
+   "lift": 118.0
+  },
+  {
+   "token": "pew research",
+   "form": "caps2",
+   "core_tweets": 82,
+   "bg_tweets": 0,
+   "lift": 118.0
+  },
+  {
+   "token": "agi",
+   "form": "caps",
+   "core_tweets": 7787,
+   "bg_tweets": 47,
+   "lift": 118.0
+  },
+  {
+   "token": "aiboys",
+   "form": "caps",
+   "core_tweets": 82,
+   "bg_tweets": 0,
+   "lift": 118.0
+  },
+  {
+   "token": "creator program",
+   "form": "caps2",
+   "core_tweets": 82,
+   "bg_tweets": 0,
+   "lift": 118.0
+  },
+  {
+   "token": "google ai",
+   "form": "caps2",
+   "core_tweets": 2047,
+   "bg_tweets": 12,
+   "lift": 117.9
+  },
+  {
+   "token": "ai to",
+   "form": "caps2",
+   "core_tweets": 572,
+   "bg_tweets": 3,
+   "lift": 117.6
+  },
+  {
+   "token": "#artificialintelligence",
+   "form": "hashtag",
+   "core_tweets": 1379,
+   "bg_tweets": 8,
+   "lift": 116.8
+  },
+  {
+   "token": "timestamps",
+   "form": "caps",
+   "core_tweets": 81,
+   "bg_tweets": 0,
+   "lift": 116.6
+  },
+  {
+   "token": "ai engineering",
+   "form": "caps2",
+   "core_tweets": 243,
+   "bg_tweets": 1,
+   "lift": 116.6
+  },
+  {
+   "token": "about ai",
+   "form": "caps2",
+   "core_tweets": 81,
+   "bg_tweets": 0,
+   "lift": 116.6
+  },
+  {
+   "token": "adobe firefly",
+   "form": "caps2",
+   "core_tweets": 81,
+   "bg_tweets": 0,
+   "lift": 116.6
+  },
+  {
+   "token": "microsoft ai",
+   "form": "caps2",
+   "core_tweets": 81,
+   "bg_tweets": 0,
+   "lift": 116.6
+  },
+  {
+   "token": "use chatgpt",
+   "form": "caps2",
+   "core_tweets": 81,
+   "bg_tweets": 0,
+   "lift": 116.6
+  },
+  {
+   "token": "ai beings",
+   "form": "caps2",
+   "core_tweets": 81,
+   "bg_tweets": 0,
+   "lift": 116.6
+  },
+  {
+   "token": "stanley druckenmiller",
+   "form": "caps2",
+   "core_tweets": 80,
+   "bg_tweets": 0,
+   "lift": 115.2
+  },
+  {
+   "token": "#allfactsai",
+   "form": "hashtag",
+   "core_tweets": 80,
+   "bg_tweets": 0,
+   "lift": 115.2
+  },
+  {
+   "token": "photonics",
+   "form": "caps",
+   "core_tweets": 80,
+   "bg_tweets": 0,
+   "lift": 115.2
+  },
+  {
+   "token": "ai governance",
+   "form": "caps2",
+   "core_tweets": 80,
+   "bg_tweets": 0,
+   "lift": 115.2
+  },
+  {
+   "token": "#girlpop_bot",
+   "form": "hashtag",
+   "core_tweets": 80,
+   "bg_tweets": 0,
+   "lift": 115.2
+  },
+  {
+   "token": "skild",
+   "form": "caps",
+   "core_tweets": 80,
+   "bg_tweets": 0,
+   "lift": 115.2
+  },
+  {
+   "token": "allfactsai",
+   "form": "caps",
+   "core_tweets": 80,
+   "bg_tweets": 0,
+   "lift": 115.2
+  },
+  {
+   "token": "ocr",
+   "form": "caps",
+   "core_tweets": 240,
+   "bg_tweets": 1,
+   "lift": 115.2
+  },
+  {
+   "token": "anthropic claude",
+   "form": "caps2",
+   "core_tweets": 80,
+   "bg_tweets": 0,
+   "lift": 115.2
+  },
+  {
+   "token": "vba",
+   "form": "caps",
+   "core_tweets": 80,
+   "bg_tweets": 0,
+   "lift": 115.2
+  },
+  {
+   "token": "if ai",
+   "form": "caps2",
+   "core_tweets": 1359,
+   "bg_tweets": 8,
+   "lift": 115.1
+  },
+  {
+   "token": "digitalhealth",
+   "form": "caps",
+   "core_tweets": 79,
+   "bg_tweets": 0,
+   "lift": 113.7
+  },
+  {
+   "token": "#mlai",
+   "form": "hashtag",
+   "core_tweets": 79,
+   "bg_tweets": 0,
+   "lift": 113.7
+  },
+  {
+   "token": "ai extend",
+   "form": "caps2",
+   "core_tweets": 79,
+   "bg_tweets": 0,
+   "lift": 113.7
+  },
+  {
+   "token": "banana 2",
+   "form": "model",
+   "core_tweets": 79,
+   "bg_tweets": 0,
+   "lift": 113.7
+  },
+  {
+   "token": "#aigallery",
+   "form": "hashtag",
+   "core_tweets": 79,
+   "bg_tweets": 0,
+   "lift": 113.7
+  },
+  {
+   "token": "physical ai",
+   "form": "caps2",
+   "core_tweets": 3698,
+   "bg_tweets": 23,
+   "lift": 113.3
+  },
+  {
+   "token": "ai pqp",
+   "form": "caps2",
+   "core_tweets": 236,
+   "bg_tweets": 1,
+   "lift": 113.2
+  },
+  {
+   "token": "katalyst",
+   "form": "caps",
+   "core_tweets": 234,
+   "bg_tweets": 1,
+   "lift": 112.3
+  },
+  {
+   "token": "vision pro",
+   "form": "caps2",
+   "core_tweets": 78,
+   "bg_tweets": 0,
+   "lift": 112.3
+  },
+  {
+   "token": "alex karp",
+   "form": "caps2",
+   "core_tweets": 78,
+   "bg_tweets": 0,
+   "lift": 112.3
+  },
+  {
+   "token": "dtec",
+   "form": "caps",
+   "core_tweets": 78,
+   "bg_tweets": 0,
+   "lift": 112.3
+  },
+  {
+   "token": "evolveq",
+   "form": "caps",
+   "core_tweets": 78,
+   "bg_tweets": 0,
+   "lift": 112.3
+  },
+  {
+   "token": "metaai",
+   "form": "caps",
+   "core_tweets": 78,
+   "bg_tweets": 0,
+   "lift": 112.3
+  },
+  {
+   "token": "higgsfield ai",
+   "form": "caps2",
+   "core_tweets": 78,
+   "bg_tweets": 0,
+   "lift": 112.3
+  },
+  {
+   "token": "spacex ai",
+   "form": "caps2",
+   "core_tweets": 78,
+   "bg_tweets": 0,
+   "lift": 112.3
+  },
+  {
+   "token": "ahrefs",
+   "form": "caps",
+   "core_tweets": 78,
+   "bg_tweets": 0,
+   "lift": 112.3
+  },
+  {
+   "token": "hailuo",
+   "form": "caps",
+   "core_tweets": 78,
+   "bg_tweets": 0,
+   "lift": 112.3
+  },
+  {
+   "token": "chatbot",
+   "form": "caps",
+   "core_tweets": 389,
+   "bg_tweets": 2,
+   "lift": 112.0
+  },
+  {
+   "token": "#nijijourney",
+   "form": "hashtag",
+   "core_tweets": 233,
+   "bg_tweets": 1,
+   "lift": 111.8
+  },
+  {
+   "token": "ai labs",
+   "form": "caps2",
+   "core_tweets": 77,
+   "bg_tweets": 0,
+   "lift": 110.8
+  },
+  {
+   "token": "imagefx",
+   "form": "caps",
+   "core_tweets": 77,
+   "bg_tweets": 0,
+   "lift": 110.8
+  },
+  {
+   "token": "@invideoofficial",
+   "form": "mention",
+   "core_tweets": 77,
+   "bg_tweets": 0,
+   "lift": 110.8
+  },
+  {
+   "token": "pro 0813",
+   "form": "model",
+   "core_tweets": 77,
+   "bg_tweets": 0,
+   "lift": 110.8
+  },
+  {
+   "token": "portable computer",
+   "form": "caps2",
+   "core_tweets": 77,
+   "bg_tweets": 0,
+   "lift": 110.8
+  },
+  {
+   "token": "ai tool",
+   "form": "caps2",
+   "core_tweets": 77,
+   "bg_tweets": 0,
+   "lift": 110.8
+  },
+  {
+   "token": "search console",
+   "form": "caps2",
+   "core_tweets": 77,
+   "bg_tweets": 0,
+   "lift": 110.8
+  },
+  {
+   "token": "to ai",
+   "form": "caps2",
+   "core_tweets": 77,
+   "bg_tweets": 0,
+   "lift": 110.8
+  },
+  {
+   "token": "computer vision",
+   "form": "caps2",
+   "core_tweets": 77,
+   "bg_tweets": 0,
+   "lift": 110.8
+  },
+  {
+   "token": "#qwen",
+   "form": "hashtag",
+   "core_tweets": 77,
+   "bg_tweets": 0,
+   "lift": 110.8
+  },
+  {
+   "token": "mobile apps",
+   "form": "caps2",
+   "core_tweets": 77,
+   "bg_tweets": 0,
+   "lift": 110.8
+  },
+  {
+   "token": "smart router",
+   "form": "caps2",
+   "core_tweets": 77,
+   "bg_tweets": 0,
+   "lift": 110.8
+  },
+  {
+   "token": "make ai",
+   "form": "caps2",
+   "core_tweets": 77,
+   "bg_tweets": 0,
+   "lift": 110.8
+  },
+  {
+   "token": "nebius",
+   "form": "caps",
+   "core_tweets": 381,
+   "bg_tweets": 2,
+   "lift": 109.7
+  },
+  {
+   "token": "one api",
+   "form": "caps2",
+   "core_tweets": 76,
+   "bg_tweets": 0,
+   "lift": 109.4
+  },
+  {
+   "token": "actionfi",
+   "form": "caps",
+   "core_tweets": 76,
+   "bg_tweets": 0,
+   "lift": 109.4
+  },
+  {
+   "token": "dify",
+   "form": "caps",
+   "core_tweets": 76,
+   "bg_tweets": 0,
+   "lift": 109.4
+  },
+  {
+   "token": "atlassian mcp",
+   "form": "caps2",
+   "core_tweets": 76,
+   "bg_tweets": 0,
+   "lift": 109.4
+  },
+  {
+   "token": "ai videos",
+   "form": "caps2",
+   "core_tweets": 76,
+   "bg_tweets": 0,
+   "lift": 109.4
+  },
+  {
+   "token": "broadcom",
+   "form": "caps",
+   "core_tweets": 836,
+   "bg_tweets": 5,
+   "lift": 109.4
+  },
+  {
+   "token": "aifilmmaking",
+   "form": "caps",
+   "core_tweets": 76,
+   "bg_tweets": 0,
+   "lift": 109.4
+  },
+  {
+   "token": "runable",
+   "form": "caps",
+   "core_tweets": 76,
+   "bg_tweets": 0,
+   "lift": 109.4
+  },
+  {
+   "token": "#imagefx",
+   "form": "hashtag",
+   "core_tweets": 76,
+   "bg_tweets": 0,
+   "lift": 109.4
+  },
+  {
+   "token": "claude security",
+   "form": "caps2",
+   "core_tweets": 76,
+   "bg_tweets": 0,
+   "lift": 109.4
+  },
+  {
+   "token": "artificialintelligence",
+   "form": "caps",
+   "core_tweets": 1139,
+   "bg_tweets": 7,
+   "lift": 109.3
+  },
+  {
+   "token": "chatgpt ads",
+   "form": "caps2",
+   "core_tweets": 226,
+   "bg_tweets": 1,
+   "lift": 108.4
+  },
+  {
+   "token": "ai trading",
+   "form": "caps2",
+   "core_tweets": 226,
+   "bg_tweets": 1,
+   "lift": 108.4
+  },
+  {
+   "token": "vrc self",
+   "form": "caps2",
+   "core_tweets": 2485,
+   "bg_tweets": 16,
+   "lift": 108.4
+  },
+  {
+   "token": "agentic chain",
+   "form": "caps2",
+   "core_tweets": 75,
+   "bg_tweets": 0,
+   "lift": 108.0
+  },
+  {
+   "token": "ai training",
+   "form": "caps2",
+   "core_tweets": 75,
+   "bg_tweets": 0,
+   "lift": 108.0
+  },
+  {
+   "token": "building ai",
+   "form": "caps2",
+   "core_tweets": 225,
+   "bg_tweets": 1,
+   "lift": 108.0
+  },
+  {
+   "token": "#responsibleai",
+   "form": "hashtag",
+   "core_tweets": 75,
+   "bg_tweets": 0,
+   "lift": 108.0
+  },
+  {
+   "token": "openai devday",
+   "form": "caps2",
+   "core_tweets": 75,
+   "bg_tweets": 0,
+   "lift": 108.0
+  },
+  {
+   "token": "ai companies",
+   "form": "caps2",
+   "core_tweets": 75,
+   "bg_tweets": 0,
+   "lift": 108.0
+  },
+  {
+   "token": "ai products",
+   "form": "caps2",
+   "core_tweets": 75,
+   "bg_tweets": 0,
+   "lift": 108.0
+  },
+  {
+   "token": "jensen huang",
+   "form": "caps2",
+   "core_tweets": 815,
+   "bg_tweets": 5,
+   "lift": 106.7
+  },
+  {
+   "token": "crdo",
+   "form": "caps",
+   "core_tweets": 222,
+   "bg_tweets": 1,
+   "lift": 106.5
+  },
+  {
+   "token": "krea2",
+   "form": "model",
+   "core_tweets": 74,
+   "bg_tweets": 0,
+   "lift": 106.5
+  },
+  {
+   "token": "alibaba cloud",
+   "form": "caps2",
+   "core_tweets": 74,
+   "bg_tweets": 0,
+   "lift": 106.5
+  },
+  {
+   "token": "developer tools",
+   "form": "caps2",
+   "core_tweets": 74,
+   "bg_tweets": 0,
+   "lift": 106.5
+  },
+  {
+   "token": "zhipu ai",
+   "form": "caps2",
+   "core_tweets": 74,
+   "bg_tweets": 0,
+   "lift": 106.5
+  },
+  {
+   "token": "maybe ai",
+   "form": "caps2",
+   "core_tweets": 74,
+   "bg_tweets": 0,
+   "lift": 106.5
+  },
+  {
+   "token": "zdnet",
+   "form": "caps",
+   "core_tweets": 74,
+   "bg_tweets": 0,
+   "lift": 106.5
+  },
+  {
+   "token": "advanced ai",
+   "form": "caps2",
+   "core_tweets": 74,
+   "bg_tweets": 0,
+   "lift": 106.5
+  },
+  {
+   "token": "perplexity",
+   "form": "caps",
+   "core_tweets": 1255,
+   "bg_tweets": 8,
+   "lift": 106.3
+  },
+  {
+   "token": "automate",
+   "form": "caps",
+   "core_tweets": 515,
+   "bg_tweets": 3,
+   "lift": 105.9
+  },
+  {
+   "token": "claude api",
+   "form": "caps2",
+   "core_tweets": 73,
+   "bg_tweets": 0,
+   "lift": 105.1
+  },
+  {
+   "token": "tatua",
+   "form": "caps",
+   "core_tweets": 73,
+   "bg_tweets": 0,
+   "lift": 105.1
+  },
+  {
+   "token": "custom ai",
+   "form": "caps2",
+   "core_tweets": 73,
+   "bg_tweets": 0,
+   "lift": 105.1
+  },
+  {
+   "token": "moviton",
+   "form": "caps",
+   "core_tweets": 73,
+   "bg_tweets": 0,
+   "lift": 105.1
+  },
+  {
+   "token": "give ai",
+   "form": "caps2",
+   "core_tweets": 73,
+   "bg_tweets": 0,
+   "lift": 105.1
+  },
+  {
+   "token": "chips 2026",
+   "form": "model",
+   "core_tweets": 73,
+   "bg_tweets": 0,
+   "lift": 105.1
+  },
+  {
+   "token": "moat",
+   "form": "caps",
+   "core_tweets": 73,
+   "bg_tweets": 0,
+   "lift": 105.1
+  },
+  {
+   "token": "smbs",
+   "form": "caps",
+   "core_tweets": 73,
+   "bg_tweets": 0,
+   "lift": 105.1
+  },
+  {
+   "token": "used ai",
+   "form": "caps2",
+   "core_tweets": 73,
+   "bg_tweets": 0,
+   "lift": 105.1
+  },
+  {
+   "token": "after ai",
+   "form": "caps2",
+   "core_tweets": 73,
+   "bg_tweets": 0,
+   "lift": 105.1
+  },
+  {
+   "token": "action model",
+   "form": "caps2",
+   "core_tweets": 73,
+   "bg_tweets": 0,
+   "lift": 105.1
+  },
+  {
+   "token": "neoclouds",
+   "form": "caps",
+   "core_tweets": 73,
+   "bg_tweets": 0,
+   "lift": 105.1
+  },
+  {
+   "token": "generative",
+   "form": "caps",
+   "core_tweets": 942,
+   "bg_tweets": 6,
+   "lift": 104.3
+  },
+  {
+   "token": "anth",
+   "form": "caps",
+   "core_tweets": 72,
+   "bg_tweets": 0,
+   "lift": 103.6
+  },
+  {
+   "token": "sol 5.6",
+   "form": "model",
+   "core_tweets": 72,
+   "bg_tweets": 0,
+   "lift": 103.6
+  },
+  {
+   "token": "#aiethics",
+   "form": "hashtag",
+   "core_tweets": 72,
+   "bg_tweets": 0,
+   "lift": 103.6
+  },
+  {
+   "token": "llm api",
+   "form": "caps2",
+   "core_tweets": 72,
+   "bg_tweets": 0,
+   "lift": 103.6
+  },
+  {
+   "token": "@ycombinator",
+   "form": "mention",
+   "core_tweets": 72,
+   "bg_tweets": 0,
+   "lift": 103.6
+  },
+  {
+   "token": "where ai",
+   "form": "caps2",
+   "core_tweets": 72,
+   "bg_tweets": 0,
+   "lift": 103.6
+  },
+  {
+   "token": "any ai",
+   "form": "caps2",
+   "core_tweets": 72,
+   "bg_tweets": 0,
+   "lift": 103.6
+  },
+  {
+   "token": "skild ai",
+   "form": "caps2",
+   "core_tweets": 72,
+   "bg_tweets": 0,
+   "lift": 103.6
+  },
+  {
+   "token": "coursera",
+   "form": "caps",
+   "core_tweets": 72,
+   "bg_tweets": 0,
+   "lift": 103.6
+  },
+  {
+   "token": "sfw anime",
+   "form": "caps2",
+   "core_tweets": 72,
+   "bg_tweets": 0,
+   "lift": 103.6
+  },
+  {
+   "token": "bench 2.1",
+   "form": "model",
+   "core_tweets": 72,
+   "bg_tweets": 0,
+   "lift": 103.6
+  },
+  {
+   "token": "#analytics",
+   "form": "hashtag",
+   "core_tweets": 215,
+   "bg_tweets": 1,
+   "lift": 103.2
+  },
+  {
+   "token": "ai infrastructure",
+   "form": "caps2",
+   "core_tweets": 357,
+   "bg_tweets": 2,
+   "lift": 102.8
+  },
+  {
+   "token": "kica",
+   "form": "caps",
+   "core_tweets": 71,
+   "bg_tweets": 0,
+   "lift": 102.2
+  },
+  {
+   "token": "what ai",
+   "form": "caps2",
+   "core_tweets": 213,
+   "bg_tweets": 1,
+   "lift": 102.2
+  },
+  {
+   "token": "vera cpu",
+   "form": "caps2",
+   "core_tweets": 71,
+   "bg_tweets": 0,
+   "lift": 102.2
+  },
+  {
+   "token": "uc berkeley",
+   "form": "caps2",
+   "core_tweets": 71,
+   "bg_tweets": 0,
+   "lift": 102.2
+  },
+  {
+   "token": "servicenow",
+   "form": "caps",
+   "core_tweets": 213,
+   "bg_tweets": 1,
+   "lift": 102.2
+  },
+  {
+   "token": "making ai",
+   "form": "caps2",
+   "core_tweets": 71,
+   "bg_tweets": 0,
+   "lift": 102.2
+  },
+  {
+   "token": "assistants",
+   "form": "caps",
+   "core_tweets": 71,
+   "bg_tweets": 0,
+   "lift": 102.2
+  },
+  {
+   "token": "automations",
+   "form": "caps",
+   "core_tweets": 71,
+   "bg_tweets": 0,
+   "lift": 102.2
+  },
+  {
+   "token": "r9700",
+   "form": "caps",
+   "core_tweets": 71,
+   "bg_tweets": 0,
+   "lift": 102.2
+  },
+  {
+   "token": "openai codex",
+   "form": "caps2",
+   "core_tweets": 213,
+   "bg_tweets": 1,
+   "lift": 102.2
+  },
+  {
+   "token": "sb energy",
+   "form": "caps2",
+   "core_tweets": 354,
+   "bg_tweets": 2,
+   "lift": 101.9
+  },
+  {
+   "token": "amazon web",
+   "form": "caps2",
+   "core_tweets": 70,
+   "bg_tweets": 0,
+   "lift": 100.8
+  },
+  {
+   "token": "hey chatgpt",
+   "form": "caps2",
+   "core_tweets": 70,
+   "bg_tweets": 0,
+   "lift": 100.8
+  },
+  {
+   "token": "#aijobs",
+   "form": "hashtag",
+   "core_tweets": 70,
+   "bg_tweets": 0,
+   "lift": 100.8
+  },
+  {
+   "token": "gavin baker",
+   "form": "caps2",
+   "core_tweets": 70,
+   "bg_tweets": 0,
+   "lift": 100.8
+  },
+  {
+   "token": "meandrichie",
+   "form": "caps",
+   "core_tweets": 70,
+   "bg_tweets": 0,
+   "lift": 100.8
+  },
+  {
+   "token": "topview ai",
+   "form": "caps2",
+   "core_tweets": 70,
+   "bg_tweets": 0,
+   "lift": 100.8
+  },
+  {
+   "token": "#rag",
+   "form": "hashtag",
+   "core_tweets": 70,
+   "bg_tweets": 0,
+   "lift": 100.8
+  },
+  {
+   "token": "vera rubin",
+   "form": "caps2",
+   "core_tweets": 630,
+   "bg_tweets": 4,
+   "lift": 100.8
+  },
+  {
+   "token": "hy3",
+   "form": "model",
+   "core_tweets": 210,
+   "bg_tweets": 1,
+   "lift": 100.8
+  },
+  {
+   "token": "gpt-3",
+   "form": "model",
+   "core_tweets": 70,
+   "bg_tweets": 0,
+   "lift": 100.8
+  },
+  {
+   "token": "#meandrichie",
+   "form": "hashtag",
+   "core_tweets": 70,
+   "bg_tweets": 0,
+   "lift": 100.8
+  },
+  {
+   "token": "traces",
+   "form": "caps",
+   "core_tweets": 209,
+   "bg_tweets": 1,
+   "lift": 100.3
+  },
+  {
+   "token": "agentic",
+   "form": "caps",
+   "core_tweets": 3121,
+   "bg_tweets": 22,
+   "lift": 99.8
+  },
+  {
+   "token": "vertex ai",
+   "form": "caps2",
+   "core_tweets": 69,
+   "bg_tweets": 0,
+   "lift": 99.3
+  },
+  {
+   "token": "ai socorro",
+   "form": "caps2",
+   "core_tweets": 69,
+   "bg_tweets": 0,
+   "lift": 99.3
+  },
+  {
+   "token": "zenn",
+   "form": "caps",
+   "core_tweets": 69,
+   "bg_tweets": 0,
+   "lift": 99.3
+  },
+  {
+   "token": "@perplexity_ai",
+   "form": "mention",
+   "core_tweets": 69,
+   "bg_tweets": 0,
+   "lift": 99.3
+  },
+  {
+   "token": "worldclaw",
+   "form": "caps",
+   "core_tweets": 69,
+   "bg_tweets": 0,
+   "lift": 99.3
+  },
+  {
+   "token": "dfinity",
+   "form": "caps",
+   "core_tweets": 69,
+   "bg_tweets": 0,
+   "lift": 99.3
+  },
+  {
+   "token": "cohere",
+   "form": "caps",
+   "core_tweets": 69,
+   "bg_tweets": 0,
+   "lift": 99.3
+  },
+  {
+   "token": "agentic commerce",
+   "form": "caps2",
+   "core_tweets": 69,
+   "bg_tweets": 0,
+   "lift": 99.3
+  },
+  {
+   "token": "ai carai",
+   "form": "caps2",
+   "core_tweets": 69,
+   "bg_tweets": 0,
+   "lift": 99.3
+  },
+  {
+   "token": "localai",
+   "form": "caps",
+   "core_tweets": 69,
+   "bg_tweets": 0,
+   "lift": 99.3
+  },
+  {
+   "token": "#bigdata",
+   "form": "hashtag",
+   "core_tweets": 207,
+   "bg_tweets": 1,
+   "lift": 99.3
+  },
+  {
+   "token": "ai mentira",
+   "form": "caps2",
+   "core_tweets": 69,
+   "bg_tweets": 0,
+   "lift": 99.3
+  },
+  {
+   "token": "fastxnetwork",
+   "form": "caps",
+   "core_tweets": 207,
+   "bg_tweets": 1,
+   "lift": 99.3
+  },
+  {
+   "token": "#claudecode",
+   "form": "hashtag",
+   "core_tweets": 345,
+   "bg_tweets": 2,
+   "lift": 99.3
+  },
+  {
+   "token": "#creativeai",
+   "form": "hashtag",
+   "core_tweets": 69,
+   "bg_tweets": 0,
+   "lift": 99.3
+  },
+  {
+   "token": "this ai",
+   "form": "caps2",
+   "core_tweets": 895,
+   "bg_tweets": 6,
+   "lift": 99.1
+  },
+  {
+   "token": "alart",
+   "form": "caps",
+   "core_tweets": 206,
+   "bg_tweets": 1,
+   "lift": 98.9
+  },
+  {
+   "token": "ai agent",
+   "form": "caps2",
+   "core_tweets": 2950,
+   "bg_tweets": 21,
+   "lift": 98.8
+  },
+  {
+   "token": "anthropic ceo",
+   "form": "caps2",
+   "core_tweets": 342,
+   "bg_tweets": 2,
+   "lift": 98.5
+  },
+  {
+   "token": "#aistocks",
+   "form": "hashtag",
+   "core_tweets": 205,
+   "bg_tweets": 1,
+   "lift": 98.4
+  },
+  {
+   "token": "#alart",
+   "form": "hashtag",
+   "core_tweets": 205,
+   "bg_tweets": 1,
+   "lift": 98.4
+  },
+  {
+   "token": "aistocks",
+   "form": "caps",
+   "core_tweets": 205,
+   "bg_tweets": 1,
+   "lift": 98.4
+  },
+  {
+   "token": "gartner",
+   "form": "caps",
+   "core_tweets": 204,
+   "bg_tweets": 1,
+   "lift": 97.9
+  },
+  {
+   "token": "fastapi",
+   "form": "caps",
+   "core_tweets": 68,
+   "bg_tweets": 0,
+   "lift": 97.9
+  },
+  {
+   "token": "source ai",
+   "form": "caps2",
+   "core_tweets": 68,
+   "bg_tweets": 0,
+   "lift": 97.9
+  },
+  {
+   "token": "ai 100",
+   "form": "model",
+   "core_tweets": 68,
+   "bg_tweets": 0,
+   "lift": 97.9
+  },
+  {
+   "token": "tatua ai",
+   "form": "caps2",
+   "core_tweets": 68,
+   "bg_tweets": 0,
+   "lift": 97.9
+  },
+  {
+   "token": "na ai",
+   "form": "caps2",
+   "core_tweets": 68,
+   "bg_tweets": 0,
+   "lift": 97.9
+  },
+  {
+   "token": "the playbook",
+   "form": "caps2",
+   "core_tweets": 68,
+   "bg_tweets": 0,
+   "lift": 97.9
+  },
+  {
+   "token": "marketers",
+   "form": "caps",
+   "core_tweets": 68,
+   "bg_tweets": 0,
+   "lift": 97.9
+  },
+  {
+   "token": "creativeai",
+   "form": "caps",
+   "core_tweets": 68,
+   "bg_tweets": 0,
+   "lift": 97.9
+  },
+  {
+   "token": "dunamu",
+   "form": "caps",
+   "core_tweets": 68,
+   "bg_tweets": 0,
+   "lift": 97.9
+  },
+  {
+   "token": "inp",
+   "form": "caps",
+   "core_tweets": 68,
+   "bg_tweets": 0,
+   "lift": 97.9
+  },
+  {
+   "token": "buckmaster",
+   "form": "caps",
+   "core_tweets": 68,
+   "bg_tweets": 0,
+   "lift": 97.9
+  },
+  {
+   "token": "aiethics",
+   "form": "caps",
+   "core_tweets": 68,
+   "bg_tweets": 0,
+   "lift": 97.9
+  },
+  {
+   "token": "trainium",
+   "form": "caps",
+   "core_tweets": 68,
+   "bg_tweets": 0,
+   "lift": 97.9
+  },
+  {
+   "token": "responsibleai",
+   "form": "caps",
+   "core_tweets": 68,
+   "bg_tweets": 0,
+   "lift": 97.9
+  },
+  {
+   "token": "deepmind",
+   "form": "caps",
+   "core_tweets": 610,
+   "bg_tweets": 4,
+   "lift": 97.6
+  },
+  {
+   "token": "best ai",
+   "form": "caps2",
+   "core_tweets": 203,
+   "bg_tweets": 1,
+   "lift": 97.4
+  },
+  {
+   "token": "vibecoding",
+   "form": "caps",
+   "core_tweets": 203,
+   "bg_tweets": 1,
+   "lift": 97.4
+  },
+  {
+   "token": "pollo ai",
+   "form": "caps2",
+   "core_tweets": 338,
+   "bg_tweets": 2,
+   "lift": 97.3
+  },
+  {
+   "token": "langchain",
+   "form": "caps",
+   "core_tweets": 202,
+   "bg_tweets": 1,
+   "lift": 96.9
+  },
+  {
+   "token": "ai safety",
+   "form": "caps2",
+   "core_tweets": 202,
+   "bg_tweets": 1,
+   "lift": 96.9
+  },
+  {
+   "token": "alpha ai",
+   "form": "caps2",
+   "core_tweets": 202,
+   "bg_tweets": 1,
+   "lift": 96.9
+  },
+  {
+   "token": "ai agentic",
+   "form": "caps2",
+   "core_tweets": 67,
+   "bg_tweets": 0,
+   "lift": 96.5
+  },
+  {
+   "token": "bitdeer",
+   "form": "caps",
+   "core_tweets": 67,
+   "bg_tweets": 0,
+   "lift": 96.5
+  },
+  {
+   "token": "sigma capital",
+   "form": "caps2",
+   "core_tweets": 67,
+   "bg_tweets": 0,
+   "lift": 96.5
+  },
+  {
+   "token": "jawaban",
+   "form": "caps",
+   "core_tweets": 67,
+   "bg_tweets": 0,
+   "lift": 96.5
+  },
+  {
+   "token": "new research",
+   "form": "caps2",
+   "core_tweets": 67,
+   "bg_tweets": 0,
+   "lift": 96.5
+  },
+  {
+   "token": "@fastxnetwork",
+   "form": "mention",
+   "core_tweets": 201,
+   "bg_tweets": 1,
+   "lift": 96.5
+  },
+  {
+   "token": "aijobs",
+   "form": "caps",
+   "core_tweets": 67,
+   "bg_tweets": 0,
+   "lift": 96.5
+  },
+  {
+   "token": "ai creator",
+   "form": "caps2",
+   "core_tweets": 67,
+   "bg_tweets": 0,
+   "lift": 96.5
+  },
+  {
+   "token": "ai ele",
+   "form": "caps2",
+   "core_tweets": 67,
+   "bg_tweets": 0,
+   "lift": 96.5
+  },
+  {
+   "token": "horrible lorex",
+   "form": "caps2",
+   "core_tweets": 67,
+   "bg_tweets": 0,
+   "lift": 96.5
+  },
+  {
+   "token": "@stockclaw",
+   "form": "mention",
+   "core_tweets": 67,
+   "bg_tweets": 0,
+   "lift": 96.5
+  },
+  {
+   "token": "skydive",
+   "form": "caps",
+   "core_tweets": 67,
+   "bg_tweets": 0,
+   "lift": 96.5
+  },
+  {
+   "token": "xlayerofficial",
+   "form": "caps",
+   "core_tweets": 67,
+   "bg_tweets": 0,
+   "lift": 96.5
+  },
+  {
+   "token": "victoriavr",
+   "form": "caps",
+   "core_tweets": 67,
+   "bg_tweets": 0,
+   "lift": 96.5
+  },
+  {
+   "token": "@xlayerofficial",
+   "form": "mention",
+   "core_tweets": 67,
+   "bg_tweets": 0,
+   "lift": 96.5
+  },
+  {
+   "token": "dsh",
+   "form": "caps",
+   "core_tweets": 200,
+   "bg_tweets": 1,
+   "lift": 96.0
+  },
+  {
+   "token": "artificial",
+   "form": "caps",
+   "core_tweets": 5771,
+   "bg_tweets": 43,
+   "lift": 95.5
+  },
+  {
+   "token": "ai mds",
+   "form": "caps2",
+   "core_tweets": 464,
+   "bg_tweets": 3,
+   "lift": 95.4
+  },
+  {
+   "token": "useful proof",
+   "form": "caps2",
+   "core_tweets": 66,
+   "bg_tweets": 0,
+   "lift": 95.0
+  },
+  {
+   "token": "coherent",
+   "form": "caps",
+   "core_tweets": 66,
+   "bg_tweets": 0,
+   "lift": 95.0
+  },
+  {
+   "token": "did ai",
+   "form": "caps2",
+   "core_tweets": 66,
+   "bg_tweets": 0,
+   "lift": 95.0
+  },
+  {
+   "token": "ai demand",
+   "form": "caps2",
+   "core_tweets": 66,
+   "bg_tweets": 0,
+   "lift": 95.0
+  },
+  {
+   "token": "#perstaai",
+   "form": "hashtag",
+   "core_tweets": 66,
+   "bg_tweets": 0,
+   "lift": 95.0
+  },
+  {
+   "token": "chatgpt sites",
+   "form": "caps2",
+   "core_tweets": 66,
+   "bg_tweets": 0,
+   "lift": 95.0
+  },
+  {
+   "token": "perstaai",
+   "form": "caps",
+   "core_tweets": 66,
+   "bg_tweets": 0,
+   "lift": 95.0
+  }
+ ]
+}

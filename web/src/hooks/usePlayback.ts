@@ -3,7 +3,6 @@ import { BUCKET_MS } from '../data/config'
 import type { TimeRange } from '../data/types'
 
 /** Wall-clock ms spent drawing one bucket. */
-const MS_PER_BUCKET = 140
 /** How much history is on screen when a replay starts. */
 const LEAD_IN = 6 * BUCKET_MS
 /** A view whose right edge is within this of "now" counts as live. */
@@ -22,6 +21,7 @@ export function usePlayback(
   extent: TimeRange | null,
   view: TimeRange | null,
   setView: (r: TimeRange) => void,
+  speed = 14400,
 ) {
   const [playing, setPlaying] = useState(false)
   const [playhead, setPlayhead] = useState<number | null>(null)
@@ -61,7 +61,7 @@ export function usePlayback(
     const step = (now: number) => {
       const { extent, setView } = latest.current
       if (!extent || pos.current === null) return
-      const next = pos.current + ((now - last) / MS_PER_BUCKET) * BUCKET_MS
+      const next = pos.current + (now - last) * speed
       last = now
       const { width, on } = follow.current
       if (next >= extent.end) {
@@ -78,7 +78,7 @@ export function usePlayback(
     }
     raf = requestAnimationFrame(step)
     return () => cancelAnimationFrame(raf)
-  }, [playing])
+  }, [playing, speed])
 
   return { playing, playhead, toggle, setUserView }
 }

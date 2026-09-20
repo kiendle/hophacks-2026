@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Prepared local demo dataset
+/data/demo.json.gz
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

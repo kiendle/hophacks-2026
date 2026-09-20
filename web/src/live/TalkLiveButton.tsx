@@ -3,14 +3,10 @@ import { EndLiveIcon, TalkLiveIcon } from './icons'
 import type { TalkLive } from './useTalkLive'
 import { useEffect, useRef, useState } from 'react'
 import { CloudOrb } from './CloudOrb'
+import type { ChatMessage } from '../ask'
+import { ToolActivity, ResultCard, ConfirmationCard } from '../components/ToolCards'
 
-/**
- * The two pieces Talk live puts on the screen, both fed by one `useTalkLive` call.
- *
- * `TalkLiveButton` goes inside the Ask input row, next to Send. `TalkLiveStrip` goes just above
- * that row, where the selection chip sits, and only appears once a talk is on or something has to
- * be said. Both render nothing at all when the laptop has no voice.
- */
+/** The composer button and voice dialog share one live connection. */
 const ON_HINT = 'End the live talk'
 const OFF_HINT = 'Talk live: ask questions with your voice.'
 
@@ -35,13 +31,14 @@ export function TalkLiveButton({ live, disabled }: { live: TalkLive; disabled?: 
   )
 }
 
-export function TalkLiveStrip({ live }: { live: TalkLive }) {
+export function TalkLiveStrip({ live, messages = [], busy = false, onConfirm }: { live: TalkLive; messages?: ChatMessage[]; busy?: boolean; onConfirm?: (id: string, approved: boolean) => void }) {
   const dialog = useRef<HTMLDialogElement>(null)
   const transcript = useRef<HTMLDivElement>(null)
   const [captions, setCaptions] = useState(false)
   const [minimizedSession, setMinimizedSession] = useState<number | null>(null)
   const expanded = minimizedSession !== live.session
   const open = live.opening || live.active || Boolean(live.note)
+  const activity = messages.filter(message => message.role === 'assistant' && !message.id.startsWith('voice-'))
   useEffect(() => {
     const node = dialog.current
     if (!node) return
@@ -67,6 +64,8 @@ export function TalkLiveStrip({ live }: { live: TalkLive }) {
               <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="4" /><path d="M10 9H8a3 3 0 0 0 0 6h2m8-6h-2a3 3 0 0 0 0 6h2" /></svg>
             </button>
           </header>
+          <div className="live-room-body">
+          <div className="live-voice-column">
           <div className="live-room-center">
             <CloudOrb level={live.level} state={live.state} />
             <p className="live-room-state" role="status">{label}</p>
@@ -75,6 +74,23 @@ export function TalkLiveStrip({ live }: { live: TalkLive }) {
           {captions && <div className="live-transcript" ref={transcript} role="log" aria-label="Live transcript">
             {live.transcript.length ? live.transcript.map(row => <p key={row.id} data-role={row.role}><span>{row.role === 'user' ? 'You' : 'Sentimeter'}</span>{row.text}</p>) : <p className="live-transcript-empty">Your conversation will appear here.</p>}
           </div>}
+          </div>
+          <section className="live-workspace" aria-label="Live searches and results">
+            <header className="live-workspace-heading"><h3>Searches & results</h3><span role="status">{busy ? 'Working' : activity.length ? 'Up to date' : 'Ready'}</span></header>
+            <div className="live-workspace-scroll">
+              {!activity.length && <p className="live-workspace-empty">Ask me to search or explore your data. You’ll see the tools and results here as I work.</p>}
+              {[...activity].reverse().map(message => <article className="live-workspace-turn" key={message.id}>
+                <ToolActivity steps={message.steps} />
+                {message.status === 'streaming' && !message.steps.length && <p role="status" className="live-workspace-empty">Checking your workspace…</p>}
+                {message.status === 'error' && <p role="alert">This request failed. You can ask me to try again.</p>}
+                {message.status === 'stopped' && <p className="live-workspace-empty">Request interrupted.</p>}
+                {message.text && <details className="live-workspace-answer"><summary>Written answer</summary><p>{message.text}</p></details>}
+                {message.cards.map((card, index) => <ResultCard key={index} card={card} />)}
+                {message.confirmation && onConfirm && <ConfirmationCard value={message.confirmation} busy={busy} decide={approved => onConfirm(message.id, approved)} />}
+              </article>)}
+            </div>
+          </section>
+          </div>
           <footer className="live-room-footer">
             <p>{live.muted ? 'Unmute whenever you’re ready.' : 'Speak naturally. You can interrupt anytime.'}</p>
             <div className="live-room-actions">

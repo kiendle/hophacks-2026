@@ -19,7 +19,7 @@ const SUBTOPICS: Record<string, string[]> = {
 
 const key = (query: string) => {
   const q = query.toLowerCase()
-  return Object.keys(SYNONYMS).find((k) => q.includes(k))
+  return Object.keys(SYNONYMS).find((k) => q === k)
 }
 
 /** Search terms a post must match to be kept. */
@@ -34,5 +34,5 @@ export function expandTerms(query: string): string[] {
 /** Subtopics worth tracking under the query. */
 export function suggestSubtopics(query: string): string[] {
   const base = key(query)
-  return base ? (SUBTOPICS[base] ?? []) : []
+  return base ? (SUBTOPICS[base] ?? [query]) : [query]
 }
