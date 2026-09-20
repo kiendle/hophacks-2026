@@ -1,0 +1,178 @@
+/* Bubble view, plus the subtopic tags shared by its card and the chat chip. */
+
+.bubble-bg {
+  fill: transparent;
+}
+
+.bubble {
+  stroke: #fff;
+  stroke-width: 1;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.bubble-selected {
+  stroke: #111;
+  stroke-width: 2;
+}
+
+.bubble-trail line {
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-dasharray: 0.1 5;
+  pointer-events: none;
+}
+
+.bubble-label {
+  font-size: 11px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.bubble-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.subtopic-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.slider-now {
+  fill: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The chat chip can hold several subtopic tags plus the range; the clear icon stays put. */
+.chip {
+  gap: 4px;
+  height: auto;
+  min-height: 36px;
+  max-width: 100%;
+  padding: 6px 6px 6px 8px;
+}
+
+.chip-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.chip-range {
+  padding: 0 2px 0 4px;
+}
+
+/* Labels below a bubble can land on a neighbor; a white halo keeps them legible. */
+.bubble-label-out {
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+/* X axis title with an info icon that reveals how traction is computed. */
+.bubble-x-label {
+  position: absolute;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #3d3d3d;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.info {
+  position: relative;
+  display: inline-flex;
+  color: var(--muted);
+  cursor: help;
+  outline: none;
+}
+
+.info:hover,
+.info:focus-visible {
+  color: #3d3d3d;
+}
+
+.info-tip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 400;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s;
+}
+
+.info:hover .info-tip,
+.info:focus-visible .info-tip {
+  opacity: 1;
+}
+
+/* Live control, right of the histogram in both views: a bare dot, like a stream's live marker. */
+.live-btn {
+  position: absolute;
+  right: 40px;
+  /* Centered on the slider track: timeline padding (8) + track y (58) - half the hit area (14). */
+  top: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+}
+
+.live-btn:disabled {
+  cursor: default;
+}
+
+.live-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #c4c4c4;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.live-btn:not(:disabled):hover .live-dot {
+  background: #9a9a9a;
+  transform: scale(1.15);
+}
+
+.live-on .live-dot {
+  background: #e5302a;
+  animation: live-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
