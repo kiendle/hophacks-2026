@@ -6,3 +6,6 @@
 *.parquet
 __pycache__/
 *.py[cod]
+
+# Local shared Bluesky journal, inference checkpoint, and control token
+bluesky-automation/data/
