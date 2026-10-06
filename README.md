@@ -8,6 +8,12 @@ Introducing **[sentimeter.surf](https://sentimeter.surf)**: scalable, agentic mo
 
 Sentimeter traces the evolution of public sentiment in real time and helps explain the shifts, so you can make decisions informed by public opinion—fast.
 
+## Preview video
+
+[![Watch the Sentimeter preview video on Vimeo](docs/preview-video.jpg)](https://vimeo.com/1228523989)
+
+▶ [Watch the preview on Vimeo](https://vimeo.com/1228523989) (4:53)
+
 ## Two layers, one view
 
 - **The big picture: a real-time social firehose.** Follow the conversation across captured activity, compare targets, and spot changes in sentiment over time.
